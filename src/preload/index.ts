@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
+import type { AppState } from "shared/AppType";
 
 declare global {
   interface Window {
@@ -7,9 +8,7 @@ declare global {
 }
 
 const API = {
-  sayHelloFromBridge: () => console.log("\nHello from bridgeAPI! 👋\n\n"),
-  username: process.env.USER,
-  loadState: async () => {
+  loadAppState: async (): Promise<AppState> => {
     return await ipcRenderer.invoke("load-state");
   },
 };

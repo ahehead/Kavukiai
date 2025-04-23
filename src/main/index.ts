@@ -4,11 +4,17 @@ import { makeAppWithSingleInstanceLock } from "lib/electron-app/factories/app/in
 import { makeAppSetup } from "lib/electron-app/factories/app/setup";
 import { MainWindow } from "./windows/main";
 import { Conf } from "electron-conf/main";
+import { version } from "~/package.json";
+import type { AppState } from "shared/AppType";
 
-const conf = new Conf({
+type StorageType = {
+  state: AppState;
+};
+
+const conf = new Conf<StorageType>({
   name: "appState",
   defaults: {
-    hello: "world",
+    state: { data: { version: version } },
   },
 });
 
@@ -16,6 +22,6 @@ makeAppWithSingleInstanceLock(async () => {
   await app.whenReady();
   await makeAppSetup(MainWindow);
   ipcMain.handle("load-state", () => {
-    return conf.get("hello");
+    return conf.get("state") as AppState;
   });
 });
