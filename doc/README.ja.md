@@ -158,9 +158,14 @@ openai api keyは設定UIで管理する。裏では、electron safeStorageを�
     - exec: any (トリガー)  
     - image: image    
   
-## 進め方
+## 検索
 rete.jsはv2なので、rete.jsまわりを書くときはなるべく[Doc](https://retejs.org/docs)や[Exsamples](https://retejs.org/examples)を確認して考える。examplesコードは埋め込みになっているので、aiは(open sandbox)などのリンクからソースコードを確認する。
 
-rete.jsのカスタマイズ時は、なるべくgithubのコードを確認する。https://github.com/retejs/react-plugin/tree/next/src/presets/classic/components
+rete.js + react 
+https://retejs.org/docs/guides/renderers/react
+https://retejs.org/examples/customization/react
+
+rete.jsのカスタマイズ時は、なるべくgithubのコードを確認する。
+https://github.com/retejs/react-plugin/tree/next/src/presets/classic/components
 
 データベース側、開発時では固まるまで直接jsonを編集する。"C:\Users\segawa\AppData\Roaming\my-electron-app\config.json"などのjsonを直接クリアするなどして、開発する。 
