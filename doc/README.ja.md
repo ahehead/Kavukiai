@@ -106,7 +106,7 @@ openai api keyは設定UIで管理する。裏では、electron safeStorageを�
 - **stringノード**
   - 説明: 短い文字列のフィールドをもち、入力文字列をそのまま次ノードへ渡す  
   - 出力: string  
-- **プロンプトノード**
+- **multi line stringノード**
   - 説明: 長文プロンプトを入力するテキストボックスをもつ  
   - 出力: string  
 - **テンプレートノード**
@@ -119,6 +119,10 @@ openai api keyは設定UIで管理する。裏では、electron safeStorageを�
 - **キャラクターノード**
   - 説明: キャラ設定項目を自由に追加できるフィールドをもつ  
   - 出力: string  
+- **Run Node**
+  - 説明: execを起動するボタン
+  - 出力:
+    - exec: トリガー
 - **Chatノード**
   - 説明: メッセージフィールドと、sendボタンがあり、chat context(user,assistantのメッセージのリスト)を表示するノード。このノードはAIには基本的な部分を作ってもらって、人が作る  
   - 入力:  
