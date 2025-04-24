@@ -8,47 +8,42 @@ LLMとAI画像生成モデルをノードベースUIで組み合わせ実行す�
 [Electron App](https://github.com/daltonmenezes/electron-app)というテンプレートを使用。
 
 ```
-🔋 Electron
-🔥 ReactJS v19
-🌎 React Router DOM v7 and Electron Router DOM v2
-🧐 React Developer Tools
-🔍 Code inspector (holding Alt or Option key on DOM element and clicking on it)
-💙 TypeScript v5
-📦 Electron Vite
-✨ TailwindCSS v4
-🎨 shadcn/ui
-🍦 lucide-icons
-💫 Biome / EditorConfig
-📦 Electron Builder
-🔮 action-electron-builder
+* Electron
+* ReactJS v19
+* React Router DOM v7 and Electron Router DOM v2
+* React Developer Tools
+* Code inspector (holding Alt or Option key on DOM element and clicking on it)
+* TypeScript v5
+* Electron Vite
+* TailwindCSS v4
+* shadcn/ui
+* lucide-icons
+* Biome / EditorConfig
+* Electron Builder
+* action-electron-builder
 ```
 
 ```
 Structure Overview
 
 ## src/lib
-
 A folder containing lib configurations/instances.
 
 ## src/main
-
 A folder containing the main process files and folders.
 
 ## src/renderer
-
 A folder containing the renderer process files and folders. ReactJS lives here!
 
 ## src/preload
 A folder containing the preload script that expose the API connection between main and renderer world by IPC in the context bridge.
 
 ## src/resources
-
 A folder containing public assets and assets for the build process like icons.
 
 > **Note**: all the content inside the **public** folder will be copied to the builded version as its.
 
 ## src/shared
-
 A folder containing data shared between one or more processes, such as constants, utilities, types, etc.
 ```
 
