@@ -1,44 +1,59 @@
 import { createRoot } from "react-dom/client";
 
-import type { GetSchemes, ClassicPreset } from "rete";
-import { NodeEditor } from "rete";
+import { ClassicPreset, NodeEditor } from "rete";
 
 import { AreaPlugin, AreaExtensions } from "rete-area-plugin";
 import {
   ConnectionPlugin,
   Presets as ConnectionPresets,
 } from "rete-connection-plugin";
-import type { ReactArea2D } from "rete-react-plugin";
 import { ReactPlugin, Presets as ReactPresets } from "rete-react-plugin";
 import {
   ContextMenuPlugin,
   Presets as ContextMenuPresets,
 } from "rete-context-menu-plugin";
-import { StringNode } from "renderer/nodeEditor/nodes/BasicNodes";
-
-import type { ContextMenuExtra } from "rete-context-menu-plugin";
+import {
+  CustomRunButton,
+  Run,
+  RunButtonControl,
+  StringNode,
+} from "renderer/nodeEditor/nodes/BasicNodes";
 
 import type { HistoryActions } from "rete-history-plugin";
 import { HistoryPlugin, Presets as HistoryPresets } from "rete-history-plugin";
 import { HistoryExtensions } from "rete-history-plugin";
 
-// ReactArea2DとContextMenuExtraを合成
-type Schemes = GetSchemes<
-  ClassicPreset.Node,
-  ClassicPreset.Connection<ClassicPreset.Node, ClassicPreset.Node>
->;
-type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
+import type { Schemes, AreaExtra } from "./types";
+import { ControlFlowEngine, DataflowEngine } from "rete-engine";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
 
+  // エンジンのインスタンス化
+  const dataflow = new DataflowEngine<Schemes>(({ inputs, outputs }) => {
+    return {
+      inputs: (): string[] =>
+        Object.keys(inputs).filter((name) => name !== "exec"),
+      outputs: (): string[] =>
+        Object.keys(outputs).filter((name) => name !== "exec"),
+    };
+  });
+  const engine = new ControlFlowEngine<Schemes>(() => {
+    return {
+      inputs: (): ["exec"] => ["exec"],
+      outputs: (): ["exec"] => ["exec"],
+    };
+  });
+
   // History pluginのインスタンス化（undo/redo管理）
   const history = new HistoryPlugin<Schemes, HistoryActions<Schemes>>();
+
   // Context menu pluginのインスタンス化
   const contextMenu = new ContextMenuPlugin({
     items: ContextMenuPresets.classic.setup([
       // 右クリックメニューの項目リスト
       ["String", () => new StringNode()],
+      ["Run", () => new Run(engine)],
     ]),
   });
 
@@ -55,7 +70,22 @@ export async function createNodeEditor(container: HTMLElement) {
 
   connection.addPreset(ConnectionPresets.classic.setup());
   // カスタムコントロール用レンダリング設定
-  render.addPreset(ReactPresets.classic.setup());
+  render.addPreset(
+    ReactPresets.classic.setup({
+      customize: {
+        control(data) {
+          if (data.payload instanceof RunButtonControl) {
+            return CustomRunButton;
+          }
+          if (data.payload instanceof ClassicPreset.InputControl) {
+            return ReactPresets.classic.Control;
+          }
+
+          return null;
+        },
+      },
+    })
+  );
 
   // Undo/Redo機能有効化
   history.addPreset(HistoryPresets.classic.setup());
@@ -65,6 +95,7 @@ export async function createNodeEditor(container: HTMLElement) {
   const stringNode = new StringNode();
   await area.translate(stringNode.id, { x: 20, y: 20 });
   await editor.addNode(stringNode);
+  await editor.addNode(new Run(engine));
 
   await AreaExtensions.zoomAt(area, editor.getNodes());
 
