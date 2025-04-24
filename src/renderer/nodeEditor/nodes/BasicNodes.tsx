@@ -1,28 +1,7 @@
 import type { JSX } from "react";
 import { ClassicPreset } from "rete";
 import RunButton from "./RunButton";
-
-export class Node extends ClassicPreset.Node<
-  { [key in string]: ClassicPreset.Socket },
-  { [key in string]: ClassicPreset.Socket },
-  {
-    [key in string]:
-    | PromptControl
-    | ClassicPreset.Control
-    | ClassicPreset.InputControl<"number">
-    | ClassicPreset.InputControl<"text">;
-  }
-> { }
-
-// テキスト専用ソケット
-export class StringSocket extends ClassicPreset.Socket {
-  constructor() {
-    super("string");
-  }
-  isCompatibleWith(socket: ClassicPreset.Socket): boolean {
-    return socket instanceof StringSocket;
-  }
-}
+import { StringSocket } from './Sockets';
 
 // String入力ノード用コントロール（テキスト入力）
 export class StringNode extends ClassicPreset.Node<
