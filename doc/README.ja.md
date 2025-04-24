@@ -159,7 +159,7 @@ openai api keyは設定UIで管理する。裏では、electron safeStorageを�
     - image: image    
   
 ## 検索
-rete.jsはv2なので、rete.jsまわりを書くときはなるべく[Doc](https://retejs.org/docs)や[Exsamples](https://retejs.org/examples)を確認して考える。examplesコードは埋め込みになっているので、aiは(open sandbox)などのリンクからソースコードを確認する。
+rete.jsまわりを書くときはなるべく[Doc](https://retejs.org/docs)や[Exsamples](https://retejs.org/examples)を確認して考える。
 
 rete.js + react 
 https://retejs.org/docs/guides/renderers/react
