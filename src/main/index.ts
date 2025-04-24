@@ -1,27 +1,49 @@
-import { app, ipcMain } from "electron";
+import { app, ipcMain, safeStorage } from "electron";
 
 import { makeAppWithSingleInstanceLock } from "lib/electron-app/factories/app/instance";
 import { makeAppSetup } from "lib/electron-app/factories/app/setup";
 import { MainWindow } from "./windows/main";
 import { Conf } from "electron-conf/main";
-import { version } from "~/package.json";
-import type { AppState } from "shared/AppType";
+import type {
+  FileList,
+  ActiveFileNumber,
+  ApiKeys,
+  AppState,
+} from "shared/AppType";
 
-type StorageType = {
-  state: AppState;
-};
-
-const conf = new Conf<StorageType>({
-  name: "appState",
+const fileListConf = new Conf<FileList>({
   defaults: {
-    state: { data: { version: version } },
+    files: [],
+  },
+});
+
+const activeFileNumberConf = new Conf<ActiveFileNumber>({
+  defaults: {
+    activeFileNumber: null,
+  },
+});
+const apiKeysConf = new Conf<ApiKeys>({
+  defaults: {
+    openai: null,
   },
 });
 
 makeAppWithSingleInstanceLock(async () => {
   await app.whenReady();
   await makeAppSetup(MainWindow);
+
   ipcMain.handle("load-state", () => {
-    return conf.get("state") as AppState;
+    const fileList = fileListConf.get("files");
+    const activeFileNumber = activeFileNumberConf.get("activeFileNumber");
+    const openaiBainary = apiKeysConf.get("openai");
+    const openai = openaiBainary
+      ? safeStorage.decryptString(openaiBainary)
+      : null;
+
+    return {
+      files: fileList,
+      activeFileNumber,
+      openai,
+    } as AppState;
   });
 });
