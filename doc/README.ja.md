@@ -55,7 +55,6 @@ A folder containing data shared between one or more processes, such as constants
 ### 追加のライブラリ
 
 * "rete": "^2.0.5",
-* "keytar": "^7.9.0",
 * "electron-conf": "^1.3.0", (electron-store互換https://github.com/alex8088/electron-conf)
 
 ## 機能要件・仕様
@@ -97,10 +96,10 @@ vs codeのように、ファイルは未保存でも、そのままの状態で�
 
 menuから設定画面を呼び出せる。設定画面は、画面上にオーバーフローして出てくる、背景はぼかされる。
 
-openai api keyは設定UIで管理する。裏はkeytar
+openai api keyは設定UIで管理する。裏では、electron safeStorageを使い暗号化する。
 
 ### UI、見た目
-スタイリッシュ、業務的。色はトリコロールカラーをアクセントに、赤、青(データフロー)、黄色(コントロールフロー)、背景は白系
+スタイリッシュ、業務的。色はトリコロールカラーガンダムをアクセントに、赤、青(データフロー)、黄色(コントロールフロー)、背景は白系
 
 ノードのコントロールフローのソケットは、右向き三角のアイコンを使う。
 
@@ -164,3 +163,9 @@ openai api keyは設定UIで管理する。裏はkeytar
     - exec: any (トリガー)  
     - image: image    
   
+## 進め方
+rete.jsはv2なので、rete.jsまわりを書くときはなるべく[Doc](https://retejs.org/docs)や[Exsamples](https://retejs.org/examples)を確認して考える。examplesコードは埋め込みになっているので、aiは(open sandbox)などのリンクからソースコードを確認する。
+
+rete.jsのカスタマイズ時は、なるべくgithubのコードを確認する。https://github.com/retejs/react-plugin/tree/next/src/presets/classic/components
+
+データベース側、開発時では固まるまで直接jsonを編集する。"C:\Users\segawa\AppData\Roaming\my-electron-app\config.json"などのjsonを直接クリアするなどして、開発する。 
