@@ -12,12 +12,6 @@ import {
   ContextMenuPlugin,
   Presets as ContextMenuPresets,
 } from "rete-context-menu-plugin";
-import {
-  CustomRunButton,
-  Run,
-  RunButtonControl,
-  StringNode,
-} from "renderer/nodeEditor/nodes/BasicNodes";
 
 import type { HistoryActions } from "rete-history-plugin";
 import { HistoryPlugin, Presets as HistoryPresets } from "rete-history-plugin";
@@ -25,6 +19,10 @@ import { HistoryExtensions } from "rete-history-plugin";
 
 import type { Schemes, AreaExtra } from "./types";
 import { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import { StringNode } from "./nodes/String";
+import { MultiLineControl, MultiLineStringNode } from "./nodes/MultiLineString";
+import { CustomTextArea } from "./nodes/MultiLineString/CustomTextArea";
+import { CustomRunButton, Run, RunButtonControl } from "./nodes/Run";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -53,6 +51,7 @@ export async function createNodeEditor(container: HTMLElement) {
     items: ContextMenuPresets.classic.setup([
       // 右クリックメニューの項目リスト
       ["String", () => new StringNode()],
+      ["MultiLineString", () => new MultiLineStringNode()],
       ["Run", () => new Run(engine)],
     ]),
   });
@@ -77,6 +76,9 @@ export async function createNodeEditor(container: HTMLElement) {
           if (data.payload instanceof RunButtonControl) {
             return CustomRunButton;
           }
+          if (data.payload instanceof MultiLineControl) {
+            return CustomTextArea;
+          }
           if (data.payload instanceof ClassicPreset.InputControl) {
             return ReactPresets.classic.Control;
           }
@@ -95,6 +97,7 @@ export async function createNodeEditor(container: HTMLElement) {
   const stringNode = new StringNode();
   await area.translate(stringNode.id, { x: 20, y: 20 });
   await editor.addNode(stringNode);
+  await editor.addNode(new MultiLineStringNode());
   await editor.addNode(new Run(engine));
 
   await AreaExtensions.zoomAt(area, editor.getNodes());

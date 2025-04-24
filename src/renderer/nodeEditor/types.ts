@@ -2,7 +2,13 @@ import type { GetSchemes } from "rete";
 import { ClassicPreset } from "rete";
 import type { ReactArea2D } from "rete-react-plugin";
 import type { ContextMenuExtra } from "rete-context-menu-plugin";
-import type { Run, RunButtonControl, StringNode } from "./nodes/BasicNodes";
+
+import type {
+  MultiLineControl,
+  MultiLineStringNode,
+} from "./nodes/MultiLineString";
+import type { Run, RunButtonControl } from "./nodes/Run";
+import type { StringNode } from "./nodes/String";
 
 export class Node extends ClassicPreset.Node<
   { [key in string]: ClassicPreset.Socket },
@@ -10,6 +16,7 @@ export class Node extends ClassicPreset.Node<
   {
     [key in string]:
       | RunButtonControl
+      | MultiLineControl
       | ClassicPreset.Control
       | ClassicPreset.InputControl<"number">
       | ClassicPreset.InputControl<"text">;
@@ -23,7 +30,7 @@ class Connection<
   isLoop?: boolean;
 }
 
-export type NodeTypes = StringNode | Run;
+export type NodeTypes = StringNode | Run | MultiLineStringNode;
 
 export type Schemes = GetSchemes<NodeTypes, Connection<Node, Node>>;
 
