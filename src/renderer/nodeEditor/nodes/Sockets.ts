@@ -1,23 +1,51 @@
 import { ClassicPreset } from "rete";
 
-/**
- * ソケットクラスを動的に生成するファクトリ
- */
-function createSocketClass(label: string) {
-  return class extends ClassicPreset.Socket {
-    constructor() {
-      super(label);
-    }
-    // 自クラス同士だけ true
-    isCompatibleWith(socket: ClassicPreset.Socket): boolean {
-      return socket.constructor === this.constructor;
-    }
-  };
+// テキスト専用ソケット
+export class StringSocket extends ClassicPreset.Socket {
+  constructor() {
+    super("string");
+  }
+  isCompatibleWith(socket: ClassicPreset.Socket): boolean {
+    return socket instanceof StringSocket;
+  }
 }
 
-// 生成したクラス
-export const StringSocket = createSocketClass("string");
-export const ExecSocket = createSocketClass("exec");
-export const ContextSocket = createSocketClass("context");
-export const SettingSocket = createSocketClass("setting");
-export const ImageSocket = createSocketClass("image");
+// 実行トリガー用ソケット
+export class ExecSocket extends ClassicPreset.Socket {
+  constructor() {
+    super("exec");
+  }
+  isCompatibleWith(socket: ClassicPreset.Socket): boolean {
+    return socket instanceof ExecSocket;
+  }
+}
+
+// チャットコンテキスト用ソケット
+export class ContextSocket extends ClassicPreset.Socket {
+  constructor() {
+    super("context");
+  }
+  isCompatibleWith(socket: ClassicPreset.Socket): boolean {
+    return socket instanceof ContextSocket;
+  }
+}
+
+// 設定用ソケット
+export class SettingSocket extends ClassicPreset.Socket {
+  constructor() {
+    super("setting");
+  }
+  isCompatibleWith(socket: ClassicPreset.Socket): boolean {
+    return socket instanceof SettingSocket;
+  }
+}
+
+// 画像用ソケット
+export class ImageSocket extends ClassicPreset.Socket {
+  constructor() {
+    super("image");
+  }
+  isCompatibleWith(socket: ClassicPreset.Socket): boolean {
+    return socket instanceof ImageSocket;
+  }
+}

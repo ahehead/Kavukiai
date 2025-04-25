@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="17.407749mm"
+   height="19.384806mm"
+   viewBox="0 0 17.407749 19.384806"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   sodipodi:docname="triangle_inkscape.svg"
+   inkscape:export-filename="triangle.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="4.0668163"
+     inkscape:cx="14.630609"
+     inkscape:cy="54.711101"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="449"
+     inkscape:window-y="1072"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect4"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,10.260377,0,1 @ F,0,0,1,0,10.260377,0,1 @ F,0,0,1,0,10.260377,0,1"
+       radius="15"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter43"
+       x="-0.17618227"
+       y="-0.1583441"
+       width="1.3523645"
+       height="1.3166882">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         id="feFlood42" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.200000"
+         id="feGaussianBlur42" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset42" />
+      <feComposite
+         result="comp1"
+         operator="out"
+         in="flood"
+         in2="offset"
+         id="feComposite42" />
+      <feComposite
+         result="comp2"
+         operator="atop"
+         in="comp1"
+         in2="SourceGraphic"
+         id="feComposite43" />
+    </filter>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-63.525467,-86.867045)">
+    <path
+       id="path1"
+       style="fill-opacity:1;stroke:#5d5d5d;stroke-width:0;stroke-dasharray:none;fill-rule:nonzero;filter:url(#filter43)"
+       inkscape:transform-center-x="-3.0348917"
+       transform="matrix(0.38680352,0,0,0.38680352,39.076232,52.429336)"
+       d="M 63.725468,132.41637 V 95.762068 a 5.9238314,5.9238314 150 0 1 8.885747,-5.130188 l 31.743555,18.32715 a 5.9238316,5.9238316 90 0 1 0,10.26038 l -31.743555,18.32715 a 5.9238313,5.9238313 29.999999 0 1 -8.885747,-5.13019 z"
+       inkscape:path-effect="#path-effect4"
+       inkscape:original-d="M 63.725468,142.67675 V 85.501691 l 49.515052,28.587529 z"
+       inkscape:export-filename="triangle.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+</svg>
