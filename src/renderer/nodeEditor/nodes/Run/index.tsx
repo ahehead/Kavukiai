@@ -3,7 +3,7 @@ import type { JSX } from 'react';
 import type { ControlFlowEngine } from 'rete-engine';
 import type { Schemes } from '../../types';
 import { ExecSocket } from '../Sockets';
-import RunButton from '../RunButton';
+import RunButton from '../components/RunButton';
 
 // Run ノード
 export class Run extends ClassicPreset.Node<
