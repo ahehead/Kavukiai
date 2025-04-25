@@ -18,7 +18,7 @@ export class Run extends ClassicPreset.Node<
     this.addOutput('exec', new ClassicPreset.Output(new ExecSocket(), undefined, true));
     this.addControl(
       'btn',
-      new RunButtonControl('Run', (e: React.MouseEvent<HTMLButtonElement>) => {
+      new RunButtonControl('Run', async (e: React.MouseEvent<HTMLButtonElement>) => {
         this.engine.execute(this.id);
         e.stopPropagation();
       })
@@ -43,6 +43,6 @@ export class RunButtonControl extends ClassicPreset.Control {
 }
 
 // カスタム Run ボタンコンポーネント
-export function CustomRunButton(props: { data: RunButtonControl }): JSX.Element {
+export function RunButtonControlView(props: { data: RunButtonControl }): JSX.Element {
   return <RunButton label={props.data.label} onClick={props.data.onClick} />;
 }

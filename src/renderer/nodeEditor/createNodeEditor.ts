@@ -20,9 +20,13 @@ import { HistoryExtensions } from "rete-history-plugin";
 import type { Schemes, AreaExtra } from "./types";
 import { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import { StringNode } from "./nodes/String";
-import { MultiLineControl, MultiLineStringNode } from "./nodes/MultiLineString";
-import { CustomTextArea } from "./nodes/MultiLineString/CustomTextArea";
-import { CustomRunButton, Run, RunButtonControl } from "./nodes/Run";
+import { MultiLineStringNode } from "./nodes/MultiLineString";
+import { RunButtonControlView, Run, RunButtonControl } from "./nodes/Run";
+import { ViewStringNode } from "./nodes/ViewString";
+import {
+  MultiLineControl,
+  TextAreaControllView,
+} from "./nodes/components/TextArea";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -46,27 +50,32 @@ export async function createNodeEditor(container: HTMLElement) {
   // History pluginのインスタンス化（undo/redo管理）
   const history = new HistoryPlugin<Schemes, HistoryActions<Schemes>>();
 
+  const area = new AreaPlugin<Schemes, AreaExtra>(container);
+  const connection = new ConnectionPlugin<Schemes, AreaExtra>();
+  const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
   // Context menu pluginのインスタンス化
   const contextMenu = new ContextMenuPlugin({
     items: ContextMenuPresets.classic.setup([
       // 右クリックメニューの項目リスト
       ["String", () => new StringNode()],
-      ["MultiLineString", () => new MultiLineStringNode()],
+      ["MultiLineString", () => new MultiLineStringNode("")],
       ["Run", () => new Run(engine)],
+      ["ViewString", () => new ViewStringNode(dataflow, area)],
     ]),
   });
 
-  const area = new AreaPlugin<Schemes, AreaExtra>(container);
-  const connection = new ConnectionPlugin<Schemes, AreaExtra>();
-  const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
-
   // エディタにプラグインを接続
+  editor.use(dataflow);
+  editor.use(engine);
   editor.use(area);
   area.use(connection);
   area.use(history);
   area.use(contextMenu);
   area.use(render);
 
+  //// ここよりプリセットの設定 ////
+
+  render.addPreset(ReactPresets.contextMenu.setup());
   connection.addPreset(ConnectionPresets.classic.setup());
   // カスタムコントロール用レンダリング設定
   render.addPreset(
@@ -74,10 +83,10 @@ export async function createNodeEditor(container: HTMLElement) {
       customize: {
         control(data) {
           if (data.payload instanceof RunButtonControl) {
-            return CustomRunButton;
+            return RunButtonControlView;
           }
           if (data.payload instanceof MultiLineControl) {
-            return CustomTextArea;
+            return TextAreaControllView;
           }
           if (data.payload instanceof ClassicPreset.InputControl) {
             return ReactPresets.classic.Control;
@@ -97,8 +106,9 @@ export async function createNodeEditor(container: HTMLElement) {
   const stringNode = new StringNode();
   await area.translate(stringNode.id, { x: 20, y: 20 });
   await editor.addNode(stringNode);
-  await editor.addNode(new MultiLineStringNode());
+  await editor.addNode(new MultiLineStringNode("hello"));
   await editor.addNode(new Run(engine));
+  await editor.addNode(new ViewStringNode(dataflow, area));
 
   await AreaExtensions.zoomAt(area, editor.getNodes());
 
