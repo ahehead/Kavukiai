@@ -123,6 +123,14 @@ openai api keyは設定UIで管理する。裏では、electron safeStorageを�
   - 説明: execを起動するボタン
   - 出力:
     - exec: トリガー
+- **View String Node**
+  - 説明: 画面にstringを表示するボタン
+  - 入力:
+    - exec: トリガー
+    - string: string
+  - 出力:
+    - exec: トリガー
+    - string: string
 - **Chatノード**
   - 説明: メッセージフィールドと、sendボタンがあり、chat context(user,assistantのメッセージのリスト)を表示するノード。このノードはAIには基本的な部分を作ってもらって、人が作る  
   - 入力:  
