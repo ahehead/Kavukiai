@@ -32,7 +32,7 @@ export function TextAreaControllView(props: { data: MultiLineControl }): JSX.Ele
       <textarea
         value={uiTextValue}
         readOnly={!editable}
-        className={`resize-none w-full h-full p-2 border-none focus:border-none focus:outline-none ring-1 focus:ring-2 ring-white rounded-md ${!editable ? "cursor-not-allowed" : ""
+        className={`resize-none w-full h-full p-2 border-none focus:border-none focus:outline-none ring-1 focus:ring-2 ring-gray-500 rounded-md ${!editable ? "cursor-not-allowed" : ""
           }`}
         placeholder="..."
         rows={5}
