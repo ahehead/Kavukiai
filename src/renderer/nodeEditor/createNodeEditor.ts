@@ -27,6 +27,11 @@ import {
   MultiLineControl,
   TextAreaControllView,
 } from "./nodes/components/TextArea";
+import { ExecSocket } from "./nodes/Sockets";
+import { CustomExecSocket } from "./custom/CustomExecSocket";
+import { CustomSocket } from "./custom/CustomSocket";
+import { CustomNodeComponent } from "./custom/CustomNodeComponent";
+import { canCreateConnection } from "./features/socket_type_restriction/canCreateConnection";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -68,10 +73,20 @@ export async function createNodeEditor(container: HTMLElement) {
   editor.use(dataflow);
   editor.use(engine);
   editor.use(area);
-  area.use(connection);
   area.use(history);
+  area.use(connection);
   area.use(contextMenu);
   area.use(render);
+
+  // コネクションのバリデーション
+  editor.addPipe((context) => {
+    if (context.type === "connectioncreate") {
+      if (!canCreateConnection(editor, context.data)) {
+        return;
+      }
+    }
+    return context;
+  });
 
   //// ここよりプリセットの設定 ////
 
@@ -81,6 +96,12 @@ export async function createNodeEditor(container: HTMLElement) {
   render.addPreset(
     ReactPresets.classic.setup({
       customize: {
+        socket(data) {
+          if (data.payload instanceof ExecSocket) {
+            return CustomExecSocket;
+          }
+          return CustomSocket;
+        },
         control(data) {
           if (data.payload instanceof RunButtonControl) {
             return RunButtonControlView;
@@ -94,6 +115,9 @@ export async function createNodeEditor(container: HTMLElement) {
 
           return null;
         },
+        node() {
+          return CustomNodeComponent;
+        },
       },
     })
   );
@@ -103,9 +127,7 @@ export async function createNodeEditor(container: HTMLElement) {
   HistoryExtensions.keyboard(history);
 
   // テスト用に基本ノードを画面に追加
-  const stringNode = new StringNode();
-  await area.translate(stringNode.id, { x: 20, y: 20 });
-  await editor.addNode(stringNode);
+  await editor.addNode(new StringNode());
   await editor.addNode(new MultiLineStringNode("hello"));
   await editor.addNode(new Run(engine));
   await editor.addNode(new ViewStringNode(dataflow, area));
