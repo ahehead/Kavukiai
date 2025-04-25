@@ -32,6 +32,7 @@ import { CustomExecSocket } from "./custom/CustomExecSocket";
 import { CustomSocket } from "./custom/CustomSocket";
 import { CustomNodeComponent } from "./custom/CustomNodeComponent";
 import { canCreateConnection } from "./features/socket_type_restriction/canCreateConnection";
+import { addCustomBackground } from "./custom/background";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -125,6 +126,9 @@ export async function createNodeEditor(container: HTMLElement) {
   // Undo/Redo機能有効化
   history.addPreset(HistoryPresets.classic.setup());
   HistoryExtensions.keyboard(history);
+
+  // 背景の設定
+  addCustomBackground(area);
 
   // テスト用に基本ノードを画面に追加
   await editor.addNode(new StringNode());
