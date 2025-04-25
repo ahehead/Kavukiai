@@ -46,6 +46,40 @@ A folder containing public assets and assets for the build process like icons.
 ## src/shared
 A folder containing data shared between one or more processes, such as constants, utilities, types, etc.
 ```
+### nodeEditorフォルダ
+
+Rete.js と React を使ったノードベース UI の実装フォルダです。  
+ワークフローのノード定義、カスタムコントロール、プラグイン設定などを集約しています。
+
+主なファイル／フォルダ構成
+- src/renderer/nodeEditor/
+  - createNodeEditor.ts  
+    ・NodeEditor のインスタンス化と各種プラグイン（Area, Connection, History, ContextMenu, React）の初期化  
+    ・カスタムコントロール（`RunButtonControl`, `MultiLineControl`）のレンダリング設定  
+    ・デフォルトノード（String, MultiLineString, Run）の追加／表示  
+  - types.ts  
+    ・`Schemes`, `AreaExtra` など、NodeEditor の型定義  
+  - nodes/
+    - Sockets.ts  
+      ・データ／制御用ソケットを動的に生成するファクトリ  
+    - String/
+      - index.tsx  
+        ・短い文字列入力ノード（`StringNode`）  
+    - MultiLineString/
+      - index.tsx  
+        ・長文入力ノード（`MultiLineStringNode`）  
+      - CustomTextArea.tsx  
+        ・マルチライン用カスタムテキストエリアコンポーネント  
+    - Run/
+      - index.tsx  
+        ・実行トリガー用ノード（`Run`）とボタンコントロール  
+    - …（将来的に ViewString, Chat, History, API 通信 などを追加予定）
+
+関連ファイルへのリンク  
+- [createNodeEditor.ts](c:\Users\segawa\ero-chat-hub3\src\renderer\nodeEditor\createNodeEditor.ts)  
+- [types.ts](c:\Users\segawa\ero-chat-hub3\src\renderer\nodeEditor\types.ts)  
+- [nodes/Sockets.ts](c:\Users\segawa\ero-chat-hub3\src\renderer\nodeEditor\nodes\Sockets.ts)  
+
 
 ### 追加のライブラリ
 
