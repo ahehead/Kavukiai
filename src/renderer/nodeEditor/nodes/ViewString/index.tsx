@@ -22,10 +22,9 @@ export class ViewStringNode extends ClassicPreset.Node<
     this.addControl('view', new MultiLineControl("", undefined, false));
   }
 
-  data(): object {
-    return {
-
-    };
+  data(inputs: { stringValue?: string[] }): { stringValue: string } {
+    const value = inputs.stringValue?.[0] || '';
+    return { stringValue: value };
   }
 
   // 実行時、stringValueを取得して表示する
