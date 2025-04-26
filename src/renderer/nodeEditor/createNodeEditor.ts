@@ -73,7 +73,7 @@ export async function createNodeEditor(container: HTMLElement) {
     items: ContextMenuPresets.classic.setup([
       // 右クリックメニューの項目リスト
       ["String", () => new StringNode()],
-      ["MultiLineString", () => new MultiLineStringNode("")],
+      ["MultiLineString", () => new MultiLineStringNode("", history, area)],
       ["Run", () => new RunNode(engine)],
       ["ViewString", () => new ViewStringNode(dataflow, area)],
     ]),
@@ -90,6 +90,11 @@ export async function createNodeEditor(container: HTMLElement) {
   area.use(contextMenu);
   area.use(render);
   area.use(gridLine);
+
+  // area.addPipe((context) => {
+  //   console.log("area pipe", context);
+  //   return context;
+  // });
 
   // コネクションのバリデーション
   editor.addPipe((context) => {
@@ -154,9 +159,15 @@ export async function createNodeEditor(container: HTMLElement) {
     })
   );
 
+  // ダブルクリックでのズームを無効化
+  area.addPipe((context) => {
+    if (context.type === "zoom" && context.data.source === "dblclick") return;
+    return context;
+  });
+
   // テスト用に基本ノードを画面に追加
   await editor.addNode(new StringNode());
-  await editor.addNode(new MultiLineStringNode("hello"));
+  await editor.addNode(new MultiLineStringNode("hello", history, area));
   await editor.addNode(new RunNode(engine));
   await editor.addNode(new ViewStringNode(dataflow, area));
 
