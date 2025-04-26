@@ -3,7 +3,7 @@ import { ExecSocket, StringSocket } from '../Sockets';
 import type { DataflowEngine } from 'rete-engine';
 import type { AreaExtra, Schemes } from 'renderer/nodeEditor/types';
 import type { AreaPlugin } from 'rete-area-plugin';
-import { MultiLineControl } from '../components/TextArea';
+import { MultiLineControl } from '../Controls/TextArea';
 
 
 // View String ノード

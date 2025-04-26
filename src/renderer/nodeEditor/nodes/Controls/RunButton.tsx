@@ -1,7 +1,23 @@
 import type React from "react"
+import type { JSX } from 'react';
+import { ClassicPreset } from 'rete';
 
+// Run ボタン用コントロール
+export class RunButtonControl extends ClassicPreset.Control {
+  constructor(
+    public label: string,
+    public onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
+  ) {
+    super();
+  }
+}
 
-export default function RunButton(props: {
+// カスタム Run ボタンコンポーネント
+export function RunButtonControlView(props: { data: RunButtonControl }): JSX.Element {
+  return <RunButton label={props.data.label} onClick={props.data.onClick} />;
+}
+
+function RunButton(props: {
   label: string
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
 }): React.JSX.Element {

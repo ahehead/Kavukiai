@@ -3,11 +3,14 @@ import { ClassicPreset } from "rete";
 import type { ReactArea2D } from "rete-react-plugin";
 import type { ContextMenuExtra } from "rete-context-menu-plugin";
 
-import type { MultiLineStringNode } from "./nodes/MultiLineString";
-import type { Run, RunButtonControl } from "./nodes/Run";
-import type { StringNode } from "./nodes/String";
-import type { ViewStringNode } from "./nodes/ViewString";
-import type { MultiLineControl } from "./nodes/components/TextArea";
+import type { RunButtonControl } from "./nodes/Controls/RunButton";
+import type { MultiLineControl } from "./nodes/Controls/TextArea";
+import type {
+  MultiLineStringNode,
+  RunNode,
+  StringNode,
+  ViewStringNode,
+} from "./nodes/Node";
 
 export class Node extends ClassicPreset.Node<
   { [key in string]: ClassicPreset.Socket },
@@ -29,7 +32,11 @@ class Connection<
   isLoop?: boolean;
 }
 
-export type NodeTypes = StringNode | Run | MultiLineStringNode | ViewStringNode;
+export type NodeTypes =
+  | StringNode
+  | RunNode
+  | MultiLineStringNode
+  | ViewStringNode;
 
 export type Schemes = GetSchemes<NodeTypes, Connection<Node, Node>>;
 

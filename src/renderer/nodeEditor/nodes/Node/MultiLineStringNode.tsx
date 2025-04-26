@@ -1,8 +1,6 @@
 import { ClassicPreset } from 'rete';
 import { StringSocket } from '../Sockets';
-import { MultiLineControl } from '../components/TextArea';
-
-
+import { MultiLineControl } from '../Controls/TextArea';
 
 // 長文文字列入力ノード
 export class MultiLineStringNode extends ClassicPreset.Node<
@@ -23,5 +21,3 @@ export class MultiLineStringNode extends ClassicPreset.Node<
 
   async execute(): Promise<void> { }
 }
-
-
