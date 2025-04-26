@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 
 import { ClassicPreset, NodeEditor } from "rete";
 
-import { AreaPlugin, AreaExtensions } from "rete-area-plugin";
+import { AreaPlugin, AreaExtensions, Drag } from "rete-area-plugin";
 import {
   ConnectionPlugin,
   Presets as ConnectionPresets,
@@ -32,7 +32,8 @@ import { CustomExecSocket } from "./custom/CustomExecSocket";
 import { CustomSocket } from "./custom/CustomSocket";
 import { CustomNodeComponent } from "./custom/CustomNodeComponent";
 import { canCreateConnection } from "./features/socket_type_restriction/canCreateConnection";
-import { addCustomBackground } from "./custom/background";
+
+import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -70,6 +71,8 @@ export async function createNodeEditor(container: HTMLElement) {
     ]),
   });
 
+  const gridLine = new GridLineSnapPlugin<Schemes>();
+
   // エディタにプラグインを接続
   editor.use(dataflow);
   editor.use(engine);
@@ -78,6 +81,7 @@ export async function createNodeEditor(container: HTMLElement) {
   area.use(connection);
   area.use(contextMenu);
   area.use(render);
+  area.use(gridLine);
 
   // コネクションのバリデーション
   editor.addPipe((context) => {
@@ -127,8 +131,20 @@ export async function createNodeEditor(container: HTMLElement) {
   history.addPreset(HistoryPresets.classic.setup());
   HistoryExtensions.keyboard(history);
 
-  // 背景の設定
-  addCustomBackground(area);
+  // マウス中ボタンで領域パン
+  area.area.setDragHandler(
+    new Drag({
+      down: (e) => {
+        // マウス（左クリック：0, 中クリック：1）でのみパンを許可
+        if (e.pointerType === "mouse" && e.button !== 0 && e.button !== 1)
+          return false;
+
+        e.preventDefault();
+        return true;
+      },
+      move: () => true,
+    })
+  );
 
   // テスト用に基本ノードを画面に追加
   await editor.addNode(new StringNode());
