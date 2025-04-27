@@ -16,6 +16,7 @@ LLMとAI画像生成モデルをノードベースUIで組み合わせ実行す�
 | TailwindCSS v4                    | ユーティリティファーストCSS |
 | rete v2.0.5                       | ノードベースUI          |
 | (その他) shadcn/ui, lucide-icons  | 補助コンポーネント      |
+electron-router-dom
 
 ## フォルダ構成
 ```
