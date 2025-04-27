@@ -91,7 +91,7 @@ export function createFile(id: string, title: string): File {
     title,
     graph: {} as GraphJsonData, // 別処理で設定
     path: undefined,
-    isDirty: false,
+    isDirty: true,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };

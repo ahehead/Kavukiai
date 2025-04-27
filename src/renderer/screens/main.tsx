@@ -3,7 +3,7 @@ import SettingsModal from 'renderer/components/SettingsModal';
 import { createNodeEditor } from 'renderer/nodeEditor/createNodeEditor';
 import { useRete } from "rete-react-plugin";
 import { createAppState, createFile, type AppState } from 'shared/AppType';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, Circle } from 'lucide-react';
 const { App } = window
 
 export function MainScreen() {
@@ -83,7 +83,7 @@ export function MainScreen() {
                   <div
                     key={file.id}
                     onClick={() => handleSelect(file.id)}
-                    className={`flex min-w-0 items-center pl-3 pr-2  py-2 cursor-pointer bg-white ${appState.activeFileId === file.id ? 'border-t-2 border-t-blue-600 border-l border-r-2 border-b-[1px] border-b-white -mb-[1px]' : 'border-r'
+                    className={`flex min-w-0 items-center pl-3 pr-2  py-2 cursor-pointer bg-white ${appState.activeFileId === file.id ? 'border-t-2 border-t-red-300 border-l border-r-2 border-b-[1px] border-b-white -mb-[1px]' : 'border-r'
                       }`}
                   >
                     {/* file name */}
@@ -96,8 +96,10 @@ export function MainScreen() {
                     >
                       {
                         file.isDirty ?
-                          <span className="w-4 h-4 bg-gray-700 rounded-full" /> :
-                          <span className='text-gray-700' ><X className='w-4 h-4' /></span>
+                          <span className=" text-gray-600" >
+                            <Circle className='w-3 h-3' fill='#4a5565' />
+                          </span> :
+                          <span className='text-gray-600' ><X className='w-4 h-4' /></span>
                       }
                     </span>
                   </div>
