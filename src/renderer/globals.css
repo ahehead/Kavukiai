@@ -132,3 +132,25 @@
     -webkit-font-smoothing: antialiased;
   }
 }
+
+@layer components {
+  @keyframes modal-slide-up {
+    from { transform: translateX(-8px); opacity: 0.3; }
+    to   { transform: translateX(0);    opacity: 1; }
+  }
+  .dialog-animate {
+    animation: modal-slide-up 230ms ease-out forwards;
+  }
+  @keyframes overlay-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .overlay-animate {
+    animation: overlay-fade-in 230ms ease-out forwards;
+  }
+}
+
+dialog::backdrop {
+  background-color: rgba(255,255,255,0.8);
+  backdrop-filter: blur(5px);
+}
