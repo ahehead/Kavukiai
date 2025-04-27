@@ -42,6 +42,7 @@ import { CustomExecSocket, CustomSocket, CustomNodeComponent } from "./custom";
 
 import { canCreateConnection } from "./features/socket_type_restriction/canCreateConnection";
 import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
+import { exportGraph } from "shared/exportGraph";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -164,6 +165,27 @@ export async function createNodeEditor(container: HTMLElement) {
     if (context.type === "zoom" && context.data.source === "dblclick") return;
     return context;
   });
+
+  // historyのタイミングで状態を保存する予定、今はconsole.logするだけ
+  const originalAdd = history.add.bind(history);
+  history.add = (action) => {
+    originalAdd(action);
+    //console.log("history add");
+  };
+  const originalUndo = history.undo.bind(history);
+  history.undo = async () => {
+    const result = await originalUndo();
+    //console.log("history undo");
+    return result;
+  };
+  const originalRedo = history.redo.bind(history);
+  history.redo = async () => {
+    const result = await originalRedo();
+    //console.log("history redo");
+    const json = exportGraph(editor, area);
+    console.log("history redo", json);
+    return result;
+  };
 
   // テスト用に基本ノードを画面に追加
   await editor.addNode(new StringNode());

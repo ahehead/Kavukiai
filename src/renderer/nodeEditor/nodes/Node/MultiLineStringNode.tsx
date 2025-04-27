@@ -25,4 +25,8 @@ export class MultiLineStringNode extends ClassicPreset.Node<
   }
 
   async execute(): Promise<void> { }
+
+  toJSON(): { data: any } {
+    return { data: this.controls.textArea.value || '' };
+  }
 }

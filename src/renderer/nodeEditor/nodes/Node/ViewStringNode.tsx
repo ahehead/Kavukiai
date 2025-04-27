@@ -41,5 +41,9 @@ export class ViewStringNode extends ClassicPreset.Node<
 
     forward('exec');
   }
+
+  toJSON(): { data: any } {
+    return { data: this.controls.view.value || '' };
+  }
 }
 

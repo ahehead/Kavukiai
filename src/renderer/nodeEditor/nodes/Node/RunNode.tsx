@@ -29,4 +29,7 @@ export class RunNode extends ClassicPreset.Node<
   async execute(_: never, forward: (output: 'exec') => void): Promise<void> {
     forward('exec');
   }
+  toJSON(): object {
+    return {};
+  }
 }

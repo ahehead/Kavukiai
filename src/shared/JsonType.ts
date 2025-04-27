@@ -1,0 +1,25 @@
+// グラフデータの型定義
+export interface GraphJsonData {
+  version: string; // バージョン情報
+  nodes: NodeJson[]; // ノード情報の配列
+  connections: ConnectionJson[]; // 接続情報の配列
+  metadata?: Record<string, unknown>; // 任意のメタ情報
+}
+
+export type NodeJson = {
+  id: string;
+  type: string; // ノードの種類
+  position: { x: number; y: number };
+  size: { width: number; height: number };
+  data?: Record<string, unknown>; // ノード固有のデータ
+  parentId?: string; // グループ化／ネスト用の親ノードID
+};
+
+// 接続情報の型
+export type ConnectionJson = {
+  id: string;
+  source: string; // 接続元ノードID
+  sourcePort: string; // 接続元ソケット名
+  target: string; // 接続先ノードID
+  targetPort: string; // 接続先ソケット名
+};
