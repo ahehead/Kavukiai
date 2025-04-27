@@ -117,7 +117,7 @@ openai api keyは設定UIで管理する。裏では、electron safeStorageを�
     - exec: トリガー
     - string: string
 - **Chatノード**
-  - 説明: メッセージフィールドと、sendボタンがあり、chat context(user,assistantのメッセージのリスト)を表示するノード。このノードはAIには基本的な部分を作ってもらって、人が作る  
+  - 説明: メッセージフィールドと、sendボタンがあり、chat context(user,assistantのメッセージのリスト)を表示するノード。
   - 入力:  
     - exec: any (トリガー)  
     - message: string (ユーザー入力)  
@@ -148,14 +148,18 @@ openai api keyは設定UIで管理する。裏では、electron safeStorageを�
     - exec: any (トリガー)  
     - image: image    
   
-## 検索
-rete.jsまわりを書くときはなるべく[Doc](https://retejs.org/docs)や[Exsamples](https://retejs.org/examples)を確認して考える。
+## アドレス
+
+rete.js
+[Doc](https://retejs.org/docs)
+[Exsamples](https://retejs.org/examples)
 
 rete.js + react 
 https://retejs.org/docs/guides/renderers/react
 https://retejs.org/examples/customization/react
 
-rete.jsのカスタマイズ時は、なるべくgithubのコードを確認する。
+rete.js react pluginのgithub、特にコンポーネント部分
 https://github.com/retejs/react-plugin/tree/next/src/presets/classic/components
 
-データベース側、開発時では固まるまで直接jsonを編集する。"C:\Users\segawa\AppData\Roaming\my-electron-app\config.json"などのjsonを直接クリアするなどして、開発する。
+データベース側、開発時では固まるまで直接jsonを編集する。
+"C:\Users\{{userName}}\AppData\Roaming\my-electron-app\config.json"などのjsonを直接クリアするなどして、開発する。
