@@ -3,88 +3,39 @@
 LLMとAI画像生成モデルをノードベースUIで組み合わせ実行することができる。特にチャットUIを持ったノードを起点としている。ノードを組み合わせることで、プロンプトで絵を生成、絵からキャラストーリーをLLMで作成、チャットから風景を画像生成で作成、ストーリの進行で画像が変わる、などの処理を組める。
 というのをコンセプトにしたデスクトップアプリです。
 
-## 開発環境
+## 開発環境の作成
 
 [Electron App](https://github.com/daltonmenezes/electron-app)というテンプレートを使用。
 
+## 主なライブラリ
+| ライブラリ                       | 用途                    |
+| -------------------------------- | ----------------------- |
+| Electron                          | デスクトップアプリ基盤  |
+| ReactJS v19                       | UI レンダリング         |
+| TypeScript v5                     | 型安全な開発            |
+| TailwindCSS v4                    | ユーティリティファーストCSS |
+| rete v2.0.5                       | ノードベースUI          |
+| (その他) shadcn/ui, lucide-icons  | 補助コンポーネント      |
+
+## フォルダ構成
 ```
-* Electron
-* ReactJS v19
-* React Router DOM v7 and Electron Router DOM v2
-* React Developer Tools
-* Code inspector (holding Alt or Option key on DOM element and clicking on it)
-* TypeScript v5
-* Electron Vite
-* TailwindCSS v4
-* shadcn/ui
-* lucide-icons
-* Biome / EditorConfig
-* Electron Builder
-* action-electron-builder
+src/
+├─ lib/           # 共通設定・ユーティリティ
+├─ main/          # メインプロセス
+├─ renderer/      # React レンダラー
+│  └─ nodeEditor/ # ノードUI全体
+├─ preload/       # IPC ブリッジ
+└─ resources/     # 画像・アイコン等
 ```
 
-```
-Structure Overview
-
-## src/lib
-A folder containing lib configurations/instances.
-
-## src/main
-A folder containing the main process files and folders.
-
-## src/renderer
-A folder containing the renderer process files and folders. ReactJS lives here!
-
-## src/preload
-A folder containing the preload script that expose the API connection between main and renderer world by IPC in the context bridge.
-
-## src/resources
-A folder containing public assets and assets for the build process like icons.
-
-> **Note**: all the content inside the **public** folder will be copied to the builded version as its.
-
-## src/shared
-A folder containing data shared between one or more processes, such as constants, utilities, types, etc.
-```
 ### nodeEditorフォルダ
-
-Rete.js と React を使ったノードベース UI の実装フォルダです。  
-ワークフローのノード定義、カスタムコントロール、プラグイン設定などを集約しています。
-
-主なファイル／フォルダ構成
-- src/renderer/nodeEditor/
-  - createNodeEditor.ts  
-    ・NodeEditor のインスタンス化と各種プラグイン（Area, Connection, History, ContextMenu, React）の初期化  
-    ・カスタムコントロール（`RunButtonControl`, `MultiLineControl`）のレンダリング設定  
-    ・デフォルトノード（String, MultiLineString, Run）の追加／表示  
-  - types.ts  
-    ・`Schemes`, `AreaExtra` など、NodeEditor の型定義  
-  - nodes/
-    - Sockets.ts  
-      ・データ／制御用ソケットを動的に生成するファクトリ  
-    - String/
-      - index.tsx  
-        ・短い文字列入力ノード（`StringNode`）  
-    - MultiLineString/
-      - index.tsx  
-        ・長文入力ノード（`MultiLineStringNode`）  
-      - CustomTextArea.tsx  
-        ・マルチライン用カスタムテキストエリアコンポーネント  
-    - Run/
-      - index.tsx  
-        ・実行トリガー用ノード（`Run`）とボタンコントロール  
-    - …（将来的に ViewString, Chat, History, API 通信 などを追加予定）
-
-関連ファイルへのリンク  
-- [createNodeEditor.ts](c:\Users\segawa\ero-chat-hub3\src\renderer\nodeEditor\createNodeEditor.ts)  
-- [types.ts](c:\Users\segawa\ero-chat-hub3\src\renderer\nodeEditor\types.ts)  
-- [nodes/Sockets.ts](c:\Users\segawa\ero-chat-hub3\src\renderer\nodeEditor\nodes\Sockets.ts)  
-
-
-### 追加のライブラリ
-
-* "rete": "^2.0.5",
-* "electron-conf": "^1.3.0", (electron-store互換https://github.com/alex8088/electron-conf)
+Rete.js + React で実装したノードベースUI
+- createNodeEditor.ts   : エディタとプラグイン設定  
+- types.ts              : `Schemes`, `AreaExtra` 型定義  
+- nodes/                : 各ノード実装  
+- Controls/             : カスタムコントロール  
+- custom/               : カスタムレンダラー定義  
+- features/             : プラグイン拡張機能  
 
 ## 機能要件・仕様
 ### デスクトップアプリ
@@ -175,13 +126,6 @@ openai api keyは設定UIで管理する。裏では、electron safeStorageを�
     - exec: any (次実行トリガー)  
     - exec: history (histroyノードへのアクション)  
     - context: chat context (チャットコンテキスト)  
-- **chat historyノード**
-  - 説明: chat contextのリストを持つ。contextを選択すると、そcontextを流す
-  - 入力:  
-    - exec: any (トリガー)  
-    - context: chat context 
-  - 出力:
-    - context: chat context
 
 - **通信ノード**
   - 説明: 設定に基づいてAPIへチャットを送信する  
@@ -214,4 +158,4 @@ https://retejs.org/examples/customization/react
 rete.jsのカスタマイズ時は、なるべくgithubのコードを確認する。
 https://github.com/retejs/react-plugin/tree/next/src/presets/classic/components
 
-データベース側、開発時では固まるまで直接jsonを編集する。"C:\Users\segawa\AppData\Roaming\my-electron-app\config.json"などのjsonを直接クリアするなどして、開発する。 
+データベース側、開発時では固まるまで直接jsonを編集する。"C:\Users\segawa\AppData\Roaming\my-electron-app\config.json"などのjsonを直接クリアするなどして、開発する。
