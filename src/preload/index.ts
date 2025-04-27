@@ -16,6 +16,9 @@ const API = {
   },
   openAIRequest: async (params: any) =>
     ipcRenderer.invoke("openai-request", params),
+
+  onOpenSettings: (callback: () => void) =>
+    ipcRenderer.on("open-settings", () => callback()),
 };
 
 contextBridge.exposeInMainWorld("App", API);
