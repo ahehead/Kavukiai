@@ -7,12 +7,12 @@ export class StringNode extends ClassicPreset.Node<
   { out: ClassicPreset.Socket },
   { textInput: ClassicPreset.InputControl<'text'> }
 > {
-  constructor() {
+  constructor(initial = '') {
     super('String');
     this.addOutput('out', new ClassicPreset.Output(new StringSocket(), 'string'));
     this.addControl(
       'textInput',
-      new ClassicPreset.InputControl('text', { initial: '' })
+      new ClassicPreset.InputControl('text', { initial: initial })
     );
   }
 
@@ -23,6 +23,13 @@ export class StringNode extends ClassicPreset.Node<
   async execute(): Promise<void> { }
 
   toJSON(): { data: any } {
-    return { data: this.controls.textInput.value || '' };
+    return {
+      data:
+        { value: this.controls.textInput.value || "" }
+    };
+  }
+
+  fromJSON(data: { value: string }): void {
+    this.controls.textInput.setValue(data.value);
   }
 }
