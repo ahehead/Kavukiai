@@ -1,4 +1,5 @@
 import type { GraphJsonData } from "./JsonType";
+import basic from "./basic.json";
 
 // 全体状態
 export type AppState = {
@@ -89,7 +90,7 @@ export function createFile(id: string, title: string): File {
   return {
     id,
     title,
-    graph: {} as GraphJsonData, // 別処理で設定
+    graph: basic as GraphJsonData,
     path: undefined,
     isDirty: true,
     createdAt: Date.now(),
