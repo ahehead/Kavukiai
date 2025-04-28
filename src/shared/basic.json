@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "nodes": [
+    {
+      "id": "8480b7fe94b8b1b5",
+      "type": "String",
+      "position": {
+        "x": 260,
+        "y": 80
+      },
+      "size": {
+        "width": 180,
+        "height": 116
+      },
+      "data": {
+        "value": ""
+      }
+    }
+  ],
+  "connections": []
+}
