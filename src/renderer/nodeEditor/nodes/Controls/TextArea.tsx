@@ -38,6 +38,10 @@ export class MultiLineControl extends ClassicPreset.Control {
     this.value = value;
     this.onChange?.(value);
   }
+  // 設定用、画面に反映するならarea.update()を呼ぶ
+  setEditable(editable: boolean) {
+    this.editable = editable;
+  }
 }
 
 // カスタムコンポーネント
