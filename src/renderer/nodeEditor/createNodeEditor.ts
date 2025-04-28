@@ -1,7 +1,7 @@
 // --- サードパーティ・モジュール ---
 import { createRoot } from "react-dom/client";
 import { ClassicPreset, NodeEditor } from "rete";
-import { AreaPlugin, AreaExtensions, Drag } from "rete-area-plugin";
+import { AreaPlugin } from "rete-area-plugin";
 import {
   ConnectionPlugin,
   Presets as ConnectionPresets,
@@ -43,6 +43,12 @@ import { CustomExecSocket, CustomSocket, CustomNodeComponent } from "./custom";
 import { canCreateConnection } from "./features/socket_type_restriction/canCreateConnection";
 import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
 import { exportGraph } from "shared/exportGraph";
+import { setupDragPan } from "./features/dragPan";
+import {
+  extractHistoryState,
+  type HistoryState,
+  restoreHistoryState,
+} from "./features/historyState";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -92,11 +98,6 @@ export async function createNodeEditor(container: HTMLElement) {
   area.use(render);
   area.use(gridLine);
 
-  // area.addPipe((context) => {
-  //   console.log("area pipe", context);
-  //   return context;
-  // });
-
   // コネクションのバリデーション
   editor.addPipe((context) => {
     if (context.type === "connectioncreate") {
@@ -145,20 +146,8 @@ export async function createNodeEditor(container: HTMLElement) {
   history.addPreset(HistoryPresets.classic.setup());
   HistoryExtensions.keyboard(history);
 
-  // マウス中ボタンで領域パン
-  area.area.setDragHandler(
-    new Drag({
-      down: (e) => {
-        // マウス（左クリック：0, 中クリック：1）でのみパンを許可
-        if (e.pointerType === "mouse" && e.button !== 0 && e.button !== 1)
-          return false;
-
-        e.preventDefault();
-        return true;
-      },
-      move: () => true,
-    })
-  );
+  // マウスクリックと、マウス中ボタンで領域パン
+  setupDragPan(area);
 
   // ダブルクリックでのズームを無効化
   area.addPipe((context) => {
@@ -175,27 +164,22 @@ export async function createNodeEditor(container: HTMLElement) {
   const originalUndo = history.undo.bind(history);
   history.undo = async () => {
     const result = await originalUndo();
-    //console.log("history undo");
+    console.log("history undo", result);
+    const a = await exportGraph(editor, area);
+    console.log(a);
     return result;
   };
   const originalRedo = history.redo.bind(history);
   history.redo = async () => {
     const result = await originalRedo();
-    //console.log("history redo");
-    const json = exportGraph(editor, area);
-    console.log("history redo", json);
+    console.log("history redo", result);
     return result;
   };
 
-  // テスト用に基本ノードを画面に追加
-  await editor.addNode(new StringNode());
-  await editor.addNode(new MultiLineStringNode("hello", history, area));
-  await editor.addNode(new RunNode(engine));
-  await editor.addNode(new ViewStringNode(dataflow, area));
-
-  await AreaExtensions.zoomAt(area, editor.getNodes());
-
   return {
     destroy: () => area.destroy(),
+    extractHistoryState: () => extractHistoryState(editor, area, history),
+    restoreHistoryState: (state: HistoryState) =>
+      restoreHistoryState(state, editor, area, dataflow, engine, history),
   };
 }
