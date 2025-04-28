@@ -1,0 +1,25 @@
+import {
+  MultiLineStringNode,
+  RunNode,
+  StringNode,
+  ViewStringNode,
+} from "renderer/nodeEditor/nodes/Node";
+import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
+import type { AreaPlugin } from "rete-area-plugin";
+import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
+import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
+
+export type NodeDeps = {
+  area: AreaPlugin<Schemes, AreaExtra>;
+  dataflow: DataflowEngine<Schemes>;
+  controlflow: ControlFlowEngine<Schemes>;
+  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>;
+};
+
+export const nodeFactories: Record<string, (deps: NodeDeps) => any> = {
+  String: () => new StringNode(""),
+  MultiLineString: ({ history, area }) =>
+    new MultiLineStringNode("", history, area),
+  Run: ({ controlflow }) => new RunNode(controlflow),
+  ViewString: ({ dataflow, area }) => new ViewStringNode(dataflow, area),
+};
