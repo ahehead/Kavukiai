@@ -8,7 +8,7 @@ import { css, type RuleSet } from 'styled-components'
  *  - hover: ごく薄い浮き上がり
  *  - selected: アンバー系枠 + 外側グロー + 2% 拡大
  */
-const styles = css<{ selected?: boolean }>`
+const addStyleCss = css<{ selected?: boolean }>`
   background: #ffffff; /* base */
   border: 2px solid #d1d5db; /* gray‑300 */
   border-radius: 0.5rem; /* 8px */
@@ -84,10 +84,10 @@ const styles = css<{ selected?: boolean }>`
 
 type Props<S extends ClassicScheme> = {
   data: S['Node']
-  styles?: () => unknown
+  styles?: () => any
   emit: RenderEmit<S>
 }
 
 export function CustomNodeComponent<S extends ClassicScheme>(props: Props<S>): JSX.Element {
-  return <Presets.classic.Node styles={() => styles} {...props} />
+  return <Presets.classic.Node styles={() => addStyleCss} {...props} />
 }
