@@ -4,7 +4,7 @@ import { createNodeEditor } from 'renderer/nodeEditor/createNodeEditor';
 import { useRete } from "rete-react-plugin";
 import { createAppState, createFile, type AppState } from 'shared/AppType';
 import { X, Plus, Circle } from 'lucide-react';
-import type { HistoryState } from 'renderer/nodeEditor/features/historyState';
+import { createInitialHistoryState, type HistoryState } from 'renderer/nodeEditor/features/historyState';
 const { App } = window
 
 export function MainScreen() {
@@ -14,10 +14,10 @@ export function MainScreen() {
 
   // アプリ全体の状態
   const [appState, setAppState] = useState<AppState>(createAppState());
-
-  // 履歴の状態を保存するためのref
+  // 前回ファイルIDを覚えておく
+  const prevFileId = useRef<string | null>(null);
+  // 各ファイルの履歴状態とグラフ状態を保存するマップ
   const fileStates = useRef<Map<string, HistoryState>>(new Map());
-  const prevFileId = useRef<string | null>('');
 
   // 最初のファイルIDを覚えておく
   useEffect(() => { prevFileId.current = appState.activeFileId }, []);
@@ -32,6 +32,13 @@ export function MainScreen() {
       files: [...prev.files, file],
       activeFileId: id
     }));
+
+    // 新規ファイルの初期履歴状態を保存
+    if (editorApi) {
+      fileStates.current.set(id, createInitialHistoryState(file.graph));
+    }
+    // prevFileId を新規ファイルID に更新
+    prevFileId.current = id;
   };
 
   // idからfileを取り出す
@@ -42,6 +49,7 @@ export function MainScreen() {
   // タブ選択
   const handleSelect = (id: string) => {
     if (editorApi && prevFileId.current) {
+      // console.log("tab select mae", editorApi.extractHistoryState());
       fileStates.current.set(prevFileId.current, editorApi.extractHistoryState());
     }
     prevFileId.current = id;
@@ -50,15 +58,20 @@ export function MainScreen() {
 
   // ファイルID が変わったら保存済み state を復元
   useEffect(() => {
-    if (!editorApi) return;
-    if (!appState.activeFileId) return;
-    const state = fileStates.current.get(appState.activeFileId);
-    if (state) editorApi.restoreHistoryState(state);
+    if (!editorApi || !appState.activeFileId) return;
+    (async () => {
+      if (!appState.activeFileId) return;
+      const state = fileStates.current.get(appState.activeFileId);
+      if (state) {
+        await editorApi.restoreHistoryState(state);
+      }
+    })();
   }, [editorApi, appState.activeFileId]);
-
   // ファイルを閉じる（左隣タブを選択）
   const handleCloseFile = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    // 閉じたファイルの履歴状態を削除
+    fileStates.current.delete(id);
     setAppState(prev => {
       const idx = prev.files.findIndex(f => f.id === id);
       const newFiles = prev.files.filter(f => f.id !== id);
@@ -95,7 +108,7 @@ export function MainScreen() {
             className="px-4 py-2 bg-white rounded"
             onClick={handleNewFile}
           >
-            新規作成
+            新規作成hi
           </button>
         </div>
       ) : (
@@ -146,12 +159,15 @@ export function MainScreen() {
               </button>
             </div>
           </div>
-          {/* editor */}
-          <div className="App flex-1 w-full h-full">
-            <div ref={ref} className="w-full h-full" />
-          </div>
         </>
       )}
+      {/* editor: 常にレンダーするが、ファイルなし時は非表示 */}
+      <div
+        className="App flex-1 w-full h-full"
+        style={{ display: appState.files.length === 0 ? 'none' : 'block' }}
+      >
+        <div ref={ref} className="w-full h-full" />
+      </div>
       {showSettings && (
         <SettingsModal onClose={() => setShowSettings(false)} />
       )}
