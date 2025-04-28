@@ -159,14 +159,11 @@ export async function createNodeEditor(container: HTMLElement) {
   const originalAdd = history.add.bind(history);
   history.add = (action) => {
     originalAdd(action);
-    //console.log("history add");
   };
   const originalUndo = history.undo.bind(history);
   history.undo = async () => {
     const result = await originalUndo();
     console.log("history undo", result);
-    const a = await exportGraph(editor, area);
-    console.log(a);
     return result;
   };
   const originalRedo = history.redo.bind(history);
@@ -179,7 +176,7 @@ export async function createNodeEditor(container: HTMLElement) {
   return {
     destroy: () => area.destroy(),
     extractHistoryState: () => extractHistoryState(editor, area, history),
-    restoreHistoryState: (state: HistoryState) =>
-      restoreHistoryState(state, editor, area, dataflow, engine, history),
+    restoreHistoryState: async (state: HistoryState) =>
+      await restoreHistoryState(state, editor, area, dataflow, engine, history),
   };
 }
