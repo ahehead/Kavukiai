@@ -27,6 +27,17 @@ export class MultiLineStringNode extends ClassicPreset.Node<
   async execute(): Promise<void> { }
 
   toJSON(): { data: any } {
-    return { data: this.controls.textArea.value || '' };
+    return {
+      data: {
+        value: this.controls.textArea.value || '',
+        editable: this.controls.textArea.editable,
+      }
+    };
+  }
+
+  // JSONから復元
+  fromJSON(data: { value: string, editable: boolean }): void {
+    this.controls.textArea.setValue(data.value);
+    this.controls.textArea.setEditable(data.editable);
   }
 }
