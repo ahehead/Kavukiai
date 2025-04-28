@@ -47,3 +47,16 @@ export async function restoreHistoryState(
   (history as any).history.limit = state.limit;
   await AreaExtensions.zoomAt(area, editor.getNodes());
 }
+
+/**
+ * 初期化された HistoryState を返す
+ */
+export function createInitialHistoryState(graph: GraphJsonData): HistoryState {
+  return {
+    graph: graph,
+    active: false,
+    produced: [],
+    reserved: [],
+    limit: undefined,
+  };
+}
