@@ -1,5 +1,9 @@
 import type { GraphJsonData } from "./JsonType";
 import basic from "./basic.json";
+import {
+  initializeHistoryState,
+  type HistoryState,
+} from "../renderer/nodeEditor/features/editor_state/historyState";
 
 // 全体状態
 export type AppState = {
@@ -46,6 +50,7 @@ export type File = {
   isDirty: boolean; // 未保存フラグ
   createdAt: number; // 作成日時（タイムスタンプ）
   updatedAt: number; // 最終更新日時
+  historyState: HistoryState; // 履歴状態
 };
 
 export function createAppState(): AppState {
@@ -95,5 +100,6 @@ export function createFile(id: string, title: string): File {
     isDirty: true,
     createdAt: Date.now(),
     updatedAt: Date.now(),
+    historyState: initializeHistoryState(), // 初期化
   };
 }
