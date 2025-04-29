@@ -42,13 +42,12 @@ import { CustomExecSocket, CustomSocket, CustomNodeComponent } from "./custom";
 
 import { canCreateConnection } from "./features/socket_type_restriction/canCreateConnection";
 import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
-import { exportGraph } from "shared/exportGraph";
 import { setupDragPan } from "./features/dragPan";
 import {
-  extractHistoryState,
-  type HistoryState,
-  restoreHistoryState,
-} from "./features/historyState";
+  getCurrentEditorState,
+  type NodeEditorState,
+  resetEditorState,
+} from "./features/editor_state/historyState";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -175,8 +174,8 @@ export async function createNodeEditor(container: HTMLElement) {
 
   return {
     destroy: () => area.destroy(),
-    extractHistoryState: () => extractHistoryState(editor, area, history),
-    restoreHistoryState: async (state: HistoryState) =>
-      await restoreHistoryState(state, editor, area, dataflow, engine, history),
+    getCurrentEditorState: () => getCurrentEditorState(editor, area, history),
+    resetEditorState: async (state: NodeEditorState) =>
+      await resetEditorState(state, editor, area, dataflow, engine, history),
   };
 }

@@ -4,7 +4,7 @@ import { createNodeEditor } from 'renderer/nodeEditor/createNodeEditor';
 import { useRete } from "rete-react-plugin";
 import { createAppState, createFile, type AppState } from 'shared/AppType';
 import { X, Plus, Circle } from 'lucide-react';
-import { createInitialHistoryState, type HistoryState } from 'renderer/nodeEditor/features/historyState';
+import { createNodeEditorState, type NodeEditorState } from 'renderer/nodeEditor/features/editor_state/historyState';
 const { App } = window
 
 export function MainScreen() {
@@ -17,7 +17,7 @@ export function MainScreen() {
   // 前回ファイルIDを覚えておく
   const prevFileId = useRef<string | null>(null);
   // 各ファイルの履歴状態とグラフ状態を保存するマップ
-  const fileStates = useRef<Map<string, HistoryState>>(new Map());
+  const fileStates = useRef<Map<string, NodeEditorState>>(new Map());
 
   // 最初のファイルIDを覚えておく
   useEffect(() => { prevFileId.current = appState.activeFileId }, []);
@@ -35,7 +35,7 @@ export function MainScreen() {
 
     // 新規ファイルの初期履歴状態を保存
     if (editorApi) {
-      fileStates.current.set(id, createInitialHistoryState(file.graph));
+      fileStates.current.set(id, createNodeEditorState(file.graph));
     }
     // prevFileId を新規ファイルID に更新
     prevFileId.current = id;
@@ -50,7 +50,7 @@ export function MainScreen() {
   const handleSelect = (id: string) => {
     if (editorApi && prevFileId.current) {
       // console.log("tab select mae", editorApi.extractHistoryState());
-      fileStates.current.set(prevFileId.current, editorApi.extractHistoryState());
+      fileStates.current.set(prevFileId.current, editorApi.getCurrentEditorState());
     }
     prevFileId.current = id;
     setAppState(prev => ({ ...prev, activeFileId: id }));
@@ -63,7 +63,7 @@ export function MainScreen() {
       if (!appState.activeFileId) return;
       const state = fileStates.current.get(appState.activeFileId);
       if (state) {
-        await editorApi.restoreHistoryState(state);
+        await editorApi.resetEditorState(state);
       }
     })();
   }, [editorApi, appState.activeFileId]);
@@ -114,16 +114,16 @@ export function MainScreen() {
       ) : (
         <>
           {/* tabs */}
-          <div className="flex border-b bg-gray-100">
+          <div className="flex border-b bg-gray-200">
             <div className="flex flex-nowrap overflow-hidden">
               {appState.files.map(file => (
                 // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
                 <div
                   key={file.id}
                   onClick={() => handleSelect(file.id)}
-                  className={`flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer border-t-2 bg-white ${appState.activeFileId === file.id
-                    ? 'border-t-2 border-t-red-300 border-l border-r-2 border-b-[1px] border-b-white -mb-[1px]'
-                    : 'border-r'
+                  className={`flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer ${appState.activeFileId === file.id
+                    ? ' bg-white rounded-t-lg'
+                    : ' bg-gray-200'
                     }`}
                 >
                   {/* file name */}
@@ -148,9 +148,9 @@ export function MainScreen() {
                   </span>
                 </div>
               ))}
-            </div>
+            </div >
             {/* new file button */}
-            <div className="flex flex-1 items-center pl-2 flex-shrink-0">
+            < div className="flex flex-1 items-center pl-2 flex-shrink-0" >
               <button
                 onClick={handleNewFile}
                 className="w-5 h-5 flex items-center justify-center hover:bg-gray-300 rounded-md"
@@ -160,7 +160,8 @@ export function MainScreen() {
             </div>
           </div>
         </>
-      )}
+      )
+      }
       {/* editor: 常にレンダーするが、ファイルなし時は非表示 */}
       <div
         className="App flex-1 w-full h-full"
@@ -168,9 +169,11 @@ export function MainScreen() {
       >
         <div ref={ref} className="w-full h-full" />
       </div>
-      {showSettings && (
-        <SettingsModal onClose={() => setShowSettings(false)} />
-      )}
-    </main>
+      {
+        showSettings && (
+          <SettingsModal onClose={() => setShowSettings(false)} />
+        )
+      }
+    </main >
   )
 }
