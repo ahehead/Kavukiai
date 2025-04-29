@@ -11,6 +11,8 @@ export class MultiLineStringNode extends ClassicPreset.Node<
   { out: ClassicPreset.Socket },
   { textArea: MultiLineControl }
 > {
+  public width = 180;
+  public height = 199;
   constructor(initial = '',
     history?: HistoryPlugin<Schemes>,
     area?: AreaPlugin<Schemes, AreaExtra>) {

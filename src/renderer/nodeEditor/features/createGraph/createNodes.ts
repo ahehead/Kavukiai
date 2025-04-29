@@ -35,10 +35,9 @@ export async function createNodes(
     }
 
     node.id = id;
-    console.log("node", id, type, position, size);
     await editor.addNode(node);
-    await area.translate(id, position);
     await area.resize(id, size.width, size.height);
+    await area.translate(id, position);
   }
 
   // ノードの接続を作成

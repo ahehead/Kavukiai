@@ -7,6 +7,8 @@ export class StringNode extends ClassicPreset.Node<
   { out: ClassicPreset.Socket },
   { textInput: ClassicPreset.InputControl<'text'> }
 > {
+  public width = 180;
+  public height = 116;
   constructor(initial = '') {
     super('String');
     this.addOutput('out', new ClassicPreset.Output(new StringSocket(), 'string'));

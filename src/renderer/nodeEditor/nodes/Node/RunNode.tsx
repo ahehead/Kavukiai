@@ -10,6 +10,8 @@ export class RunNode extends ClassicPreset.Node<
   { exec: ClassicPreset.Socket },
   { btn: RunButtonControl }
 > {
+  public width = 180;
+  public height = 141;
   constructor(
     private engine: ControlFlowEngine<Schemes>
   ) {

@@ -12,6 +12,8 @@ export class ViewStringNode extends ClassicPreset.Node<
   { exec: ClassicPreset.Socket; stringValue: ClassicPreset.Socket },
   { view: MultiLineControl }
 > {
+  public width = 180;
+  public height = 278;
   constructor(private dataflow: DataflowEngine<Schemes>, private area: AreaPlugin<Schemes, AreaExtra>) {
     super('ViewString');
 
