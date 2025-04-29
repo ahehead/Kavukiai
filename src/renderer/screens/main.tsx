@@ -24,6 +24,17 @@ export function MainScreen() {
 
   // 新規ファイル追加
   const handleNewFile = () => {
+    // 新規作成前に、現在アクティブなファイルの状態を保存
+    if (editorApi && prevFileId.current) {
+      fileStates.current.set(
+        prevFileId.current,
+        editorApi.getCurrentEditorState()
+      );
+    }
+    prevFileId.current = null;
+    setAppState(prev => ({ ...prev, activeFileId: null }));
+
+
     const id = crypto.randomUUID();
     const title = `Untitled-${appState.files.length + 1}`;
     const file = createFile(id, title);
@@ -41,10 +52,6 @@ export function MainScreen() {
     prevFileId.current = id;
   };
 
-  // idからfileを取り出す
-  const getFileById = (id: string) => {
-    return appState.files.find(file => file.id === id);
-  };
 
   // タブ選択
   const handleSelect = (id: string) => {
