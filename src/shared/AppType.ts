@@ -55,7 +55,7 @@ export type File = {
 
 export function createAppState(): AppState {
   return {
-    version: "1.0.0",
+    version: "1", // 永続化データのマイグレーション用
     files: [],
     settings: createSettings(),
     ...createActiveFile(),
