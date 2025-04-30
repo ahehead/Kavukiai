@@ -23,10 +23,17 @@ export function MainScreen() {
   const getGraphAndHistory = useAppStore(s => s.getGraphAndHistory);
   const setAppState = useAppStore(s => s.setAppState);
 
+  // 現在の編集状態を保存する共通関数
+  const saveCurrentEditorState = () => {
+    const currId = useAppStore.getState().activeFileId;
+    if (editorApi && currId) {
+      setGraphAndHistory(currId, editorApi.getCurrentEditorState());
+    }
+  };
+
   const handleNewFile = () => {
     // 新規作成前に、現在の編集状態を保存
-    const prevId = useAppStore.getState().activeFileId;
-    if (editorApi && prevId) setGraphAndHistory(prevId, editorApi.getCurrentEditorState());
+    saveCurrentEditorState();
     setActiveFileId(null);
 
     const id = crypto.randomUUID();
@@ -39,9 +46,7 @@ export function MainScreen() {
   // タブ選択
   const handleSelect = (id: string) => {
     // 選択前のファイルの編集状態を保存
-    const prevId = useAppStore.getState().activeFileId;
-    if (editorApi && prevId) setGraphAndHistory(prevId, editorApi.getCurrentEditorState());
-
+    saveCurrentEditorState();
     // タブ選択
     setActiveFileId(id);
   };
@@ -59,8 +64,7 @@ export function MainScreen() {
   const handleCloseFile = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     // 閉じる前に、現在の編集状態を保存
-    const currId = useAppStore.getState().activeFileId;
-    if (editorApi && currId) setGraphAndHistory(currId, editorApi.getCurrentEditorState());
+    saveCurrentEditorState();
     // タブ削除 & 新規アクティブ決定
     const nextActive = getNewActiveFileId(files, id, activeFileId);
     removeFile(id);
