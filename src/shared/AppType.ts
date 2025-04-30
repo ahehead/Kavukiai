@@ -144,3 +144,40 @@ export function convertPersistedFileToFile(file: PersistedFile): File {
 export function convertPersistedFilesToFiles(files: PersistedFile[]): File[] {
   return files.map(convertPersistedFileToFile);
 }
+
+export function convertFileToPersistedFile(file: File): PersistedFile {
+  const { historyState, ...rest } = file;
+  return rest;
+}
+export function convertFilesToPersistedFiles(files: File[]): PersistedFile[] {
+  return files.map(convertFileToPersistedFile);
+}
+
+export function convertPersistedAppStateToAppState(
+  src: PersistedAppState
+): AppState {
+  return {
+    version: src.version,
+    files: convertPersistedFilesToFiles(src.files),
+    settings: {
+      ui: src.settings.ui,
+      api: convertApiKeysSaveToApiKeys(src.settings.api),
+    },
+    activeFileId: src.activeFileId,
+  };
+}
+
+export function convertAppStateToPersistedAppState(
+  src: AppState,
+  apiKeysSave: ApiKeysSave
+): PersistedAppState {
+  return {
+    version: src.version,
+    files: convertFilesToPersistedFiles(src.files),
+    settings: {
+      ui: src.settings.ui,
+      api: apiKeysSave,
+    },
+    activeFileId: src.activeFileId,
+  };
+}
