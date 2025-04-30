@@ -2,7 +2,7 @@ import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
-import { exportGraph } from "renderer/nodeEditor/features/exportGraphJson/exportGraph";
+import { exportGraph } from "../exportGraphJson/exportGraph";
 import { createNodes } from "../createGraph/createNodes";
 import { AreaExtensions } from "rete-area-plugin";
 import type { AreaExtra, Schemes } from "../../types";

@@ -23,6 +23,7 @@ export function MainScreen() {
   const getGraphAndHistory = useAppStore(s => s.getGraphAndHistory);
   const setAppState = useAppStore(s => s.setAppState);
 
+
   // 現在の編集状態を保存する共通関数
   const saveCurrentEditorState = () => {
     const currId = useAppStore.getState().activeFileId;
@@ -82,6 +83,25 @@ export function MainScreen() {
       setAppState(res);
     }
     )
+
+    const subscribe = useAppStore.subscribe(
+      (state) => {
+        // stateからappStateを取得
+        const appState: AppState = {
+          version: state.version,
+          files: state.files,
+          settings: {
+            ui: state.settings.ui,
+            api: state.settings.api,
+          },
+          activeFileId: state.activeFileId,
+        };
+        console.log("saveAppState", appState);
+        App.saveAppState(appState)
+      }
+    );
+    return subscribe
+
   }, [])
 
   return (

@@ -3,8 +3,8 @@ import {
   RunNode,
   StringNode,
   ViewStringNode,
-} from "renderer/nodeEditor/nodes/Node";
-import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
+} from "../../nodes/Node";
+import type { AreaExtra, Schemes } from "../../types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
