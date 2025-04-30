@@ -5,35 +5,30 @@ import type {
   AppState,
   ApiKeysSave,
   ApiKeys,
-  PersistedFile,
   PersistedAppState,
 } from "shared/AppType";
 import {
   convertApiKeysSaveToApiKeys,
-  convertPersistedFilesToFiles,
-  createAppState,
+  convertAppStateToPersistedAppState,
+  convertPersistedAppStateToAppState,
   createPersistedAppState,
   providers,
 } from "shared/AppType";
 
 // ストレージ初期化
-const appSateConf = new Conf<PersistedAppState>({
-  defaults: createPersistedAppState(),
+const appSateConf = new Conf<{ appState: PersistedAppState }>({
+  defaults: { appState: createPersistedAppState() },
 });
 
+/* ===========================================================
+ * IPCハンドラ登録
+ * ===========================================================
+ */
 export function registerStateHandlers(): void {
   // 初期状態読み込み
   ipcMain.handle(IpcChannel.LoadState, (): AppState => {
-    const state = createAppState();
-    state.version = appSateConf.get("version");
-    state.files = convertPersistedFilesToFiles(
-      appSateConf.get("files") as PersistedFile[]
-    );
-    state.activeFileId = appSateConf.get("activeFileId");
-    state.settings.ui = appSateConf.get("settings.ui");
-    state.settings.api = convertApiKeysSaveToApiKeys(
-      appSateConf.get("settings.api") as ApiKeysSave
-    );
+    const saveState = appSateConf.get("appState");
+    const state = convertPersistedAppStateToAppState(saveState);
     return state;
   });
 
@@ -54,4 +49,11 @@ export function registerStateHandlers(): void {
       return convertApiKeysSaveToApiKeys(saved);
     }
   );
+
+  // AppState保存（PersistedAppStateに変換して保存）
+  ipcMain.handle(IpcChannel.SaveState, (_evt, state: AppState): void => {
+    const saved = appSateConf.get("settings.api") as ApiKeysSave;
+    const persisted = convertAppStateToPersistedAppState(state, saved);
+    appSateConf.set("appState", persisted);
+  });
 }

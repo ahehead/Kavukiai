@@ -13,6 +13,7 @@ export type AppApi = {
   saveApiKey(key: string | null): Promise<ApiKeys>;
   openAIRequest(params: OpenAIParams): Promise<string>;
   onOpenSettings(callback: () => void): void;
+  saveAppState(state: AppState): Promise<void>;
 };
 
 const API: AppApi = {
@@ -23,6 +24,8 @@ const API: AppApi = {
     ipcRenderer.invoke(IpcChannel.OpenAIRequest, params),
   onOpenSettings: (callback) =>
     ipcRenderer.on(IpcChannel.OpenSettings, () => callback()),
+  saveAppState: (state: AppState) =>
+    ipcRenderer.invoke(IpcChannel.SaveState, state),
 };
 
 contextBridge.exposeInMainWorld("App", API);

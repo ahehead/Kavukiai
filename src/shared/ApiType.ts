@@ -3,6 +3,7 @@ export enum IpcChannel {
   SaveApiKey = "save-api-key",
   OpenAIRequest = "openai-request",
   OpenSettings = "open-settings",
+  SaveState = "SaveState",
 }
 
 export type OpenAIParams = any;
