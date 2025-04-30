@@ -1,8 +1,10 @@
 import { ipcMain, safeStorage } from "electron";
 import { Conf } from "electron-conf/main";
+import { IpcChannel } from "shared/ApiType";
 import type {
   AppState,
   ApiKeysSave,
+  ApiKeys,
   PersistedFile,
   PersistedAppState,
 } from "shared/AppType";
@@ -21,7 +23,7 @@ const appSateConf = new Conf<PersistedAppState>({
 
 export function registerStateHandlers(): void {
   // 初期状態読み込み
-  ipcMain.handle("load-state", (): AppState => {
+  ipcMain.handle(IpcChannel.LoadState, (): AppState => {
     const state = createAppState();
     state.version = appSateConf.get("version");
     state.files = convertPersistedFilesToFiles(
@@ -35,19 +37,21 @@ export function registerStateHandlers(): void {
     return state;
   });
 
-  // サービス鍵保存（暗号化） service: "openai" | "google"
+  // サービス鍵保存（暗号化）
   ipcMain.handle(
-    "save-service-key",
-    (_evt, service: keyof ApiKeysSave, apiKey: string | null) => {
+    IpcChannel.SaveApiKey,
+    (_evt, service: keyof ApiKeysSave, apiKey: string | null): ApiKeys => {
       try {
-        if (providers.find((p) => p === service) === undefined) {
+        if (!providers.includes(service)) {
           throw new Error(`不正なサービス名:${service}`);
         }
         const enc = apiKey ? safeStorage.encryptString(apiKey) : null;
-        appSateConf.set(service, enc);
+        appSateConf.set(`settings.api.${service}`, enc);
       } catch (err) {
         console.error(`APIキー保存失敗(${service}):`, err);
       }
+      const saved = appSateConf.get("settings.api") as ApiKeysSave;
+      return convertApiKeysSaveToApiKeys(saved);
     }
   );
 }

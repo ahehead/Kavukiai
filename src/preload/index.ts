@@ -1,24 +1,28 @@
 import { contextBridge, ipcRenderer } from "electron";
-import type { AppState } from "shared/AppType";
+import { IpcChannel, type OpenAIParams } from "shared/ApiType";
+import type { AppState, ApiKeys } from "shared/AppType";
 
 declare global {
   interface Window {
-    App: typeof API;
+    App: AppApi;
   }
 }
 
-const API = {
-  loadAppState: async (): Promise<AppState> => {
-    return await ipcRenderer.invoke("load-state");
-  },
-  saveApiKey: async (key: string | null): Promise<void> => {
-    return await ipcRenderer.invoke("save-api-key", key);
-  },
-  openAIRequest: async (params: any) =>
-    ipcRenderer.invoke("openai-request", params),
+export type AppApi = {
+  loadAppState(): Promise<AppState>;
+  saveApiKey(key: string | null): Promise<ApiKeys>;
+  openAIRequest(params: OpenAIParams): Promise<string>;
+  onOpenSettings(callback: () => void): void;
+};
 
-  onOpenSettings: (callback: () => void) =>
-    ipcRenderer.on("open-settings", () => callback()),
+const API: AppApi = {
+  loadAppState: () => ipcRenderer.invoke(IpcChannel.LoadState),
+  saveApiKey: (key) =>
+    ipcRenderer.invoke(IpcChannel.SaveApiKey, key) as Promise<ApiKeys>,
+  openAIRequest: (params: OpenAIParams) =>
+    ipcRenderer.invoke(IpcChannel.OpenAIRequest, params),
+  onOpenSettings: (callback) =>
+    ipcRenderer.on(IpcChannel.OpenSettings, () => callback()),
 };
 
 contextBridge.exposeInMainWorld("App", API);
