@@ -51,7 +51,7 @@ export function registerStateHandlers(): void {
   );
 
   // AppState保存（PersistedAppStateに変換して保存）
-  ipcMain.handle(IpcChannel.SaveState, (_evt, state: AppState): void => {
+  ipcMain.on(IpcChannel.SaveState, (_evt, state: AppState): void => {
     const saved = appSateConf.get("settings.api") as ApiKeysSave;
     const persisted = convertAppStateToPersistedAppState(state, saved);
     appSateConf.set("appState", persisted);
