@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import SettingsModal from 'renderer/components/SettingsModal';
 import { createNodeEditor } from 'renderer/nodeEditor/createNodeEditor';
 import { useRete } from "rete-react-plugin";
-import { createAppState, createFile, type AppState } from 'shared/AppType';
+import { type AppState, createFile } from 'shared/AppType';
 import { X, Plus, Circle } from 'lucide-react';
-import { createNodeEditorState, type NodeEditorState } from 'renderer/nodeEditor/features/editor_state/historyState';
+import { getNewActiveFileId } from "renderer/utils/tabs";
+import useAppStore from 'renderer/hooks/AppStore';
 const { App } = window
 
 export function MainScreen() {
@@ -12,87 +13,58 @@ export function MainScreen() {
   // 設定画面を表示するか
   const [showSettings, setShowSettings] = useState(false);
 
-  // アプリ全体の状態
-  const [appState, setAppState] = useState<AppState>(createAppState());
-  // 前回ファイルIDを覚えておく
-  const prevFileId = useRef<string | null>(null);
-  // 各ファイルの履歴状態とグラフ状態を保存するマップ
-  const fileStates = useRef<Map<string, NodeEditorState>>(new Map());
+  // store から値とアクションを取得
+  const files = useAppStore(s => s.files);
+  const activeFileId = useAppStore(s => s.activeFileId);
+  const addFile = useAppStore(s => s.addFile);
+  const removeFile = useAppStore(s => s.removeFile);
+  const setActiveFileId = useAppStore(s => s.setActiveFileId);
+  const setGraphAndHistory = useAppStore(s => s.setGraphAndHistory);
+  const getGraphAndHistory = useAppStore(s => s.getGraphAndHistory);
+  const setAppState = useAppStore(s => s.setAppState);
 
-  // 最初のファイルIDを覚えておく
-  useEffect(() => { prevFileId.current = appState.activeFileId }, []);
-
-  // 新規ファイル追加
   const handleNewFile = () => {
-    // 新規作成前に、現在アクティブなファイルの状態を保存
-    if (editorApi && prevFileId.current) {
-      fileStates.current.set(
-        prevFileId.current,
-        editorApi.getCurrentEditorState()
-      );
-    }
-    prevFileId.current = null;
-    setAppState(prev => ({ ...prev, activeFileId: null }));
-
+    // 新規作成前に、現在の編集状態を保存
+    const prevId = useAppStore.getState().activeFileId;
+    if (editorApi && prevId) setGraphAndHistory(prevId, editorApi.getCurrentEditorState());
+    setActiveFileId(null);
 
     const id = crypto.randomUUID();
-    const title = `Untitled-${appState.files.length + 1}`;
+    const title = `Untitled-${files.length + 1}`;
     const file = createFile(id, title);
-    setAppState(prev => ({
-      ...prev,
-      files: [...prev.files, file],
-      activeFileId: id
-    }));
-
-    // 新規ファイルの初期履歴状態を保存
-    if (editorApi) {
-      fileStates.current.set(id, createNodeEditorState(file.graph));
-    }
-    // prevFileId を新規ファイルID に更新
-    prevFileId.current = id;
+    addFile(file);
+    setActiveFileId(id);
   };
-
 
   // タブ選択
   const handleSelect = (id: string) => {
-    if (editorApi && prevFileId.current) {
-      // console.log("tab select mae", editorApi.extractHistoryState());
-      fileStates.current.set(prevFileId.current, editorApi.getCurrentEditorState());
-    }
-    prevFileId.current = id;
-    setAppState(prev => ({ ...prev, activeFileId: id }));
+    // 選択前のファイルの編集状態を保存
+    const prevId = useAppStore.getState().activeFileId;
+    if (editorApi && prevId) setGraphAndHistory(prevId, editorApi.getCurrentEditorState());
+
+    // タブ選択
+    setActiveFileId(id);
   };
 
   // ファイルID が変わったら保存済み state を復元
   useEffect(() => {
-    if (!editorApi || !appState.activeFileId) return;
+    if (!editorApi || !activeFileId) return;
     (async () => {
-      if (!appState.activeFileId) return;
-      const state = fileStates.current.get(appState.activeFileId);
-      if (state) {
-        await editorApi.resetEditorState(state);
-      }
+      const state = getGraphAndHistory(activeFileId);
+      if (state) await editorApi.resetEditorState(state);
     })();
-  }, [editorApi, appState.activeFileId]);
-  // ファイルを閉じる（左隣タブを選択）
+  }, [editorApi, activeFileId]);
+
+  // ファイルを閉じる
   const handleCloseFile = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    // 閉じたファイルの履歴状態を削除
-    fileStates.current.delete(id);
-    setAppState(prev => {
-      const idx = prev.files.findIndex(f => f.id === id);
-      const newFiles = prev.files.filter(f => f.id !== id);
-      let newActive = prev.activeFileId;
-      if (prev.activeFileId === id) {
-        if (newFiles.length > 0) {
-          const leftIdx = idx - 1 < 0 ? 0 : idx - 1;
-          newActive = newFiles[leftIdx].id;
-        } else {
-          newActive = '';
-        }
-      }
-      return { ...prev, files: newFiles, activeFileId: newActive };
-    });
+    // 閉じる前に、現在の編集状態を保存
+    const currId = useAppStore.getState().activeFileId;
+    if (editorApi && currId) setGraphAndHistory(currId, editorApi.getCurrentEditorState());
+    // タブ削除 & 新規アクティブ決定
+    const nextActive = getNewActiveFileId(files, id, activeFileId);
+    removeFile(id);
+    setActiveFileId(nextActive);
   };
 
   useEffect(() => {
@@ -110,7 +82,7 @@ export function MainScreen() {
 
   return (
     <main className="flex flex-col fixed inset-0 border-t">
-      {appState.files.length === 0 ? (
+      {files.length === 0 ? (
         <div className="flex-1 flex items-center justify-center bg-blue-50">
           <button
             className="px-4 py-2 bg-white rounded"
@@ -124,12 +96,12 @@ export function MainScreen() {
           {/* tabs */}
           <div className="flex border-b bg-gray-200">
             <div className="flex flex-nowrap overflow-hidden">
-              {appState.files.map(file => (
+              {files.map(file => (
                 // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
                 <div
                   key={file.id}
                   onClick={() => handleSelect(file.id)}
-                  className={`flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer ${appState.activeFileId === file.id
+                  className={`flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer ${activeFileId === file.id
                     ? ' bg-white rounded-t-lg'
                     : ' bg-gray-200'
                     }`}
@@ -173,7 +145,7 @@ export function MainScreen() {
       {/* editor: 常にレンダーするが、ファイルなし時は非表示 */}
       <div
         className="App flex-1 w-full h-full"
-        style={{ display: appState.files.length === 0 ? 'none' : 'block' }}
+        style={{ display: files.length === 0 ? 'none' : 'block' }}
       >
         <div ref={ref} className="w-full h-full" />
       </div>
