@@ -1,6 +1,10 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { IpcChannel, type OpenAIParams } from "shared/ApiType";
-import type { AppState, ApiKeys } from "shared/AppType";
+import type {
+  ApiKeysFlags,
+  MainState,
+  PersistedMainState,
+} from "shared/AppType";
 
 declare global {
   interface Window {
@@ -9,22 +13,22 @@ declare global {
 }
 
 export type AppApi = {
-  loadAppState(): Promise<AppState>;
-  saveApiKey(key: string | null): Promise<ApiKeys>;
+  loadAppState(): Promise<MainState>;
+  saveApiKey(key: string | null): Promise<ApiKeysFlags>;
   openAIRequest(params: OpenAIParams): Promise<string>;
   onOpenSettings(callback: () => void): void;
-  saveAppState(state: AppState): void;
+  saveAppState(state: PersistedMainState): void;
 };
 
 const API: AppApi = {
   loadAppState: () => ipcRenderer.invoke(IpcChannel.LoadState),
   saveApiKey: (key) =>
-    ipcRenderer.invoke(IpcChannel.SaveApiKey, key) as Promise<ApiKeys>,
+    ipcRenderer.invoke(IpcChannel.SaveApiKey, key) as Promise<ApiKeysFlags>,
   openAIRequest: (params: OpenAIParams) =>
     ipcRenderer.invoke(IpcChannel.OpenAIRequest, params),
   onOpenSettings: (callback) =>
     ipcRenderer.on(IpcChannel.OpenSettings, () => callback()),
-  saveAppState: (state: AppState) =>
+  saveAppState: (state: PersistedMainState) =>
     ipcRenderer.send(IpcChannel.SaveState, state),
 };
 

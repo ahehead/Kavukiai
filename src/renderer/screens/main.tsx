@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import SettingsModal from 'renderer/components/SettingsModal';
 import { createNodeEditor } from 'renderer/nodeEditor/createNodeEditor';
 import { useRete } from "rete-react-plugin";
-import { type AppState, createFile } from 'shared/AppType';
+import { type MainState, convertMainToPersistedMain, createFile } from 'shared/AppType';
 import { X, Plus, Circle } from 'lucide-react';
 import { getNewActiveFileId } from "renderer/utils/tabs";
-import useAppStore from 'renderer/hooks/AppStore';
+import useMainStore from 'renderer/hooks/MainStore';
 const { App } = window
 
 export function MainScreen() {
@@ -14,19 +14,19 @@ export function MainScreen() {
   const [showSettings, setShowSettings] = useState(false);
 
   // store から値とアクションを取得
-  const files = useAppStore(s => s.files);
-  const activeFileId = useAppStore(s => s.activeFileId);
-  const addFile = useAppStore(s => s.addFile);
-  const removeFile = useAppStore(s => s.removeFile);
-  const setActiveFileId = useAppStore(s => s.setActiveFileId);
-  const setGraphAndHistory = useAppStore(s => s.setGraphAndHistory);
-  const getGraphAndHistory = useAppStore(s => s.getGraphAndHistory);
-  const setAppState = useAppStore(s => s.setAppState);
+  const files = useMainStore(s => s.files);
+  const activeFileId = useMainStore(s => s.activeFileId);
+  const addFile = useMainStore(s => s.addFile);
+  const removeFile = useMainStore(s => s.removeFile);
+  const setActiveFileId = useMainStore(s => s.setActiveFileId);
+  const setGraphAndHistory = useMainStore(s => s.setGraphAndHistory);
+  const getGraphAndHistory = useMainStore(s => s.getGraphAndHistory);
+  const setAppState = useMainStore(s => s.setMainState);
 
 
   // 現在の編集状態を保存する共通関数
   const saveCurrentEditorState = () => {
-    const currId = useAppStore.getState().activeFileId;
+    const currId = useMainStore.getState().activeFileId;
     if (editorApi && currId) {
       setGraphAndHistory(currId, editorApi.getCurrentEditorState());
     }
@@ -78,29 +78,25 @@ export function MainScreen() {
       setShowSettings(true)
     });
 
-    App.loadAppState().then((res: AppState) => {
+    App.loadAppState().then((res: MainState) => {
       console.log("loadAppState", res);
       setAppState(res);
-    }
-    )
+    });
 
-    const subscribe = useAppStore.subscribe(
-      (state) => {
-        // stateからappStateを取得
-        const appState: AppState = {
-          version: state.version,
-          files: state.files,
-          settings: {
-            ui: state.settings.ui,
-            api: state.settings.api,
-          },
-          activeFileId: state.activeFileId,
-        };
-        console.log("saveAppState", appState);
-        App.saveAppState(appState)
+    const unsubscribe = useMainStore.subscribe(
+      // selector: storeからPersisted 可能な形に絞り込む
+      (s) => ({
+        version: s.version,
+        files: s.files,
+        settings: { ui: s.settings.ui },
+        activeFileId: s.activeFileId,
+      }),
+      // listener: 絞り込んだstateを受け取る
+      (appState) => {
+        App.saveAppState(convertMainToPersistedMain(appState));
       }
     );
-    return subscribe
+    return unsubscribe;
 
   }, [])
 
