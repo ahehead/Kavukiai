@@ -5,11 +5,9 @@ import {
   type AppState,
   type File as AppFile,
 } from "shared/AppType";
-import {
-  initializeHistoryState,
-  type HistoryState,
-} from "renderer/nodeEditor/features/editor_state/historyState";
+import { initializeHistoryState } from "renderer/nodeEditor/features/editor_state/historyState";
 import { create } from "zustand";
+import type { NodeEditorState } from "renderer/nodeEditor/features/editor_state/historyState";
 
 type Store = AppState & {
   setActiveFileId: (id: string | null) => void;
@@ -18,14 +16,17 @@ type Store = AppState & {
   addFile: (file: AppFile) => void;
   removeFile: (id: AppFile["id"]) => void;
   updateFile: (id: AppFile["id"], updates: Partial<AppFile>) => void;
-  addHistory: (fileId: string, history: HistoryState) => void;
+  setGraphAndHistory: (fileId: string, state: NodeEditorState) => void;
   clearHistory: (fileId: string) => void;
+  getGraphAndHistory: (fileId: string) => NodeEditorState | undefined;
+  setAppState: (state: AppState) => void;
 };
 
 const initial = createAppState();
 
-const useAppStore = create<Store>((set) => ({
+const useAppStore = create<Store>((set, get) => ({
   ...initial,
+  setAppState: (state) => set(() => ({ ...state })),
 
   // タブ切替
   setActiveFileId: (id) => set({ activeFileId: id }),
@@ -55,18 +56,26 @@ const useAppStore = create<Store>((set) => ({
     })),
 
   // 履歴操作
-  addHistory: (fileId, history) =>
+  setGraphAndHistory: (fileId, state) =>
     set((s) => ({
       files: s.files.map((f) =>
-        f.id === fileId ? { ...f, historyState: history } : f
+        f.id === fileId
+          ? { ...f, graph: state.graph, historyState: state.historyState }
+          : f
       ),
     })),
+
   clearHistory: (fileId) =>
     set((s) => ({
       files: s.files.map((f) =>
         f.id === fileId ? { ...f, historyState: initializeHistoryState() } : f
       ),
     })),
+
+  getGraphAndHistory: (fileId) => {
+    const f = get().files.find((f) => f.id === fileId);
+    return f ? { graph: f.graph, historyState: f.historyState } : undefined;
+  },
 }));
 
 export default useAppStore;
