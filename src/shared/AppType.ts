@@ -1,5 +1,5 @@
 /* ===========================================================
- * 状態管理 – AppState / PersistedAppState
+ * 状態管理 – AppState / PersistedAppState / ApiKeysState / PersistedApiKeysState
  * ===========================================================
  */
 import type { GraphJsonData } from "./JsonType";
@@ -22,10 +22,6 @@ export type Provider = (typeof providers)[number];
 type Flags<T extends string> = { [P in T]: boolean };
 type Secrets<T extends string> = { [P in T]: Buffer | null };
 
-/* ---------- API キー ---------- */
-export type ApiKeys = Flags<Provider>; // 例) { openai: true, gemini: false, ... }
-export type ApiKeysSave = Secrets<Provider>; // 例) { openai: <Buffer>, gemini: null, ... }
-
 /* ---------- タブ管理 ---------- */
 export type ActiveFileId = {
   activeFileId: string | null;
@@ -35,7 +31,7 @@ export type ActiveFileId = {
 export type File = {
   id: string;
   title: string;
-  path?: string;
+  path: string | null;
   graph: GraphJsonData;
   isDirty: boolean;
   readonly createdAt: number;
@@ -46,20 +42,25 @@ export type File = {
 /* historyState を除外した永続化用ファイル */
 export type PersistedFile = Omit<File, "historyState">;
 
-/* ---------- AppState 共通骨格 ---------- */
-type AppStateBase<F, A> = {
+/* ---------- MainState（API キーを除く全体） ---------- */
+type MainStateBase<F> = {
   version: string;
   files: F; // File[] または PersistedFile[]
   settings: {
     ui: UISettings;
-    api: A; // ApiKeys または ApiKeysSave
   };
 } & ActiveFileId;
 
 /* ---------- 実行時 / 保存時 ---------- */
-export type AppState = AppStateBase<File[], ApiKeys>;
-export type PersistedAppState = AppStateBase<PersistedFile[], ApiKeysSave>;
+export type MainState = MainStateBase<File[]>;
+export type PersistedMainState = MainStateBase<PersistedFile[]>;
 
+/* ---------- ApiKeysState（認証情報だけ） ---------- */
+export type ApiKeysFlags = Flags<Provider>; // 実行時: { openai: true/false, … }
+export type ApiKeysSecrets = Secrets<Provider>; // 保存用: { openai: Buffer|null, … }
+
+export type ApiKeysState = { version: string; keys: ApiKeysFlags };
+export type PersistedApiKeysState = { version: string; keys: ApiKeysSecrets };
 /* ===========================================================
  * ファクトリ関数
  * ===========================================================
@@ -72,20 +73,11 @@ export function createActiveFileId(): ActiveFileId {
   return { activeFileId: null };
 }
 
-export function createApiKeys(): ApiKeys {
-  // すべて false で初期化
-  // biome-ignore lint/performance/noAccumulatingSpread: <explanation>
-  return providers.reduce((acc, p) => ({ ...acc, [p]: false }), {} as ApiKeys);
-}
+export const createApiKeysFlags = (): ApiKeysFlags =>
+  Object.fromEntries(providers.map((p) => [p, false])) as ApiKeysFlags;
 
-export function createApiKeysSave(): ApiKeysSave {
-  // すべて null で初期化
-  return providers.reduce(
-    // biome-ignore lint/performance/noAccumulatingSpread: <explanation>
-    (acc, p) => ({ ...acc, [p]: null }),
-    {} as ApiKeysSave
-  );
-}
+export const createApiKeysSecrets = (): ApiKeysSecrets =>
+  Object.fromEntries(providers.map((p) => [p, null])) as ApiKeysSecrets;
 
 export function createFile(id: string, title: string): File {
   const now = Date.now();
@@ -93,7 +85,7 @@ export function createFile(id: string, title: string): File {
     id,
     title,
     graph: basic as GraphJsonData,
-    path: undefined,
+    path: null,
     isDirty: true,
     createdAt: now,
     updatedAt: now,
@@ -102,40 +94,54 @@ export function createFile(id: string, title: string): File {
 }
 
 /* ---------- AppState（実行時） ---------- */
-export function createAppState(): AppState {
+export function createMainState(): MainState {
   return {
     version: "1",
     files: [],
     settings: {
       ui: createUISettings(),
-      api: createApiKeys(),
     },
     ...createActiveFileId(),
   };
 }
 
 /* ---------- PersistedAppState（保存用） ---------- */
-export function createPersistedAppState(): PersistedAppState {
+export function createPersistedMainState(): PersistedMainState {
   return {
     version: "1",
     files: [],
     settings: {
       ui: createUISettings(),
-      api: createApiKeysSave(),
     },
     ...createActiveFileId(),
   };
 }
 
+export const createApiKeysState = (): ApiKeysState => ({
+  version: "1",
+  keys: createApiKeysFlags(),
+});
+
+export const createPersistedApiKeysState = (): PersistedApiKeysState => ({
+  version: "1",
+  keys: createApiKeysSecrets(),
+});
+
 /* ===========================================================
  * 変換ユーティリティ
  * ===========================================================
  */
-export function convertApiKeysSaveToApiKeys(src: ApiKeysSave): ApiKeys {
-  const dst: Partial<ApiKeys> = {};
-  for (const p of providers) dst[p] = !!src[p];
-  return dst as ApiKeys;
-}
+/* ------- ApiKeysSecrets ⇄ ApiKeysFlags ------- */
+export const secretsToFlags = (src: ApiKeysSecrets): ApiKeysFlags =>
+  Object.fromEntries(providers.map((p) => [p, !!src[p]])) as ApiKeysFlags;
+
+export const flagsToSecrets = (
+  flags: ApiKeysFlags,
+  prevSecrets: ApiKeysSecrets
+): ApiKeysSecrets =>
+  Object.fromEntries(
+    providers.map((p) => [p, flags[p] ? prevSecrets[p] : null])
+  ) as ApiKeysSecrets;
 
 export function convertPersistedFileToFile(file: PersistedFile): File {
   return { ...file, historyState: initializeHistoryState() };
@@ -153,31 +159,16 @@ export function convertFilesToPersistedFiles(files: File[]): PersistedFile[] {
   return files.map(convertFileToPersistedFile);
 }
 
-export function convertPersistedAppStateToAppState(
-  src: PersistedAppState
-): AppState {
+export function convertPersistedMainToMain(src: PersistedMainState): MainState {
   return {
-    version: src.version,
+    ...src,
     files: convertPersistedFilesToFiles(src.files),
-    settings: {
-      ui: src.settings.ui,
-      api: convertApiKeysSaveToApiKeys(src.settings.api),
-    },
-    activeFileId: src.activeFileId,
   };
 }
 
-export function convertAppStateToPersistedAppState(
-  src: AppState,
-  apiKeysSave: ApiKeysSave
-): PersistedAppState {
+export function convertMainToPersistedMain(src: MainState): PersistedMainState {
   return {
-    version: src.version,
+    ...src,
     files: convertFilesToPersistedFiles(src.files),
-    settings: {
-      ui: src.settings.ui,
-      api: apiKeysSave,
-    },
-    activeFileId: src.activeFileId,
   };
 }
