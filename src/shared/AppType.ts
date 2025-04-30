@@ -1,3 +1,7 @@
+/* ===========================================================
+ * 状態管理 – AppState / PersistedAppState
+ * ===========================================================
+ */
 import type { GraphJsonData } from "./JsonType";
 import basic from "./basic.json";
 import {
@@ -5,101 +9,138 @@ import {
   type HistoryState,
 } from "../renderer/nodeEditor/features/editor_state/historyState";
 
-// 全体状態
-export type AppState = {
-  version: string; // ステートバージョン（マイグレーション対応用）
-  files: File[];
-  settings: Settings;
-} & ActiveFile;
-
-// 将来的に Settings を分割・拡張しやすいようにまとめ直し
-export type Settings = {
-  ui: UISettings;
-  api: ApiKeys;
-};
-
-// UI 設定
+/* ---------- UI 設定 ---------- */
 export type UISettings = {
   snap: boolean;
-  theme: "light" | "dark";
+  theme: "light" | "dark" | "system";
 };
 
-// API キー（レンダー側に渡すのは登録有無だけ）
-export type ApiKeys = {
-  openai: boolean;
-  google: boolean;
-};
+/* ---------- Provider 拡張 ---------- */
+export const providers = ["openai", "google", "gemini", "ollama"] as const;
+export type Provider = (typeof providers)[number];
 
-// 保存用（暗号化後のバイナリ）
-export type ApiKeysSave = {
-  openai: Buffer | null;
-  google: Buffer | null;
-};
+type Flags<T extends string> = { [P in T]: boolean };
+type Secrets<T extends string> = { [P in T]: Buffer | null };
 
-// タブ管理用
-export type ActiveFile = {
+/* ---------- API キー ---------- */
+export type ApiKeys = Flags<Provider>; // 例) { openai: true, gemini: false, ... }
+export type ApiKeysSave = Secrets<Provider>; // 例) { openai: <Buffer>, gemini: null, ... }
+
+/* ---------- タブ管理 ---------- */
+export type ActiveFileId = {
   activeFileId: string | null;
 };
 
-// ファイル情報
+/* ---------- ファイル ---------- */
 export type File = {
-  id: string; // ユニークID（タブ管理や履歴と紐付けやすく）
+  id: string;
   title: string;
-  path?: string; // 保存先パス
+  path?: string;
   graph: GraphJsonData;
-  isDirty: boolean; // 未保存フラグ
-  createdAt: number; // 作成日時（タイムスタンプ）
-  updatedAt: number; // 最終更新日時
-  historyState: HistoryState; // 履歴状態
+  isDirty: boolean;
+  readonly createdAt: number;
+  readonly updatedAt: number;
+  historyState: HistoryState;
 };
 
-export function createAppState(): AppState {
-  return {
-    version: "1", // 永続化データのマイグレーション用
-    files: [],
-    settings: createSettings(),
-    ...createActiveFile(),
-  };
-}
+/* historyState を除外した永続化用ファイル */
+export type PersistedFile = Omit<File, "historyState">;
 
-export function createSettings(): Settings {
-  return {
-    ui: createUISettings(),
-    api: createApiKeys(),
+/* ---------- AppState 共通骨格 ---------- */
+type AppStateBase<F, A> = {
+  version: string;
+  files: F; // File[] または PersistedFile[]
+  settings: {
+    ui: UISettings;
+    api: A; // ApiKeys または ApiKeysSave
   };
-}
+} & ActiveFileId;
 
-// 初期化用ファクトリ関数
+/* ---------- 実行時 / 保存時 ---------- */
+export type AppState = AppStateBase<File[], ApiKeys>;
+export type PersistedAppState = AppStateBase<PersistedFile[], ApiKeysSave>;
+
+/* ===========================================================
+ * ファクトリ関数
+ * ===========================================================
+ */
 export function createUISettings(): UISettings {
-  return {
-    snap: false,
-    theme: "light",
-  };
+  return { snap: false, theme: "light" };
 }
 
-// 初期化用ファクトリ関数
+export function createActiveFileId(): ActiveFileId {
+  return { activeFileId: null };
+}
+
 export function createApiKeys(): ApiKeys {
-  return {
-    openai: false,
-    google: false,
-  };
+  // すべて false で初期化
+  // biome-ignore lint/performance/noAccumulatingSpread: <explanation>
+  return providers.reduce((acc, p) => ({ ...acc, [p]: false }), {} as ApiKeys);
 }
 
-export function createActiveFile(): ActiveFile {
-  return {
-    activeFileId: null,
-  };
+export function createApiKeysSave(): ApiKeysSave {
+  // すべて null で初期化
+  return providers.reduce(
+    // biome-ignore lint/performance/noAccumulatingSpread: <explanation>
+    (acc, p) => ({ ...acc, [p]: null }),
+    {} as ApiKeysSave
+  );
 }
 
 export function createFile(id: string, title: string): File {
+  const now = Date.now();
   return {
     id,
     title,
     graph: basic as GraphJsonData,
     path: undefined,
     isDirty: true,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    historyState: initializeHistoryState(), // 初期化
+    createdAt: now,
+    updatedAt: now,
+    historyState: initializeHistoryState(),
   };
+}
+
+/* ---------- AppState（実行時） ---------- */
+export function createAppState(): AppState {
+  return {
+    version: "1",
+    files: [],
+    settings: {
+      ui: createUISettings(),
+      api: createApiKeys(),
+    },
+    ...createActiveFileId(),
+  };
+}
+
+/* ---------- PersistedAppState（保存用） ---------- */
+export function createPersistedAppState(): PersistedAppState {
+  return {
+    version: "1",
+    files: [],
+    settings: {
+      ui: createUISettings(),
+      api: createApiKeysSave(),
+    },
+    ...createActiveFileId(),
+  };
+}
+
+/* ===========================================================
+ * 変換ユーティリティ
+ * ===========================================================
+ */
+export function convertApiKeysSaveToApiKeys(src: ApiKeysSave): ApiKeys {
+  const dst: Partial<ApiKeys> = {};
+  for (const p of providers) dst[p] = !!src[p];
+  return dst as ApiKeys;
+}
+
+export function convertPersistedFileToFile(file: PersistedFile): File {
+  return { ...file, historyState: initializeHistoryState() };
+}
+
+export function convertPersistedFilesToFiles(files: PersistedFile[]): File[] {
+  return files.map(convertPersistedFileToFile);
 }
