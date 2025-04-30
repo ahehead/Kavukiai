@@ -102,6 +102,7 @@ export function MainScreen() {
     });
 
     App.loadAppState().then((res: AppState) => {
+      console.log("loadAppState", res);
       setAppState(res);
     }
     )
