@@ -16,8 +16,6 @@ export const useIsFileDirty = (fileId: string | null) => {
     (async () => {
       if (!file) return setDirty(false);
 
-      console.log("useIsFileDirty", file.historyState.produced.length);
-
       // ①履歴ですぐ判定
       if (file.historyState.produced.length > 0) {
         return setDirty(true);
