@@ -69,7 +69,9 @@ export async function createNodeEditor(container: HTMLElement) {
   });
 
   // History pluginのインスタンス化（undo/redo管理）
-  const history = new HistoryPlugin<Schemes, HistoryActions<Schemes>>();
+  const history = new HistoryPlugin<Schemes, HistoryActions<Schemes>>({
+    timing: 200,
+  });
 
   const area = new AreaPlugin<Schemes, AreaExtra>(container);
   const connection = new ConnectionPlugin<Schemes, AreaExtra>();
@@ -154,28 +156,20 @@ export async function createNodeEditor(container: HTMLElement) {
     return context;
   });
 
-  // historyのタイミングで状態を保存する予定、今はconsole.logするだけ
-  const originalAdd = history.add.bind(history);
-  history.add = (action) => {
-    originalAdd(action);
-  };
-  const originalUndo = history.undo.bind(history);
-  history.undo = async () => {
-    const result = await originalUndo();
-    console.log("history undo", result);
-    return result;
-  };
-  const originalRedo = history.redo.bind(history);
-  history.redo = async () => {
-    const result = await originalRedo();
-    console.log("history redo", result);
-    return result;
-  };
-
   return {
     destroy: () => area.destroy(),
     getCurrentEditorState: () => getCurrentEditorState(editor, area, history),
     resetEditorState: async (state: NodeEditorState) =>
       await resetEditorState(state, editor, area, dataflow, engine, history),
+    patchHistoryAdd: (callback: () => void) => {
+      let timer: ReturnType<typeof setTimeout> | null = null;
+      const orig = history.add.bind(history);
+
+      history.add = (action) => {
+        orig(action);
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(callback, 200);
+      };
+    },
   };
 }
