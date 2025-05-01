@@ -3,12 +3,12 @@ import SettingsModal from 'renderer/components/SettingsModal';
 import { createNodeEditor } from 'renderer/nodeEditor/createNodeEditor';
 import { useRete } from "rete-react-plugin";
 import { type MainState, convertMainToPersistedMain, createFile } from 'shared/AppType';
-import { X, Plus, Circle } from 'lucide-react';
+import { X, Plus, Circle, Bell } from 'lucide-react';
 import { getNewActiveFileId } from "renderer/utils/tabs";
 import useMainStore from 'renderer/hooks/MainStore';
 import { useIsFileDirty } from 'renderer/hooks/useIsFileDirty';
 import { hashGraph } from 'renderer/utils/hash';
-
+import { Toaster, toast } from 'sonner';
 const { App } = window
 
 const TabItem: React.FC<{
@@ -48,6 +48,8 @@ export function MainScreen() {
   const [ref, editorApi] = useRete(createNodeEditor);
   // 設定画面を表示するか
   const [showSettings, setShowSettings] = useState(false);
+
+
 
   // store から値とアクションを取得
   const files = useMainStore(s => s.files);
@@ -102,12 +104,23 @@ export function MainScreen() {
   }, [editorApi, activeFileId]);
 
   // ファイルを閉じる
-  const handleCloseFile = (id: string, e: React.MouseEvent) => {
+  const handleCloseFile = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     // 閉じる前に、現在の編集状態を保存
     setCurrentFileState();
-    // 閉じるファイルがdirtyな場合、削除するか確認
-    // Todo
+
+    // 対象がアクティブかつ未保存なら確認ダイアログ
+    if (id === activeFileId && isDirty) {
+      const { response } = await App.showCloseConfirm();
+      // キャンセル
+      if (response === 2) return;
+      // 保存
+      if (response === 0) {
+        const ok = await onFileSave();
+        if (!ok) return;                 // キャンセル/失敗なら中断
+      }
+      // 「保存しない(response===1)」はそのまま破棄
+    }
 
     // タブ削除 & 新規アクティブ決定
     const nextActive = getNewActiveFileId(files, id, activeFileId);
@@ -115,41 +128,46 @@ export function MainScreen() {
     setActiveFileId(nextActive);
   };
 
-  // 保存処理
-  const onFileSave = useCallback(async () => {
-    if (!activeFileId || !editorApi || !isDirty) return;
-    // 現在のファイル状態を保存
-    setCurrentFileState();
+  // 保存処理（戻り値: true=保存成功 or 不要, false=キャンセル/失敗）
+  const onFileSave = useCallback(
+    async (): Promise<boolean> => {
+      if (!activeFileId || !editorApi || !isDirty) return false;
+      setCurrentFileState();
 
-    const f = getFileById(activeFileId);
-    if (!f) return;
-    let filePath = f.path;
-    if (!filePath) {
-      filePath = await App.showSaveDialog(f.title);
-      if (!filePath) return;
-    }
-    const ok = await App.saveGraphJsonData(filePath, f.graph);
-    if (!ok) {
-      alert('ファイルの保存に失敗しました');
-      return;
-    }
-    const newHash = await hashGraph(f.graph);
-    // Storeのアクションで更新
-    updateFile(activeFileId, { path: filePath, graphHash: newHash });
-    clearHistory(activeFileId);
-    alert('保存しました');
-  }, [activeFileId, editorApi, isDirty]);
+      const f = getFileById(activeFileId);
+      if (!f) return false;
+
+      let filePath = f.path;
+      if (!filePath) {
+        filePath = await App.showSaveDialog(f.title);
+        if (!filePath) return false;      // ユーザーがキャンセル
+      }
+      const newFilePath = await App.saveGraphJsonData(filePath, f.graph);
+      if (!newFilePath) {
+        alert('ファイルの保存に失敗しました');
+        return false;                     // 保存失敗
+      }
+      updateFile(activeFileId, {
+        title: newFilePath.split('/').pop() || f.title,
+        path: newFilePath,
+        graphHash: await hashGraph(f.graph)
+      });
+      clearHistory(activeFileId);
+      alert('保存しました');
+      return true;                        // 保存成功
+    },
+    [activeFileId, editorApi, isDirty]
+  );
 
   useEffect(() => {
-
-    // main側から設定画面を開くように指示されたら、設定画面を表示する
-    App.onOpenSettings(() => {
-      setShowSettings(true)
+    // 設定画面オープン指示の解除関数を取得
+    const unsubOpen = App.onOpenSettings(() => {
+      setShowSettings(true);
     });
 
     // アプリの状態を復元
     App.loadAppStateSnapshot().then((res: MainState) => {
-      console.log("loadAppState");
+      toast.success('アプリの状態を復元しました');
       setAppState(res);
     });
 
@@ -167,14 +185,16 @@ export function MainScreen() {
       }
     );
 
-    // 保存要請を受けたらファイル保存処理を実行
-    const unsub = App.onSaveGraphInitiate(onFileSave);
+    // 保存要請の解除関数を取得
+    const unsubSave = App.onSaveGraphInitiate(onFileSave);
+
     return () => {
-      if (typeof unsub === 'function') unsub();
+      unsubOpen();
+      unsubSave();
+      // store subscribe 解除
       unsubscribe();
     };
-
-  }, [onFileSave])
+  }, [onFileSave]);
 
   useEffect(() => {
     if (!editorApi) return;
@@ -232,6 +252,13 @@ export function MainScreen() {
         style={{ display: files.length === 0 ? 'none' : 'block' }}
       >
         <div ref={ref} className="w-full h-full" />
+      </div>
+      {/* 通知ベル */}
+      <div className="flex justify-end">
+        <button className='flex items-center justify-center rounded-full w-6 h-6 hover:bg-gray-300 mr-1'>
+          <Bell className='w-4 h-4' />
+        </button>
+        <Toaster richColors={true} expand={true} />
       </div>
       {
         // 設定画面
