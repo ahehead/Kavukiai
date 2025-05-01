@@ -9,7 +9,7 @@ import { create } from "zustand";
 import type { NodeEditorState } from "renderer/nodeEditor/features/editor_state/historyState";
 import { subscribeWithSelector } from "zustand/middleware";
 
-type MainStore = MainState & {
+export type MainStore = MainState & {
   /* ───────────── actions ───────────── */
   setMainState: (s: MainState) => void;
 
