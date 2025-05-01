@@ -13,6 +13,9 @@ type MainStore = MainState & {
   /* ───────────── actions ───────────── */
   setMainState: (s: MainState) => void;
 
+  // ファイル取得
+  getFileById: (id: string) => AppFile | undefined;
+
   // タブ操作
   setActiveFileId: (id: string | null) => void;
 
@@ -38,6 +41,10 @@ const useMainStore = create<MainStore>()(
 
     /* ---------- bulk import/export ---------- */
     setMainState: (state) => set(() => ({ ...state })),
+
+    getFileById: (id: string) => {
+      return get().files.find((f) => f.id === id);
+    },
 
     /* ---------- タブ ---------- */
     setActiveFileId: (id) => set({ activeFileId: id }),
