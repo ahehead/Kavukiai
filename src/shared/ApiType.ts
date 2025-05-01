@@ -4,6 +4,9 @@ export enum IpcChannel {
   OpenAIRequest = "openai-request",
   OpenSettings = "open-settings",
   SaveState = "SaveState",
+  SaveGraphInitiate = "save-graph-initiate",
+  ShowSaveDialog = "show-save-dialog",
+  SaveGraph = "save-graph",
 }
 
 export type OpenAIParams = any;

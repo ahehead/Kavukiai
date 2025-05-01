@@ -7,6 +7,5 @@ import { registerIpcHandlers } from "./ipc";
 makeAppWithSingleInstanceLock(async () => {
   await app.whenReady();
   await makeAppSetup(MainWindow);
-
   registerIpcHandlers();
 });
