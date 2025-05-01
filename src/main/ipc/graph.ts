@@ -4,22 +4,46 @@ import path from "node:path";
 import { IpcChannel } from "shared/ApiType";
 import type { GraphJsonData } from "shared/JsonType";
 import os from "node:os";
+import { Conf } from "electron-conf/main";
+import {
+  createDefaultApplicationSettings,
+  type ApplicationSettings,
+} from "main/types";
+
+const conf = new Conf<ApplicationSettings>({
+  name: "app-settings",
+  defaults: createDefaultApplicationSettings(),
+});
 
 export function registerGraphHandlers(): void {
+  // save dialog
   ipcMain.handle(IpcChannel.ShowSaveDialog, async (event, title) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (!win) {
       console.error("No window found for save dialog");
       return null;
     }
+
+    const lastSaveDir = conf.get("lastSaveDir");
+    const defaultPath = lastSaveDir
+      ? path.join(lastSaveDir, `${title}.json`)
+      : path.join(os.homedir(), `${title}.json`);
+
     const result = await dialog.showSaveDialog(win, {
       filters: [{ name: "JSON", extensions: ["json"] }],
-      defaultPath: path.join(os.homedir(), `${title}.json`),
+      defaultPath,
       properties: ["showOverwriteConfirmation"],
     });
+
+    if (result.filePath) {
+      // 最後に保存したフォルダを記憶
+      conf.set("lastSaveDir", path.dirname(result.filePath));
+    }
+    // キャンセルされた場合は null を返す
     return result.canceled ? null : result.filePath;
   });
 
+  // save json data
   ipcMain.handle(
     IpcChannel.SaveJsonGraph,
     async (event, filePath: string, graph: GraphJsonData) => {
