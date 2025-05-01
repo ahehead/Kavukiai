@@ -1,24 +1,30 @@
-import { useEffect, useState, useCallback, use } from 'react'
 import SettingsModal from 'renderer/components/SettingsModal';
 import { createNodeEditor } from 'renderer/nodeEditor/createNodeEditor';
 import { useRete } from "rete-react-plugin";
-import { type MainState, convertMainToPersistedMain, createFile } from 'shared/AppType';
-import { X, Plus, Circle, Bell } from 'lucide-react';
+import { type MainState, convertMainToPersistedMain, createFile, type File } from 'shared/AppType';
+import { X, Plus, Circle } from 'lucide-react';
 import { getNewActiveFileId } from "renderer/utils/tabs";
 import useMainStore from 'renderer/hooks/MainStore';
 import { useIsFileDirty } from 'renderer/hooks/useIsFileDirty';
 import { hashGraph } from 'renderer/utils/hash';
-import { Toaster, toast } from 'sonner';
+import { Toaster } from 'sonner';
 import { notify } from 'renderer/features/toast-notice/notify';
 import BellButton from 'renderer/features/toast-notice/BellButton';
+import { useShallow } from 'zustand/react/shallow'
+import { memo, useCallback, useEffect, useState } from 'react';
 const { App } = window
 
-const TabItem: React.FC<{
+const TabItem = memo(({
+  file,
+  active,
+  onSelect,
+  onClose
+}: {
   file: { id: string; title: string };
   active: boolean;
   onSelect: (id: string) => void;
   onClose: (id: string, e: React.MouseEvent) => void;
-}> = ({ file, active, onSelect, onClose }) => {
+}) => {
   const isDirty = useIsFileDirty(file.id);
 
   return (
@@ -44,38 +50,50 @@ const TabItem: React.FC<{
       </span>
     </div>
   );
-};
+});
 
 export function MainScreen() {
   const [ref, editorApi] = useRete(createNodeEditor);
   // 設定画面を表示するか
   const [showSettings, setShowSettings] = useState(false);
 
+  const {
+    files,
+    activeFileId,
+    getFileById,
+    addFile,
+    removeFile,
+    setActiveFileId,
+    setGraphAndHistory,
+    getGraphAndHistory,
+    setMainState,
+    updateFile,
+    clearHistory
+  } = useMainStore(useShallow(state => ({
+    files: state.files,
+    activeFileId: state.activeFileId,
+    getFileById: state.getFileById,
+    addFile: state.addFile,
+    removeFile: state.removeFile,
+    setActiveFileId: state.setActiveFileId,
+    setGraphAndHistory: state.setGraphAndHistory,
+    getGraphAndHistory: state.getGraphAndHistory,
+    setMainState: state.setMainState,
+    updateFile: state.updateFile,
+    clearHistory: state.clearHistory
+  })));
 
-
-  // store から値とアクションを取得
-  const files = useMainStore(s => s.files);
-  const activeFileId = useMainStore(s => s.activeFileId);
-  const getFileById = useMainStore(s => s.getFileById);
-  const addFile = useMainStore(s => s.addFile);
-  const removeFile = useMainStore(s => s.removeFile);
-  const setActiveFileId = useMainStore(s => s.setActiveFileId);
-  const setGraphAndHistory = useMainStore(s => s.setGraphAndHistory);
-  const getGraphAndHistory = useMainStore(s => s.getGraphAndHistory);
-  const setAppState = useMainStore(s => s.setMainState);
-  const updateFile = useMainStore(s => s.updateFile);
-  const clearHistory = useMainStore(s => s.clearHistory);
 
   // 編集状況がファイルに保存済みかどうか
   const isDirty = useIsFileDirty(activeFileId);
 
   // 現在編集中のファイルを、useMainStoreに収める共通関数
-  const setCurrentFileState = () => {
+  const setCurrentFileState = useCallback(() => {
     const currId = useMainStore.getState().activeFileId;
     if (editorApi && currId) {
       setGraphAndHistory(currId, editorApi.getCurrentEditorState());
     }
-  };
+  }, [editorApi, setGraphAndHistory]);
 
   const handleNewFile = async () => {
     // 新規作成前に、現在のファイル状態を保存
@@ -164,7 +182,7 @@ export function MainScreen() {
   useEffect(() => {
     // アプリの状態を復元
     App.loadAppStateSnapshot().then((res: MainState) => {
-      setAppState(res);
+      setMainState(res);
     });
   }, []);
 
@@ -228,7 +246,7 @@ export function MainScreen() {
           {/* tabs */}
           <div className="flex border-b bg-gray-200">
             <div className="flex flex-nowrap overflow-hidden">
-              {files.map(file => (
+              {files.map((file: File) => (
                 <TabItem
                   key={file.id}
                   file={file}
