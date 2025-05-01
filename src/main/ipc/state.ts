@@ -31,7 +31,7 @@ const apiKeysConf = new Conf<PersistedApiKeysState>({
  */
 export function registerStateHandlers(): void {
   // 初期状態読み込み
-  ipcMain.handle(IpcChannel.LoadState, (): MainState => {
+  ipcMain.handle(IpcChannel.LoadSnapshot, (): MainState => {
     const saveState = appSateConf.get("appState");
     const state = convertPersistedMainToMain(saveState);
     return state;
@@ -59,8 +59,11 @@ export function registerStateHandlers(): void {
   );
 
   // MainState保存
-  ipcMain.on(IpcChannel.SaveState, (_evt, state: PersistedMainState): void => {
-    appSateConf.set("appState", state);
-    console.log("AppState Saved");
-  });
+  ipcMain.on(
+    IpcChannel.SaveSnapshot,
+    (_evt, state: PersistedMainState): void => {
+      appSateConf.set("appState", state);
+      console.log("AppState Saved");
+    }
+  );
 }

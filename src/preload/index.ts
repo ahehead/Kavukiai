@@ -14,35 +14,47 @@ declare global {
 
 export type AppApi = {
   loadAppStateSnapshot(): Promise<MainState>;
+  takeAppStateSnapshot(state: PersistedMainState): void;
+
   saveApiKey(key: string | null): Promise<ApiKeysFlags>;
   openAIRequest(params: OpenAIParams): Promise<string>;
-  onOpenSettings(callback: () => void): void;
-  takeAppStateSnapshot(state: PersistedMainState): void;
-  onSaveGraphInitiate(callback: () => void): () => Electron.IpcRenderer;
+
+  onOpenSettings(callback: () => void): () => void;
+
+  onSaveGraphInitiate(callback: () => Promise<boolean>): () => void;
   showSaveDialog(title: string): Promise<string | null>;
-  saveGraphJsonData(filePath: string, graph: unknown): Promise<boolean>;
+  saveGraphJsonData(filePath: string, graph: unknown): Promise<string | null>;
+
+  // 閉じる時の確認ダイアログ
+  showCloseConfirm(): Promise<{ response: number }>;
 };
 
 const API: AppApi = {
   // アプリの状態を復元
-  loadAppStateSnapshot: () => ipcRenderer.invoke(IpcChannel.LoadState),
+  loadAppStateSnapshot: () => ipcRenderer.invoke(IpcChannel.LoadSnapshot),
+  // アプリの状態をスナップショットする
+  takeAppStateSnapshot: (state: PersistedMainState) =>
+    ipcRenderer.send(IpcChannel.SaveSnapshot, state),
 
   saveApiKey: (key) =>
     ipcRenderer.invoke(IpcChannel.SaveApiKey, key) as Promise<ApiKeysFlags>,
   openAIRequest: (params: OpenAIParams) =>
     ipcRenderer.invoke(IpcChannel.OpenAIRequest, params),
-  onOpenSettings: (callback) =>
-    ipcRenderer.on(IpcChannel.OpenSettings, () => callback()),
-
-  // アプリの状態をスナップショットする
-  takeAppStateSnapshot: (state: PersistedMainState) =>
-    ipcRenderer.send(IpcChannel.SaveState, state),
-
-  // mainからのファイル保存要請
-  onSaveGraphInitiate: (callback): (() => Electron.IpcRenderer) => {
+  onOpenSettings: (callback) => {
     const listener = () => callback();
+    ipcRenderer.on(IpcChannel.OpenSettings, listener);
+    return () => ipcRenderer.removeListener(IpcChannel.OpenSettings, listener);
+  },
+
+  onSaveGraphInitiate: (callback) => {
+    const listener = async () => {
+      try {
+        await callback();
+      } catch (e) {
+        console.error("onSaveGraphInitiate callback error:", e);
+      }
+    };
     ipcRenderer.on(IpcChannel.SaveGraphInitiate, listener);
-    // 解除用関数を返す
     return () =>
       ipcRenderer.removeListener(IpcChannel.SaveGraphInitiate, listener);
   },
@@ -54,11 +66,14 @@ const API: AppApi = {
 
   // グラフを保存
   saveGraphJsonData: (filePath, graph) =>
-    ipcRenderer.invoke(
-      IpcChannel.SaveGraph,
-      filePath,
-      graph
-    ) as Promise<boolean>,
+    ipcRenderer.invoke(IpcChannel.SaveJsonGraph, filePath, graph) as Promise<
+      string | null
+    >,
+
+  showCloseConfirm: () =>
+    ipcRenderer.invoke("show-close-confirm") as Promise<{
+      response: number;
+    }>,
 };
 
 contextBridge.exposeInMainWorld("App", API);
