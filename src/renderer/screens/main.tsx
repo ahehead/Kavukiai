@@ -6,7 +6,41 @@ import { type MainState, convertMainToPersistedMain, createFile } from 'shared/A
 import { X, Plus, Circle } from 'lucide-react';
 import { getNewActiveFileId } from "renderer/utils/tabs";
 import useMainStore from 'renderer/hooks/MainStore';
+import { useIsFileDirty } from 'renderer/hooks/useIsFileDirty';
 const { App } = window
+
+const TabItem: React.FC<{
+  file: { id: string; title: string };
+  active: boolean;
+  onSelect: (id: string) => void;
+  onClose: (id: string, e: React.MouseEvent) => void;
+}> = ({ file, active, onSelect, onClose }) => {
+  const isDirty = useIsFileDirty(file.id);
+
+  return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+    <div
+      onClick={() => onSelect(file.id)}
+      className={`flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer ${active ? 'bg-white rounded-t-lg' : 'bg-gray-200'
+        }`}
+    >
+      <span className="flex-shrink min-w-0 truncate whitespace-nowrap mr-1">
+        {file.title}
+      </span>
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+      <span
+        onClick={e => onClose(file.id, e)}
+        className="flex-shrink-0 w-5 h-5 flex items-center justify-center hover:bg-gray-300 rounded-md"
+      >
+        {isDirty ? (
+          <Circle className="w-3 h-3" fill="#4a5565" />
+        ) : (
+          <X className="w-4 h-4" />
+        )}
+      </span>
+    </div>
+  );
+};
 
 export function MainScreen() {
   const [ref, editorApi] = useRete(createNodeEditor);
@@ -32,14 +66,14 @@ export function MainScreen() {
     }
   };
 
-  const handleNewFile = () => {
+  const handleNewFile = async () => {
     // 新規作成前に、現在の編集状態を保存
     saveCurrentEditorState();
     setActiveFileId(null);
 
     const id = crypto.randomUUID();
     const title = `Untitled-${files.length + 1}`;
-    const file = createFile(id, title);
+    const file = await createFile(id, title);
     addFile(file);
     setActiveFileId(id);
   };
@@ -79,26 +113,36 @@ export function MainScreen() {
     });
 
     App.loadAppState().then((res: MainState) => {
-      console.log("loadAppState", res);
+      console.log("loadAppState");
       setAppState(res);
     });
 
     const unsubscribe = useMainStore.subscribe(
-      // selector: storeからPersisted 可能な形に絞り込む
       (s) => ({
         version: s.version,
         files: s.files,
         settings: { ui: s.settings.ui },
         activeFileId: s.activeFileId,
       }),
-      // listener: 絞り込んだstateを受け取る
       (appState) => {
+        console.log("SaveAppState");
         App.saveAppState(convertMainToPersistedMain(appState));
       }
     );
     return unsubscribe;
 
   }, [])
+
+  useEffect(() => {
+    if (!editorApi) return;
+    const func = () => {
+      const currId = useMainStore.getState().activeFileId;
+      if (currId) {
+        setGraphAndHistory(currId, editorApi.getCurrentEditorState());
+      }
+    }
+    editorApi.patchHistoryAdd(func);
+  }, [editorApi]);
 
   return (
     <main className="flex flex-col fixed inset-0 border-t">
@@ -117,36 +161,13 @@ export function MainScreen() {
           <div className="flex border-b bg-gray-200">
             <div className="flex flex-nowrap overflow-hidden">
               {files.map(file => (
-                // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-                <div
+                <TabItem
                   key={file.id}
-                  onClick={() => handleSelect(file.id)}
-                  className={`flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer ${activeFileId === file.id
-                    ? ' bg-white rounded-t-lg'
-                    : ' bg-gray-200'
-                    }`}
-                >
-                  {/* file name */}
-                  <span className="flex-shrink min-w-0 truncate whitespace-nowrap mr-1">
-                    {file.title}
-                  </span>
-                  {/* close button */}
-                  {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-                  <span
-                    onClick={e => handleCloseFile(file.id, e)}
-                    className="flex-shrink-0 w-5 h-5 flex items-center justify-center hover:bg-gray-300 rounded-md"
-                  >
-                    {file.isDirty ? (
-                      <span className="text-gray-600">
-                        <Circle className="w-3 h-3" fill="#4a5565" />
-                      </span>
-                    ) : (
-                      <span className="text-gray-600">
-                        <X className="w-4 h-4" />
-                      </span>
-                    )}
-                  </span>
-                </div>
+                  file={file}
+                  active={file.id === activeFileId}
+                  onSelect={setActiveFileId}
+                  onClose={handleCloseFile}
+                />
               ))}
             </div >
             {/* new file button */}
