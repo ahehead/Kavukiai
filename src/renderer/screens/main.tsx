@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import SettingsModal from 'renderer/components/SettingsModal';
 import { createNodeEditor } from 'renderer/nodeEditor/createNodeEditor';
 import { useRete } from "rete-react-plugin";
@@ -7,6 +7,8 @@ import { X, Plus, Circle } from 'lucide-react';
 import { getNewActiveFileId } from "renderer/utils/tabs";
 import useMainStore from 'renderer/hooks/MainStore';
 import { useIsFileDirty } from 'renderer/hooks/useIsFileDirty';
+import { hashGraph } from 'renderer/utils/hash';
+
 const { App } = window
 
 const TabItem: React.FC<{
@@ -50,16 +52,21 @@ export function MainScreen() {
   // store から値とアクションを取得
   const files = useMainStore(s => s.files);
   const activeFileId = useMainStore(s => s.activeFileId);
+  const getFileById = useMainStore(s => s.getFileById);
   const addFile = useMainStore(s => s.addFile);
   const removeFile = useMainStore(s => s.removeFile);
   const setActiveFileId = useMainStore(s => s.setActiveFileId);
   const setGraphAndHistory = useMainStore(s => s.setGraphAndHistory);
   const getGraphAndHistory = useMainStore(s => s.getGraphAndHistory);
   const setAppState = useMainStore(s => s.setMainState);
+  const updateFile = useMainStore(s => s.updateFile);
+  const clearHistory = useMainStore(s => s.clearHistory);
 
+  // 編集状況がファイルに保存済みかどうか
+  const isDirty = useIsFileDirty(activeFileId);
 
-  // 現在の編集状態を保存する共通関数
-  const saveCurrentEditorState = () => {
+  // 現在編集中のファイルを、useMainStoreに収める共通関数
+  const setCurrentFileState = () => {
     const currId = useMainStore.getState().activeFileId;
     if (editorApi && currId) {
       setGraphAndHistory(currId, editorApi.getCurrentEditorState());
@@ -67,9 +74,9 @@ export function MainScreen() {
   };
 
   const handleNewFile = async () => {
-    // 新規作成前に、現在の編集状態を保存
-    saveCurrentEditorState();
-    setActiveFileId(null);
+    // 新規作成前に、現在のファイル状態を保存
+    setCurrentFileState();
+    //setActiveFileId(null);
 
     const id = crypto.randomUUID();
     const title = `Untitled-${files.length + 1}`;
@@ -80,13 +87,12 @@ export function MainScreen() {
 
   // タブ選択
   const handleSelect = (id: string) => {
-    // 選択前のファイルの編集状態を保存
-    saveCurrentEditorState();
-    // タブ選択
+    // 選択前のファイルの状態を保存
+    setCurrentFileState();
     setActiveFileId(id);
   };
 
-  // ファイルID が変わったら保存済み state を復元
+  // アクティブなファイルIDが変わったら、そのファイルの状態に画面を復元
   useEffect(() => {
     if (!editorApi || !activeFileId) return;
     (async () => {
@@ -99,24 +105,55 @@ export function MainScreen() {
   const handleCloseFile = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     // 閉じる前に、現在の編集状態を保存
-    saveCurrentEditorState();
+    setCurrentFileState();
+    // 閉じるファイルがdirtyな場合、削除するか確認
+    // Todo
+
     // タブ削除 & 新規アクティブ決定
     const nextActive = getNewActiveFileId(files, id, activeFileId);
     removeFile(id);
     setActiveFileId(nextActive);
   };
 
+  // 保存処理
+  const onFileSave = useCallback(async () => {
+    if (!activeFileId || !editorApi || !isDirty) return;
+    // 現在のファイル状態を保存
+    setCurrentFileState();
+
+    const f = getFileById(activeFileId);
+    if (!f) return;
+    let filePath = f.path;
+    if (!filePath) {
+      filePath = await App.showSaveDialog(f.title);
+      if (!filePath) return;
+    }
+    const ok = await App.saveGraphJsonData(filePath, f.graph);
+    if (!ok) {
+      alert('ファイルの保存に失敗しました');
+      return;
+    }
+    const newHash = await hashGraph(f.graph);
+    // Storeのアクションで更新
+    updateFile(activeFileId, { path: filePath, graphHash: newHash });
+    clearHistory(activeFileId);
+    alert('保存しました');
+  }, [activeFileId, editorApi, isDirty]);
+
   useEffect(() => {
 
+    // main側から設定画面を開くように指示されたら、設定画面を表示する
     App.onOpenSettings(() => {
       setShowSettings(true)
     });
 
-    App.loadAppState().then((res: MainState) => {
+    // アプリの状態を復元
+    App.loadAppStateSnapshot().then((res: MainState) => {
       console.log("loadAppState");
       setAppState(res);
     });
 
+    // useMainStoreに変更があったら、アプリの状態をスナップショットする
     const unsubscribe = useMainStore.subscribe(
       (s) => ({
         version: s.version,
@@ -126,12 +163,18 @@ export function MainScreen() {
       }),
       (appState) => {
         console.log("SaveAppState");
-        App.saveAppState(convertMainToPersistedMain(appState));
+        App.takeAppStateSnapshot(convertMainToPersistedMain(appState));
       }
     );
-    return unsubscribe;
 
-  }, [])
+    // 保存要請を受けたらファイル保存処理を実行
+    const unsub = App.onSaveGraphInitiate(onFileSave);
+    return () => {
+      if (typeof unsub === 'function') unsub();
+      unsubscribe();
+    };
+
+  }, [onFileSave])
 
   useEffect(() => {
     if (!editorApi) return;
@@ -171,7 +214,7 @@ export function MainScreen() {
               ))}
             </div >
             {/* new file button */}
-            < div className="flex flex-1 items-center pl-2 flex-shrink-0" >
+            < div className="flex flex-1 items-center pl-2 flex-shrink-0 focus:outline-0" >
               <button
                 onClick={handleNewFile}
                 className="w-5 h-5 flex items-center justify-center hover:bg-gray-300 rounded-md"
@@ -183,7 +226,7 @@ export function MainScreen() {
         </>
       )
       }
-      {/* editor: 常にレンダーするが、ファイルなし時は非表示 */}
+      {/* editor: 常にレンダーする。ファイルなし時はdisplay none */}
       <div
         className="App flex-1 w-full h-full"
         style={{ display: files.length === 0 ? 'none' : 'block' }}
@@ -191,6 +234,7 @@ export function MainScreen() {
         <div ref={ref} className="w-full h-full" />
       </div>
       {
+        // 設定画面
         showSettings && (
           <SettingsModal onClose={() => setShowSettings(false)} />
         )
