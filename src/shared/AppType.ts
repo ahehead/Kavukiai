@@ -8,6 +8,7 @@ import {
   initializeHistoryState,
   type HistoryState,
 } from "../renderer/nodeEditor/features/editor_state/historyState";
+import { hashGraph } from "renderer/utils/hash";
 
 /* ---------- UI 設定 ---------- */
 export type UISettings = {
@@ -33,7 +34,7 @@ export type File = {
   title: string;
   path: string | null;
   graph: GraphJsonData;
-  isDirty: boolean;
+  graphHash: string; // 最後に保存したときのグラフのハッシュ値
   readonly createdAt: number;
   readonly updatedAt: number;
   historyState: HistoryState;
@@ -79,14 +80,15 @@ export const createApiKeysFlags = (): ApiKeysFlags =>
 export const createApiKeysSecrets = (): ApiKeysSecrets =>
   Object.fromEntries(providers.map((p) => [p, null])) as ApiKeysSecrets;
 
-export function createFile(id: string, title: string): File {
+export async function createFile(id: string, title: string): Promise<File> {
   const now = Date.now();
+  const graph = basic as GraphJsonData;
   return {
     id,
     title,
-    graph: basic as GraphJsonData,
+    graph,
     path: null,
-    isDirty: true,
+    graphHash: await hashGraph(graph),
     createdAt: now,
     updatedAt: now,
     historyState: initializeHistoryState(),
