@@ -14,10 +14,11 @@ export function CustomExecSocket<T extends ClassicPreset.Socket>(props: {
         className="cursor-pointer
         rounded-full
         transform transition-all duration-100
-        group-hover:scale-115"
+        group-hover:scale-115
+        "
         title={data.name}
       >
-        <TriangleIcon fill="yellow" className="w-[16px] h-[16px]" />
+        <TriangleIcon stroke="#424242" fill="#F5D76E" className="w-[16px] h-[16px]" />
       </div>
     </div>
   )

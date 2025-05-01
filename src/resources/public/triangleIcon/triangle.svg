@@ -2,60 +2,22 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="17.407749mm"
-   height="19.384806mm"
-   viewBox="0 0 17.407749 19.384806"
+   width="11.971249mm"
+   height="13.426042mm"
+   viewBox="0 0 11.971248 13.426042"
    version="1.1"
    id="svg1"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
-     id="defs1">
-    <filter
-       style="color-interpolation-filters:sRGB"
-       id="filter43"
-       x="-0.17618227"
-       y="-0.1583441"
-       width="1.3523645"
-       height="1.3166882">
-      <feFlood
-         result="flood"
-         in="SourceGraphic"
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         id="feFlood42" />
-      <feGaussianBlur
-         result="blur"
-         in="SourceGraphic"
-         stdDeviation="3.200000"
-         id="feGaussianBlur42" />
-      <feOffset
-         result="offset"
-         in="blur"
-         dx="0.000000"
-         dy="0.000000"
-         id="feOffset42" />
-      <feComposite
-         result="comp1"
-         operator="out"
-         in="flood"
-         in2="offset"
-         id="feComposite42" />
-      <feComposite
-         result="comp2"
-         operator="atop"
-         in="comp1"
-         in2="SourceGraphic"
-         id="feComposite43" />
-    </filter>
-  </defs>
+     id="defs1" />
   <g
      id="layer1"
-     transform="translate(-63.525467,-86.867045)">
+     transform="translate(-66.061088,-89.847827)">
     <path
-       id="path1"
-       style="fill-opacity:1;fill-rule:nonzero;stroke:#5d5d5d;stroke-width:0;stroke-dasharray:none;filter:url(#filter43)"
-       transform="matrix(0.38680352,0,0,0.38680352,39.076232,52.429336)"
-       d="M 63.725468,132.41637 V 95.762068 a 5.9238314,5.9238314 150 0 1 8.885747,-5.130188 l 31.743555,18.32715 a 5.9238316,5.9238316 90 0 1 0,10.26038 l -31.743555,18.32715 a 5.9238313,5.9238313 29.999999 0 1 -8.885747,-5.13019 z" />
+       style="fill-opacity:1;stroke-width:1.00013;stroke-dasharray:none"
+       id="path8"
+       d="m 72.851445,91.436395 -9.38103,5.416139 a 1.0693008,1.0693008 30 0 1 -1.603951,-0.926041 v -10.83228 a 1.0693008,1.0693008 150 0 1 1.603951,-0.926041 l 9.38103,5.416139 a 1.0693008,1.0693008 90 0 1 0,1.852084 z"
+       transform="translate(4.4240175,6.0504946)" />
   </g>
 </svg>
