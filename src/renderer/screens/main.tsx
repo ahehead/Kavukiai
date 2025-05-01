@@ -230,7 +230,7 @@ export function MainScreen() {
                   key={file.id}
                   file={file}
                   active={file.id === activeFileId}
-                  onSelect={setActiveFileId}
+                  onSelect={handleSelect}
                   onClose={handleCloseFile}
                 />
               ))}
