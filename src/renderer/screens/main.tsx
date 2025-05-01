@@ -206,7 +206,10 @@ export function MainScreen() {
         setGraphAndHistory(currId, editorApi.getCurrentEditorState());
       }
     }
-    editorApi.patchHistoryAdd(func);
+    const unsubHistory = editorApi.patchHistoryAdd(func);
+    return () => {
+      unsubHistory();
+    };
   }, [editorApi]);
 
   return (

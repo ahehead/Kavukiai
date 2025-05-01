@@ -170,6 +170,12 @@ export async function createNodeEditor(container: HTMLElement) {
         if (timer) clearTimeout(timer);
         timer = setTimeout(callback, 200);
       };
+
+      // 解除用関数を返す
+      return () => {
+        history.add = orig;
+        if (timer) clearTimeout(timer);
+      };
     },
   };
 }
