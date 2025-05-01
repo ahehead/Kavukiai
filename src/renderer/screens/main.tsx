@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, use } from 'react'
 import SettingsModal from 'renderer/components/SettingsModal';
 import { createNodeEditor } from 'renderer/nodeEditor/createNodeEditor';
 import { useRete } from "rete-react-plugin";
@@ -9,6 +9,8 @@ import useMainStore from 'renderer/hooks/MainStore';
 import { useIsFileDirty } from 'renderer/hooks/useIsFileDirty';
 import { hashGraph } from 'renderer/utils/hash';
 import { Toaster, toast } from 'sonner';
+import { notify } from 'renderer/features/toast-notice/notify';
+import BellButton from 'renderer/features/toast-notice/BellButton';
 const { App } = window
 
 const TabItem: React.FC<{
@@ -144,7 +146,7 @@ export function MainScreen() {
       }
       const newFilePath = await App.saveGraphJsonData(filePath, f.graph);
       if (!newFilePath) {
-        alert('ファイルの保存に失敗しました');
+        notify("error", "ファイルの保存に失敗しました");
         return false;                     // 保存失敗
       }
       updateFile(activeFileId, {
@@ -153,22 +155,24 @@ export function MainScreen() {
         graphHash: await hashGraph(f.graph)
       });
       clearHistory(activeFileId);
-      alert('保存しました');
+      notify("success", "ファイルを保存しました");
       return true;                        // 保存成功
     },
     [activeFileId, editorApi, isDirty]
   );
 
   useEffect(() => {
+    // アプリの状態を復元
+    App.loadAppStateSnapshot().then((res: MainState) => {
+      notify("info", "アプリの状態を復元しました");
+      setAppState(res);
+    });
+  }, []);
+
+  useEffect(() => {
     // 設定画面オープン指示の解除関数を取得
     const unsubOpen = App.onOpenSettings(() => {
       setShowSettings(true);
-    });
-
-    // アプリの状態を復元
-    App.loadAppStateSnapshot().then((res: MainState) => {
-      toast.success('アプリの状態を復元しました');
-      setAppState(res);
     });
 
     // useMainStoreに変更があったら、アプリの状態をスナップショットする
@@ -180,7 +184,7 @@ export function MainScreen() {
         activeFileId: s.activeFileId,
       }),
       (appState) => {
-        console.log("SaveAppState");
+        notify("info", "アプリの状態を保存しました");
         App.takeAppStateSnapshot(convertMainToPersistedMain(appState));
       }
     );
@@ -237,7 +241,7 @@ export function MainScreen() {
             < div className="flex flex-1 items-center pl-2 flex-shrink-0 focus:outline-0" >
               <button
                 onClick={handleNewFile}
-                className="w-5 h-5 flex items-center justify-center hover:bg-gray-300 rounded-md"
+                className="w-5 h-5 flex items-center justify-center focus:outline-0 hover:bg-gray-300 rounded-md"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -255,9 +259,7 @@ export function MainScreen() {
       </div>
       {/* 通知ベル */}
       <div className="flex justify-end">
-        <button className='flex items-center justify-center rounded-full w-6 h-6 hover:bg-gray-300 mr-1'>
-          <Bell className='w-4 h-4' />
-        </button>
+        <BellButton />
         <Toaster richColors={true} expand={true} />
       </div>
       {
