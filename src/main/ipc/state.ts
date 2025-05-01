@@ -61,6 +61,6 @@ export function registerStateHandlers(): void {
   // MainState保存
   ipcMain.on(IpcChannel.SaveState, (_evt, state: PersistedMainState): void => {
     appSateConf.set("appState", state);
-    console.log("AppState saved:", state);
+    console.log("AppState Saved");
   });
 }
