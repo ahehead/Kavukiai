@@ -1,12 +1,15 @@
 export enum IpcChannel {
-  LoadState = "load-state",
+  LoadSnapshot = "load-snapshot",
+  SaveSnapshot = "save-snapshot",
+
   SaveApiKey = "save-api-key",
   OpenAIRequest = "openai-request",
+
   OpenSettings = "open-settings",
-  SaveState = "SaveState",
+
   SaveGraphInitiate = "save-graph-initiate",
   ShowSaveDialog = "show-save-dialog",
-  SaveGraph = "save-graph",
+  SaveJsonGraph = "save-json-graph",
 }
 
 export type OpenAIParams = any;
