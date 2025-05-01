@@ -164,7 +164,6 @@ export function MainScreen() {
   useEffect(() => {
     // アプリの状態を復元
     App.loadAppStateSnapshot().then((res: MainState) => {
-      notify("info", "アプリの状態を復元しました");
       setAppState(res);
     });
   }, []);
@@ -184,7 +183,6 @@ export function MainScreen() {
         activeFileId: s.activeFileId,
       }),
       (appState) => {
-        notify("info", "アプリの状態を保存しました");
         App.takeAppStateSnapshot(convertMainToPersistedMain(appState));
       }
     );
