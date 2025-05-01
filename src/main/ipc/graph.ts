@@ -15,6 +15,7 @@ export function registerGraphHandlers(): void {
     const result = await dialog.showSaveDialog(win, {
       filters: [{ name: "JSON", extensions: ["json"] }],
       defaultPath: path.join(os.homedir(), `${title}.json`),
+      properties: ["showOverwriteConfirmation"],
     });
     return result.canceled ? null : result.filePath;
   });
