@@ -1,9 +1,9 @@
-import { BrowserWindow, Menu } from "electron";
+import { BrowserWindow } from "electron";
 import { join } from "node:path";
-
 import { createWindow } from "lib/electron-app/factories/windows/create";
 import { ENVIRONMENT } from "shared/constants";
 import { displayName } from "~/package.json";
+import { createAppMenu } from "../menu";
 
 export async function MainWindow() {
   const window = createWindow({
@@ -23,29 +23,8 @@ export async function MainWindow() {
     },
   });
 
-  const menu = Menu.buildFromTemplate([
-    {
-      label: "File",
-      submenu: [
-        {
-          label: "Quit",
-          accelerator: "CmdOrCtrl+Q",
-          click: () => {
-            window.close();
-          },
-        },
-      ],
-    },
-    {
-      label: "Settings",
-
-      click: () => {
-        window.webContents.send("open-settings");
-      },
-    },
-  ]);
-
-  Menu.setApplicationMenu(menu);
+  // メニュー作成
+  createAppMenu(window);
 
   window.webContents.on("did-finish-load", () => {
     if (ENVIRONMENT.IS_DEV) {
