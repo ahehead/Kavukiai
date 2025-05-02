@@ -8,7 +8,7 @@ import {
   initializeHistoryState,
   type HistoryState,
 } from "../renderer/nodeEditor/features/editor_state/historyState";
-import { hashGraph } from "../renderer/utils/hash";
+import { hashGraph } from "../renderer/features/dirty-check/hash";
 
 /* ---------- UI 設定 ---------- */
 export type UISettings = {

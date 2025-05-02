@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { X, Plus, Circle } from 'lucide-react';
 import type { File } from 'shared/AppType';
-import { useIsFileDirty } from 'renderer/hooks/useIsFileDirty';
+import { useIsFileDirty } from '../features/dirty-check/useIsFileDirty';
 
 const TabItem = memo(({
   file,

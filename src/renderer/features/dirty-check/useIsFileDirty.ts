@@ -1,8 +1,8 @@
 // hooks/useIsFileDirty.ts
 import { useEffect, useState } from "react";
-import useMainStore from "./MainStore";
-import { hashGraph } from "../utils/hash";
+import useMainStore from "renderer/hooks/MainStore";
 import type { File } from "shared/AppType";
+import { hashGraph } from "./hash";
 
 export const useIsFileDirty = (fileId: string | null) => {
   const file = useMainStore((s) => s.files.find((f) => f.id === fileId));
