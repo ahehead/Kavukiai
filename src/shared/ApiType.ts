@@ -26,3 +26,10 @@ export type OpenAIResponse = {
     total_tokens: number;
   };
 };
+
+// ファイルを閉じる確認dialogの返答
+export enum CloseFileDialogResponse {
+  Confirm = 0,
+  DoNotSave = 1,
+  Cancel = 2,
+}
