@@ -1,7 +1,6 @@
 import SettingsModal from 'renderer/components/SettingsModal';
 import TabBar from 'renderer/components/TabBar';
-import { createNodeEditor } from 'renderer/nodeEditor/createNodeEditor';
-import { useRete } from "rete-react-plugin";
+import useNodeEditorSetup from 'renderer/hooks/useNodeEditorSetup';
 import { type MainState, convertMainToPersistedMain, createFile } from 'shared/AppType';
 import { getNewActiveFileId } from "renderer/utils/tabs";
 import useMainStore from 'renderer/hooks/MainStore';
@@ -18,10 +17,6 @@ import { appService } from 'renderer/services/appService';
 
 
 export function MainScreen() {
-  const [ref, editorApi] = useRete(createNodeEditor);
-  // 設定画面を表示するか
-  const [showSettings, setShowSettings] = useState(false);
-
   const {
     files,
     activeFileId,
@@ -48,16 +43,18 @@ export function MainScreen() {
     clearHistory: state.clearHistory
   })));
 
+  // Reteエディタのセットアップ
+  const { ref, setCurrentFileState } = useNodeEditorSetup(
+    activeFileId,
+    getGraphAndHistory,
+    setGraphAndHistory
+  );
+
+  // 設定画面を表示するか
+  const [showSettings, setShowSettings] = useState(false);
 
   // 編集状況がファイルに保存済みかどうか
   const isDirty = useIsFileDirty(activeFileId);
-
-  // 現在編集中のファイルを、useMainStoreに収める共通関数
-  const setCurrentFileState = useCallback(() => {
-    if (editorApi && activeFileId) {
-      setGraphAndHistory(activeFileId, editorApi.getCurrentEditorState());
-    }
-  }, [editorApi, activeFileId, setGraphAndHistory]);
 
   const handleNewFile = async () => {
     // 新規作成前に、現在のファイル状態を保存
@@ -78,14 +75,6 @@ export function MainScreen() {
     setActiveFileId(id);
   };
 
-  // アクティブなファイルIDが変わったら、そのファイルの状態に画面を復元
-  useEffect(() => {
-    if (!editorApi || !activeFileId) return;
-    (async () => {
-      const state = getGraphAndHistory(activeFileId);
-      if (state) await editorApi.resetEditorState(state);
-    })();
-  }, [editorApi, activeFileId]);
 
   // ファイルを閉じる
   const handleCloseFile = async (id: string, e: React.MouseEvent) => {
@@ -116,7 +105,7 @@ export function MainScreen() {
   // 保存処理（戻り値: true=保存成功 or 不要, false=キャンセル/失敗）
   const onFileSave = useCallback(
     async (): Promise<boolean> => {
-      if (!activeFileId || !editorApi || !isDirty) return false;
+      if (!activeFileId || !isDirty) return false;
       setCurrentFileState();
 
       const f = getFileById(activeFileId);
@@ -141,7 +130,7 @@ export function MainScreen() {
       notify("success", "ファイルを保存しました");
       return true;                        // 保存成功
     },
-    [activeFileId, editorApi, isDirty]
+    [activeFileId, isDirty]
   );
 
   useEffect(() => {
@@ -179,12 +168,6 @@ export function MainScreen() {
       unsubscribe();
     };
   }, [onFileSave]);
-
-  useEffect(() => {
-    if (!editorApi) return;
-    const unsubHistory = editorApi.patchHistoryAdd(setCurrentFileState);
-    return () => { unsubHistory(); };
-  }, [editorApi, setCurrentFileState]);
 
   return (
     <main className="flex flex-col fixed inset-0 border-t">
