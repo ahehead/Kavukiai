@@ -12,6 +12,7 @@ import { notify } from 'renderer/features/toast-notice/notify';
 import BellButton from 'renderer/features/toast-notice/BellButton';
 import { useShallow } from 'zustand/react/shallow'
 import { memo, useCallback, useEffect, useState } from 'react';
+import { CloseFileDialogResponse } from 'shared/ApiType';
 const { App } = window
 
 const TabItem = memo(({
@@ -133,9 +134,9 @@ export function MainScreen() {
     if (id === activeFileId && isDirty) {
       const { response } = await App.showCloseConfirm();
       // キャンセル
-      if (response === 2) return;
+      if (response === CloseFileDialogResponse.Cancel) return;
       // 保存
-      if (response === 0) {
+      if (response === CloseFileDialogResponse.Confirm) {
         const ok = await onFileSave();
         if (!ok) return;                 // キャンセル/失敗なら中断
       }
