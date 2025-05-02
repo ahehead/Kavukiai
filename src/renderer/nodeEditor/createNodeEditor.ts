@@ -161,6 +161,8 @@ export async function createNodeEditor(container: HTMLElement) {
     getCurrentEditorState: () => getCurrentEditorState(editor, area, history),
     resetEditorState: async (state: NodeEditorState) =>
       await resetEditorState(state, editor, area, dataflow, engine, history),
+
+    // historyのaddをオーバーライドして、履歴が追加されたときにコールバックを実行する
     patchHistoryAdd: (callback: () => void) => {
       let timer: ReturnType<typeof setTimeout> | null = null;
       const orig = history.add.bind(history);

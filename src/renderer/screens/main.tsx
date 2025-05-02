@@ -54,11 +54,10 @@ export function MainScreen() {
 
   // 現在編集中のファイルを、useMainStoreに収める共通関数
   const setCurrentFileState = useCallback(() => {
-    const currId = useMainStore.getState().activeFileId;
-    if (editorApi && currId) {
-      setGraphAndHistory(currId, editorApi.getCurrentEditorState());
+    if (editorApi && activeFileId) {
+      setGraphAndHistory(activeFileId, editorApi.getCurrentEditorState());
     }
-  }, [editorApi, setGraphAndHistory]);
+  }, [editorApi, activeFileId, setGraphAndHistory]);
 
   const handleNewFile = async () => {
     // 新規作成前に、現在のファイル状態を保存
@@ -146,14 +145,14 @@ export function MainScreen() {
   );
 
   useEffect(() => {
-    // アプリの状態を復元
+    // 起動時にアプリの状態を復元
     appService.loadAppStateSnapshot().then((res: MainState) => {
       setMainState(res);
     });
   }, []);
 
   useEffect(() => {
-    // 設定画面オープン指示の解除関数を取得
+    // 設定画面オープン指示
     const unsubOpen = appService.onOpenSettings(() => {
       setShowSettings(true);
     });
@@ -177,24 +176,15 @@ export function MainScreen() {
     return () => {
       unsubOpen();
       unsubSave();
-      // store subscribe 解除
       unsubscribe();
     };
   }, [onFileSave]);
 
   useEffect(() => {
     if (!editorApi) return;
-    const func = () => {
-      const currId = useMainStore.getState().activeFileId;
-      if (currId) {
-        setGraphAndHistory(currId, editorApi.getCurrentEditorState());
-      }
-    }
-    const unsubHistory = editorApi.patchHistoryAdd(func);
-    return () => {
-      unsubHistory();
-    };
-  }, [editorApi]);
+    const unsubHistory = editorApi.patchHistoryAdd(setCurrentFileState);
+    return () => { unsubHistory(); };
+  }, [editorApi, setCurrentFileState]);
 
   return (
     <main className="flex flex-col fixed inset-0 border-t">
