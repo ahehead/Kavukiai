@@ -1,11 +1,11 @@
-import { registerStateHandlers } from "./state";
+import { registerSnapshotHandlers } from "./snapshot";
 import { registerOpenAIHandlers } from "./openai";
-import { registerGraphHandlers } from "./graph";
+import { registerSaveHandlers } from "./save";
 // import { registerOtherServiceHandlers } from "./otherService";
 
 export function registerIpcHandlers(): void {
-  registerStateHandlers();
+  registerSnapshotHandlers();
   registerOpenAIHandlers();
-  registerGraphHandlers();
+  registerSaveHandlers();
   // registerOtherServiceHandlers();
 }

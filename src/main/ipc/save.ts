@@ -15,7 +15,7 @@ const conf = new Conf<ApplicationSettings>({
   defaults: createDefaultApplicationSettings(),
 });
 
-export function registerGraphHandlers(): void {
+export function registerSaveHandlers(): void {
   // save dialog
   ipcMain.handle(IpcChannel.ShowSaveDialog, async (event, title) => {
     const win = BrowserWindow.fromWebContents(event.sender);

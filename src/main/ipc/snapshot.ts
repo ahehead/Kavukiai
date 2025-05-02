@@ -29,7 +29,7 @@ const apiKeysConf = new Conf<PersistedApiKeysState>({
  * IPCハンドラ登録
  * ===========================================================
  */
-export function registerStateHandlers(): void {
+export function registerSnapshotHandlers(): void {
   // 初期状態読み込み
   ipcMain.handle(IpcChannel.LoadSnapshot, (): MainState => {
     const saveState = appSateConf.get("appState");

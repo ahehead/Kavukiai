@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { createWindow } from "lib/electron-app/factories/windows/create";
 import { ENVIRONMENT } from "shared/constants";
 import { displayName } from "~/package.json";
-import { createAppMenu } from "../menu";
+import { createAppMenu } from "../menu/menu";
 import {
   type ApplicationSettings,
   createDefaultApplicationSettings,
