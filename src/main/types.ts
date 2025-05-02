@@ -8,8 +8,7 @@ export type WindowSettings = {
   height: number;
   x: number;
   y: number;
-  isMaximized: boolean;
-  isFullscreen: boolean;
+  alwaysOnTop: boolean;
 };
 
 export type SystemSettings = {
@@ -20,12 +19,11 @@ export type SystemSettings = {
 export function createDefaultApplicationSettings(): ApplicationSettings {
   return {
     windowSettings: {
-      width: 1200,
-      height: 800,
+      width: 700,
+      height: 473,
       x: 0,
       y: 0,
-      isMaximized: false,
-      isFullscreen: false,
+      alwaysOnTop: true,
     },
     systemSettings: {
       lastSaveDir: null,
