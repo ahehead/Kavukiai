@@ -36,7 +36,7 @@ export function registerGraphHandlers(): void {
     });
 
     if (result.filePath) {
-      // 最後に保存したフォルダを記憶
+      // 最後に保存したフォルダのパスを記憶
       conf.set("systemSettings.lastSaveDir", path.dirname(result.filePath));
     }
     // キャンセルされた場合は null を返す
@@ -58,7 +58,7 @@ export function registerGraphHandlers(): void {
   );
 
   // 閉じる確認ダイアログ
-  ipcMain.handle("show-close-confirm", async (event) => {
+  ipcMain.handle(IpcChannel.ShowCloseConfirm, async (event) => {
     // モーダル対象のウィンドウを取得
     const win = BrowserWindow.fromWebContents(event.sender);
     if (!win) {

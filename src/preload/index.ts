@@ -70,8 +70,9 @@ const API: AppApi = {
       string | null
     >,
 
+  // 閉じる時の確認ダイアログ
   showCloseConfirm: () =>
-    ipcRenderer.invoke("show-close-confirm") as Promise<{
+    ipcRenderer.invoke(IpcChannel.ShowCloseConfirm) as Promise<{
       response: number;
     }>,
 };
