@@ -1,7 +1,7 @@
 import { ipcMain, dialog, BrowserWindow } from "electron";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { IpcChannel } from "shared/ApiType";
+import { CloseFileDialogResponse, IpcChannel } from "shared/ApiType";
 import type { GraphJsonData } from "shared/JsonType";
 import os from "node:os";
 import { Conf } from "electron-conf/main";
@@ -24,7 +24,7 @@ export function registerGraphHandlers(): void {
       return null;
     }
 
-    const lastSaveDir = conf.get("lastSaveDir");
+    const lastSaveDir = conf.get("systemSettings.lastSaveDir") as string | null;
     const defaultPath = lastSaveDir
       ? path.join(lastSaveDir, `${title}.json`)
       : path.join(os.homedir(), `${title}.json`);
@@ -37,7 +37,7 @@ export function registerGraphHandlers(): void {
 
     if (result.filePath) {
       // 最後に保存したフォルダを記憶
-      conf.set("lastSaveDir", path.dirname(result.filePath));
+      conf.set("systemSettings.lastSaveDir", path.dirname(result.filePath));
     }
     // キャンセルされた場合は null を返す
     return result.canceled ? null : result.filePath;
@@ -63,14 +63,14 @@ export function registerGraphHandlers(): void {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (!win) {
       console.error("No window found for close confirmation dialog");
-      return { response: 2 }; // キャンセル
+      return { response: CloseFileDialogResponse.Cancel }; // キャンセル
     }
     const res = await dialog.showMessageBox(win, {
       type: "warning",
       message: "ファイルは未保存です。保存しますか？",
       buttons: ["保存", "保存しない", "キャンセル"],
-      defaultId: 0,
-      cancelId: 2,
+      defaultId: CloseFileDialogResponse.Confirm,
+      cancelId: CloseFileDialogResponse.Cancel,
     });
     return res; // { response: number; }
   });
