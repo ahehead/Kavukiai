@@ -1,57 +1,21 @@
 import SettingsModal from 'renderer/components/SettingsModal';
+import TabBar from 'renderer/components/TabBar';
 import { createNodeEditor } from 'renderer/nodeEditor/createNodeEditor';
 import { useRete } from "rete-react-plugin";
-import { type MainState, convertMainToPersistedMain, createFile, type File } from 'shared/AppType';
-import { X, Plus, Circle } from 'lucide-react';
+import { type MainState, convertMainToPersistedMain, createFile } from 'shared/AppType';
 import { getNewActiveFileId } from "renderer/utils/tabs";
 import useMainStore from 'renderer/hooks/MainStore';
-import { useIsFileDirty } from 'renderer/hooks/useIsFileDirty';
+import { useIsFileDirty, isFileDirty } from 'renderer/hooks/useIsFileDirty';
 import { hashGraph } from 'renderer/utils/hash';
 import { Toaster } from 'sonner';
 import { notify } from 'renderer/features/toast-notice/notify';
 import BellButton from 'renderer/features/toast-notice/BellButton';
 import { useShallow } from 'zustand/react/shallow'
-import { memo, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CloseFileDialogResponse } from 'shared/ApiType';
-const { App } = window
+import { appService } from 'renderer/services/appService';
 
-const TabItem = memo(({
-  file,
-  active,
-  onSelect,
-  onClose
-}: {
-  file: { id: string; title: string };
-  active: boolean;
-  onSelect: (id: string) => void;
-  onClose: (id: string, e: React.MouseEvent) => void;
-}) => {
-  const isDirty = useIsFileDirty(file.id);
 
-  return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-    <div
-      onClick={() => onSelect(file.id)}
-      className={`flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer ${active ? 'bg-white rounded-t-lg' : 'bg-gray-200'
-        }`}
-    >
-      <span className="flex-shrink min-w-0 truncate whitespace-nowrap mr-1">
-        {file.title}
-      </span>
-      {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-      <span
-        onClick={e => onClose(file.id, e)}
-        className="flex-shrink-0 w-5 h-5 flex items-center justify-center hover:bg-gray-300 rounded-md"
-      >
-        {isDirty ? (
-          <Circle className="w-3 h-3" fill="#4a5565" />
-        ) : (
-          <X className="w-4 h-4" />
-        )}
-      </span>
-    </div>
-  );
-});
 
 export function MainScreen() {
   const [ref, editorApi] = useRete(createNodeEditor);
@@ -130,9 +94,10 @@ export function MainScreen() {
     // 閉じる前に、現在の編集状態を保存
     setCurrentFileState();
 
-    // 対象がアクティブかつ未保存なら確認ダイアログ
-    if (id === activeFileId && isDirty) {
-      const { response } = await App.showCloseConfirm();
+    // ダーティ判定
+    const isCloseFileDirty = await isFileDirty(getFileById(id));
+    if (isCloseFileDirty) {
+      const { response } = await appService.showCloseConfirm();
       // キャンセル
       if (response === CloseFileDialogResponse.Cancel) return;
       // 保存
@@ -160,10 +125,10 @@ export function MainScreen() {
 
       let filePath = f.path;
       if (!filePath) {
-        filePath = await App.showSaveDialog(f.title);
+        filePath = await appService.showSaveDialog(f.title);
         if (!filePath) return false;      // ユーザーがキャンセル
       }
-      const newFilePath = await App.saveGraphJsonData(filePath, f.graph);
+      const newFilePath = await appService.saveGraphJsonData(filePath, f.graph);
       if (!newFilePath) {
         notify("error", "ファイルの保存に失敗しました");
         return false;                     // 保存失敗
@@ -182,14 +147,14 @@ export function MainScreen() {
 
   useEffect(() => {
     // アプリの状態を復元
-    App.loadAppStateSnapshot().then((res: MainState) => {
+    appService.loadAppStateSnapshot().then((res: MainState) => {
       setMainState(res);
     });
   }, []);
 
   useEffect(() => {
     // 設定画面オープン指示の解除関数を取得
-    const unsubOpen = App.onOpenSettings(() => {
+    const unsubOpen = appService.onOpenSettings(() => {
       setShowSettings(true);
     });
 
@@ -202,12 +167,12 @@ export function MainScreen() {
         activeFileId: s.activeFileId,
       }),
       (appState) => {
-        App.takeAppStateSnapshot(convertMainToPersistedMain(appState));
+        appService.takeAppStateSnapshot(convertMainToPersistedMain(appState));
       }
     );
 
     // 保存要請の解除関数を取得
-    const unsubSave = App.onSaveGraphInitiate(onFileSave);
+    const unsubSave = appService.onSaveGraphInitiate(onFileSave);
 
     return () => {
       unsubOpen();
@@ -243,33 +208,14 @@ export function MainScreen() {
           </button>
         </div>
       ) : (
-        <>
-          {/* tabs */}
-          <div className="flex border-b bg-gray-200">
-            <div className="flex flex-nowrap overflow-hidden">
-              {files.map((file: File) => (
-                <TabItem
-                  key={file.id}
-                  file={file}
-                  active={file.id === activeFileId}
-                  onSelect={handleSelect}
-                  onClose={handleCloseFile}
-                />
-              ))}
-            </div >
-            {/* new file button */}
-            < div className="flex flex-1 items-center pl-2 flex-shrink-0 focus:outline-0" >
-              <button
-                onClick={handleNewFile}
-                className="w-5 h-5 flex items-center justify-center focus:outline-0 hover:bg-gray-300 rounded-md"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </>
-      )
-      }
+        <TabBar
+          files={files}
+          activeFileId={activeFileId}
+          onSelect={handleSelect}
+          onClose={handleCloseFile}
+          onNewFile={handleNewFile}
+        />
+      )}
       {/* editor: 常にレンダーする。ファイルなし時はdisplay none */}
       <div
         className="App flex-1 w-full h-full"
