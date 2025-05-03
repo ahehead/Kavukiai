@@ -12,7 +12,7 @@ import BellButton from 'renderer/features/toast-notice/BellButton';
 import { useShallow } from 'zustand/react/shallow'
 import { useCallback, useEffect, useState } from 'react';
 import { CloseFileDialogResponse } from 'shared/ApiType';
-import { appService } from 'renderer/services/appService';
+import { electronApiService } from 'renderer/services/appService';
 
 
 
@@ -85,7 +85,7 @@ export function MainScreen() {
     // ダーティ判定
     const isCloseFileDirty = await isFileDirty(getFileById(id));
     if (isCloseFileDirty) {
-      const { response } = await appService.showCloseConfirm();
+      const { response } = await electronApiService.showCloseConfirm();
       // キャンセル
       if (response === CloseFileDialogResponse.Cancel) return;
       // 保存
@@ -113,10 +113,10 @@ export function MainScreen() {
 
       let filePath = f.path;
       if (!filePath) {
-        filePath = await appService.showSaveDialog(f.title);
+        filePath = await electronApiService.showSaveDialog(f.title);
         if (!filePath) return false;      // ユーザーがキャンセル
       }
-      const newFilePath = await appService.saveGraphJsonData(filePath, f.graph);
+      const newFilePath = await electronApiService.saveGraphJsonData(filePath, f.graph);
       if (!newFilePath) {
         notify("error", "ファイルの保存に失敗しました");
         return false;                     // 保存失敗
@@ -130,19 +130,40 @@ export function MainScreen() {
       notify("success", "ファイルを保存しました");
       return true;                        // 保存成功
     },
-    [activeFileId, isDirty]
+    [activeFileId, isDirty, getFileById, setCurrentFileState, updateFile, clearHistory]
   );
 
   useEffect(() => {
     // 起動時にアプリの状態を復元
-    appService.loadAppStateSnapshot().then((res: MainState) => {
+    electronApiService.loadAppStateSnapshot().then((res: MainState) => {
       setMainState(res);
     });
-  }, []);
+  }, [setMainState]);
+
+  useEffect(() => {
+    const unsub = electronApiService.onFileLoadedRequest(async (e, path, fileName, json) => {
+      // ファイル読み込み前に、現在のファイル状態を保存
+      setCurrentFileState();
+      // 同じハッシュのファイルが有れば、それにフォーカスして終了
+      const hash = await hashGraph(json);
+      const sameFile = files.find((f) => f.graphHash === hash);
+      if (sameFile) {
+        setActiveFileId(sameFile.id);
+        return;
+      }
+
+      // ファイルの新規作成
+      const id = crypto.randomUUID();
+      const file = await createFile(id, fileName, json, path);
+      addFile(file);
+      setActiveFileId(id);
+    });
+    return () => unsub();
+  }, [files, addFile, setActiveFileId, setCurrentFileState]);
 
   useEffect(() => {
     // 設定画面オープン指示
-    const unsubOpen = appService.onOpenSettings(() => {
+    const unsubOpen = electronApiService.onOpenSettings(() => {
       setShowSettings(true);
     });
 
@@ -155,19 +176,19 @@ export function MainScreen() {
         activeFileId: s.activeFileId,
       }),
       (appState) => {
-        appService.takeAppStateSnapshot(convertMainToPersistedMain(appState));
+        electronApiService.takeAppStateSnapshot(convertMainToPersistedMain(appState));
       }
     );
 
     // 保存要請の解除関数を取得
-    const unsubSave = appService.onSaveGraphInitiate(onFileSave);
+    const unsubSave = electronApiService.onSaveGraphInitiate(onFileSave);
 
     return () => {
       unsubOpen();
       unsubSave();
       unsubscribe();
     };
-  }, [onFileSave]);
+  }, [onFileSave, setShowSettings]);
 
   return (
     <main className="flex flex-col fixed inset-0 border-t">
