@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: rgb(214, 239, 252);
+  --foreground: rgb(21, 21, 31);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -38,6 +38,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  --dataSocket: rgb(27, 76, 156);
+  --execSocket: rgb(242, 153, 82);
 }
 
 .dark {
@@ -112,6 +115,9 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-dataSocket: var(--dataSocket);
+  --color-execSocket: var(--execSocket);
 }
 
 @layer base {
