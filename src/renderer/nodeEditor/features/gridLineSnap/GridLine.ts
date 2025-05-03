@@ -87,7 +87,6 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
     const multiplier = Math.max(1, Math.floor(scaleFactor));
     const gridSize = this.baseSize * multiplier;
     const lineSize = multiplier;
-    this.backgroundElem.style.backgroundColor = this.backgroundColor;
     this.backgroundElem.style.backgroundImage = `
       linear-gradient(${this.gridColor} ${lineSize}px, transparent ${lineSize}px),
       linear-gradient(90deg, ${this.gridColor} ${lineSize}px, transparent ${lineSize}px)
