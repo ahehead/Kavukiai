@@ -80,14 +80,18 @@ export const createApiKeysFlags = (): ApiKeysFlags =>
 export const createApiKeysSecrets = (): ApiKeysSecrets =>
   Object.fromEntries(providers.map((p) => [p, null])) as ApiKeysSecrets;
 
-export async function createFile(id: string, title: string): Promise<File> {
+export async function createFile(
+  id: string,
+  title: string,
+  graph: GraphJsonData = basic,
+  path: string | null = null
+): Promise<File> {
   const now = Date.now();
-  const graph = basic as GraphJsonData;
   return {
     id,
     title,
     graph,
-    path: null,
+    path: path,
     graphHash: await hashGraph(graph),
     createdAt: now,
     updatedAt: now,

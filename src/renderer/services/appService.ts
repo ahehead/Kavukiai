@@ -1,9 +1,10 @@
 import type { MainState, PersistedMainState } from "shared/AppType";
 import type { CloseFileDialogResponse } from "shared/ApiType";
+import type { GraphJsonData } from "shared/JsonType";
 
 const { App } = window;
 
-export const appService = {
+export const electronApiService = {
   showCloseConfirm: (): Promise<{ response: CloseFileDialogResponse }> =>
     App.showCloseConfirm(),
 
@@ -12,7 +13,7 @@ export const appService = {
 
   saveGraphJsonData: (
     filePath: string,
-    graph: unknown
+    graph: GraphJsonData
   ): Promise<string | null> => App.saveGraphJsonData(filePath, graph),
 
   loadAppStateSnapshot: (): Promise<MainState> => App.loadAppStateSnapshot(),
@@ -25,4 +26,13 @@ export const appService = {
 
   onSaveGraphInitiate: (handler: () => Promise<boolean>): (() => void) =>
     App.onSaveGraphInitiate(handler),
+
+  onFileLoadedRequest: (
+    handler: (
+      e: Electron.IpcRendererEvent,
+      path: string,
+      name: string,
+      json: GraphJsonData
+    ) => Promise<void>
+  ): (() => void) => App.onFileLoadedRequest(handler),
 };

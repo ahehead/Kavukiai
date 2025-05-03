@@ -5,6 +5,7 @@ import type {
   MainState,
   PersistedMainState,
 } from "shared/AppType";
+import type { GraphJsonData } from "shared/JsonType";
 
 declare global {
   interface Window {
@@ -23,10 +24,23 @@ export type AppApi = {
 
   onSaveGraphInitiate(callback: () => Promise<boolean>): () => void;
   showSaveDialog(title: string): Promise<string | null>;
-  saveGraphJsonData(filePath: string, graph: unknown): Promise<string | null>;
+  saveGraphJsonData(
+    filePath: string,
+    graph: GraphJsonData
+  ): Promise<string | null>;
 
   // 閉じる時の確認ダイアログ
   showCloseConfirm(): Promise<{ response: number }>;
+
+  // menuのファイル読み込みからの通知
+  onFileLoadedRequest(
+    callback: (
+      e: Electron.IpcRendererEvent,
+      path: string,
+      name: string,
+      json: GraphJsonData
+    ) => Promise<void>
+  ): () => void;
 };
 
 const API: AppApi = {
@@ -75,6 +89,25 @@ const API: AppApi = {
     ipcRenderer.invoke(IpcChannel.ShowCloseConfirm) as Promise<{
       response: number;
     }>,
+
+  // menuのファイル読み込みからの通知
+  onFileLoadedRequest: (callback) => {
+    const listener = async (
+      _e: Electron.IpcRendererEvent,
+      path: string,
+      name: string,
+      json: GraphJsonData
+    ) => {
+      try {
+        await callback(_e, path, name, json);
+      } catch (e) {
+        console.error("onFileLoadedRequest callback error:", e);
+      }
+    };
+    ipcRenderer.on(IpcChannel.FileLoadedRequest, listener);
+    return () =>
+      ipcRenderer.removeListener(IpcChannel.FileLoadedRequest, listener);
+  },
 };
 
 contextBridge.exposeInMainWorld("App", API);

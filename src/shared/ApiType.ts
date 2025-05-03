@@ -11,6 +11,8 @@ export enum IpcChannel {
   ShowSaveDialog = "show-save-dialog",
   SaveJsonGraph = "save-json-graph",
   ShowCloseConfirm = "show-close-confirm",
+
+  FileLoadedRequest = "file-loaded-request",
 }
 
 export type OpenAIParams = any;
