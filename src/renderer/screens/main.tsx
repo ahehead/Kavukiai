@@ -158,7 +158,7 @@ export function MainScreen() {
       addFile(file);
       setActiveFileId(id);
     });
-    return () => unsub();
+    return () => { unsub() };
   }, [files, addFile, setActiveFileId, setCurrentFileState]);
 
   useEffect(() => {

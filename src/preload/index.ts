@@ -9,59 +9,29 @@ import type { GraphJsonData } from "shared/JsonType";
 
 declare global {
   interface Window {
-    App: AppApi;
+    App: typeof API;
   }
 }
 
-export type AppApi = {
-  loadAppStateSnapshot(): Promise<MainState>;
-  takeAppStateSnapshot(state: PersistedMainState): void;
-
-  saveApiKey(key: string | null): Promise<ApiKeysFlags>;
-  openAIRequest(params: OpenAIParams): Promise<string>;
-
-  onOpenSettings(callback: () => void): () => void;
-
-  onSaveGraphInitiate(callback: () => Promise<boolean>): () => void;
-  showSaveDialog(title: string): Promise<string | null>;
-  saveGraphJsonData(
-    filePath: string,
-    graph: GraphJsonData,
-    lastHash: string
-  ): Promise<string | null>;
-
-  // 閉じる時の確認ダイアログ
-  showCloseConfirm(): Promise<{ response: number }>;
-
-  // menuのファイル読み込みからの通知
-  onFileLoadedRequest(
-    callback: (
-      e: Electron.IpcRendererEvent,
-      path: string,
-      name: string,
-      json: GraphJsonData
-    ) => Promise<void>
-  ): () => void;
-};
-
-const API: AppApi = {
+const API = {
   // アプリの状態を復元
-  loadAppStateSnapshot: () => ipcRenderer.invoke(IpcChannel.LoadSnapshot),
+  loadAppStateSnapshot: (): Promise<MainState> =>
+    ipcRenderer.invoke(IpcChannel.LoadSnapshot),
   // アプリの状態をスナップショットする
-  takeAppStateSnapshot: (state: PersistedMainState) =>
+  takeAppStateSnapshot: (state: PersistedMainState): void =>
     ipcRenderer.send(IpcChannel.SaveSnapshot, state),
 
-  saveApiKey: (key) =>
+  saveApiKey: (key: string | null): Promise<ApiKeysFlags> =>
     ipcRenderer.invoke(IpcChannel.SaveApiKey, key) as Promise<ApiKeysFlags>,
-  openAIRequest: (params: OpenAIParams) =>
+  openAIRequest: (params: OpenAIParams): Promise<string> =>
     ipcRenderer.invoke(IpcChannel.OpenAIRequest, params),
-  onOpenSettings: (callback) => {
+  onOpenSettings: (callback: () => void): (() => void) => {
     const listener = () => callback();
     ipcRenderer.on(IpcChannel.OpenSettings, listener);
     return () => ipcRenderer.removeListener(IpcChannel.OpenSettings, listener);
   },
 
-  onSaveGraphInitiate: (callback) => {
+  onSaveGraphInitiate: (callback: () => Promise<boolean>): (() => void) => {
     const listener = async () => {
       try {
         await callback();
@@ -74,13 +44,17 @@ const API: AppApi = {
       ipcRenderer.removeListener(IpcChannel.SaveGraphInitiate, listener);
   },
   // ダイアログを開く
-  showSaveDialog: (title: string) =>
+  showSaveDialog: (title: string): Promise<string | null> =>
     ipcRenderer.invoke(IpcChannel.ShowSaveDialog, title) as Promise<
       string | null
     >,
 
   // グラフを保存
-  saveGraphJsonData: (filePath, graph, lastHash) =>
+  saveGraphJsonData: (
+    filePath: string,
+    graph: GraphJsonData,
+    lastHash: string
+  ): Promise<string | null> =>
     ipcRenderer.invoke(
       IpcChannel.SaveJsonGraph,
       filePath,
@@ -89,13 +63,20 @@ const API: AppApi = {
     ) as Promise<string | null>,
 
   // 閉じる時の確認ダイアログ
-  showCloseConfirm: () =>
+  showCloseConfirm: (): Promise<{ response: number }> =>
     ipcRenderer.invoke(IpcChannel.ShowCloseConfirm) as Promise<{
       response: number;
     }>,
 
   // menuのファイル読み込みからの通知
-  onFileLoadedRequest: (callback) => {
+  onFileLoadedRequest: (
+    callback: (
+      e: Electron.IpcRendererEvent,
+      path: string,
+      name: string,
+      json: GraphJsonData
+    ) => Promise<void>
+  ): (() => void) => {
     const listener = async (
       _e: Electron.IpcRendererEvent,
       path: string,
