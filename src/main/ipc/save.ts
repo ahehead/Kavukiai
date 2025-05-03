@@ -6,12 +6,13 @@ import type { GraphJsonData } from "shared/JsonType";
 import os from "node:os";
 import { Conf } from "electron-conf/main";
 import {
+  ConfFileName,
   createDefaultApplicationSettings,
   type ApplicationSettings,
 } from "main/types";
 
 const conf = new Conf<ApplicationSettings>({
-  name: "app-settings",
+  name: ConfFileName.ApplicationSettings,
   defaults: createDefaultApplicationSettings(),
 });
 
@@ -24,23 +25,24 @@ export function registerSaveHandlers(): void {
       return null;
     }
 
-    const lastSaveDir = conf.get("systemSettings.lastSaveDir") as string | null;
+    const lastSaveDir = conf.get("systemSettings.lastDir") as string | null;
+    console.log("lastSaveDir", lastSaveDir);
     const defaultPath = lastSaveDir
       ? path.join(lastSaveDir, `${title}.json`)
       : path.join(os.homedir(), `${title}.json`);
 
-    const result = await dialog.showSaveDialog(win, {
+    const { canceled, filePath } = await dialog.showSaveDialog(win, {
       filters: [{ name: "JSON", extensions: ["json"] }],
       defaultPath,
       properties: ["showOverwriteConfirmation"],
     });
 
-    if (result.filePath) {
+    if (filePath) {
       // 最後に保存したフォルダのパスを記憶
-      conf.set("systemSettings.lastSaveDir", path.dirname(result.filePath));
+      conf.set("systemSettings.lastDir", path.dirname(filePath));
     }
     // キャンセルされた場合は null を返す
-    return result.canceled ? null : result.filePath;
+    return canceled ? null : filePath;
   });
 
   // save json data
