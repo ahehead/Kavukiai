@@ -90,14 +90,13 @@ export function MainScreen() {
     setCurrentFileState();
 
     // ダーティ判定
-    const isCloseFileDirty = await isFileDirty(getFileById(id));
-    if (isCloseFileDirty) {
+    if (await isFileDirty(getFileById(id))) {
       const { response } = await electronApiService.showCloseConfirm();
       // キャンセル
       if (response === CloseFileDialogResponse.Cancel) return;
       // 保存
       if (response === CloseFileDialogResponse.Confirm) {
-        const ok = await onFileSave();
+        const ok = await onFileSave(id);
         if (!ok) return;                 // キャンセル/失敗なら中断
       }
       // 「保存しない(response===1)」はそのまま破棄
@@ -111,11 +110,11 @@ export function MainScreen() {
 
   // 保存処理（戻り値: true=保存成功 or 不要, false=キャンセル/失敗）
   const onFileSave = useCallback(
-    async (): Promise<boolean> => {
-      if (!activeFileId || !isDirty) return true;
+    async (fileId: string | null): Promise<boolean> => {
+      if (!fileId || !isDirty) return true;
       setCurrentFileState();
 
-      const f = getFileById(activeFileId);
+      const f = getFileById(fileId);
       if (!f) return true;
 
       // filePathが無ければ、保存したことがないので、ダイアログを表示
@@ -124,28 +123,29 @@ export function MainScreen() {
         filePath = await electronApiService.showSaveDialog(f.title);
         if (!filePath) return false;      // ユーザーがキャンセル
       }
+      // グラフを保存
       const result = await electronApiService.saveGraphJsonData(filePath, f.graph, f.graphHash);
       if (!result) {
-        notify("error", "ファイルの保存に失敗しました");
+        notify("error", `ファイルの保存に失敗しました: ${f.title}`);
         return false;                     // 保存失敗
       }
-      updateFile(activeFileId, {
+      updateFile(fileId, {
         title: result.fileName,
         path: result.filePath,
         graph: f.graph,
         graphHash: await hashGraph(f.graph)
       });
-      clearHistory(activeFileId);
-      clearEditorHistory(f.graph);
-      notify("success", "ファイルを保存しました");
+      clearHistory(fileId);
+      if (fileId === activeFileId) { clearEditorHistory(f.graph); }
+      notify("success", `ファイルを保存: ${result.fileName}`);
       return true;                        // 保存成功
     },
-    [activeFileId, isDirty, getFileById, setCurrentFileState, updateFile, clearHistory, clearEditorHistory, notify]
+    [isDirty, activeFileId, getFileById, setCurrentFileState, updateFile, clearHistory, clearEditorHistory, notify]
   );
 
   useEffect(() => {
     const unsub = electronApiService.onFileLoadedRequest(async (e, path, fileName, json) => {
-      // ファイル読み込み前に、現在のファイル状態を保存
+      // ファイル読み込み前に、現在のファイル状態をMainStoreに反映
       setCurrentFileState();
       // 同じハッシュのファイルが有れば、それにフォーカスして終了
       const hash = await hashGraph(json);
@@ -182,16 +182,17 @@ export function MainScreen() {
         electronApiService.takeAppStateSnapshot(convertMainToPersistedMain(appState));
       }
     );
-
-    // 保存要請の解除関数を取得
-    const unsubSave = electronApiService.onSaveGraphInitiate(onFileSave);
-
     return () => {
       unsubOpen();
-      unsubSave();
       unsubscribe();
     };
-  }, [onFileSave, setShowSettings]);
+  }, [setShowSettings]);
+
+  useEffect(() => {
+    // mainからの保存指示を受け取る
+    const unsubSave = electronApiService.onSaveGraphInitiate(async () => await onFileSave(activeFileId));
+    return () => { unsubSave() };
+  }, [activeFileId, onFileSave]);
 
   return (
     <main className="flex flex-col fixed inset-0 border-t">
