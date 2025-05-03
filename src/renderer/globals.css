@@ -134,12 +134,12 @@
 }
 
 @layer components {
-  @keyframes modal-slide-up {
+  @keyframes modal-slide-right {
     from { transform: translateX(-8px); opacity: 0.3; }
     to   { transform: translateX(0);    opacity: 1; }
   }
   .dialog-animate {
-    animation: modal-slide-up 230ms ease-out forwards;
+    animation: modal-slide-right 230ms ease-out forwards;
   }
   @keyframes overlay-fade-in {
     from { opacity: 0; }
@@ -147,6 +147,15 @@
   }
   .overlay-animate {
     animation: overlay-fade-in 230ms ease-out forwards;
+  }
+
+  /* slide up */
+  @keyframes modal-slide-up {
+    from { transform: translateY(12px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .dialog-animate-up {
+    animation: modal-slide-up 310ms ease-out forwards;
   }
 }
 

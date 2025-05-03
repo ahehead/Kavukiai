@@ -3,43 +3,6 @@ import { X, Plus, Circle } from 'lucide-react';
 import type { File } from 'shared/AppType';
 import { useIsFileDirty } from '../features/dirty-check/useIsFileDirty';
 
-const TabItem = memo(({
-  file,
-  active,
-  onSelect,
-  onClose
-}: {
-  file: { id: string; title: string };
-  active: boolean;
-  onSelect: (id: string) => void;
-  onClose: (id: string, e: React.MouseEvent) => void;
-}) => {
-  const isDirty = useIsFileDirty(file.id);
-
-  return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-    <div
-      onClick={() => onSelect(file.id)}
-      className={`flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer ${active ? 'bg-white rounded-t-lg' : 'bg-gray-200'
-        }`}
-    >
-      <span className="flex-shrink min-w-0 truncate whitespace-nowrap mr-1">
-        {file.title}
-      </span>
-      {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-      <span
-        onClick={e => onClose(file.id, e)}
-        className="flex-shrink-0 w-5 h-5 flex items-center justify-center hover:bg-gray-300 rounded-md"
-      >
-        {isDirty ? (
-          <Circle className="w-3 h-3" fill="#4a5565" />
-        ) : (
-          <X className="w-4 h-4" />
-        )}
-      </span>
-    </div>
-  );
-});
 
 export default function TabBar({
   files,
@@ -55,7 +18,7 @@ export default function TabBar({
   onNewFile: () => void;
 }) {
   return (
-    <div className="flex border-b bg-gray-200">
+    <div className="flex border-b bg-gray-100">
       <div className="flex flex-nowrap overflow-hidden">
         {files.map(file => (
           <TabItem
@@ -78,3 +41,47 @@ export default function TabBar({
     </div>
   );
 }
+
+
+const TabItem = memo(({
+  file,
+  active,
+  onSelect,
+  onClose
+}: {
+  file: { id: string; title: string };
+  active: boolean;
+  onSelect: (id: string) => void;
+  onClose: (id: string, e: React.MouseEvent) => void;
+}) => {
+  const isDirty = useIsFileDirty(file.id);
+
+  return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+    <div
+      onClick={() => onSelect(file.id)}
+      className={`
+        flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer
+        border-t-2 border-b-0 border-x-2 rounded-t-md
+        ${active
+          ? 'bg-white border-gray-300'
+          : 'bg-gray-100 border-gray-100'}
+      `}
+    >
+      <span className="flex-shrink min-w-0 truncate whitespace-nowrap mr-1">
+        {file.title}
+      </span>
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+      <span
+        onClick={e => onClose(file.id, e)}
+        className="flex-shrink-0 w-5 h-5 flex items-center justify-center hover:bg-gray-300 rounded-md"
+      >
+        {isDirty ? (
+          <Circle className="w-3 h-3" fill="#4a5565" />
+        ) : (
+          <X className="w-4 h-4" />
+        )}
+      </span>
+    </div>
+  );
+});

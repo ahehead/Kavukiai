@@ -35,7 +35,7 @@ export default function BellButton() {
     <div className="relative inline-block" ref={ref}>
       <button
         onClick={toggle}
-        className="flex items-center justify-center rounded-full w-7 h-7 hover:bg-gray-300 mr-1 focus:outline-none"
+        className="flex items-center justify-center rounded-full w-7 h-7 bg-gray-200 hover:bg-gray-300 mr-1 focus:outline-none"
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={`${id}-panel`}

@@ -197,13 +197,27 @@ export function MainScreen() {
   return (
     <main className="flex flex-col fixed inset-0 border-t">
       {files.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center bg-blue-50">
-          <button
-            className="px-4 py-2 bg-white rounded"
-            onClick={handleNewFile}
-          >
-            新規作成hi
-          </button>
+        <div className="flex-1 flex items-center justify-center bg-blue-100 border-8 rounded-lg border-white">
+          <div className='flex flex-col items-start dialog-animate-up'>
+            <ul className=''>
+              <li className="mb-2 bg-white rounded hover:bg-gray-100">
+                <button
+                  className="px-4 py-2"
+                  onClick={handleNewFile}
+                >
+                  ・ 新規作成
+                </button>
+              </li>
+              <li className='mb-2 bg-white rounded hover:bg-gray-100'>
+                <button
+                  className="px-4 py-2"
+                  onClick={handleNewFile}
+                >
+                  ・ テンプレートから作成
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       ) : (
         <TabBar
@@ -222,7 +236,8 @@ export function MainScreen() {
         <div ref={ref} className="w-full h-full" />
       </div>
       {/* 通知ベル */}
-      <div className="flex justify-end">
+      <div className=" justify-end bg-gray-100 "
+        style={{ display: files.length === 0 ? 'none' : "flex" }}>
         <BellButton />
       </div>
       {
