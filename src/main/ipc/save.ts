@@ -49,7 +49,12 @@ export function registerSaveHandlers(): void {
   // save json data
   ipcMain.handle(
     IpcChannel.SaveJsonGraph,
-    async (event, filePath: string, graph: GraphJsonData, lastHash: string) => {
+    async (
+      event,
+      filePath: string,
+      graph: GraphJsonData,
+      lastHash: string
+    ): Promise<{ filePath: string; fileName: string } | null> => {
       try {
         // ファイルを読み込みhashを計算、lastHashと比較
         const fileData = await fs.readFile(filePath, "utf-8");
@@ -74,7 +79,7 @@ export function registerSaveHandlers(): void {
         }
 
         await fs.writeFile(filePath, JSON.stringify(graph, null, 2), "utf-8");
-        return filePath;
+        return { filePath, fileName: path.parse(filePath).name };
       } catch (error) {
         console.error("Graph save failed:", error);
         return null;

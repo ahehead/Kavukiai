@@ -45,22 +45,15 @@ const API = {
   },
   // ダイアログを開く
   showSaveDialog: (title: string): Promise<string | null> =>
-    ipcRenderer.invoke(IpcChannel.ShowSaveDialog, title) as Promise<
-      string | null
-    >,
+    ipcRenderer.invoke(IpcChannel.ShowSaveDialog, title),
 
   // グラフを保存
   saveGraphJsonData: (
     filePath: string,
     graph: GraphJsonData,
     lastHash: string
-  ): Promise<string | null> =>
-    ipcRenderer.invoke(
-      IpcChannel.SaveJsonGraph,
-      filePath,
-      graph,
-      lastHash
-    ) as Promise<string | null>,
+  ): Promise<{ filePath: string; fileName: string } | null> =>
+    ipcRenderer.invoke(IpcChannel.SaveJsonGraph, filePath, graph, lastHash),
 
   // 閉じる時の確認ダイアログ
   showCloseConfirm: (): Promise<{ response: number }> =>

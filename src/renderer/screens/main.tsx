@@ -56,6 +56,13 @@ export function MainScreen() {
   // 編集状況がファイルに保存済みかどうか
   const isDirty = useIsFileDirty(activeFileId);
 
+  useEffect(() => {
+    // 起動時にアプリの状態を復元
+    electronApiService.loadAppStateSnapshot().then((res: MainState) => {
+      setMainState(res);
+    });
+  }, [setMainState]);
+
   const handleNewFile = async () => {
     // 新規作成前に、現在のファイル状態を保存
     setCurrentFileState();
@@ -116,14 +123,14 @@ export function MainScreen() {
         filePath = await electronApiService.showSaveDialog(f.title);
         if (!filePath) return false;      // ユーザーがキャンセル
       }
-      const newFilePath = await electronApiService.saveGraphJsonData(filePath, f.graph, f.graphHash);
-      if (!newFilePath) {
+      const result = await electronApiService.saveGraphJsonData(filePath, f.graph, f.graphHash);
+      if (!result) {
         notify("error", "ファイルの保存に失敗しました");
         return false;                     // 保存失敗
       }
       updateFile(activeFileId, {
-        title: newFilePath.split('/').pop() || f.title,
-        path: newFilePath,
+        title: result.fileName,
+        path: result.filePath,
         graphHash: await hashGraph(f.graph)
       });
       clearHistory(activeFileId);
@@ -132,13 +139,6 @@ export function MainScreen() {
     },
     [activeFileId, isDirty, getFileById, setCurrentFileState, updateFile, clearHistory, notify]
   );
-
-  useEffect(() => {
-    // 起動時にアプリの状態を復元
-    electronApiService.loadAppStateSnapshot().then((res: MainState) => {
-      setMainState(res);
-    });
-  }, [setMainState]);
 
   useEffect(() => {
     const unsub = electronApiService.onFileLoadedRequest(async (e, path, fileName, json) => {
