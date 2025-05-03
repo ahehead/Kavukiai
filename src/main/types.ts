@@ -13,7 +13,7 @@ export type WindowSettings = {
 
 export type SystemSettings = {
   // 前回の保存フォルダ
-  lastSaveDir: string | null;
+  lastDir: string | null;
 };
 
 export function createDefaultApplicationSettings(): ApplicationSettings {
@@ -26,7 +26,11 @@ export function createDefaultApplicationSettings(): ApplicationSettings {
       alwaysOnTop: true,
     },
     systemSettings: {
-      lastSaveDir: null,
+      lastDir: null,
     },
   };
+}
+
+export enum ConfFileName {
+  ApplicationSettings = "app-settings",
 }
