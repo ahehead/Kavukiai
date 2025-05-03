@@ -26,7 +26,8 @@ export type AppApi = {
   showSaveDialog(title: string): Promise<string | null>;
   saveGraphJsonData(
     filePath: string,
-    graph: GraphJsonData
+    graph: GraphJsonData,
+    lastHash: string
   ): Promise<string | null>;
 
   // 閉じる時の確認ダイアログ
@@ -79,10 +80,13 @@ const API: AppApi = {
     >,
 
   // グラフを保存
-  saveGraphJsonData: (filePath, graph) =>
-    ipcRenderer.invoke(IpcChannel.SaveJsonGraph, filePath, graph) as Promise<
-      string | null
-    >,
+  saveGraphJsonData: (filePath, graph, lastHash) =>
+    ipcRenderer.invoke(
+      IpcChannel.SaveJsonGraph,
+      filePath,
+      graph,
+      lastHash
+    ) as Promise<string | null>,
 
   // 閉じる時の確認ダイアログ
   showCloseConfirm: () =>

@@ -13,8 +13,9 @@ export const electronApiService = {
 
   saveGraphJsonData: (
     filePath: string,
-    graph: GraphJsonData
-  ): Promise<string | null> => App.saveGraphJsonData(filePath, graph),
+    graph: GraphJsonData,
+    lastHash: string
+  ): Promise<string | null> => App.saveGraphJsonData(filePath, graph, lastHash),
 
   loadAppStateSnapshot: (): Promise<MainState> => App.loadAppStateSnapshot(),
 

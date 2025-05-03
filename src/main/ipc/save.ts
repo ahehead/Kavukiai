@@ -10,6 +10,7 @@ import {
   createDefaultApplicationSettings,
   type ApplicationSettings,
 } from "main/types";
+import { hashGraph } from "renderer/features/dirty-check/hash";
 
 const conf = new Conf<ApplicationSettings>({
   name: ConfFileName.ApplicationSettings,
@@ -26,7 +27,7 @@ export function registerSaveHandlers(): void {
     }
 
     const lastSaveDir = conf.get("systemSettings.lastDir") as string | null;
-    console.log("lastSaveDir", lastSaveDir);
+
     const defaultPath = lastSaveDir
       ? path.join(lastSaveDir, `${title}.json`)
       : path.join(os.homedir(), `${title}.json`);
@@ -48,8 +49,30 @@ export function registerSaveHandlers(): void {
   // save json data
   ipcMain.handle(
     IpcChannel.SaveJsonGraph,
-    async (event, filePath: string, graph: GraphJsonData) => {
+    async (event, filePath: string, graph: GraphJsonData, lastHash: string) => {
       try {
+        // ファイルを読み込みhashを計算、lastHashと比較
+        const fileData = await fs.readFile(filePath, "utf-8");
+        if ((await hashGraph(JSON.parse(fileData))) !== lastHash) {
+          // 確認ダイアログを表示
+          const win = BrowserWindow.fromWebContents(event.sender);
+          if (!win) {
+            console.error("No window found for save confirmation dialog");
+            return null;
+          }
+          const res = await dialog.showMessageBox(win, {
+            type: "warning",
+            message: "ファイルは変更されています。上書きしますか？",
+            buttons: ["上書き", "キャンセル"],
+            defaultId: 0,
+            cancelId: 1,
+          });
+          if (res.response === 1) {
+            // キャンセルされた場合は null を返す
+            return null;
+          }
+        }
+
         await fs.writeFile(filePath, JSON.stringify(graph, null, 2), "utf-8");
         return filePath;
       } catch (error) {

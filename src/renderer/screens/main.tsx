@@ -116,7 +116,7 @@ export function MainScreen() {
         filePath = await electronApiService.showSaveDialog(f.title);
         if (!filePath) return false;      // ユーザーがキャンセル
       }
-      const newFilePath = await electronApiService.saveGraphJsonData(filePath, f.graph);
+      const newFilePath = await electronApiService.saveGraphJsonData(filePath, f.graph, f.graphHash);
       if (!newFilePath) {
         notify("error", "ファイルの保存に失敗しました");
         return false;                     // 保存失敗
