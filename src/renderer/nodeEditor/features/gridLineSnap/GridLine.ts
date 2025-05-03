@@ -48,7 +48,7 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
       "left-[-320000px]",
       "w-[640000px]",
       "h-[640000px]",
-      "bg-white",
+      "bg-background",
       "z-[-1]",
     ].join(" ");
 

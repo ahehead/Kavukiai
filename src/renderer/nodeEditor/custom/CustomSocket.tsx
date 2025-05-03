@@ -10,7 +10,7 @@ export function CustomSocket<T extends ClassicPreset.Socket>({
       <div
         className="cursor-pointer
                w-[16px] h-[16px]
-               rounded-full bg-[#7b81ff]
+               rounded-full bg-dataSocket
                border-[#686dcc] border-[1px]
                transform transition-all duration-100
                group-hover:scale-115"

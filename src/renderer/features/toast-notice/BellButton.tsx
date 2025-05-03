@@ -47,7 +47,7 @@ export default function BellButton() {
         <div
           id={`${id}-panel`}
           role="menu"
-          className="absolute right-0 bottom-full mb-2 w-80 max-h-80 bg-white border shadow-lg rounded-md z-50 flex flex-col overflow-hidden"
+          className="absolute right-0 bottom-full mb-2 w-80 max-h-80 bg-background border shadow-lg rounded-md z-50 flex flex-col overflow-hidden"
         >
           <div className="flex justify-end p-1">
             <button

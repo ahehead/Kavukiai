@@ -200,7 +200,7 @@ export function MainScreen() {
         <div className="flex-1 flex items-center justify-center bg-blue-100 border-8 rounded-lg border-white">
           <div className='flex flex-col items-start dialog-animate-up'>
             <ul className=''>
-              <li className="mb-2 bg-white rounded hover:bg-gray-100">
+              <li className="mb-2  rounded hover:bg-gray-100 bg-background">
                 <button
                   className="px-4 py-2"
                   onClick={handleNewFile}
@@ -208,7 +208,7 @@ export function MainScreen() {
                   ・ 新規作成
                 </button>
               </li>
-              <li className='mb-2 bg-white rounded hover:bg-gray-100'>
+              <li className='mb-2 bg-background rounded hover:bg-gray-100'>
                 <button
                   className="px-4 py-2"
                   onClick={handleNewFile}

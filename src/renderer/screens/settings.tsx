@@ -12,7 +12,7 @@ export function SettingsScreen() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
+      <div className="max-w-md mx-auto bg-background rounded-lg shadow-lg p-6">
         <h1 className="text-2xl font-semibold mb-4">Settings</h1>
 
         <div className="mb-4">

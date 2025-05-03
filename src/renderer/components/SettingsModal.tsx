@@ -16,7 +16,7 @@ export default function SettingsModal({ onClose }: Props) {
       <dialog
         open
         ref={dialogRef}
-        className="static bg-white p-6 rounded-lg shadow-lg dialog-animate focus:outline-none"
+        className="static bg-background p-6 rounded-lg shadow-lg dialog-animate focus:outline-none"
         onClick={stop}
         onKeyDown={stop}
         onKeyUp={stop}

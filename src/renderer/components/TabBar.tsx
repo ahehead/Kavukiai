@@ -64,7 +64,7 @@ const TabItem = memo(({
         flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer
         border-t-2 border-b-0 border-x-2 rounded-t-md
         ${active
-          ? 'bg-white border-gray-300'
+          ? 'bg-background border-gray-300'
           : 'bg-gray-100 border-gray-100'}
       `}
     >
