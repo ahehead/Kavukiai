@@ -140,7 +140,7 @@ export function MainScreen() {
       notify("success", `ファイルを保存: ${result.fileName}`);
       return true;                        // 保存成功
     },
-    [isDirty, activeFileId, getFileById, setCurrentFileState, updateFile, clearHistory, clearEditorHistory, notify]
+    [isDirty, activeFileId, getFileById, setCurrentFileState, updateFile, clearHistory, clearEditorHistory]
   );
 
   useEffect(() => {
@@ -224,7 +224,6 @@ export function MainScreen() {
       {/* 通知ベル */}
       <div className="flex justify-end">
         <BellButton />
-        <Toaster richColors={true} expand={true} />
       </div>
       {
         // 設定画面
@@ -232,6 +231,7 @@ export function MainScreen() {
           <SettingsModal onClose={() => setShowSettings(false)} />
         )
       }
+      <Toaster richColors={true} expand={true} offset={5} />
     </main >
   )
 }
