@@ -105,11 +105,11 @@ export function MainScreen() {
   // 保存処理（戻り値: true=保存成功 or 不要, false=キャンセル/失敗）
   const onFileSave = useCallback(
     async (): Promise<boolean> => {
-      if (!activeFileId || !isDirty) return false;
+      if (!activeFileId || !isDirty) return true;
       setCurrentFileState();
 
       const f = getFileById(activeFileId);
-      if (!f) return false;
+      if (!f) return true;
 
       let filePath = f.path;
       if (!filePath) {
@@ -130,7 +130,7 @@ export function MainScreen() {
       notify("success", "ファイルを保存しました");
       return true;                        // 保存成功
     },
-    [activeFileId, isDirty, getFileById, setCurrentFileState, updateFile, clearHistory]
+    [activeFileId, isDirty, getFileById, setCurrentFileState, updateFile, clearHistory, notify]
   );
 
   useEffect(() => {
