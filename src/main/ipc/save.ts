@@ -103,22 +103,4 @@ export function registerSaveHandlers(): void {
       }
     }
   );
-
-  // 閉じる確認ダイアログ
-  ipcMain.handle(IpcChannel.ShowCloseConfirm, async (event) => {
-    // モーダル対象のウィンドウを取得
-    const win = BrowserWindow.fromWebContents(event.sender);
-    if (!win) {
-      console.error("No window found for close confirmation dialog");
-      return { response: CloseFileDialogResponse.Cancel }; // キャンセル
-    }
-    const res = await dialog.showMessageBox(win, {
-      type: "warning",
-      message: "ファイルは未保存です。保存しますか？",
-      buttons: ["保存", "保存しない", "キャンセル"],
-      defaultId: CloseFileDialogResponse.Confirm,
-      cancelId: CloseFileDialogResponse.Cancel,
-    });
-    return res; // { response: number; }
-  });
 }
