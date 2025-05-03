@@ -17,6 +17,16 @@ const conf = new Conf<ApplicationSettings>({
   defaults: createDefaultApplicationSettings(),
 });
 
+async function isGraphUnchanged(
+  filePath: string,
+  lastHash: string
+): Promise<boolean> {
+  const currentHash = await hashGraph(
+    JSON.parse(await fs.readFile(filePath, "utf-8"))
+  );
+  return currentHash === lastHash;
+}
+
 export function registerSaveHandlers(): void {
   // save dialog
   ipcMain.handle(IpcChannel.ShowSaveDialog, async (event, title) => {
@@ -56,25 +66,32 @@ export function registerSaveHandlers(): void {
       lastHash: string
     ): Promise<{ filePath: string; fileName: string } | null> => {
       try {
-        // ファイルを読み込みhashを計算、lastHashと比較
-        const fileData = await fs.readFile(filePath, "utf-8");
-        if ((await hashGraph(JSON.parse(fileData))) !== lastHash) {
-          // 確認ダイアログを表示
-          const win = BrowserWindow.fromWebContents(event.sender);
-          if (!win) {
-            console.error("No window found for save confirmation dialog");
-            return null;
-          }
-          const res = await dialog.showMessageBox(win, {
-            type: "warning",
-            message: "ファイルは変更されています。上書きしますか？",
-            buttons: ["上書き", "キャンセル"],
-            defaultId: 0,
-            cancelId: 1,
-          });
-          if (res.response === 1) {
-            // キャンセルされた場合は null を返す
-            return null;
+        // ファイルが存在するか確認
+        const fileExists = await fs
+          .access(filePath)
+          .then(() => true)
+          .catch(() => false);
+
+        if (fileExists) {
+          // ファイルを読み込みhashを計算、lastHashと比較
+          if (!(await isGraphUnchanged(filePath, lastHash))) {
+            // ファイルが変更されていたら確認ダイアログを表示
+            const win = BrowserWindow.fromWebContents(event.sender);
+            if (!win) {
+              console.error("No window found for save confirmation dialog");
+              return null;
+            }
+            const res = await dialog.showMessageBox(win, {
+              type: "warning",
+              message: "ファイルは変更されています。上書きしますか？",
+              buttons: ["上書き", "キャンセル"],
+              defaultId: 0,
+              cancelId: 1,
+            });
+            if (res.response === 1) {
+              // キャンセルされた場合は null を返す
+              return null;
+            }
           }
         }
 

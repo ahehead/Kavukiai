@@ -90,7 +90,7 @@ export async function createFile(
   return {
     id,
     title,
-    graph,
+    graph: graph,
     path: path,
     graphHash: await hashGraph(graph),
     createdAt: now,

@@ -1,7 +1,11 @@
 import { useRete } from "rete-react-plugin";
 import { createNodeEditor } from "renderer/nodeEditor/createNodeEditor";
 import { useCallback, useEffect } from "react";
-import type { NodeEditorState } from "renderer/nodeEditor/features/editor_state/historyState";
+import {
+  initializeHistoryState,
+  type NodeEditorState,
+} from "renderer/nodeEditor/features/editor_state/historyState";
+import type { GraphJsonData } from "shared/JsonType";
 
 export default function useNodeEditorSetup(
   activeFileId: string | null,
@@ -36,5 +40,16 @@ export default function useNodeEditorSetup(
     };
   }, [editorApi, setCurrentFileState]);
 
-  return { ref, setCurrentFileState };
+  const clearEditorHistory = useCallback(
+    (graph: GraphJsonData) => {
+      if (!editorApi) return;
+      editorApi.resetEditorState({
+        graph,
+        historyState: initializeHistoryState(),
+      });
+    },
+    [editorApi]
+  );
+
+  return { ref, setCurrentFileState, clearEditorHistory };
 }

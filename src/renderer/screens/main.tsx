@@ -44,7 +44,7 @@ export function MainScreen() {
   })));
 
   // Reteエディタのセットアップ
-  const { ref, setCurrentFileState } = useNodeEditorSetup(
+  const { ref, setCurrentFileState, clearEditorHistory } = useNodeEditorSetup(
     activeFileId,
     getGraphAndHistory,
     setGraphAndHistory
@@ -118,6 +118,7 @@ export function MainScreen() {
       const f = getFileById(activeFileId);
       if (!f) return true;
 
+      // filePathが無ければ、保存したことがないので、ダイアログを表示
       let filePath = f.path;
       if (!filePath) {
         filePath = await electronApiService.showSaveDialog(f.title);
@@ -131,13 +132,15 @@ export function MainScreen() {
       updateFile(activeFileId, {
         title: result.fileName,
         path: result.filePath,
+        graph: f.graph,
         graphHash: await hashGraph(f.graph)
       });
       clearHistory(activeFileId);
+      clearEditorHistory(f.graph);
       notify("success", "ファイルを保存しました");
       return true;                        // 保存成功
     },
-    [activeFileId, isDirty, getFileById, setCurrentFileState, updateFile, clearHistory, notify]
+    [activeFileId, isDirty, getFileById, setCurrentFileState, updateFile, clearHistory, clearEditorHistory, notify]
   );
 
   useEffect(() => {
