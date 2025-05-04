@@ -34,6 +34,12 @@ export async function MainWindow() {
     resizable: true,
     alwaysOnTop: windowSettings.alwaysOnTop,
     autoHideMenuBar: false,
+    titleBarStyle: "hidden",
+    titleBarOverlay: {
+      color: "rgba(0,0,0,0)", // 背景色（RGB / RGBA / HSLA も可）
+      symbolColor: "#111111", // ボタンアイコンの色（Windows 限定）
+      height: 32, // ピクセル指定も可（省略可）
+    },
 
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
