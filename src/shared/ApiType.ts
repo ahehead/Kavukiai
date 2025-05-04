@@ -13,6 +13,7 @@ export enum IpcChannel {
   ShowCloseConfirm = "show-close-confirm",
 
   FileLoadedRequest = "file-loaded-request",
+  LoadFile = "load-file",
 }
 
 export type OpenAIParams = any;

@@ -9,7 +9,8 @@ type ApiKeys =
   | "takeAppStateSnapshot"
   | "onOpenSettings"
   | "onSaveGraphInitiate"
-  | "onFileLoadedRequest";
+  | "onFileLoadedRequest"
+  | "loadFile";
 
 type ElectronService = Pick<typeof App, ApiKeys>;
 
