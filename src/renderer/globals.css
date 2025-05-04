@@ -4,6 +4,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@import "./styles/font.css";
+
+
 :root {
   --background: rgb(248, 251, 252);
   --foreground: rgb(21, 21, 31);
@@ -137,6 +140,7 @@
     -webkit-app-region: no-drag;
     -webkit-font-smoothing: antialiased;
   }
+
 }
 
 @layer components {

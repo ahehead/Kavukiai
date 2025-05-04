@@ -1,0 +1,35 @@
+/*　入力用 日本語＋アイコン */
+@font-face {
+  font-family: "HackGen Nerd";
+  src: url("../../resources/public/font/HackGen35ConsoleNF-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+/* UI用　英語 */
+@font-face {
+  font-family: "IBMPlexMono";
+  src: url("../../resources/public/font/IBMPlexMono-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+/* 本文用　日本語 */
+@font-face {
+  font-family: "MPLUS1p";
+  src: url("../../resources/public/font/MPLUS1p-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  /* UI：まず英字フォント、和文とアイコンは HackGen NF */
+  --font-ui: "IBMPlexMono", "HackGen NF", monospace;
+
+  /* 入力欄：HackGen NF を先頭にして全角幅揃え＆アイコン確実 */
+  --font-input: "HackGen NF", "IBMPlexMono", monospace;
+
+  /* 記事：和文優先で柔らかいゴシック＋欧文は IBM Plex Sans */
+  --font-article: "MPLUS1p", "IBM Plex Sans", "HackGen NF", system-ui, sans-serif;
+}
+
+body, nav, table, button        { font-family: var(--font-ui);    font-feature-settings:"liga" 1 }
+textarea, input, code, pre      { font-family: var(--font-input);  font-feature-settings:"liga" 1 }
+article, .doc, .markdown        { font-family: var(--font-article); }
