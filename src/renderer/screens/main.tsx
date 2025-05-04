@@ -13,6 +13,9 @@ import { useShallow } from 'zustand/react/shallow'
 import { useCallback, useEffect, useState } from 'react';
 import { CloseFileDialogResponse } from 'shared/ApiType';
 import { electronApiService } from 'renderer/services/appService';
+import { Button } from 'renderer/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from 'renderer/components/ui/dropdown-menu';
+import type { GraphJsonData } from 'shared/JsonType';
 
 
 
@@ -62,6 +65,22 @@ export function MainScreen() {
       setMainState(res);
     });
   }, [setMainState]);
+
+  useEffect(() => {
+    // useMainStoreに変更があったら、アプリの状態をスナップショットする
+    const unsubscribe = useMainStore.subscribe(
+      (s) => ({
+        version: s.version,
+        files: s.files,
+        settings: { ui: s.settings.ui },
+        activeFileId: s.activeFileId,
+      }),
+      (appState) => {
+        electronApiService.takeAppStateSnapshot(convertMainToPersistedMain(appState));
+      }
+    );
+    return () => { unsubscribe(); };
+  }, []);
 
   const handleNewFile = async () => {
     // 新規作成前に、現在のファイル状態を保存
@@ -143,8 +162,9 @@ export function MainScreen() {
     [isDirty, activeFileId, getFileById, setCurrentFileState, updateFile, clearHistory, clearEditorHistory]
   );
 
-  useEffect(() => {
-    const unsub = electronApiService.onFileLoadedRequest(async (e, path, fileName, json) => {
+  // ファイルを読み込む処理
+  const onLoadFile = useCallback(
+    async (path: string, fileName: string, json: GraphJsonData) => {
       // ファイル読み込み前に、現在のファイル状態をMainStoreに反映
       setCurrentFileState();
       // 同じハッシュのファイルが有れば、それにフォーカスして終了
@@ -160,93 +180,109 @@ export function MainScreen() {
       const file = await createFile(id, fileName, json, path);
       addFile(file);
       setActiveFileId(id);
+    }, [files, setCurrentFileState, addFile, setActiveFileId]);
+
+
+  // mainからのファイル読み込み通知を受け取り、ファイルを開く
+  useEffect(() => {
+    const unsub = electronApiService.onFileLoadedRequest(async (e, path, fileName, json) => {
+      await onLoadFile(path, fileName, json);
     });
     return () => { unsub() };
-  }, [files, addFile, setActiveFileId, setCurrentFileState]);
+  }, [onLoadFile]);
 
   useEffect(() => {
     // 設定画面オープン指示
     const unsubOpen = electronApiService.onOpenSettings(() => {
       setShowSettings(true);
     });
-
-    // useMainStoreに変更があったら、アプリの状態をスナップショットする
-    const unsubscribe = useMainStore.subscribe(
-      (s) => ({
-        version: s.version,
-        files: s.files,
-        settings: { ui: s.settings.ui },
-        activeFileId: s.activeFileId,
-      }),
-      (appState) => {
-        electronApiService.takeAppStateSnapshot(convertMainToPersistedMain(appState));
-      }
-    );
-    return () => {
-      unsubOpen();
-      unsubscribe();
-    };
+    return () => { unsubOpen(); };
   }, [setShowSettings]);
 
   useEffect(() => {
-    // mainからの保存指示を受け取る
+    // mainからの保存指示を受け取り、現在開いているファイルを保存
     const unsubSave = electronApiService.onSaveGraphInitiate(async () => await onFileSave(activeFileId));
     return () => { unsubSave() };
   }, [activeFileId, onFileSave]);
 
+  // ファイルを開くボタン
+  const handleLoadFile = useCallback(async () => {
+    const result = await electronApiService.loadFile();
+    if (result) {
+      await onLoadFile(result.path, result.name, result.json);
+    }
+  }, [onLoadFile]);
+
   return (
-    <main className="flex flex-col fixed inset-0 border-t">
-      {files.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center bg-blue-100 border-8 rounded-lg border-white">
-          <div className='flex flex-col items-start dialog-animate-up'>
-            <ul className=''>
-              <li className="mb-2  rounded hover:bg-gray-100 bg-background">
-                <button
-                  className="px-4 py-2"
-                  onClick={handleNewFile}
-                >
-                  ・ 新規作成
-                </button>
-              </li>
-              <li className='mb-2 bg-background rounded hover:bg-gray-100'>
-                <button
-                  className="px-4 py-2"
-                  onClick={handleNewFile}
-                >
-                  ・ テンプレートから作成
-                </button>
-              </li>
-            </ul>
+    <div className="flex flex-col fixed inset-0">
+      {/* タイトルバー */}
+      <div className="flex titlebar bg-titlebar" >
+        <DropdownMenu>
+          <DropdownMenuTrigger className='focus:outline-none'>
+            <Button className='text-foreground font-bold focus:outline-none' variant={"ghost"}>File</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={async () => await onFileSave(activeFileId)}>Save</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLoadFile}>Open</DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      {/* メインコンテンツ */}
+      <main className="flex flex-1 flex-col border-t">
+        {files.length === 0 ? (
+          <div className="flex-1 flex items-center justify-center bg-blue-100 border-8 rounded-lg border-white">
+            <div className='flex flex-col items-start dialog-animate-up'>
+              <ul className=''>
+                <li className="mb-2  rounded hover:bg-gray-100 bg-background">
+                  <button
+                    className="px-4 py-2"
+                    onClick={handleNewFile}
+                  >
+                    ・ 新規作成
+                  </button>
+                </li>
+                <li className='mb-2 bg-background rounded hover:bg-gray-100'>
+                  <button
+                    className="px-4 py-2"
+                    onClick={handleNewFile}
+                  >
+                    ・ テンプレートから作成
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
+        ) : (
+          <TabBar
+            files={files}
+            activeFileId={activeFileId}
+            onSelect={handleSelect}
+            onClose={handleCloseFile}
+            onNewFile={handleNewFile}
+          />
+        )}
+        {/* editor: 常にレンダーする。ファイルなし時はdisplay none */}
+        <div
+          className="App flex-1 w-full h-full"
+          style={{ display: files.length === 0 ? 'none' : 'block' }}
+        >
+          <div ref={ref} className="w-full h-full" />
         </div>
-      ) : (
-        <TabBar
-          files={files}
-          activeFileId={activeFileId}
-          onSelect={handleSelect}
-          onClose={handleCloseFile}
-          onNewFile={handleNewFile}
-        />
-      )}
-      {/* editor: 常にレンダーする。ファイルなし時はdisplay none */}
-      <div
-        className="App flex-1 w-full h-full"
-        style={{ display: files.length === 0 ? 'none' : 'block' }}
-      >
-        <div ref={ref} className="w-full h-full" />
-      </div>
-      {/* 通知ベル */}
-      <div className=" justify-end bg-gray-100 "
-        style={{ display: files.length === 0 ? 'none' : "flex" }}>
-        <BellButton />
-      </div>
-      {
-        // 設定画面
-        showSettings && (
-          <SettingsModal onClose={() => setShowSettings(false)} />
-        )
-      }
-      <Toaster richColors={true} expand={true} offset={5} />
-    </main >
+        {/* 通知ベル */}
+        <div className=" justify-end bg-gray-100 "
+          style={{ display: files.length === 0 ? 'none' : "flex" }}>
+          <BellButton />
+        </div>
+        {
+          // 設定画面
+          showSettings && (
+            <SettingsModal onClose={() => setShowSettings(false)} />
+          )
+        }
+        <Toaster richColors={true} expand={true} offset={5} />
+      </main >
+    </div>
   )
 }
