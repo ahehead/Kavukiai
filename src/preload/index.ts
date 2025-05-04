@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { IpcChannel, type OpenAIParams } from "shared/ApiType";
+import { type FileData, IpcChannel, type OpenAIParams } from "shared/ApiType";
 import type {
   ApiKeysFlags,
   MainState,
@@ -66,19 +66,15 @@ const API = {
   onFileLoadedRequest: (
     callback: (
       e: Electron.IpcRendererEvent,
-      path: string,
-      name: string,
-      json: GraphJsonData
+      fileData: FileData
     ) => Promise<void>
   ): (() => void) => {
     const listener = async (
       _e: Electron.IpcRendererEvent,
-      path: string,
-      name: string,
-      json: GraphJsonData
+      fileData: FileData
     ) => {
       try {
-        await callback(_e, path, name, json);
+        await callback(_e, fileData);
       } catch (e) {
         console.error("onFileLoadedRequest callback error:", e);
       }
@@ -89,11 +85,8 @@ const API = {
   },
 
   // ファイルを読み込む
-  loadFile: (): Promise<{
-    path: string;
-    name: string;
-    json: GraphJsonData;
-  } | null> => ipcRenderer.invoke(IpcChannel.LoadFile),
+  loadFile: (): Promise<FileData | null> =>
+    ipcRenderer.invoke(IpcChannel.LoadFile),
 };
 
 contextBridge.exposeInMainWorld("App", API);

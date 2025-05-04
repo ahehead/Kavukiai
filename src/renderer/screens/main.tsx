@@ -11,7 +11,7 @@ import { notify } from 'renderer/features/toast-notice/notify';
 import BellButton from 'renderer/features/toast-notice/BellButton';
 import { useShallow } from 'zustand/react/shallow'
 import { useCallback, useEffect, useState } from 'react';
-import { CloseFileDialogResponse } from 'shared/ApiType';
+import { CloseFileDialogResponse, type FileData } from 'shared/ApiType';
 import { electronApiService } from 'renderer/services/appService';
 import { Button } from 'renderer/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from 'renderer/components/ui/dropdown-menu';
@@ -164,7 +164,7 @@ export function MainScreen() {
 
   // ファイルを読み込む処理
   const onLoadFile = useCallback(
-    async (path: string, fileName: string, json: GraphJsonData) => {
+    async ({ filePath, fileName, json }: FileData) => {
       // ファイル読み込み前に、現在のファイル状態をMainStoreに反映
       setCurrentFileState();
       // 同じハッシュのファイルが有れば、それにフォーカスして終了
@@ -177,7 +177,7 @@ export function MainScreen() {
 
       // ファイルの新規作成
       const id = crypto.randomUUID();
-      const file = await createFile(id, fileName, json, path);
+      const file = await createFile(id, fileName, json, filePath);
       addFile(file);
       setActiveFileId(id);
     }, [files, setCurrentFileState, addFile, setActiveFileId]);
@@ -185,17 +185,13 @@ export function MainScreen() {
 
   // mainからのファイル読み込み通知を受け取り、ファイルを開く
   useEffect(() => {
-    const unsub = electronApiService.onFileLoadedRequest(async (e, path, fileName, json) => {
-      await onLoadFile(path, fileName, json);
-    });
+    const unsub = electronApiService.onFileLoadedRequest(async (e, fileData) => await onLoadFile(fileData));
     return () => { unsub() };
   }, [onLoadFile]);
 
   useEffect(() => {
     // 設定画面オープン指示
-    const unsubOpen = electronApiService.onOpenSettings(() => {
-      setShowSettings(true);
-    });
+    const unsubOpen = electronApiService.onOpenSettings(() => setShowSettings(true));
     return () => { unsubOpen(); };
   }, [setShowSettings]);
 
@@ -209,7 +205,7 @@ export function MainScreen() {
   const handleLoadFile = useCallback(async () => {
     const result = await electronApiService.loadFile();
     if (result) {
-      await onLoadFile(result.path, result.name, result.json);
+      await onLoadFile(result);
     }
   }, [onLoadFile]);
 

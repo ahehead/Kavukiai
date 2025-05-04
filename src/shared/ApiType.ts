@@ -1,3 +1,5 @@
+import type { GraphJsonData } from "./JsonType";
+
 export enum IpcChannel {
   LoadSnapshot = "load-snapshot",
   SaveSnapshot = "save-snapshot",
@@ -37,3 +39,10 @@ export enum CloseFileDialogResponse {
   DoNotSave = 1,
   Cancel = 2,
 }
+
+// apiでやり取りするFile情報
+export type FileData = {
+  filePath: string;
+  fileName: string;
+  json: GraphJsonData;
+};
