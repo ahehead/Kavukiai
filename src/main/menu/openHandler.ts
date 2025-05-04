@@ -11,6 +11,15 @@ import { IpcChannel } from "shared/ApiType";
 import type { GraphJsonData } from "shared/JsonType";
 
 export async function handleOpenFile(window: BrowserWindow) {
+  window.webContents.send(
+    IpcChannel.FileLoadedRequest,
+    await openDialogAndReadFile(window)
+  );
+}
+
+export async function openDialogAndReadFile(
+  window: BrowserWindow
+): Promise<{ path: string; name: string; json: GraphJsonData } | null> {
   const conf = new Conf<ApplicationSettings>({
     name: ConfFileName.ApplicationSettings,
     defaults: createDefaultApplicationSettings(),
@@ -20,13 +29,12 @@ export async function handleOpenFile(window: BrowserWindow) {
     properties: ["openFile"],
     filters: [{ name: "JSON", extensions: ["json"] }],
   });
-  if (canceled || filePaths.length === 0) return;
+  if (canceled || filePaths.length === 0) return null;
   const content = await fs.readFile(filePaths[0], "utf-8");
   conf.set("systemSettings.lastDir", path.dirname(filePaths[0]));
-  window.webContents.send(
-    IpcChannel.FileLoadedRequest,
-    filePaths[0],
-    path.parse(filePaths[0]).name,
-    JSON.parse(content) as GraphJsonData
-  );
+  return {
+    path: filePaths[0],
+    name: path.parse(filePaths[0]).name,
+    json: JSON.parse(content) as GraphJsonData,
+  };
 }
