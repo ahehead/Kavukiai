@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { X, Plus, Circle } from 'lucide-react';
 import type { File } from 'shared/AppType';
 import { useIsFileDirty } from '../features/dirty-check/useIsFileDirty';
+import { UIButton } from './atom/IconButton';
 
 
 export default function TabBar({
@@ -31,12 +32,11 @@ export default function TabBar({
         ))}
       </div>
       <div className="flex flex-1 items-center pl-2 flex-shrink-0 focus:outline-0">
-        <button
+        <UIButton
           onClick={onNewFile}
-          className="w-5 h-5 flex items-center justify-center focus:outline-0 hover:bg-gray-300 rounded-md"
         >
-          <Plus className="w-4 h-4" />
-        </button>
+          <Plus className="icon-base-size" />
+        </UIButton>
       </div>
     </div>
   );
@@ -64,24 +64,22 @@ const TabItem = memo(({
         flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer
         border-t-2 border-b-0 border-x-2 rounded-t-md
         ${active
-          ? 'bg-background border-gray-300'
-          : 'bg-gray-100 border-gray-100'}
+          ? 'bg-background '
+          : 'bg-gray-100 '}
       `}
     >
       <span className="flex-shrink min-w-0 truncate whitespace-nowrap mr-1">
         {file.title}
       </span>
-      {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-      <span
+      <UIButton
         onClick={e => onClose(file.id, e)}
-        className="flex-shrink-0 w-5 h-5 flex items-center justify-center hover:bg-gray-300 rounded-md"
       >
         {isDirty ? (
-          <Circle className="w-3 h-3" fill="#4a5565" />
+          <Circle className="close-icon-maru" />
         ) : (
-          <X className="w-4 h-4" />
+          <X className="icon-base-size" />
         )}
-      </span>
+      </UIButton>
     </div>
   );
 });
