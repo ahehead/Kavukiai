@@ -1,4 +1,3 @@
-
 import type { ClassicPreset } from 'rete'
 import TriangleIcon from 'src/resources/public/triangleIcon/triangle.svg?react'
 
@@ -18,7 +17,11 @@ export function CustomExecSocket<T extends ClassicPreset.Socket>(props: {
         "
         title={data.name}
       >
-        <TriangleIcon stroke="#424242" fill="#F5D76E" className="w-[16px] h-[16px]" />
+        <TriangleIcon
+          className="w-[16px] h-[16px]
+                     fill-[var(--color-execSocket)]
+                     stroke-[#f2ffee]"
+        />
       </div>
     </div>
   )
