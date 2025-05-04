@@ -2,7 +2,7 @@ import SettingsModal from 'renderer/components/SettingsModal';
 import TabBar from 'renderer/components/TabBar';
 import useNodeEditorSetup from 'renderer/hooks/useNodeEditorSetup';
 import { type MainState, convertMainToPersistedMain, createFile } from 'shared/AppType';
-import { getNewActiveFileId } from "renderer/utils/tabs";
+import { getNewActiveFileId } from "renderer/features/tab/getNewFileId";
 import useMainStore from 'renderer/hooks/MainStore';
 import { useIsFileDirty, isFileDirty } from '../features/dirty-check/useIsFileDirty';
 import { hashGraph } from 'renderer/features/dirty-check/hash';
