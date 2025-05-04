@@ -31,6 +31,7 @@ const API = {
     return () => ipcRenderer.removeListener(IpcChannel.OpenSettings, listener);
   },
 
+  // mainからのセーブリクエスト
   onSaveGraphInitiate: (callback: () => Promise<boolean>): (() => void) => {
     const listener = async () => {
       try {
@@ -61,7 +62,7 @@ const API = {
       response: number;
     }>,
 
-  // menuのファイル読み込みからの通知
+  // mainからのファイル読み込み通知
   onFileLoadedRequest: (
     callback: (
       e: Electron.IpcRendererEvent,
@@ -86,6 +87,13 @@ const API = {
     return () =>
       ipcRenderer.removeListener(IpcChannel.FileLoadedRequest, listener);
   },
+
+  // ファイルを読み込む
+  loadFile: (): Promise<{
+    path: string;
+    name: string;
+    json: GraphJsonData;
+  } | null> => ipcRenderer.invoke(IpcChannel.LoadFile),
 };
 
 contextBridge.exposeInMainWorld("App", API);
