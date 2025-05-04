@@ -1,29 +1,42 @@
 @import "tailwindcss";
-
-@plugin 'tailwindcss-animate';
+@import "./styles/font.css";
+@import "./styles/node.css";
+@import "./styles/titlebar.css";
 
 @custom-variant dark (&:is(.dark *));
 
-@import "./styles/font.css";
-
+/* ------------------------------------------------------------------
+ *  Core + Semantic Tokens
+ *  (light theme overrides below)
+ * ----------------------------------------------------------------*/
 
 :root {
-  --background: rgb(248, 251, 252);
-  --foreground: rgb(21, 21, 31);
+  --spacing: 0.25rem;
+
+  --titlebar: rgb(177, 203, 246);
+  --background: rgb(255, 254, 251);
+  --foreground: rgb(21 21 31);
+
+  --sidebar: rgb(228 234 255);
+  --sidebar-foreground: oklch(0.145 0 0);
+
+  --primary: rgb(27 76 156);
+  --primary-foreground: oklch(0.145 0 0);
+
+  --accent: rgb(182, 216, 230);
+  --accent-foreground: oklch(0.145 0 0);
+
+  --destructive: rgb(185 18 49);
+  --destructive-foreground: oklch(0.985 0 0);
+
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
@@ -33,55 +46,38 @@
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-
-  --dataSocket: rgb(27, 76, 156);
-  --execSocket: rgb(242, 153, 82);
 }
 
+/* ------------------------------------------------------------------
+ *  Dark theme overrides – 未指定カラーは従来値のまま
+ * ----------------------------------------------------------------*/
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+
+  --primary: oklch(0.488 0.243 264.376);
+  --primary-foreground: oklch(0.985 0 0);
+
+  --accent: oklch(0.488 0.243 264.376);
+  --accent-foreground: oklch(0.985 0 0);
+
+  --destructive: rgb(185 18 49);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
 }
 
+/* ------------------------------------------------------------------
+ *  Theme → CSS var マッピング (変更なし)
+ * ----------------------------------------------------------------*/
 @theme inline {
+  --color-titlebar: var(--titlebar);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -118,11 +114,27 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-
   --color-dataSocket: var(--dataSocket);
   --color-execSocket: var(--execSocket);
 }
 
+@layer utilities {
+  .close-icon-maru {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
+    fill: var(--foreground);
+    opacity: 0.5;
+  }
+  .icon-base-size {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
+  }
+}
+
+/* ------------------------------------------------------------------
+ *  Rest of the original layers (base/components/animations)
+ *  ここから下は元コードをそのまま残しています
+ * ----------------------------------------------------------------*/
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -140,29 +152,42 @@
     -webkit-app-region: no-drag;
     -webkit-font-smoothing: antialiased;
   }
-
 }
 
 @layer components {
   @keyframes modal-slide-right {
-    from { transform: translateX(-8px); opacity: 0.3; }
-    to   { transform: translateX(0);    opacity: 1; }
+    from {
+      transform: translateX(-8px);
+      opacity: 0.3;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
   }
   .dialog-animate {
     animation: modal-slide-right 230ms ease-out forwards;
   }
   @keyframes overlay-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   .overlay-animate {
     animation: overlay-fade-in 230ms ease-out forwards;
   }
-
-  /* slide up */
   @keyframes modal-slide-up {
-    from { transform: translateY(12px); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
+    from {
+      transform: translateY(12px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
   .dialog-animate-up {
     animation: modal-slide-up 310ms ease-out forwards;
@@ -170,6 +195,6 @@
 }
 
 dialog::backdrop {
-  background-color: rgba(255,255,255,0.8);
+  background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(5px);
 }
