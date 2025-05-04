@@ -14,7 +14,6 @@ class TextAreaAction implements HistoryAction {
   ) { }
   async undo() {
     this.control.setValue(this.prev);
-    this.control.area?.update("control", this.control.id);
   }
   async redo() {
     this.control.setValue(this.next);
@@ -71,7 +70,6 @@ export function TextAreaControllView(props: {
               new TextAreaAction(control, prevText, uiText)
             );
           }
-          console.log("blur", uiText);
         }}
         onChange={control.editable ? (e) => {
           const v = e.target.value;
@@ -87,7 +85,6 @@ export function TextAreaControllView(props: {
         } : undefined}
         className={`resize-none w-full h-full p-2 border-none focus:border-none focus:outline-none ring-1 focus:ring-2 ring-gray-500 rounded-md ${!control.editable ? "cursor-not-allowed" : ""
           }`}
-        rows={5}
       />
     </Drag.NoDrag>
   );
