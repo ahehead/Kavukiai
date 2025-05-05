@@ -92,6 +92,9 @@ importers:
       zustand:
         specifier: ^5.0.3
         version: 5.0.3(@types/react@19.0.10)(react@19.0.0)
+      zustand-debounce:
+        specifier: ^2.2.0
+        version: 2.2.0(zustand@5.0.3(@types/react@19.0.10)(react@19.0.0))
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.9.4
@@ -4048,6 +4051,11 @@ packages:
   zip-stream@4.1.1:
     resolution: {integrity: sha512-9qv4rlDiopXg4E69k+vMHjNN63YFMe9sZMrdlvKnCjlCRWeCBswPPMPUfx+ipsAWq1LXHe70RcbaHdJJpS6hyQ==}
     engines: {node: '>= 10'}
+
+  zustand-debounce@2.2.0:
+    resolution: {integrity: sha512-6r6ZHwYqZVlxiyBr6nqcy3DLOmbc84Sxe3Sk8SzV8VYvM5ck+Lhbebehz/gsULRZlGCEGsANksqhnB8O6rWrzQ==}
+    peerDependencies:
+      zustand: '>=4.0.0'
 
   zustand@5.0.3:
     resolution: {integrity: sha512-14fwWQtU3pH4dE0dOpdMiWjddcH+QzKIgk1cl8epwSE7yag43k/AD/m4L6+K7DytAOr9gGBe3/EXj9g7cdostg==}
@@ -8179,6 +8187,10 @@ snapshots:
       archiver-utils: 3.0.4
       compress-commons: 4.1.2
       readable-stream: 3.6.2
+
+  zustand-debounce@2.2.0(zustand@5.0.3(@types/react@19.0.10)(react@19.0.0)):
+    dependencies:
+      zustand: 5.0.3(@types/react@19.0.10)(react@19.0.0)
 
   zustand@5.0.3(@types/react@19.0.10)(react@19.0.0):
     optionalDependencies:
