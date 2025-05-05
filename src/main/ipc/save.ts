@@ -12,6 +12,7 @@ import {
 } from "main/types";
 import { hashGraph } from "renderer/features/dirty-check/hash";
 import { getWindow } from "main/features/window";
+import { getDefaultSavePath } from "main/features/file/lastDirPath";
 
 const conf = new Conf<ApplicationSettings>({
   name: ConfFileName.ApplicationSettings,
@@ -29,29 +30,25 @@ async function isGraphUnchanged(
 }
 
 export function registerSaveHandlers(): void {
-  // save dialog
+  // 保存時にダイアログを表示
   ipcMain.handle(IpcChannel.ShowSaveDialog, async (event, title) => {
-    const lastSaveDir = conf.get("systemSettings.lastDir") as string | null;
-
-    const defaultPath = lastSaveDir
-      ? path.join(lastSaveDir, `${title}.json`)
-      : path.join(os.homedir(), `${title}.json`);
-
     const { canceled, filePath } = await dialog.showSaveDialog(
       getWindow(event.sender),
       {
         filters: [{ name: "JSON", extensions: ["json"] }],
-        defaultPath,
+        defaultPath: getDefaultSavePath(conf, title),
         properties: ["showOverwriteConfirmation"],
       }
     );
+
+    // キャンセルされた場合は null を返す
+    if (canceled) return null;
 
     if (filePath) {
       // 最後に保存したフォルダのパスを記憶
       conf.set("systemSettings.lastDir", path.dirname(filePath));
     }
-    // キャンセルされた場合は null を返す
-    return canceled ? null : filePath;
+    return filePath;
   });
 
   // save json data

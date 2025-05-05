@@ -9,6 +9,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { FileData } from "shared/ApiType";
 import type { GraphJsonData } from "shared/JsonType";
+import { getLastDir } from "./file/lastDirPath";
 
 export async function openDialogAndReadFile(
   window: BrowserWindow
@@ -19,7 +20,7 @@ export async function openDialogAndReadFile(
   });
 
   const { canceled, filePaths } = await dialog.showOpenDialog(window, {
-    defaultPath: conf.get("systemSettings.lastDir"),
+    defaultPath: getLastDir(conf),
     properties: ["openFile"],
     filters: [{ name: "JSON", extensions: ["json"] }],
   });
