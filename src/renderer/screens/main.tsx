@@ -140,8 +140,7 @@ export function MainScreen() {
       }
 
       // 同じファイルを上書きするときだけ lastHash を送る
-      const sameFile = filePath === f.path;
-      const lastHash = sameFile ? f.graphHash : undefined;
+      const lastHash = (filePath === f.path) ? f.graphHash : undefined;
 
       // グラフを保存
       const result = await electronApiService.saveGraphJsonData(filePath, f.graph, lastHash);
