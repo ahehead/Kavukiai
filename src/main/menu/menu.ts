@@ -4,7 +4,7 @@ import {
   type MenuItemConstructorOptions,
 } from "electron";
 import { IpcChannel } from "shared/ApiType";
-import { handleOpenFile } from "./openHandler";
+import { openDialogAndReadFile } from "main/features/openFile";
 
 export function createAppMenu(window: BrowserWindow) {
   const template: MenuItemConstructorOptions[] = [
@@ -15,7 +15,10 @@ export function createAppMenu(window: BrowserWindow) {
           label: "Open",
           accelerator: "CmdOrCtrl+O",
           click: async () => {
-            await handleOpenFile(window);
+            window.webContents.send(
+              IpcChannel.FileLoadedRequest,
+              await openDialogAndReadFile(window)
+            );
           },
         },
         {

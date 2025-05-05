@@ -202,9 +202,8 @@ export function MainScreen() {
   // ファイルを開くボタン
   const handleLoadFile = useCallback(async () => {
     const result = await electronApiService.loadFile();
-    if (result) {
-      await onLoadFile(result);
-    }
+    if (!result) return;
+    await onLoadFile(result);
   }, [onLoadFile]);
 
   return (
@@ -212,8 +211,13 @@ export function MainScreen() {
       {/* タイトルバー */}
       <div className="flex titlebar bg-titlebar" >
         <DropdownMenu>
-          <DropdownMenuTrigger className='focus:outline-none'>
-            <Button className='text-foreground font-bold focus:outline-none' variant={"ghost"}>File</Button>
+          <DropdownMenuTrigger asChild>
+            <Button
+              className='text-foreground font-bold '
+              variant="ghost"
+            >
+              File
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuGroup>
