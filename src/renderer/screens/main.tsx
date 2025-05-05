@@ -1,7 +1,6 @@
 import SettingsModal from 'renderer/components/SettingsModal';
 import TabBar from 'renderer/features/tab/TabBar';
 import useNodeEditorSetup from 'renderer/hooks/useNodeEditorSetup';
-import { createFile } from 'shared/AppType';
 import useMainStore from 'renderer/hooks/MainStore';
 import { Toaster } from 'sonner';
 import BellButton from 'renderer/features/toast-notice/BellButton';
@@ -46,7 +45,7 @@ export function MainScreen() {
     setGraphAndHistory
   );
 
-  const { saveFile, closeFile, loadFile } = useFileOperations(
+  const { saveFile, closeFile, loadFile, newFile } = useFileOperations(
     files,
     activeFileId,
     setCurrentFileState,
@@ -81,10 +80,7 @@ export function MainScreen() {
   }, [activeFileId, saveFile]);
 
   const handleNewFile = async () => {
-    // 新規作成前に、現在のファイル状態を保存
-    setCurrentFileState();
-    const title = `workspace-${files.length + 1}`;
-    addFile(await createFile(title));
+    newFile();
   };
 
   // タブ選択

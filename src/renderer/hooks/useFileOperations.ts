@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import useMainStore from "../hooks/MainStore";
 import { electronApiService } from "../services/appService";
 import { isFileDirty } from "../features/dirty-check/useIsFileDirty";
 import { hashGraph } from "../features/dirty-check/hash";
@@ -119,5 +118,12 @@ export function useFileOperations(
     [files]
   );
 
-  return { saveFile, loadFile, closeFile };
+  const newFile = useCallback(async () => {
+    // 新規作成前に、現在のファイル状態を保存
+    setCurrentFileState();
+    const title = `workspace-${files.length + 1}`;
+    addFile(await createFile(title));
+  }, [addFile, setCurrentFileState]);
+
+  return { saveFile, loadFile, closeFile, newFile };
 }
