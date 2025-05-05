@@ -1,10 +1,10 @@
 import SettingsModal from 'renderer/components/SettingsModal';
 import TabBar from 'renderer/features/tab/TabBar';
 import useNodeEditorSetup from 'renderer/hooks/useNodeEditorSetup';
-import { type MainState, convertMainToPersistedMain, createFile } from 'shared/AppType';
+import { createFile } from 'shared/AppType';
 import { getNewActiveFileId } from "renderer/features/tab/getNewFileId";
 import useMainStore from 'renderer/hooks/MainStore';
-import { useIsFileDirty, isFileDirty } from '../features/dirty-check/useIsFileDirty';
+import { isFileDirty } from '../features/dirty-check/useIsFileDirty';
 import { hashGraph } from 'renderer/features/dirty-check/hash';
 import { Toaster } from 'sonner';
 import { notify } from 'renderer/features/toast-notice/notify';
