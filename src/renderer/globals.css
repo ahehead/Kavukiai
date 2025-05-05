@@ -120,14 +120,18 @@
 
 @layer utilities {
   .close-icon-maru {
-    width: calc(var(--spacing) * 3.5);
-    height: calc(var(--spacing) * 3.5);
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
     fill: var(--foreground);
     opacity: 0.5;
   }
   .icon-base-size {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
+  }
+  .icon-size-md {
+    width: calc(var(--spacing) * 5);
+    height: calc(var(--spacing) * 5);
   }
 }
 
