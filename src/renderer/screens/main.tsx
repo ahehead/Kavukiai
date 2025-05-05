@@ -1,5 +1,5 @@
 import SettingsModal from 'renderer/components/SettingsModal';
-import TabBar from 'renderer/components/TabBar';
+import TabBar from 'renderer/features/tab/TabBar';
 import useNodeEditorSetup from 'renderer/hooks/useNodeEditorSetup';
 import { type MainState, convertMainToPersistedMain, createFile } from 'shared/AppType';
 import { getNewActiveFileId } from "renderer/features/tab/getNewFileId";
@@ -85,13 +85,8 @@ export function MainScreen() {
   const handleNewFile = async () => {
     // 新規作成前に、現在のファイル状態を保存
     setCurrentFileState();
-    //setActiveFileId(null);
-
-    const id = crypto.randomUUID();
-    const title = `Untitled-${files.length + 1}`;
-    const file = await createFile(id, title);
-    addFile(file);
-    setActiveFileId(id);
+    const title = `workspace-${files.length + 1}`;
+    addFile(await createFile(title));
   };
 
   // タブ選択
@@ -130,11 +125,12 @@ export function MainScreen() {
   // 保存処理（戻り値: true=保存成功 or 不要, false=キャンセル/失敗）
   const onFileSave = useCallback(
     async (fileId: string | null): Promise<boolean> => {
-      if (!fileId || !isDirty) return true;
+      if (!fileId) return true;
       setCurrentFileState();
-
       const f = getFileById(fileId);
       if (!f) return true;
+
+      if (!await isFileDirty(f)) return true;
 
       // filePathが無ければ、保存したことがないので、ダイアログを表示
       let filePath = f.path;
@@ -159,8 +155,15 @@ export function MainScreen() {
       notify("success", `ファイルを保存: ${result.fileName}`);
       return true;                        // 保存成功
     },
-    [isDirty, activeFileId, getFileById, setCurrentFileState, updateFile, clearHistory, clearEditorHistory]
+    [activeFileId, getFileById, setCurrentFileState, updateFile, clearHistory, clearEditorHistory]
   );
+
+  const getSameFile = useCallback(
+    async (json: GraphJsonData) => {
+      const hash = await hashGraph(json);
+      const sameFile = files.find((f) => f.graphHash === hash);
+      return sameFile;
+    }, [files]);
 
   // ファイルを読み込む処理
   const onLoadFile = useCallback(
@@ -168,18 +171,13 @@ export function MainScreen() {
       // ファイル読み込み前に、現在のファイル状態をMainStoreに反映
       setCurrentFileState();
       // 同じハッシュのファイルが有れば、それにフォーカスして終了
-      const hash = await hashGraph(json);
-      const sameFile = files.find((f) => f.graphHash === hash);
+      const sameFile = await getSameFile(json);
       if (sameFile) {
         setActiveFileId(sameFile.id);
         return;
       }
-
       // ファイルの新規作成
-      const id = crypto.randomUUID();
-      const file = await createFile(id, fileName, json, filePath);
-      addFile(file);
-      setActiveFileId(id);
+      addFile(await createFile(fileName, json, filePath));
     }, [files, setCurrentFileState, addFile, setActiveFileId]);
 
 
