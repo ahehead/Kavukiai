@@ -3,6 +3,10 @@ import path from "node:path";
 import type { Conf } from "electron-conf/main";
 import type { ApplicationSettings } from "main/types";
 
+export function setLastDir(conf: Conf<ApplicationSettings>, dir: string): void {
+  conf.set("systemSettings.lastDir", dir);
+}
+
 /**
  * 設定から lastDir を取得し、null ならユーザーのホームディレクトリを返す
  */
