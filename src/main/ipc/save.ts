@@ -1,7 +1,7 @@
 import { ipcMain, dialog, BrowserWindow } from "electron";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { CloseFileDialogResponse, IpcChannel } from "shared/ApiType";
+import { IpcChannel } from "shared/ApiType";
 import type { GraphJsonData } from "shared/JsonType";
 import os from "node:os";
 import { Conf } from "electron-conf/main";
@@ -11,6 +11,7 @@ import {
   type ApplicationSettings,
 } from "main/types";
 import { hashGraph } from "renderer/features/dirty-check/hash";
+import { getWindow } from "main/features/window";
 
 const conf = new Conf<ApplicationSettings>({
   name: ConfFileName.ApplicationSettings,
@@ -30,23 +31,20 @@ async function isGraphUnchanged(
 export function registerSaveHandlers(): void {
   // save dialog
   ipcMain.handle(IpcChannel.ShowSaveDialog, async (event, title) => {
-    const win = BrowserWindow.fromWebContents(event.sender);
-    if (!win) {
-      console.error("No window found for save dialog");
-      return null;
-    }
-
     const lastSaveDir = conf.get("systemSettings.lastDir") as string | null;
 
     const defaultPath = lastSaveDir
       ? path.join(lastSaveDir, `${title}.json`)
       : path.join(os.homedir(), `${title}.json`);
 
-    const { canceled, filePath } = await dialog.showSaveDialog(win, {
-      filters: [{ name: "JSON", extensions: ["json"] }],
-      defaultPath,
-      properties: ["showOverwriteConfirmation"],
-    });
+    const { canceled, filePath } = await dialog.showSaveDialog(
+      getWindow(event.sender),
+      {
+        filters: [{ name: "JSON", extensions: ["json"] }],
+        defaultPath,
+        properties: ["showOverwriteConfirmation"],
+      }
+    );
 
     if (filePath) {
       // 最後に保存したフォルダのパスを記憶
@@ -76,12 +74,7 @@ export function registerSaveHandlers(): void {
           // ファイルを読み込みhashを計算、lastHashと比較
           if (!(await isGraphUnchanged(filePath, lastHash))) {
             // ファイルが変更されていたら確認ダイアログを表示
-            const win = BrowserWindow.fromWebContents(event.sender);
-            if (!win) {
-              console.error("No window found for save confirmation dialog");
-              return null;
-            }
-            const res = await dialog.showMessageBox(win, {
+            const res = await dialog.showMessageBox(getWindow(event.sender), {
               type: "warning",
               message: "ファイルは変更されています。上書きしますか？",
               buttons: ["上書き", "キャンセル"],
