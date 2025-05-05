@@ -81,14 +81,13 @@ export const createApiKeysSecrets = (): ApiKeysSecrets =>
   Object.fromEntries(providers.map((p) => [p, null])) as ApiKeysSecrets;
 
 export async function createFile(
-  id: string,
   title: string,
   graph: GraphJsonData = basic,
   path: string | null = null
 ): Promise<File> {
   const now = Date.now();
   return {
-    id,
+    id: crypto.randomUUID(),
     title,
     graph: graph,
     path: path,
