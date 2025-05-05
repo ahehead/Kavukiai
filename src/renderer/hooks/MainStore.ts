@@ -56,7 +56,8 @@ const useMainStore = create<MainStore>()(
       })),
 
     /* ---------- ファイル ---------- */
-    addFile: (file) => set((s) => ({ files: [...s.files, file] })),
+    addFile: (file) =>
+      set((s) => ({ files: [...s.files, file], activeFileId: file.id })),
 
     removeFile: (id) =>
       set((s) => ({
