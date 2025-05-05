@@ -138,8 +138,13 @@ export function MainScreen() {
         filePath = await electronApiService.showSaveDialog(f.title);
         if (!filePath) return false;      // ユーザーがキャンセル
       }
+
+      // 同じファイルを上書きするときだけ lastHash を送る
+      const sameFile = filePath === f.path;
+      const lastHash = sameFile ? f.graphHash : undefined;
+
       // グラフを保存
-      const result = await electronApiService.saveGraphJsonData(filePath, f.graph, f.graphHash);
+      const result = await electronApiService.saveGraphJsonData(filePath, f.graph, lastHash);
       if (!result) {
         notify("error", `ファイルの保存に失敗しました: ${f.title}`);
         return false;                     // 保存失敗
@@ -161,8 +166,7 @@ export function MainScreen() {
   const getSameFile = useCallback(
     async (json: GraphJsonData) => {
       const hash = await hashGraph(json);
-      const sameFile = files.find((f) => f.graphHash === hash);
-      return sameFile;
+      return files.find((f) => f.graphHash === hash);
     }, [files]);
 
   // ファイルを読み込む処理
@@ -176,7 +180,7 @@ export function MainScreen() {
         setActiveFileId(sameFile.id);
         return;
       }
-      // ファイルの新規作成
+      // ファイルの新規作成追加
       addFile(await createFile(fileName, json, filePath));
     }, [files, setCurrentFileState, addFile, setActiveFileId]);
 

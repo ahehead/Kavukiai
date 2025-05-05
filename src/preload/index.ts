@@ -52,7 +52,7 @@ const API = {
   saveGraphJsonData: (
     filePath: string,
     graph: GraphJsonData,
-    lastHash: string
+    lastHash?: string
   ): Promise<{ filePath: string; fileName: string } | null> =>
     ipcRenderer.invoke(IpcChannel.SaveJsonGraph, filePath, graph, lastHash),
 

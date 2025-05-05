@@ -57,11 +57,11 @@ export function registerSaveHandlers(): void {
       event,
       filePath: string,
       graph: GraphJsonData,
-      lastHash: string
+      lastHash?: string // lastHashは、同じファイルを上書きする時だけ
     ): Promise<{ filePath: string; fileName: string } | null> => {
       try {
-        // ファイルがあれば、上書き確認
-        if (await fileExists(filePath)) {
+        // 同名かつファイルがあれば、上書き確認
+        if (lastHash !== undefined && (await fileExists(filePath))) {
           // ファイルを読み込みhashを計算、lastHashと比較
           if (!(await isGraphUnchanged(filePath, lastHash))) {
             // ファイルが変更されていたら確認ダイアログを表示
