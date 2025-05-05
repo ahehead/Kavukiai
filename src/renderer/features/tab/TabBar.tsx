@@ -1,8 +1,8 @@
 import { memo } from 'react';
-import { X, Plus, Circle } from 'lucide-react';
 import type { File } from 'shared/AppType';
 import { useIsFileDirty } from '../dirty-check/useIsFileDirty';
-import { UIButton } from '../../components/atom/UIButton';
+import { CloseFileButton, PlusButton } from '../../components/atom/UIButton';
+
 
 
 export default function TabBar({
@@ -32,11 +32,7 @@ export default function TabBar({
         ))}
       </div>
       <div className="flex flex-1 items-center pl-2 flex-shrink-0 focus:outline-0">
-        <UIButton
-          onClick={onNewFile}
-        >
-          <Plus className="icon-base-size" />
-        </UIButton>
+        <PlusButton onClick={onNewFile} />
       </div>
     </div>
   );
@@ -71,15 +67,7 @@ const TabItem = memo(({
       <span className="flex-shrink min-w-0 truncate whitespace-nowrap mr-1">
         {file.title}
       </span>
-      <UIButton
-        onClick={e => onClose(file.id, e)}
-      >
-        {isDirty ? (
-          <Circle className="close-icon-maru" />
-        ) : (
-          <X className="icon-base-size" />
-        )}
-      </UIButton>
+      <CloseFileButton isDirty={isDirty} onClick={e => onClose(file.id, e)} />
     </div>
   );
 });
