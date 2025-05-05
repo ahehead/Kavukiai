@@ -7,6 +7,7 @@ import { hashGraph } from "renderer/features/dirty-check/hash";
 import { getWindow } from "main/features/window";
 import { getDefaultSavePath, setLastDir } from "main/features/file/lastDirPath";
 import { ApplicationSettingsConf } from "main/features/file/conf";
+import writeFileAtomic from "write-file-atomic";
 
 async function isGraphUnchanged(
   filePath: string,
@@ -77,7 +78,10 @@ export function registerSaveHandlers(): void {
           }
         }
 
-        await fs.writeFile(filePath, JSON.stringify(graph, null, 2), "utf-8");
+        await writeFileAtomic(filePath, JSON.stringify(graph, null, 2), {
+          mode: 0o600, // パーミッション
+          fsync: true, // flush する
+        });
 
         setLastDir(ApplicationSettingsConf(), path.dirname(filePath));
 
