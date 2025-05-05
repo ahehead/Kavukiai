@@ -56,32 +56,6 @@ export function MainScreen() {
   // 設定画面を表示するか
   const [showSettings, setShowSettings] = useState(false);
 
-  // 編集状況がファイルに保存済みかどうか
-  const isDirty = useIsFileDirty(activeFileId);
-
-  useEffect(() => {
-    // 起動時にアプリの状態を復元
-    electronApiService.loadAppStateSnapshot().then((res: MainState) => {
-      setMainState(res);
-    });
-  }, [setMainState]);
-
-  useEffect(() => {
-    // useMainStoreに変更があったら、アプリの状態をスナップショットする
-    const unsubscribe = useMainStore.subscribe(
-      (s) => ({
-        version: s.version,
-        files: s.files,
-        settings: { ui: s.settings.ui },
-        activeFileId: s.activeFileId,
-      }),
-      (appState) => {
-        electronApiService.takeAppStateSnapshot(convertMainToPersistedMain(appState));
-      }
-    );
-    return () => { unsubscribe(); };
-  }, []);
-
   const handleNewFile = async () => {
     // 新規作成前に、現在のファイル状態を保存
     setCurrentFileState();
