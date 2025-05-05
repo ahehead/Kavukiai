@@ -2,20 +2,15 @@ import SettingsModal from 'renderer/components/SettingsModal';
 import TabBar from 'renderer/features/tab/TabBar';
 import useNodeEditorSetup from 'renderer/hooks/useNodeEditorSetup';
 import { createFile } from 'shared/AppType';
-import { getNewActiveFileId } from "renderer/features/tab/getNewFileId";
 import useMainStore from 'renderer/hooks/MainStore';
-import { isFileDirty } from '../features/dirty-check/useIsFileDirty';
-import { hashGraph } from 'renderer/features/dirty-check/hash';
 import { Toaster } from 'sonner';
-import { notify } from 'renderer/features/toast-notice/notify';
 import BellButton from 'renderer/features/toast-notice/BellButton';
 import { useShallow } from 'zustand/react/shallow'
 import { useCallback, useEffect, useState } from 'react';
-import { CloseFileDialogResponse, type FileData } from 'shared/ApiType';
 import { electronApiService } from 'renderer/services/appService';
 import { Button } from 'renderer/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from 'renderer/components/ui/dropdown-menu';
-import type { GraphJsonData } from 'shared/JsonType';
+import { useFileOperations } from 'renderer/hooks/useFileOperations';
 
 
 
@@ -29,7 +24,6 @@ export function MainScreen() {
     setActiveFileId,
     setGraphAndHistory,
     getGraphAndHistory,
-    setMainState,
     updateFile,
     clearHistory
   } = useMainStore(useShallow(state => ({
@@ -41,7 +35,6 @@ export function MainScreen() {
     setActiveFileId: state.setActiveFileId,
     setGraphAndHistory: state.setGraphAndHistory,
     getGraphAndHistory: state.getGraphAndHistory,
-    setMainState: state.setMainState,
     updateFile: state.updateFile,
     clearHistory: state.clearHistory
   })));
@@ -53,8 +46,39 @@ export function MainScreen() {
     setGraphAndHistory
   );
 
+  const { saveFile, closeFile, loadFile } = useFileOperations(
+    files,
+    activeFileId,
+    setCurrentFileState,
+    clearEditorHistory,
+    getFileById,
+    setActiveFileId,
+    addFile,
+    removeFile,
+    updateFile,
+    clearHistory,
+  );
+
   // 設定画面を表示するか
   const [showSettings, setShowSettings] = useState(false);
+
+  // mainからのファイル読み込み通知を受け取り、ファイルを開く
+  useEffect(() => {
+    const unsub = electronApiService.onFileLoadedRequest(async (e, fileData) => await loadFile(fileData));
+    return () => { unsub() };
+  }, [loadFile]);
+
+  useEffect(() => {
+    // 設定画面オープン指示
+    const unsubOpen = electronApiService.onOpenSettings(() => setShowSettings(true));
+    return () => { unsubOpen(); };
+  }, [setShowSettings]);
+
+  useEffect(() => {
+    // mainからの保存指示を受け取り、現在開いているファイルを保存
+    const unsubSave = electronApiService.onSaveGraphInitiate(async () => await saveFile(activeFileId));
+    return () => { unsubSave() };
+  }, [activeFileId, saveFile]);
 
   const handleNewFile = async () => {
     // 新規作成前に、現在のファイル状態を保存
@@ -74,114 +98,15 @@ export function MainScreen() {
   // ファイルを閉じる
   const handleCloseFile = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    // 閉じる前に、現在の編集状態を保存
-    setCurrentFileState();
-
-    // ダーティ判定
-    if (await isFileDirty(getFileById(id))) {
-      const { response } = await electronApiService.showCloseConfirm();
-      // キャンセル
-      if (response === CloseFileDialogResponse.Cancel) return;
-      // 保存
-      if (response === CloseFileDialogResponse.Confirm) {
-        const ok = await onFileSave(id);
-        if (!ok) return;                 // キャンセル/失敗なら中断
-      }
-      // 「保存しない(response===1)」はそのまま破棄
-    }
-
-    // タブ削除 & 新規アクティブ決定
-    const nextActive = getNewActiveFileId(files, id, activeFileId);
-    removeFile(id);
-    setActiveFileId(nextActive);
+    closeFile(id);
   };
-
-  // 保存処理（戻り値: true=保存成功 or 不要, false=キャンセル/失敗）
-  const onFileSave = useCallback(
-    async (fileId: string | null): Promise<boolean> => {
-      if (!fileId) return true;
-      setCurrentFileState();
-      const f = getFileById(fileId);
-      if (!f) return true;
-
-      if (!await isFileDirty(f)) return true;
-
-      // filePathが無ければ、保存したことがないので、ダイアログを表示
-      let filePath = f.path;
-      if (!filePath) {
-        filePath = await electronApiService.showSaveDialog(f.title);
-        if (!filePath) return false;      // ユーザーがキャンセル
-      }
-
-      // 同じファイルを上書きするときだけ lastHash を送る
-      const lastHash = (filePath === f.path) ? f.graphHash : undefined;
-
-      // グラフを保存
-      const result = await electronApiService.saveGraphJsonData(filePath, f.graph, lastHash);
-      if (!result) {
-        notify("error", `ファイルの保存に失敗しました: ${f.title}`);
-        return false;                     // 保存失敗
-      }
-      updateFile(fileId, {
-        title: result.fileName,
-        path: result.filePath,
-        graph: f.graph,
-        graphHash: await hashGraph(f.graph)
-      });
-      clearHistory(fileId);
-      if (fileId === activeFileId) { clearEditorHistory(f.graph); }
-      notify("success", `ファイルを保存: ${result.fileName}`);
-      return true;                        // 保存成功
-    },
-    [activeFileId, getFileById, setCurrentFileState, updateFile, clearHistory, clearEditorHistory]
-  );
-
-  const getSameFile = useCallback(
-    async (json: GraphJsonData) => {
-      const hash = await hashGraph(json);
-      return files.find((f) => f.graphHash === hash);
-    }, [files]);
-
-  // ファイルを読み込む処理
-  const onLoadFile = useCallback(
-    async ({ filePath, fileName, json }: FileData) => {
-      // ファイル読み込み前に、現在のファイル状態をMainStoreに反映
-      setCurrentFileState();
-      // 同じハッシュのファイルが有れば、それにフォーカスして終了
-      const sameFile = await getSameFile(json);
-      if (sameFile) {
-        setActiveFileId(sameFile.id);
-        return;
-      }
-      // ファイルの新規作成追加
-      addFile(await createFile(fileName, json, filePath));
-    }, [files, setCurrentFileState, addFile, setActiveFileId]);
-
-
-  // mainからのファイル読み込み通知を受け取り、ファイルを開く
-  useEffect(() => {
-    const unsub = electronApiService.onFileLoadedRequest(async (e, fileData) => await onLoadFile(fileData));
-    return () => { unsub() };
-  }, [onLoadFile]);
-
-  useEffect(() => {
-    // 設定画面オープン指示
-    const unsubOpen = electronApiService.onOpenSettings(() => setShowSettings(true));
-    return () => { unsubOpen(); };
-  }, [setShowSettings]);
-
-  useEffect(() => {
-    // mainからの保存指示を受け取り、現在開いているファイルを保存
-    const unsubSave = electronApiService.onSaveGraphInitiate(async () => await onFileSave(activeFileId));
-    return () => { unsubSave() };
-  }, [activeFileId, onFileSave]);
 
   // ファイルを開くボタン
   const handleLoadFile = useCallback(async () => {
     const result = await electronApiService.loadFile();
     if (!result) return;
-    await onLoadFile(result);
-  }, [onLoadFile]);
+    await loadFile(result);
+  }, [loadFile]);
 
   return (
     <div className="flex flex-col fixed inset-0">
@@ -198,7 +123,7 @@ export function MainScreen() {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={async () => await onFileSave(activeFileId)}>Save</DropdownMenuItem>
+              <DropdownMenuItem onClick={async () => await saveFile(activeFileId)}>Save</DropdownMenuItem>
               <DropdownMenuItem onClick={handleLoadFile}>Open</DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
