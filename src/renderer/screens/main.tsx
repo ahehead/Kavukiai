@@ -3,7 +3,7 @@ import TabBar from 'renderer/features/tab/TabBar';
 import useNodeEditorSetup from 'renderer/hooks/useNodeEditorSetup';
 import useMainStore from 'renderer/hooks/MainStore';
 import { Toaster } from 'sonner';
-import BellButton from 'renderer/features/toast-notice/BellButton';
+import NoticeButton from 'renderer/features/toast-notice/NoticeButton';
 import { useShallow } from 'zustand/react/shallow'
 import { useCallback, useEffect, useState } from 'react';
 import { electronApiService } from 'renderer/services/appService';
@@ -167,9 +167,9 @@ export function MainScreen() {
           <div ref={ref} className="w-full h-full" />
         </div>
         {/* 通知ベル */}
-        <div className=" justify-end bg-gray-100 "
+        <div className="fixed bottom-5 right-5 "
           style={{ display: files.length === 0 ? 'none' : "flex" }}>
-          <BellButton />
+          <NoticeButton />
         </div>
         {
           // 設定画面
