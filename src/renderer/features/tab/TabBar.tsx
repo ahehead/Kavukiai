@@ -1,8 +1,8 @@
 import { memo } from 'react';
 import { X, Plus, Circle } from 'lucide-react';
 import type { File } from 'shared/AppType';
-import { useIsFileDirty } from '../features/dirty-check/useIsFileDirty';
-import { UIButton } from './atom/IconButton';
+import { useIsFileDirty } from '../dirty-check/useIsFileDirty';
+import { UIButton } from '../../components/atom/IconButton';
 
 
 export default function TabBar({
