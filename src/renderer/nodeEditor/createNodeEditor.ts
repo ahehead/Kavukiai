@@ -48,6 +48,7 @@ import {
   type NodeEditorState,
   resetEditorState,
 } from "./features/editor_state/historyState";
+import { Node } from "./custom/CustomBaseNode";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -137,7 +138,7 @@ export async function createNodeEditor(container: HTMLElement) {
           return null;
         },
         node() {
-          return CustomNodeComponent;
+          return Node;
         },
       },
     })
