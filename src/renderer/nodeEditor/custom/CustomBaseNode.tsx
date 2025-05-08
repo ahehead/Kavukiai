@@ -1,6 +1,6 @@
-import clsx from 'clsx'
 import { Presets, type RenderEmit } from 'rete-react-plugin'
 import type { Node as NodeInterface, Schemes } from '../types'
+import { NodePanel, NodePanelHeader, NodeTitle } from 'renderer/components/atom/NodePanel'
 export const $nodecolor = 'rgba(110,136,255,0.8)'
 export const $nodecolorselected = '#ffd92c'
 export const $socketsize = 24
@@ -30,24 +30,20 @@ export function Node<Scheme extends Schemes>({ data, emit }: Props<Scheme>) {
   sortByIndex(controls)
 
   return (
-    <div
+    <NodePanel
       data-testid="node"
-      className={clsx(
-        'relative cursor-pointer select-none rounded-[10px] border-2 pb-[6px]',
-        'border-[#4e58bf] bg-[rgba(110,136,255,0.8)] hover:bg-[rgba(115,141,255,0.84)]',
-        selected && 'bg-[#ffd92c] border-[#e3c000]'
-      )}
       style={{
         width: `${Number.isFinite(width) ? width : 180}px`,
         height: Number.isFinite(height) ? `${height}px` : 'auto'
       }}
     >
-      <div
-        className="title text-white text-[18px] p-[8px]"
-        data-testid="title"
-      >
-        {label}
-      </div>
+      <NodePanelHeader>
+        <NodeTitle
+          data-testid="title"
+        >
+          {label}
+        </NodeTitle>
+      </NodePanelHeader>
 
       {/* Outputs */}
       {outputs.map(([key, output]) =>
@@ -129,6 +125,6 @@ export function Node<Scheme extends Schemes>({ data, emit }: Props<Scheme>) {
       )}
 
 
-    </div>
+    </NodePanel>
   )
 }
