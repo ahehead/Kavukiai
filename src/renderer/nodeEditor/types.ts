@@ -27,12 +27,18 @@ class Connection<
   B extends Node
 > extends ClassicPreset.Connection<A, B> {
   isLoop?: boolean;
+  isExec?: boolean;
 }
 
+export class CustomSocketType extends ClassicPreset.Socket {
+  type?: string;
+}
+
+// 型参照用のインターフェイス
 export interface Node
   extends ClassicPreset.Node<
-    { [key in string]: ClassicPreset.Socket },
-    { [key in string]: ClassicPreset.Socket },
+    { [key in string]: CustomSocketType },
+    { [key in string]: CustomSocketType },
     {
       [key in string]:
         | RunButtonControl
