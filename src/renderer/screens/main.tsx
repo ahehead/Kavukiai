@@ -126,7 +126,7 @@ export function MainScreen() {
         </DropdownMenu>
       </div>
       {/* メインコンテンツ */}
-      <main className="flex flex-1 flex-col border-t">
+      <main className="flex flex-1 flex-col">
         {files.length === 0 ? (
           <div className="flex-1 flex items-center justify-center bg-blue-100 border-8 rounded-lg border-white">
             <div className='flex flex-col items-start dialog-animate-up'>
