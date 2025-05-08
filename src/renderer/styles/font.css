@@ -30,6 +30,6 @@
   --font-article: "MPLUS1p", "IBM Plex Sans", "HackGen NF", system-ui, sans-serif;
 }
 
-body, nav, table, button        { font-family: var(--font-ui);    font-feature-settings:"liga" 1 }
+body, nav, table, button        { font-family: var(--font-ui); }
 textarea, input, code, pre      { font-family: var(--font-input);  font-feature-settings:"liga" 1 }
 article, .doc, .markdown        { font-family: var(--font-article); }
