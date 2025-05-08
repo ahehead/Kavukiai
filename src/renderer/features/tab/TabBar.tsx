@@ -19,7 +19,7 @@ export default function TabBar({
   onNewFile: () => void;
 }) {
   return (
-    <div className="flex border-b bg-gray-100">
+    <div className="flex border-b bg-sidebar">
       <div className="flex flex-nowrap overflow-hidden">
         {files.map(file => (
           <TabItem
@@ -58,7 +58,7 @@ const TabItem = memo(({
       onClick={() => onSelect(file.id)}
       className={`
         flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer
-        border-t-2 border-b-0 border-x-2 rounded-t-md
+        border-t-0 border-b-0 border-x-2 rounded-t-md
         ${active
           ? 'bg-background '
           : 'bg-gray-100 '}
