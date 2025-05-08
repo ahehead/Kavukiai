@@ -1,6 +1,6 @@
 import clsx from 'clsx'
-import { Presets, type ClassicScheme, type RenderEmit } from 'rete-react-plugin'
-import type { JSX } from 'react'
+import { Presets, type RenderEmit } from 'rete-react-plugin'
+import type { Node as NodeInterface, Schemes } from '../types'
 export const $nodecolor = 'rgba(110,136,255,0.8)'
 export const $nodecolorselected = '#ffd92c'
 export const $socketsize = 24
@@ -10,14 +10,13 @@ export const $nodewidth = 180
 
 type NodeExtraData = { width?: number, height?: number }
 
-type Props<S extends ClassicScheme> = {
-  data: S['Node'] & NodeExtraData
+type Props<S extends Schemes> = {
+  data: NodeInterface & NodeExtraData
   styles?: () => any
   emit: RenderEmit<S>
 }
-export type NodeComponent<Scheme extends ClassicScheme> = (props: Props<Scheme>) => JSX.Element
 
-export function Node<Scheme extends ClassicScheme>({ data, emit }: Props<Scheme>) {
+export function Node<Scheme extends Schemes>({ data, emit }: Props<Scheme>) {
   const inputs = Object.entries(data.inputs)
   const outputs = Object.entries(data.outputs)
   const controls = Object.entries(data.controls)
@@ -34,7 +33,7 @@ export function Node<Scheme extends ClassicScheme>({ data, emit }: Props<Scheme>
     <div
       data-testid="node"
       className={clsx(
-        'relative cursor-pointer select-none rounded-[10px] border-2 pb-[6px] font-sans',
+        'relative cursor-pointer select-none rounded-[10px] border-2 pb-[6px]',
         'border-[#4e58bf] bg-[rgba(110,136,255,0.8)] hover:bg-[rgba(115,141,255,0.84)]',
         selected && 'bg-[#ffd92c] border-[#e3c000]'
       )}
@@ -44,7 +43,7 @@ export function Node<Scheme extends ClassicScheme>({ data, emit }: Props<Scheme>
       }}
     >
       <div
-        className="title text-white text-[18px] font-sans p-[8px]"
+        className="title text-white text-[18px] p-[8px]"
         data-testid="title"
       >
         {label}
@@ -63,6 +62,7 @@ export function Node<Scheme extends ClassicScheme>({ data, emit }: Props<Scheme>
               data-testid="output-title"
             >
               {output.label}
+              {output.socket.type}
             </div>
             <Presets.classic.RefSocket
               name="output-socket"
@@ -75,19 +75,6 @@ export function Node<Scheme extends ClassicScheme>({ data, emit }: Props<Scheme>
             />
           </div>
         )
-      )}
-
-      {/* Controls */}
-      {controls.map(([key, control]) =>
-        control ? (
-          <Presets.classic.RefControl
-            key={key}
-            name="control"
-            emit={emit}
-            payload={control}
-            data-testid={`control-${key}`}
-          />
-        ) : null
       )}
 
       {/* Inputs */}
@@ -127,6 +114,21 @@ export function Node<Scheme extends ClassicScheme>({ data, emit }: Props<Scheme>
           </div>
         ) : null
       )}
+
+      {/* Controls */}
+      {controls.map(([key, control]) =>
+        control ? (
+          <Presets.classic.RefControl
+            key={key}
+            name="control"
+            emit={emit}
+            payload={control}
+            data-testid={`control-${key}`}
+          />
+        ) : null
+      )}
+
+
     </div>
   )
 }
