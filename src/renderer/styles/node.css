@@ -23,17 +23,14 @@
   --socket-size: 0.5rem;              /* ソケット直径 */
   --connection-width: 2px;            /* ベジェ線幅 */
 
-  /* Icon size presets */
-  --icon-size-sm: 18px;               /* ノード内・重ね系 */
-  --icon-size-md: 24px;               /* サイドバー / ツールバー */
 
   /* --------------------------------------------------------------
    *  Node Surfaces (背景色は既存変数を使い回し)
    * ------------------------------------------------------------*/
-  --node-header-bg: var(--sidebar);    /* とりあえずサイドバーと同色 */
+  --node-header: var(--sidebar);    /* とりあえずサイドバーと同色 */
   --node-header-fg: var(--sidebar-foreground);
-  --node-body-bg: var(--card);         /* 基本カード色と統一 */
-  --node-body-fg: var(--card-foreground);
+  --node: var(--card);         /* 基本カード色と統一 */
+  --node-fg: var(--card-foreground);
   --node-border: var(--border);
 
   /* --------------------------------------------------------------
@@ -45,16 +42,23 @@
 
   /* text-scale – ノード内部は 1 段下げ */
   --text-node: 0.75rem;
+
+  --node-selected: var(--node-state-pending); /* 選択時の色 */
 }
 
 /* --------------------------------------------------------------
  *  Dark Theme Overrides (必要最低限のみ)
  * ------------------------------------------------------------*/
 .dark {
-  --node-header-bg: var(--sidebar);
-  --node-header-fg: var(--sidebar-foreground);
-  --node-body-bg: var(--card);
-  --node-body-fg: var(--card-foreground);
+    --node-bg: var(--card);
+    --node-fg: var(--card-foreground);
+}
+
+@theme inline {
+  --color-node-header: var(--sidebar);
+  --color-node-header-fg: var(--sidebar-foreground);
+  --color-node: var(--card);
+  --color-node-fg: var(--card-foreground);
 }
 
 /* --------------------------------------------------------------
