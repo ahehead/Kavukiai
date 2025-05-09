@@ -11,7 +11,7 @@ export function CustomExecSocket<T extends ClassicPreset.Socket>(props: {
   const { data } = props
 
   return (
-    <div className="group inline-flex w-[24px] h-[22px] rounded-full items-center justify-center ml-[1px] mt-[1px] ">
+    <div className="group inline-flex w-[24px] h-[22px] rounded-full items-center justify-center ">
       <div
         className="cursor-pointer
         rounded-full
