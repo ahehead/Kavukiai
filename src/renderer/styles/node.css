@@ -1,69 +1,47 @@
 /* ===================================================================
  *  Node‑Editor Specific Design Tokens
- *  (import this *after* design-tokens.css)
  * =================================================================*/
 
-/*
-  背景や基本色は design-tokens.css で宣言した Semantic/Core を流用し、
-  ノード専用に必要な分だけ上書き・追加します。
-*/
 
 :root {
   --dataSocket: rgb(27 76 156);
   --execSocket: rgb(242 153 82);
 
-  /* --------------------------------------------------------------
-   *  Layout & Spacing
-   * ------------------------------------------------------------*/
-  --node-radius: var(--radius);        /* 角丸 – UI と共通 */
-  --node-padding: 0.5rem;             /* 内側余白 */
-  --node-header-height: 1.75rem;      /* ヘッダー固定高 */
-
-  /* Socket & Connection */
   --socket-size: 0.5rem;              /* ソケット直径 */
   --connection-width: 2px;            /* ベジェ線幅 */
 
 
-  /* --------------------------------------------------------------
-   *  Node Surfaces (背景色は既存変数を使い回し)
-   * ------------------------------------------------------------*/
-  --node-header: var(--sidebar);    /* とりあえずサイドバーと同色 */
-  --node-header-fg: var(--sidebar-foreground);
   --node: var(--card);         /* 基本カード色と統一 */
   --node-fg: var(--card-foreground);
+
+  --node-header: rgb(225, 225, 225);    /* とりあえずサイドバーと同色 */
+  --node-header-fg: var(--sidebar-foreground);
+
+  --node-label: rgb(218, 255, 253);
   --node-border: var(--border);
 
-  /* --------------------------------------------------------------
-   *  Node States
-   * ------------------------------------------------------------*/
   --node-state-pending: var(--accent);        /* 選択色を流用 */
   --node-state-success: var(--primary);       /* プライマリ色を流用 */
   --node-state-error: var(--destructive);     /* 崩壊色を流用 */
 
-  /* text-scale – ノード内部は 1 段下げ */
-  --text-node: 0.75rem;
-
-  --node-selected: var(--node-state-pending); /* 選択時の色 */
+  --node-selected: var(--accent); /* 選択時の色 */
 }
 
-/* --------------------------------------------------------------
- *  Dark Theme Overrides (必要最低限のみ)
- * ------------------------------------------------------------*/
 .dark {
-    --node-bg: var(--card);
+    --node: var(--card);
     --node-fg: var(--card-foreground);
 }
 
 @theme inline {
-  --color-node-header: var(--sidebar);
-  --color-node-header-fg: var(--sidebar-foreground);
-  --color-node: var(--card);
-  --color-node-fg: var(--card-foreground);
+  --color-node: var(--node);
+  --color-node-fg: var(--node-fg);
+  --color-node-header: var(--node-header);
+  --color-node-header-fg: var(--node-header-fg);
+  --color-node-label: var(--node-label);
+
 }
 
-/* --------------------------------------------------------------
- *  Convenience Utility (Tailwind で使う場合は optional)
- * ------------------------------------------------------------*/
+
 @layer utilities {
   .text-node { font-size: var(--text-node); }
   .node-header { @apply bg-[var(--node-header-bg)] text-[var(--node-header-fg)] h-[var(--node-header-height)] rounded-t-[var(--node-radius)]; }
