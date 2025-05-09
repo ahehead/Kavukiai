@@ -1,9 +1,10 @@
-import { useEffect, useState, type JSX } from "react";
+import { useEffect, useRef, useState, type JSX } from "react";
 import { ClassicPreset } from "rete";
-import { Drag } from "rete-react-plugin";
 import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types";
 import type { AreaPlugin } from "rete-area-plugin";
+import { Drag } from "rete-react-plugin";
+import { cva } from "class-variance-authority";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
 class TextAreaAction implements HistoryAction {
@@ -43,6 +44,22 @@ export class MultiLineControl extends ClassicPreset.Control {
   }
 }
 
+
+const textAreaClasses = cva(
+  ["block w-full h-full p-1 resize-none border-none focus:outline-none ring-1 ring-gray-500 focus:ring-2 focus:ring-accent rounded-md"],
+  {
+    variants: {
+      editable: {
+        true: "",
+        false: "cursor-not-allowed bg-gray-100",
+      },
+    },
+    defaultVariants: {
+      editable: true,
+    },
+  }
+);
+
 // カスタムコンポーネント
 export function TextAreaControllView(props: {
   data: MultiLineControl;
@@ -50,43 +67,43 @@ export function TextAreaControllView(props: {
   const control = props.data;
   const [uiText, setUiText] = useState(control.value);
   const [prevText, setPrevText] = useState(control.value);
-
+  const ref = useRef<HTMLTextAreaElement | null>(null);
+  Drag.useNoDrag(ref);
   useEffect(() => {
     setUiText(control.value);
   }, [control.value]);
 
   return (
-    <Drag.NoDrag>
-      <textarea
-        value={uiText}
-        readOnly={!control.editable}
-        onFocus={() => {
-          setPrevText(uiText);
-        }}
-        onBlur={() => {
-          // 変更確定時に履歴へ登録
-          if (uiText !== prevText && control.history) {
-            control.history.add(
-              new TextAreaAction(control, prevText, uiText)
-            );
-          }
-        }}
-        onChange={control.editable ? (e) => {
-          const v = e.target.value;
-          // キー入力ごとに履歴登録
-          if (control.history) {
-            control.history.add(
-              new TextAreaAction(control, uiText, v)
-            );
-          }
+    <textarea
+      ref={ref}
+      value={uiText}
+      readOnly={!control.editable}
+      onFocus={() => {
+        setPrevText(uiText);
+      }}
+      onBlur={() => {
+        // 変更確定時に履歴へ登録
+        if (uiText !== prevText && control.history) {
+          control.history.add(
+            new TextAreaAction(control, prevText, uiText)
+          );
+        }
+      }}
+      onChange={control.editable ? (e) => {
+        const v = e.target.value;
+        // キー入力ごとに履歴登録
+        if (control.history) {
+          control.history.add(
+            new TextAreaAction(control, uiText, v)
+          );
+        }
 
-          setUiText(v);
-          control.setValue(v);
-        } : undefined}
-        className={`resize-none w-full h-full p-2 border-none focus:border-none focus:outline-none ring-1 focus:ring-2 ring-gray-500 rounded-md ${!control.editable ? "cursor-not-allowed" : ""
-          }`}
-      />
-    </Drag.NoDrag>
+        setUiText(v);
+        control.setValue(v);
+      } : undefined}
+      className={textAreaClasses({ editable: control.editable })}
+      placeholder=".../"
+    />
   );
 }
 
