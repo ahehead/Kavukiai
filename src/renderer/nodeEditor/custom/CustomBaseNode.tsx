@@ -1,6 +1,6 @@
 import { Presets, type RenderEmit } from 'rete-react-plugin'
 import type { Node as NodeInterface, Schemes } from '../types'
-import { NodePanel, NodePanelHeader, NodeTitle } from 'renderer/components/atom/NodePanel'
+import { NodePanel, NodePanelBody, NodePanelHeader, NodeTitle } from 'renderer/components/atom/NodePanel'
 export const $nodecolor = 'rgba(110,136,255,0.8)'
 export const $nodecolorselected = '#ffd92c'
 export const $socketsize = 24
@@ -31,98 +31,103 @@ export function Node<Scheme extends Schemes>({ data, emit }: Props<Scheme>) {
 
   return (
     <NodePanel
-      data-testid="node"
+
       style={{
         width: `${Number.isFinite(width) ? width : 180}px`,
         height: Number.isFinite(height) ? `${height}px` : 'auto'
       }}
     >
       <NodePanelHeader>
-        <NodeTitle
-          data-testid="title"
-        >
+        <NodeTitle>
           {label}
         </NodeTitle>
       </NodePanelHeader>
 
-      {/* Outputs */}
-      {outputs.map(([key, output]) =>
-        output && (
-          <div
-            className="output text-right"
-            key={key}
-            data-testid={`output-${key}`}
-          >
+      <NodePanelBody>
+        {/* Outputs */}
+        {outputs.map(([key, output]) =>
+          output && (
             <div
-              className="output-title inline-block align-middle text-white text-[14px] font-sans m-[6px] leading-[24px]"
-              data-testid="output-title"
+              className="output flex flex-row justify-end items-center"
+              key={key}
+              data-testid={`output-${key}`}
             >
-              {output.label}
-              {output.socket.type}
-            </div>
-            <Presets.classic.RefSocket
-              name="output-socket"
-              side="output"
-              socketKey={key}
-              nodeId={id}
-              emit={emit}
-              payload={output.socket}
-              data-testid="output-socket"
-            />
-          </div>
-        )
-      )}
-
-      {/* Inputs */}
-      {inputs.map(([key, input]) =>
-        input ? (
-          <div
-            className="input text-left"
-            key={key}
-            data-testid={`input-${key}`}
-          >
-            <Presets.classic.RefSocket
-              name="input-socket"
-              side="input"
-              socketKey={key}
-              nodeId={id}
-              emit={emit}
-              payload={input.socket}
-              data-testid="input-socket"
-            />
-            {(!input.control || !input.showControl) && (
               <div
-                className="input-title inline-block align-middle text-white text-[14px] font-sans m-[6px] leading-[24px]"
-                data-testid="input-title"
+                className="output-title inline-block align-middle"
+                data-testid="output-title"
               >
-                {input.label}
-              </div>
-            )}
-            {input.control && input.showControl && (
-              <Presets.classic.RefControl
-                key={key}
-                name="input-control"
-                emit={emit}
-                payload={input.control}
-                data-testid="input-control"
-              />
-            )}
-          </div>
-        ) : null
-      )}
+                {output.label}
 
+              </div>
+              <div
+                className='rounded-md px-1.5 bg-node-label'>
+                {output.socket.type}
+              </div>
+              <Presets.classic.RefSocket
+                name="output-socket"
+                side="output"
+                socketKey={key}
+                nodeId={id}
+                emit={emit}
+                payload={output.socket}
+                data-testid="output-socket"
+              />
+            </div>
+          )
+        )}
+
+        {/* Inputs */}
+        {inputs.map(([key, input]) =>
+          input ? (
+            <div
+              className="input text-left flex flex-row justify-start items-center"
+              key={key}
+              data-testid={`input-${key}`}
+            >
+              <Presets.classic.RefSocket
+                name="input-socket"
+                side="input"
+                socketKey={key}
+                nodeId={id}
+                emit={emit}
+                payload={input.socket}
+                data-testid="input-socket"
+              />
+              {(!input.control || !input.showControl) && (
+                <div
+                  className="input-title inline-block align-middle "
+                  data-testid="input-title"
+                >
+                  {input.label}
+                </div>
+              )}
+              {input.control && input.showControl && (
+                <Presets.classic.RefControl
+                  key={key}
+                  name="input-control"
+                  emit={emit}
+                  payload={input.control}
+                  data-testid="input-control"
+                />
+              )}
+            </div>
+          ) : null
+        )}
+      </NodePanelBody>
       {/* Controls */}
-      {controls.map(([key, control]) =>
-        control ? (
-          <Presets.classic.RefControl
-            key={key}
-            name="control"
-            emit={emit}
-            payload={control}
-            data-testid={`control-${key}`}
-          />
-        ) : null
-      )}
+      <div className='w-full h-full p-2'>
+        {controls.map(([key, control]) =>
+          control ? (
+            <Presets.classic.RefControl
+              key={key}
+              name="control"
+              emit={emit}
+              payload={control}
+              data-testid={`control-${key}`}
+            />
+          ) : null
+        )}
+      </div>
 
 
     </NodePanel>
