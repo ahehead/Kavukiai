@@ -61,7 +61,7 @@ const TabItem = memo(({
         border-t-0 border-b-0 border-x-2 rounded-t-md
         ${active
           ? 'bg-background '
-          : 'bg-gray-100 '}
+          : 'bg-sidebar'}
       `}
     >
       <span className="flex-shrink min-w-0 truncate whitespace-nowrap mr-1">
