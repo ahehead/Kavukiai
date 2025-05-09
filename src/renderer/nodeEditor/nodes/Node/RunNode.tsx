@@ -1,6 +1,6 @@
 import { ClassicPreset } from 'rete';
 import type { ControlFlowEngine } from 'rete-engine';
-import type { Schemes } from '../../types';
+import type { ExtraSizeData, Schemes } from '../../types';
 import { ExecSocket } from '../Sockets';
 import { RunButtonControl } from '../Controls/RunButton';
 
@@ -9,9 +9,9 @@ export class RunNode extends ClassicPreset.Node<
   object,
   { exec: ClassicPreset.Socket },
   { btn: RunButtonControl }
-> {
-  public width = 180;
-  public height = 141;
+> implements ExtraSizeData {
+  public width?: number;
+  public height?: number;
   constructor(
     private engine: ControlFlowEngine<Schemes>
   ) {
