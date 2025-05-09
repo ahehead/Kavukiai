@@ -17,12 +17,14 @@ export async function createNodes(
 ): Promise<void> {
   // ノードの登録
   for (const { id, type, position, size, data } of graphJsonData.nodes) {
+    // ノードごとのファクトリを取得
     const factory = nodeFactories[type];
     if (!factory) {
       console.error(`Unknown node type: ${type}`);
       continue;
     }
 
+    // ノードのインスタンスを生成
     const node = factory({
       area,
       dataflow,
@@ -30,13 +32,16 @@ export async function createNodes(
       history,
     });
 
+    // ノードにfromJsonがあり、データがある場合はデータをセット
     if (typeof (node as any).fromJSON === "function" && data) {
       (node as any).fromJSON(data as Record<string, unknown>);
     }
 
     node.id = id;
     await editor.addNode(node);
-    await area.resize(id, size.width, size.height);
+    if (size.width && size.height) {
+      await area.resize(id, size.width, size.height);
+    }
     await area.translate(id, position);
   }
 
@@ -48,6 +53,7 @@ export async function createNodes(
     target,
     targetPort,
   } of graphJsonData.connections || []) {
+    // 接続元と接続先のノードを取得
     const sourceNode = editor.getNode(source);
     const targetNode = editor.getNode(target);
     if (sourceNode && targetNode) {
