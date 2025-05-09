@@ -10,7 +10,7 @@ export type NodeJson = {
   id: string;
   type: string; // ノードの種類
   position: { x: number; y: number };
-  size: { width: number; height: number };
+  size: { width?: number; height?: number }; // サイズ、なければ自然なサイズ
   data?: Record<string, unknown>; // ノード固有のデータ
   parentId?: string; // グループ化／ネスト用の親ノードID
 };
