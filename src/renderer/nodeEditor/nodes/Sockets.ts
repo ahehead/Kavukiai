@@ -15,7 +15,7 @@ export class StringSocket extends CustomSocketType {
 export class ExecSocket extends CustomSocketType {
   constructor() {
     super("exec");
-    this.type = "exec";
+    this.type = "";
   }
   isCompatibleWith(socket: CustomSocketType): boolean {
     return socket instanceof ExecSocket;
