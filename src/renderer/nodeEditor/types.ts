@@ -22,6 +22,8 @@ export type NodeTypes =
   | MultiLineStringNode
   | ViewStringNode;
 
+export type ExtraSizeData = { width?: number; height?: number };
+
 class Connection<
   A extends Node,
   B extends Node
@@ -47,4 +49,7 @@ export interface Node
         | ClassicPreset.InputControl<"number">
         | ClassicPreset.InputControl<"text">;
     }
-  > {}
+  > {
+  width?: number;
+  height?: number;
+}
