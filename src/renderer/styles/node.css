@@ -7,7 +7,7 @@
   --dataSocket: rgb(27 76 156);
   --execSocket: rgb(242 153 82);
 
-  --socket-size: 0.5rem;              /* ソケット直径 */
+  --socket-icon-size: 0.75rem;              /* ソケット直径 */
   --connection-width: 2px;            /* ベジェ線幅 */
 
 
@@ -43,9 +43,6 @@
 
 
 @layer utilities {
-  .text-node { font-size: var(--text-node); }
-  .node-header { @apply bg-[var(--node-header-bg)] text-[var(--node-header-fg)] h-[var(--node-header-height)] rounded-t-[var(--node-radius)]; }
-  .node-body { @apply bg-[var(--node-body-bg)] text-[var(--node-body-fg)] p-[var(--node-padding)] rounded-b-[var(--node-radius)] border border-[var(--node-border)]; }
-  .socket-data  { background-color: var(--socket-data); width: var(--socket-size); height: var(--socket-size); border-radius: 9999px; }
-  .socket-exec  { background-color: var(--socket-exec); width: var(--socket-size); height: var(--socket-size); border-radius: 9999px; }
+  .socket-icon-size { width: var(--socket-icon-size); height: var(--socket-icon-size); }
+  .socket-icon-wrapper-size { width: calc(var(--socket-icon-size) * 1.5); height: calc(var(--socket-icon-size) * 1.5); }
 }
