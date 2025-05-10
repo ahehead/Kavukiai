@@ -11,9 +11,9 @@ export function CustomExecSocket<T extends ClassicPreset.Socket>(props: {
   const { data } = props
 
   return (
-    <div className="group inline-flex w-[24px] h-[22px] rounded-full items-center justify-center ">
+    <div className="group cursor-pointer flex socket-icon-wrapper-size rounded-full items-center justify-center">
       <div
-        className="cursor-pointer
+        className="
         rounded-full
         transform transition-all duration-100
         group-hover:scale-115
@@ -21,7 +21,7 @@ export function CustomExecSocket<T extends ClassicPreset.Socket>(props: {
         title={data.name}
       >
         <TriangleIcon
-          className="w-[16px] h-[16px]
+          className="socket-icon-size
                      fill-[var(--color-execSocket)]
                      stroke-[#f2ffee]"
         />
