@@ -1,6 +1,6 @@
 import { Presets, type RenderEmit } from 'rete-react-plugin'
 import type { Node as NodeInterface, Schemes } from '../types'
-import { NodePanel, NodePanelBody, NodePanelHeader, NodeTitle } from 'renderer/components/atom/NodePanel'
+import { NodePanel, NodePanelBody, NodePanelHeader, NodeTitle } from 'renderer/components/NodePanel'
 export const $nodecolor = 'rgba(110,136,255,0.8)'
 export const $nodecolorselected = '#ffd92c'
 export const $socketsize = 24
@@ -38,9 +38,7 @@ export function Node<Scheme extends Schemes>({ data, emit }: Props<Scheme>) {
       }}
     >
       <NodePanelHeader>
-        <NodeTitle>
-          {label}
-        </NodeTitle>
+        <NodeTitle>{label}</NodeTitle>
       </NodePanelHeader>
 
       <NodePanelBody>
