@@ -7,7 +7,7 @@
   --dataSocket: rgb(27 76 156);
   --execSocket: rgb(242 153 82);
 
-  --socket-icon-size: 0.75rem;              /* ソケット直径 */
+  --socket-icon-size: 0.875rem;              /* ソケット直径 */
   --connection-width: 2px;            /* ベジェ線幅 */
 
 
