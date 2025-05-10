@@ -1,14 +1,15 @@
 import { ClassicPreset } from 'rete';
-import { StringSocket } from '../Sockets';
+import { createSocket } from '../Sockets';
 import { MultiLineControl } from '../Controls/TextArea';
 import type { HistoryPlugin } from 'rete-history-plugin';
-import type { AreaExtra, ExtraSizeData, Schemes } from 'renderer/nodeEditor/types';
+import type { AreaExtra, CustomSocketType, ExtraSizeData, Schemes } from 'renderer/nodeEditor/types';
 import type { AreaPlugin } from 'rete-area-plugin';
+const { Node, Output } = ClassicPreset;
 
 // 長文文字列入力ノード
-export class MultiLineStringNode extends ClassicPreset.Node<
+export class MultiLineStringNode extends Node<
   object,
-  { out: ClassicPreset.Socket },
+  { out: CustomSocketType },
   { textArea: MultiLineControl }
 > implements ExtraSizeData {
   public width?: number;
@@ -20,7 +21,9 @@ export class MultiLineStringNode extends ClassicPreset.Node<
     area?: AreaPlugin<Schemes, AreaExtra>
   ) {
     super('MultiLineString');
-    this.addOutput('out', new ClassicPreset.Output(new StringSocket(), 'string'));
+    this.addOutput(
+      'out',
+      new Output(createSocket("string"), undefined));
     this.addControl('textArea', new MultiLineControl(initial, undefined, true, history, area));
   }
 
