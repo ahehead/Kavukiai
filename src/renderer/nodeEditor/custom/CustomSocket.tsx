@@ -6,10 +6,10 @@ export function CustomSocket<T extends ClassicPreset.Socket>({
   data: T
 }): React.ReactElement {
   return (
-    <div className="group inline-flex w-[24px] h-[22px] rounded-full items-center justify-center">
+    <div className="group cursor-pointer flex socket-icon-wrapper-size rounded-full items-center justify-center">
       <div
-        className="cursor-pointer
-               w-[16px] h-[16px]
+        className="
+              socket-icon-size
                rounded-full bg-dataSocket
                border-[#686dcc] border-[1px]
                transform transition-all duration-100
