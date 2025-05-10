@@ -1,5 +1,7 @@
 import { cn } from "renderer/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority";
+import TriangleIcon from 'src/resources/public/triangleIcon/triangle.svg?react'
+import { Circle } from 'lucide-react';
 
 export const nodePanelValiant = cva(
   ["bg-node text-node-fg flex flex-col rounded-md border shadow-sm"],
@@ -50,7 +52,7 @@ export function NodeTitle({ ...props }: React.ComponentProps<"div">) {
 export function NodePanelSockets({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex flex-col pt-1 gap-1 text-xs tracking-tight")}
+      className={cn("flex flex-col pt-1 gap-1")}
       {...props}
     />
   )
@@ -73,7 +75,7 @@ export const textAreaClasses = cva(
 );
 
 const nodeSocketWrapperStyles = cva(
-  ["flex flex-row items-center"],
+  ["flex flex-row items-center text-sm tracking-tight"],
   {
     variants: {
       side: {
@@ -103,11 +105,43 @@ export function NodeSocketName({ ...props }: React.ComponentProps<"div">) {
 
 // ソケットの型表示
 export function NodeSocketTypeLabel({ ...props }: React.ComponentProps<"div">) {
-  return <div {...props} className="rounded-md px-1.5 bg-node-label" />;
+  return <div {...props} className="rounded-md px-1 bg-node-label" />;
 }
 
 export function NodePanelControls({ ...props }: React.ComponentProps<"div">) {
   return (
     <div className='w-full h-full p-2'{...props} />
+  )
+}
+
+const socketIconWrapperStyles = cva(
+  ["group cursor-pointer flex socket-icon-wrapper-size rounded-full items-center justify-center"],
+)
+
+export function NodeExecSocket({ title }: { title: string }) {
+  return (
+    <div className={socketIconWrapperStyles()}>
+      <div
+        className="rounded-full transform transition-all duration-100 group-hover:scale-115"
+        title={title}
+      >
+        <TriangleIcon
+          className="socket-icon-size fill-[var(--color-execSocket)] stroke-[#f2ffee]"
+        />
+      </div>
+    </div>
+  )
+}
+
+export function NodeDataSocket({ title }: { title: string }) {
+  return (
+    <div className={socketIconWrapperStyles()}>
+      <div
+        className=" transform transition-all duration-100 group-hover:scale-115"
+        title={title}
+      >
+        <Circle className="socket-icon-size fill-[var(--color-dataSocket)] text-[#686dcc]" />
+      </div>
+    </div>
   )
 }
