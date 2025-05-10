@@ -1,13 +1,14 @@
 import { ClassicPreset } from 'rete';
 import type { ControlFlowEngine } from 'rete-engine';
-import type { ExtraSizeData, Schemes } from '../../types';
-import { ExecSocket } from '../Sockets';
+import type { CustomSocketType, ExtraSizeData, Schemes } from '../../types';
+import { createSocket } from '../Sockets';
 import { RunButtonControl } from '../Controls/RunButton';
+const { Output, Node } = ClassicPreset;
 
 // Run ノード
-export class RunNode extends ClassicPreset.Node<
+export class RunNode extends Node<
   object,
-  { exec: ClassicPreset.Socket },
+  { exec: CustomSocketType },
   { btn: RunButtonControl }
 > implements ExtraSizeData {
   public width?: number;
@@ -16,7 +17,7 @@ export class RunNode extends ClassicPreset.Node<
     private engine: ControlFlowEngine<Schemes>
   ) {
     super('Run');
-    this.addOutput('exec', new ClassicPreset.Output(new ExecSocket(), undefined, true));
+    this.addOutput('exec', new Output(createSocket("exec"), undefined, true));
     this.addControl(
       'btn',
       new RunButtonControl('Run', async (e: React.MouseEvent<HTMLButtonElement>) => {
