@@ -1,7 +1,8 @@
 import { memo } from 'react';
 import type { File } from 'shared/AppType';
 import { useIsFileDirty } from '../dirty-check/useIsFileDirty';
-import { CloseFileButton, PlusButton } from '../../components/atom/UIButton';
+import { CloseFileButton, PlusButton } from '../../components/UIButton';
+import { TabAddButtonSpace, TabBarComponent, TabItems, TabItemComponent, TabTitle } from 'renderer/components/TabComponent';
 
 
 
@@ -19,8 +20,8 @@ export default function TabBar({
   onNewFile: () => void;
 }) {
   return (
-    <div className="flex border-b bg-sidebar">
-      <div className="flex flex-nowrap overflow-hidden">
+    <TabBarComponent>
+      <TabItems>
         {files.map(file => (
           <TabItem
             key={file.id}
@@ -30,11 +31,11 @@ export default function TabBar({
             onClose={onClose}
           />
         ))}
-      </div>
-      <div className="flex flex-1 items-center pl-2 flex-shrink-0 focus:outline-0">
+      </TabItems>
+      <TabAddButtonSpace>
         <PlusButton onClick={onNewFile} />
-      </div>
-    </div>
+      </TabAddButtonSpace>
+    </TabBarComponent>
   );
 }
 
@@ -53,21 +54,13 @@ const TabItem = memo(({
   const isDirty = useIsFileDirty(file.id);
 
   return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-    <div
+    <TabItemComponent
+      active={active}
       onClick={() => onSelect(file.id)}
-      className={`
-        flex min-w-0 items-center pl-3 pr-2 py-2 cursor-pointer
-        border-t-0 border-b-0 border-x-2 rounded-t-md
-        ${active
-          ? 'bg-background '
-          : 'bg-sidebar'}
-      `}
     >
-      <span className="flex-shrink min-w-0 truncate whitespace-nowrap mr-1">
-        {file.title}
-      </span>
+      <TabTitle>{file.title}</TabTitle>
       <CloseFileButton isDirty={isDirty} onClick={e => onClose(file.id, e)} />
-    </div>
-  );
-});
+    </TabItemComponent>
+  )
+}
+)
