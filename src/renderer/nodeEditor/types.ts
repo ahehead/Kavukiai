@@ -14,7 +14,10 @@ import type {
 
 export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
 
-export type Schemes = GetSchemes<NodeTypes, Connection<Node, Node>>;
+export type Schemes = GetSchemes<
+  NodeTypes,
+  Connection<NodeInterface, NodeInterface>
+>;
 
 export type NodeTypes =
   | StringNode
@@ -25,24 +28,26 @@ export type NodeTypes =
 export type ExtraSizeData = { width?: number; height?: number };
 
 class Connection<
-  A extends Node,
-  B extends Node
+  A extends NodeInterface,
+  B extends NodeInterface
 > extends ClassicPreset.Connection<A, B> {
   isLoop?: boolean;
   isExec?: boolean;
 }
 
 export class CustomSocketType extends ClassicPreset.Socket {
-  type?: string;
+  isCompatibleWith(socket: CustomSocketType): boolean {
+    return this.name === socket.name;
+  }
 }
 
 // 型参照用のインターフェイス
-export interface Node
+export interface NodeInterface
   extends ClassicPreset.Node<
-    { [key in string]: CustomSocketType },
-    { [key in string]: CustomSocketType },
+    { [key in string]?: CustomSocketType },
+    { [key in string]?: CustomSocketType },
     {
-      [key in string]:
+      [key in string]?:
         | RunButtonControl
         | MultiLineControl
         | ClassicPreset.Control
