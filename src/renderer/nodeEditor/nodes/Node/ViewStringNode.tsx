@@ -1,15 +1,15 @@
 import { ClassicPreset } from 'rete';
-import { ExecSocket, StringSocket } from '../Sockets';
+import { createSocket } from '../Sockets';
 import type { DataflowEngine } from 'rete-engine';
-import type { AreaExtra, ExtraSizeData, Schemes } from 'renderer/nodeEditor/types';
+import type { AreaExtra, CustomSocketType, ExtraSizeData, Schemes } from 'renderer/nodeEditor/types';
 import type { AreaPlugin } from 'rete-area-plugin';
 import { MultiLineControl } from '../Controls/TextArea';
-
+const { Node, Input, Output } = ClassicPreset;
 
 // View String ノード
-export class ViewStringNode extends ClassicPreset.Node<
-  { exec: ClassicPreset.Socket; stringValue: ClassicPreset.Socket },
-  { exec: ClassicPreset.Socket; stringValue: ClassicPreset.Socket },
+export class ViewStringNode extends Node<
+  { exec: CustomSocketType; stringValue: CustomSocketType },
+  { exec: CustomSocketType; stringValue: CustomSocketType },
   { view: MultiLineControl }
 > implements ExtraSizeData {
 
@@ -22,13 +22,23 @@ export class ViewStringNode extends ClassicPreset.Node<
   ) {
     super('ViewString');
 
-    this.addInput('exec', new ClassicPreset.Input(new ExecSocket(), undefined, true));
-    this.addInput('stringValue', new ClassicPreset.Input(new StringSocket(), 'string'));
+    this.addInput(
+      'exec',
+      new Input(createSocket("exec"), undefined, true));
+    this.addInput(
+      'stringValue',
+      new Input(createSocket("string"), undefined,));
 
-    this.addOutput('exec', new ClassicPreset.Output(new ExecSocket(), undefined, true));
-    this.addOutput('stringValue', new ClassicPreset.Output(new StringSocket(), 'string'));
+    this.addOutput(
+      'exec',
+      new Output(createSocket("exec"), undefined, true));
+    this.addOutput(
+      'stringValue',
+      new Output(createSocket("string"), undefined,));
 
-    this.addControl('view', new MultiLineControl("", undefined, false));
+    this.addControl(
+      'view',
+      new MultiLineControl("", undefined, false));
   }
 
   data(inputs: { stringValue?: string[] }): { stringValue: string } {
