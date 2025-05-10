@@ -1,12 +1,8 @@
-import type { Schemes } from "renderer/nodeEditor/types";
+import type { CustomSocketType, Schemes } from "renderer/nodeEditor/types";
 import type { ClassicPreset, NodeEditor } from "rete";
 
-import type { StringSocket, ExecSocket } from "../../nodes/Sockets";
-
-export type Input = ClassicPreset.Input<SocketType>;
-export type Output = ClassicPreset.Output<SocketType>;
-
-type SocketType = StringSocket | ExecSocket;
+export type Input = ClassicPreset.Input<CustomSocketType>;
+export type Output = ClassicPreset.Output<CustomSocketType>;
 
 export function canCreateConnection(
   editor: NodeEditor<Schemes>,
@@ -20,7 +16,10 @@ export function canCreateConnection(
 export function getConnectionSockets(
   editor: NodeEditor<Schemes>,
   connection: Schemes["Connection"]
-): { source: SocketType | undefined; target: SocketType | undefined } {
+): {
+  source: CustomSocketType | undefined;
+  target: CustomSocketType | undefined;
+} {
   const source = editor.getNode(connection.source);
   const target = editor.getNode(connection.target);
 
