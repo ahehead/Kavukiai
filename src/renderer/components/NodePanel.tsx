@@ -41,7 +41,7 @@ export function NodeTitle({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-testid="title"
-      className={cn(["leading-none font-semibold pl-2 py-2"])}
+      className={cn(["leading-none pl-2 py-2 tracking-tight"])}
       {...props}
     />
   )
@@ -50,7 +50,7 @@ export function NodeTitle({ ...props }: React.ComponentProps<"div">) {
 export function NodePanelSockets({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex flex-col pt-1 gap-1")}
+      className={cn("flex flex-col pt-1 gap-1 text-xs tracking-tight")}
       {...props}
     />
   )
