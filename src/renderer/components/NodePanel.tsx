@@ -55,3 +55,19 @@ export function NodePanelBody({ ...props }: React.ComponentProps<"div">) {
     />
   )
 }
+
+
+export const textAreaClasses = cva(
+  ["block w-full h-full p-1 resize-none border-none focus:outline-none ring-1 ring-gray-500 focus:ring-2 focus:ring-accent rounded-md"],
+  {
+    variants: {
+      editable: {
+        true: "",
+        false: "cursor-not-allowed bg-gray-100",
+      },
+    },
+    defaultVariants: {
+      editable: true,
+    },
+  }
+);

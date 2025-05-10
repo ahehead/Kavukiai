@@ -4,7 +4,7 @@ import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
-import { cva } from "class-variance-authority";
+import { textAreaClasses } from "renderer/components/NodePanel";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
 class TextAreaAction implements HistoryAction {
@@ -44,21 +44,6 @@ export class MultiLineControl extends ClassicPreset.Control {
   }
 }
 
-
-const textAreaClasses = cva(
-  ["block w-full h-full p-1 resize-none border-none focus:outline-none ring-1 ring-gray-500 focus:ring-2 focus:ring-accent rounded-md"],
-  {
-    variants: {
-      editable: {
-        true: "",
-        false: "cursor-not-allowed bg-gray-100",
-      },
-    },
-    defaultVariants: {
-      editable: true,
-    },
-  }
-);
 
 // カスタムコンポーネント
 export function TextAreaControllView(props: {
