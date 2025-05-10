@@ -47,7 +47,7 @@ export function NodeTitle({ ...props }: React.ComponentProps<"div">) {
   )
 }
 
-export function NodePanelBody({ ...props }: React.ComponentProps<"div">) {
+export function NodePanelSockets({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn("flex flex-col pt-1 gap-1")}
@@ -71,3 +71,43 @@ export const textAreaClasses = cva(
     },
   }
 );
+
+const nodeSocketWrapperStyles = cva(
+  ["flex flex-row items-center"],
+  {
+    variants: {
+      side: {
+        input: "justify-start",
+        output: "justify-end",
+      },
+    },
+    defaultVariants: {
+      side: "input",
+    },
+  }
+);
+
+// ソケット行のラッパー
+export function NodeSocketWrapper({
+  side,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof nodeSocketWrapperStyles>) {
+  return <div {...props}
+    className={nodeSocketWrapperStyles({ side })} />;
+}
+
+// ソケットの名前（ラベル）
+export function NodeSocketName({ ...props }: React.ComponentProps<"div">) {
+  return <div {...props} className="inline-block align-middle mr-1" />;
+}
+
+// ソケットの型表示
+export function NodeSocketTypeLabel({ ...props }: React.ComponentProps<"div">) {
+  return <div {...props} className="rounded-md px-1.5 bg-node-label" />;
+}
+
+export function NodePanelControls({ ...props }: React.ComponentProps<"div">) {
+  return (
+    <div className='w-full h-full p-2'{...props} />
+  )
+}
