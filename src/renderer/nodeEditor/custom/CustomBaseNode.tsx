@@ -1,5 +1,5 @@
 import { Presets, type RenderEmit } from 'rete-react-plugin'
-import type { Node as NodeInterface, Schemes } from '../types'
+import type { NodeInterface, Schemes } from '../types'
 import { NodePanel, NodePanelSockets, NodePanelHeader, NodeSocketName, NodeSocketTypeLabel, NodeSocketWrapper, NodeTitle, NodePanelControls } from 'renderer/components/NodePanel'
 
 type Props<S extends Schemes> = {
@@ -9,7 +9,7 @@ type Props<S extends Schemes> = {
 
 const nodeMinWidth = 180
 
-export function Node<Scheme extends Schemes>({ data, emit }: Props<Scheme>) {
+export function CustomNode<Scheme extends Schemes>({ data, emit }: Props<Scheme>) {
   const inputs = Object.entries(data.inputs)
   const outputs = Object.entries(data.outputs)
   const controls = Object.entries(data.controls)
@@ -46,7 +46,7 @@ export function Node<Scheme extends Schemes>({ data, emit }: Props<Scheme>) {
                 {output.label}
               </NodeSocketName>
               <NodeSocketTypeLabel data-testid="output-type">
-                {output.socket.type}
+                {output.socket.name}
               </NodeSocketTypeLabel>
               <Presets.classic.RefSocket
                 name="output-socket"
@@ -79,9 +79,14 @@ export function Node<Scheme extends Schemes>({ data, emit }: Props<Scheme>) {
                 data-testid="input-socket"
               />
               {(!input.control || !input.showControl) && (
-                <NodeSocketName data-testid="input-title">
-                  {input.label}
-                </NodeSocketName>
+                <>
+                  <NodeSocketTypeLabel data-testid="input-type">
+                    {input.socket.name}
+                  </NodeSocketTypeLabel>
+                  <NodeSocketName data-testid="input-title">
+                    {input.label}
+                  </NodeSocketName>
+                </>
               )}
               {input.control && input.showControl && (
                 <Presets.classic.RefControl
