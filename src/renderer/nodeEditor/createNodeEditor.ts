@@ -27,7 +27,6 @@ import {
   RunNode,
   ViewStringNode,
 } from "./nodes/Node";
-import { ExecSocket } from "./nodes/Sockets";
 import {
   RunButtonControl,
   RunButtonControlView,
@@ -38,7 +37,7 @@ import {
   TextAreaControllView,
 } from "./nodes/Controls/TextArea";
 
-import { CustomExecSocket, CustomSocket, CustomNodeComponent } from "./custom";
+import { CustomExecSocket, CustomSocket } from "./custom";
 
 import { canCreateConnection } from "./features/socket_type_restriction/canCreateConnection";
 import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
@@ -48,7 +47,7 @@ import {
   type NodeEditorState,
   resetEditorState,
 } from "./features/editor_state/historyState";
-import { Node } from "./custom/CustomBaseNode";
+import { CustomNode } from "./custom/CustomBaseNode";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -119,7 +118,7 @@ export async function createNodeEditor(container: HTMLElement) {
     ReactPresets.classic.setup({
       customize: {
         socket(data) {
-          if (data.payload instanceof ExecSocket) {
+          if (data.payload.name === "exec") {
             return CustomExecSocket;
           }
           return CustomSocket;
@@ -138,7 +137,7 @@ export async function createNodeEditor(container: HTMLElement) {
           return null;
         },
         node() {
-          return Node;
+          return CustomNode;
         },
       },
     })
