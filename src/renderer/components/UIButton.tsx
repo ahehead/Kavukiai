@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "renderer/lib/utils";
-import { Button, buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { Bell, BellPlus, Circle, Plus, X } from "lucide-react";
 
 export const iconButtonVariants = cva("flex-shrink-0 rounded-md cursor-pointer bg-transparent focus:outline-none forcus-visible:outline-none", {
