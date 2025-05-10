@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 import { useEffect, useState, useId } from "react";
 import { useNoticeStore } from "./useNoticeStore";
 import type { Notice } from "./types";
-import { BellButton } from "renderer/components/atom/UIButton";
+import { BellButton } from "renderer/components/UIButton";
 import { Popover, PopoverContent, PopoverTrigger } from "renderer/components/ui/popover";
 
 export default function NoticeButton() {
