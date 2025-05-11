@@ -48,6 +48,7 @@ import {
   resetEditorState,
 } from "./features/editor_state/historyState";
 import { CustomNode } from "./custom/CustomBaseNode";
+import { nodeFactories } from "./nodes/nodeFactories";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -78,16 +79,22 @@ export async function createNodeEditor(container: HTMLElement) {
   const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
   // Context menu pluginのインスタンス化
   const contextMenu = new ContextMenuPlugin({
-    items: ContextMenuPresets.classic.setup([
+    items: ContextMenuPresets.classic.setup(
       // 右クリックメニューの項目リスト
-      ["String", () => new StringNode()],
-      [
-        "MultiLineString",
-        () => new MultiLineStringNode("", history, area, dataflow),
-      ],
-      ["Run", () => new RunNode(engine)],
-      ["ViewString", () => new ViewStringNode(dataflow, area)],
-    ]),
+      Object.entries(nodeFactories).map(
+        ([name, factory]) =>
+          [
+            name,
+            () =>
+              factory({
+                area,
+                dataflow,
+                controlflow: engine,
+                history,
+              }),
+          ] as const
+      )
+    ),
   });
 
   const gridLine = new GridLineSnapPlugin<Schemes>({ baseSize: 20 });
