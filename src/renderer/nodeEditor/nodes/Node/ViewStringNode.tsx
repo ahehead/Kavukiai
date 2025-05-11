@@ -38,7 +38,7 @@ export class ViewStringNode extends Node<
 
     this.addControl(
       'view',
-      new MultiLineControl("", undefined, false));
+      new MultiLineControl("", false));
   }
 
   data(inputs: { stringValue?: string[] }): { stringValue: string } {
@@ -48,8 +48,6 @@ export class ViewStringNode extends Node<
 
   // 実行時、stringValueを取得して表示する
   async execute(_input: 'exec', forward: (output: 'exec') => void): Promise<void> {
-    // dataflowのリセット。
-    this.dataflow.reset();
     const { stringValue } = (await this.dataflow.fetchInputs(this.id)) as { stringValue?: string[] }
 
     // stringValueがundefinedの場合は何もしない
