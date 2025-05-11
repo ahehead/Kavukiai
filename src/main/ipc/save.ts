@@ -80,7 +80,6 @@ export function registerSaveHandlers(): void {
 
         await writeFileAtomic(filePath, JSON.stringify(graph, null, 2), {
           mode: 0o600, // パーミッション
-          fsync: true, // flush する
         });
 
         setLastDir(ApplicationSettingsConf(), path.dirname(filePath));
