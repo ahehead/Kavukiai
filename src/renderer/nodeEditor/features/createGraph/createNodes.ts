@@ -1,5 +1,5 @@
 import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
-import { nodeFactories } from "./nodeFactories";
+import { nodeFactories } from "../../nodes/nodeFactories";
 import { ClassicPreset, type NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
