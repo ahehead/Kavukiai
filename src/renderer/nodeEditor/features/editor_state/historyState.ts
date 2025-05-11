@@ -63,6 +63,7 @@ export async function resetEditorState(
 ): Promise<void> {
   await editor.clear();
   history.clear();
+  dataflow.reset();
   await createNodes(payload.graph, area, editor, dataflow, engine, history);
   setHistoryState(history, payload);
   await AreaExtensions.zoomAt(area, editor.getNodes());
