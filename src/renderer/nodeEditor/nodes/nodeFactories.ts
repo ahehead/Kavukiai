@@ -4,7 +4,7 @@ import {
   StringNode,
   ViewStringNode,
 } from "./Node";
-import type { AreaExtra, Schemes } from "../types";
+import type { AreaExtra, NodeTypes, Schemes } from "../types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
@@ -16,7 +16,7 @@ export type NodeDeps = {
   history: HistoryPlugin<Schemes, HistoryActions<Schemes>>;
 };
 
-export const nodeFactories: Record<string, (deps: NodeDeps) => any> = {
+export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   String: () => new StringNode(""),
   MultiLineString: ({ history, area, dataflow }) =>
     new MultiLineStringNode("", history, area, dataflow),
