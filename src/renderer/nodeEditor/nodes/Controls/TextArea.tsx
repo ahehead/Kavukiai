@@ -5,6 +5,7 @@ import type { AreaExtra, Schemes } from "../../types";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { textAreaClasses } from "renderer/components/NodePanel";
+import type { DataflowEngine } from "rete-engine";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
 class TextAreaAction implements HistoryAction {
@@ -21,21 +22,31 @@ class TextAreaAction implements HistoryAction {
   }
 }
 
+
+
 // 長文プロンプト入力用コントロール
 export class MultiLineControl extends ClassicPreset.Control {
   value: string;
   constructor(
-    initial: string,
-    public onChange?: (v: string) => void,
+    initial = '',
     public editable = true,
+    public nodeId?: string,
     public history?: HistoryPlugin<Schemes>,
-    public area?: AreaPlugin<Schemes, AreaExtra>
+    public area?: AreaPlugin<Schemes, AreaExtra>,
+    public dataflow?: DataflowEngine<Schemes>,
+    public onChange?: (v: string) => void,
   ) {
     super();
     this.value = initial;
   }
   setValue(value: string) {
     this.value = value;
+    try {
+      //dataflowのキャッシュをクリア
+      this.dataflow?.reset()
+    } catch (e) {
+      console.error("dataNode reset error", e, this.value);
+    }
     this.onChange?.(value);
   }
   // 設定用、画面に反映するならarea.update()を呼ぶ
@@ -58,34 +69,27 @@ export function TextAreaControllView(props: {
     setUiText(control.value);
   }, [control.value]);
 
+  const onChangeHandle = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const v = e.target.value;
+    // キー入力ごとに履歴登録
+    if (control.history) control.history.add(new TextAreaAction(control, uiText, v));
+    setUiText(v);
+    control.setValue(v);
+  }
+
   return (
     <textarea
       ref={ref}
       value={uiText}
       readOnly={!control.editable}
-      onFocus={() => {
-        setPrevText(uiText);
-      }}
+      onFocus={() => { setPrevText(uiText); }}
       onBlur={() => {
         // 変更確定時に履歴へ登録
         if (uiText !== prevText && control.history) {
-          control.history.add(
-            new TextAreaAction(control, prevText, uiText)
-          );
+          control.history.add(new TextAreaAction(control, prevText, uiText));
         }
       }}
-      onChange={control.editable ? (e) => {
-        const v = e.target.value;
-        // キー入力ごとに履歴登録
-        if (control.history) {
-          control.history.add(
-            new TextAreaAction(control, uiText, v)
-          );
-        }
-
-        setUiText(v);
-        control.setValue(v);
-      } : undefined}
+      onChange={control.editable ? onChangeHandle : undefined}
       className={textAreaClasses({ editable: control.editable })}
       placeholder=".../"
     />
