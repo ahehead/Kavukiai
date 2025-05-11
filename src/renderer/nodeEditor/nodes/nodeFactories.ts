@@ -3,8 +3,8 @@ import {
   RunNode,
   StringNode,
   ViewStringNode,
-} from "../../nodes/Node";
-import type { AreaExtra, Schemes } from "../../types";
+} from "./Node";
+import type { AreaExtra, Schemes } from "../types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
@@ -18,8 +18,8 @@ export type NodeDeps = {
 
 export const nodeFactories: Record<string, (deps: NodeDeps) => any> = {
   String: () => new StringNode(""),
-  MultiLineString: ({ history, area }) =>
-    new MultiLineStringNode("", history, area),
+  MultiLineString: ({ history, area, dataflow }) =>
+    new MultiLineStringNode("", history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
   ViewString: ({ dataflow, area }) => new ViewStringNode(dataflow, area),
 };
