@@ -81,7 +81,10 @@ export async function createNodeEditor(container: HTMLElement) {
     items: ContextMenuPresets.classic.setup([
       // 右クリックメニューの項目リスト
       ["String", () => new StringNode()],
-      ["MultiLineString", () => new MultiLineStringNode("", history, area)],
+      [
+        "MultiLineString",
+        () => new MultiLineStringNode("", history, area, dataflow),
+      ],
       ["Run", () => new RunNode(engine)],
       ["ViewString", () => new ViewStringNode(dataflow, area)],
     ]),
