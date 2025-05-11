@@ -4,6 +4,7 @@ import { MultiLineControl } from '../Controls/TextArea';
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaExtra, CustomSocketType, ExtraSizeData, Schemes } from 'renderer/nodeEditor/types';
 import type { AreaPlugin } from 'rete-area-plugin';
+import type { DataflowEngine } from 'rete-engine';
 const { Node, Output } = ClassicPreset;
 
 // 長文文字列入力ノード
@@ -16,15 +17,18 @@ export class MultiLineStringNode extends Node<
   public height?: number;
 
   constructor(
-    initial = '',
-    history?: HistoryPlugin<Schemes>,
-    area?: AreaPlugin<Schemes, AreaExtra>
+    initial: string,
+    history: HistoryPlugin<Schemes>,
+    area: AreaPlugin<Schemes, AreaExtra>,
+    dataflow: DataflowEngine<Schemes>,
   ) {
     super('MultiLineString');
     this.addOutput(
       'out',
       new Output(createSocket("string"), undefined));
-    this.addControl('textArea', new MultiLineControl(initial, undefined, true, history, area));
+    this.addControl(
+      'textArea',
+      new MultiLineControl(initial, true, this.id, history, area, dataflow));
   }
 
   // dataflowで流す
