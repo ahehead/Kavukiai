@@ -1,3 +1,4 @@
+import { cva } from "class-variance-authority";
 import { Scope, type BaseSchemes, type Root } from "rete";
 import { type Area2D, type BaseArea, BaseAreaPlugin } from "rete-area-plugin";
 
@@ -9,7 +10,6 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
   private baseSize: number;
   private snapEnabled: boolean;
   private gridColor: string;
-  private backgroundColor: string;
   private backgroundElem!: HTMLDivElement;
   private lastZoom = 1;
 
@@ -17,13 +17,11 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
     baseSize?: number;
     snap?: boolean;
     gridColor?: string;
-    backgroundColor?: string;
   }) {
     super("gridline-snap-plugin");
     this.baseSize = options?.baseSize ?? 10;
     this.snapEnabled = options?.snap ?? true;
     this.gridColor = options?.gridColor ?? "#e5e7eb";
-    this.backgroundColor = options?.backgroundColor ?? "white";
   }
 
   setParent(scope: Scope<BaseArea<Schemes>, [Root<Schemes>]>) {
@@ -42,15 +40,10 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
     const background = document.createElement("div");
 
     // Tailwind クラスで位置・サイズ・白背景 + 最背面化
-    background.className = [
-      "absolute",
-      "top-[-320000px]",
-      "left-[-320000px]",
-      "w-[640000px]",
-      "h-[640000px]",
-      "bg-background",
-      "z-[-1]",
-    ].join(" ");
+    const bgStyles = cva(
+      "absolute top-[-320000px] left-[-320000px] w-[640000px] h-[640000px] bg-background z-[-1]"
+    );
+    background.className = bgStyles();
 
     this.backgroundElem = background;
     container.childNodes[0].appendChild(background);
@@ -103,10 +96,6 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
   }
   public setGridColor(color: string) {
     this.gridColor = color;
-    this.applyStyle();
-  }
-  public setBackgroundColor(color: string) {
-    this.backgroundColor = color;
     this.applyStyle();
   }
   public refresh() {
