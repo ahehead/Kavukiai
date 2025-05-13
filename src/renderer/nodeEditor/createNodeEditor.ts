@@ -22,12 +22,6 @@ import { ControlFlowEngine, DataflowEngine } from "rete-engine";
 
 // --- 自作モジュール ---
 import {
-  StringNode,
-  MultiLineStringNode,
-  RunNode,
-  ViewStringNode,
-} from "./nodes/Node";
-import {
   RunButtonControl,
   RunButtonControlView,
 } from "./nodes/Controls/RunButton";
@@ -39,7 +33,6 @@ import {
 
 import { CustomExecSocket, CustomSocket } from "./custom";
 
-import { canCreateConnection } from "./features/socket_type_restriction/canCreateConnection";
 import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
 import { setupDragPan } from "./features/dragPan";
 import {
@@ -49,6 +42,7 @@ import {
 } from "./features/editor_state/historyState";
 import { CustomNode } from "./custom/CustomBaseNode";
 import { nodeFactories } from "./nodes/nodeFactories";
+import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -109,15 +103,8 @@ export async function createNodeEditor(container: HTMLElement) {
   area.use(render);
   area.use(gridLine);
 
-  // コネクションのバリデーション
-  editor.addPipe((context) => {
-    if (context.type === "connectioncreate") {
-      if (!canCreateConnection(editor, context.data)) {
-        return;
-      }
-    }
-    return context;
-  });
+  // コネクションの作成時と削除時に、ソケットの接続状態を更新
+  setupSocketConnectionState(editor, area);
 
   //// ここよりプリセットの設定 ////
 
