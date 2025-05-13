@@ -36,8 +36,19 @@ class Connection<
 }
 
 export class CustomSocketType extends ClassicPreset.Socket {
+  isConnected = false;
+
+  constructor(name: string, isConnect = false) {
+    super(name);
+    this.isConnected = isConnect;
+  }
+
   isCompatibleWith(socket: CustomSocketType): boolean {
     return this.name === socket.name;
+  }
+
+  setConnected(isConnect: boolean) {
+    this.isConnected = isConnect;
   }
 }
 
