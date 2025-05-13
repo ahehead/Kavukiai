@@ -12,16 +12,19 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
   private gridColor: string;
   private backgroundElem!: HTMLDivElement;
   private lastZoom = 1;
+  private gridOpacity: number;
 
   constructor(options?: {
     baseSize?: number;
     snap?: boolean;
     gridColor?: string;
+    gridOpacity?: number;
   }) {
     super("gridline-snap-plugin");
     this.baseSize = options?.baseSize ?? 10;
     this.snapEnabled = options?.snap ?? true;
     this.gridColor = options?.gridColor ?? "#e5e7eb";
+    this.gridOpacity = options?.gridOpacity ?? 0.35;
   }
 
   setParent(scope: Scope<BaseArea<Schemes>, [Root<Schemes>]>) {
@@ -75,15 +78,37 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
     });
   }
 
+  private colorWithAlpha(color: string, alpha: number) {
+    // #RRGGBB → rgba()
+    if (color.startsWith("#")) {
+      const hex = color.slice(1);
+      const bigint = Number.parseInt(hex, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return `rgba(${r},${g},${b},${alpha})`;
+    }
+
+    // 既に rgb() → rgba() へ置換
+    if (color.startsWith("rgb(")) {
+      return color.replace("rgb(", "rgba(").replace(")", `,${alpha})`);
+    }
+
+    // hsl() や既に α が入っている場合はそのまま返す
+    return color;
+  }
+
   private applyStyle() {
     const scaleFactor = 1 / this.lastZoom;
     const multiplier = Math.max(1, Math.floor(scaleFactor));
     const gridSize = this.baseSize * multiplier;
     const lineSize = multiplier;
+    const lineColor = this.colorWithAlpha(this.gridColor, this.gridOpacity);
+
     this.backgroundElem.style.backgroundImage = `
-      linear-gradient(${this.gridColor} ${lineSize}px, transparent ${lineSize}px),
-      linear-gradient(90deg, ${this.gridColor} ${lineSize}px, transparent ${lineSize}px)
-    `;
+    linear-gradient(${lineColor} ${lineSize}px, transparent ${lineSize}px),
+    linear-gradient(90deg, ${lineColor} ${lineSize}px, transparent ${lineSize}px)
+  `;
     this.backgroundElem.style.backgroundSize = `${gridSize}px ${gridSize}px`;
   }
 
@@ -99,6 +124,10 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
     this.applyStyle();
   }
   public refresh() {
+    this.applyStyle();
+  }
+  public setGridOpacity(alpha: number) {
+    this.gridOpacity = Math.min(1, Math.max(0, alpha)); // 0-1 clamp
     this.applyStyle();
   }
 }
