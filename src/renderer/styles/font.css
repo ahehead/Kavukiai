@@ -8,7 +8,16 @@
 /* UI用　英語 */
 @font-face {
   font-family: "IBMPlexMono";
+  font-weight: 400;
   src: url("../../resources/public/font/IBMPlexMono-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+/* semibold を追加 */
+@font-face {
+  font-family: "IBMPlexMono";
+  font-weight: 600;
+  src: url("../../resources/public/font/IBMPlexMono-SemiBold.ttf") format("truetype");
   font-display: swap;
 }
 
