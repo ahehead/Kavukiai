@@ -1,12 +1,11 @@
 import { NodeDataSocket } from "renderer/components/NodePanel"
-import type { ClassicPreset } from "rete"
+import type { CustomSocketType } from "../types"
 
-export function CustomSocket<T extends ClassicPreset.Socket>({
-  data
-}: {
-  data: T
-}): React.ReactElement {
+export function CustomSocket<T extends CustomSocketType>(
+  props: { data: T }
+): React.ReactElement {
+  const { data } = props
   return (
-    <NodeDataSocket title={data.name} />
+    <NodeDataSocket isConnected={data.isConnected} title={data.name} />
   )
 }
