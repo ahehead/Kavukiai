@@ -3,8 +3,8 @@ import { cva, type VariantProps } from "class-variance-authority";
 import TriangleIcon from 'src/resources/public/triangleIcon/triangle.svg?react'
 import { Circle } from 'lucide-react';
 
-export const nodePanelValiant = cva(
-  ["bg-node text-node-fg flex flex-col rounded-md border shadow-sm"],
+export const nodePanel = cva(
+  ["bg-node-bg text-node-fg flex flex-col rounded-md border border-node-outline shadow-sm hover:ring-2 hover:ring-accent/70"],
   {
     variants: {
       selected: {
@@ -18,12 +18,12 @@ export const nodePanelValiant = cva(
   }
 )
 
-export function NodePanel({ selected, ...props }: React.ComponentProps<"div"> & VariantProps<typeof nodePanelValiant>) {
+export function NodePanel({ selected, ...props }: React.ComponentProps<"div"> & VariantProps<typeof nodePanel>) {
   return (
     <div
       data-testid="node"
       className={cn(
-        nodePanelValiant({ selected }),
+        nodePanel({ selected }),
       )}
       {...props}
     />
@@ -33,7 +33,7 @@ export function NodePanel({ selected, ...props }: React.ComponentProps<"div"> & 
 export function NodePanelHeader({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("bg-node-header rounded-t-md")}
+      className={cn("rounded-t-md bg-gradient-to-r from-node-header/90 to-node-header")}
       {...props}
     />
   )
@@ -43,7 +43,7 @@ export function NodeTitle({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-testid="title"
-      className={cn(["leading-none pl-2 py-2 tracking-tight"])}
+      className={cn(["node-title-size leading-none pl-2 py-2 tracking-tight font-semibold"])}
       {...props}
     />
   )
@@ -75,7 +75,7 @@ export const textAreaClasses = cva(
 );
 
 const nodeSocketWrapperStyles = cva(
-  ["flex flex-row items-center text-sm tracking-tight"],
+  ["flex flex-row items-center node-socket-text-size tracking-tight"],
   {
     variants: {
       side: {
@@ -105,7 +105,7 @@ export function NodeSocketName({ ...props }: React.ComponentProps<"div">) {
 
 // ソケットの型表示
 export function NodeSocketTypeLabel({ ...props }: React.ComponentProps<"div">) {
-  return <div {...props} className="rounded-md px-1 bg-node-label" />;
+  return <div {...props} className=" px-1 bg-node-label" />;
 }
 
 export function NodePanelControls({ ...props }: React.ComponentProps<"div">) {
@@ -118,7 +118,21 @@ const socketIconWrapperStyles = cva(
   ["group cursor-pointer flex socket-icon-wrapper-size rounded-full items-center justify-center"],
 )
 
-export function NodeExecSocket({ title }: { title: string }) {
+const execIconStyles = cva(
+  [" stroke-[#f2ffee]"],
+  {
+    variants: {
+      isConnected: {
+        true: "socket-icon-size-connected fill-[var(--execSocket)]",
+        false: "socket-icon-size fill-[var(--execSocket)] opacity-60",
+      },
+    },
+    defaultVariants: {
+      isConnected: false,
+    },
+  })
+
+export function NodeExecSocket({ title, isConnected }: { title: string } & VariantProps<typeof execIconStyles>) {
   return (
     <div className={socketIconWrapperStyles()}>
       <div
@@ -126,21 +140,35 @@ export function NodeExecSocket({ title }: { title: string }) {
         title={title}
       >
         <TriangleIcon
-          className="socket-icon-size fill-[var(--color-execSocket)] stroke-[#f2ffee]"
+          className={execIconStyles({ isConnected })}
         />
       </div>
     </div>
   )
 }
 
-export function NodeDataSocket({ title }: { title: string }) {
+const dataIconStyles = cva(
+  ["fill-[var(--color-dataSocket)] text-dataSocket"],
+  {
+    variants: {
+      isConnected: {
+        true: "socket-icon-size-connected ",
+        false: "socket-icon-size opacity-60",
+      },
+    },
+    defaultVariants: {
+      isConnected: false,
+    },
+  })
+
+export function NodeDataSocket({ isConnected, title }: { title: string } & VariantProps<typeof dataIconStyles>) {
   return (
     <div className={socketIconWrapperStyles()}>
       <div
         className=" transform transition-all duration-100 group-hover:scale-115"
         title={title}
       >
-        <Circle className="socket-icon-size fill-[var(--color-dataSocket)] text-[#686dcc]" />
+        <Circle className={dataIconStyles({ isConnected })} />
       </div>
     </div>
   )
