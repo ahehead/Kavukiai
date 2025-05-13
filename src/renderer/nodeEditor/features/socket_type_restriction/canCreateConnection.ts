@@ -13,6 +13,28 @@ export function canCreateConnection(
   return !!(source && target && source.isCompatibleWith(target));
 }
 
+export function getConnectionPorts(
+  editor: NodeEditor<Schemes>,
+  connection: Schemes["Connection"]
+): {
+  input: Input | undefined;
+  output: Output | undefined;
+} {
+  const source = editor.getNode(connection.source);
+  const target = editor.getNode(connection.target);
+
+  const output =
+    source &&
+    (source.outputs as Record<string, Output>)[connection.sourceOutput];
+  const input =
+    target && (target.inputs as Record<string, Input>)[connection.targetInput];
+
+  return {
+    output,
+    input,
+  };
+}
+
 export function getConnectionSockets(
   editor: NodeEditor<Schemes>,
   connection: Schemes["Connection"]
@@ -20,17 +42,12 @@ export function getConnectionSockets(
   source: CustomSocketType | undefined;
   target: CustomSocketType | undefined;
 } {
-  const source = editor.getNode(connection.source);
-  const target = editor.getNode(connection.target);
-
-  const output =
-    source &&
-    (source.outputs as Record<string, Input>)[connection.sourceOutput];
-  const input =
-    target && (target.inputs as Record<string, Output>)[connection.targetInput];
+  const { output, input } = getConnectionPorts(editor, connection);
+  const source = output?.socket as CustomSocketType;
+  const target = input?.socket as CustomSocketType;
 
   return {
-    source: output?.socket,
-    target: input?.socket,
+    source,
+    target,
   };
 }
