@@ -24,10 +24,10 @@ export class ViewStringNode extends Node<
 
     this.addInput(
       'exec',
-      new Input(createSocket("exec"), undefined, true));
+      new Input(createSocket("exec"), undefined, false));
     this.addInput(
       'stringValue',
-      new Input(createSocket("string"), undefined,));
+      new Input(createSocket("string"), undefined, false));
 
     this.addOutput(
       'exec',
