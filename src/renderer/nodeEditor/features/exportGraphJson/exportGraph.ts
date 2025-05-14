@@ -26,7 +26,6 @@ export function exportGraph(
       position: { x: _node.position.x, y: _node.position.y },
       size: { width: node.width, height: node.height },
     };
-
     const nodeData = node.toJSON();
 
     nodes.push({
