@@ -11,14 +11,17 @@ import type { DataflowEngine } from "rete-engine";
 class TextAreaAction implements HistoryAction {
   constructor(
     private control: MultiLineControl,
+    private area: AreaPlugin<Schemes, AreaExtra>,
     private prev: string,
     private next: string
   ) { }
   async undo() {
     this.control.setValue(this.prev);
+    this.area.update("control", this.control.id)
   }
   async redo() {
     this.control.setValue(this.next);
+    this.area.update("control", this.control.id)
   }
 }
 
@@ -72,7 +75,7 @@ export function TextAreaControllView(props: {
   const onChangeHandle = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const v = e.target.value;
     // キー入力ごとに履歴登録
-    if (control.history) control.history.add(new TextAreaAction(control, uiText, v));
+    if (control.history && control.area) control.history.add(new TextAreaAction(control, control.area, uiText, v));
     setUiText(v);
     control.setValue(v);
   }
@@ -85,8 +88,8 @@ export function TextAreaControllView(props: {
       onFocus={() => { setPrevText(uiText); }}
       onBlur={() => {
         // 変更確定時に履歴へ登録
-        if (uiText !== prevText && control.history) {
-          control.history.add(new TextAreaAction(control, prevText, uiText));
+        if (uiText !== prevText && control.history && control.area) {
+          control.history.add(new TextAreaAction(control, control.area, prevText, uiText));
         }
       }}
       onChange={control.editable ? onChangeHandle : undefined}
