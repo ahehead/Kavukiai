@@ -28,29 +28,35 @@ export function useFileOperations(
 
       if (!f || !(await isFileDirty(f))) return true;
 
+      let currentFilePath = f.path;
       // filePathが無ければ、保存したことがないので、ダイアログを表示
-      let filePath = f.path;
-      if (!filePath) {
-        filePath = await electronApiService.showSaveDialog(f.title);
-        if (!filePath) return false; // ユーザーがキャンセル
+      if (!currentFilePath) {
+        currentFilePath = await electronApiService.showSaveDialog(f.title);
+        if (!currentFilePath) return false; // ユーザーがキャンセル
       }
 
       // 同じファイルを上書きするときだけ lastHash を送る
-      const lastHash = filePath === f.path ? f.graphHash : undefined;
+      const lastHash = currentFilePath === f.path ? f.graphHash : undefined;
 
       // グラフを保存
       const result = await electronApiService.saveGraphJsonData(
-        filePath,
+        currentFilePath,
         f.graph,
         lastHash
       );
-      if (!result) {
-        notify("error", `保存失敗: ${f.title}`);
+      if (result.status === "cancel") {
+        notify("info", "保存キャンセル");
+        return false; // ユーザーがキャンセル
+      }
+      if (result.status === "error") {
+        notify("error", `保存失敗: ${result.message}`);
         return false; // 保存失敗
       }
+      const { filePath, fileName } = result.data;
+
       updateFile(fileId, {
-        title: result.fileName,
-        path: result.filePath,
+        title: fileName,
+        path: filePath,
         graph: f.graph,
         graphHash: await hashGraph(f.graph),
       });
@@ -58,7 +64,7 @@ export function useFileOperations(
       if (fileId === activeFileId) {
         clearEditorHistory(f.graph);
       }
-      notify("success", `保存しました: ${result.fileName}`);
+      notify("success", `保存しました: ${fileName}`);
       return true; // 保存成功
     },
     [
