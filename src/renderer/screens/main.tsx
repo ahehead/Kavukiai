@@ -7,9 +7,9 @@ import NoticeButton from 'renderer/features/toast-notice/NoticeButton';
 import { useShallow } from 'zustand/react/shallow'
 import { useCallback, useEffect, useState } from 'react';
 import { electronApiService } from 'renderer/services/appService';
-import { Button } from 'renderer/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from 'renderer/components/ui/dropdown-menu';
 import { useFileOperations } from 'renderer/hooks/useFileOperations';
+import { MenuButton } from 'renderer/components/UIButton';
 
 
 
@@ -110,12 +110,7 @@ export function MainScreen() {
       <div className="flex titlebar bg-titlebar" >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              className='text-foreground font-bold '
-              variant="ghost"
-            >
-              File
-            </Button>
+            <MenuButton>File</MenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuGroup>
@@ -145,6 +140,14 @@ export function MainScreen() {
                     onClick={handleNewFile}
                   >
                     ・ テンプレートから作成
+                  </button>
+                </li>
+                <li className='mb-2 bg-background rounded hover:bg-gray-100'>
+                  <button
+                    className="px-4 py-2"
+                    onClick={handleLoadFile}
+                  >
+                    ・ ファイルを開く
                   </button>
                 </li>
               </ul>
