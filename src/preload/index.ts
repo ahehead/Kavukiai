@@ -1,5 +1,10 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { type FileData, IpcChannel, type OpenAIParams } from "shared/ApiType";
+import {
+  type FileData,
+  IpcChannel,
+  type IpcResult,
+  type OpenAIParams,
+} from "shared/ApiType";
 import type {
   ApiKeysFlags,
   MainState,
@@ -53,7 +58,7 @@ const API = {
     filePath: string,
     graph: GraphJsonData,
     lastHash?: string
-  ): Promise<{ filePath: string; fileName: string } | null> =>
+  ): Promise<IpcResult<{ filePath: string; fileName: string }>> =>
     ipcRenderer.invoke(IpcChannel.SaveJsonGraph, filePath, graph, lastHash),
 
   // 閉じる時の確認ダイアログ
