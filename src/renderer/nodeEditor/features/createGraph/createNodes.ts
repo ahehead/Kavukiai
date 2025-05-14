@@ -40,6 +40,7 @@ export async function createNodes(
     node.id = id;
     await editor.addNode(node);
     if (size.width && size.height) {
+      node.setSize(size.width, size.height);
       await area.resize(id, size.width, size.height);
     }
     await area.translate(id, position);
