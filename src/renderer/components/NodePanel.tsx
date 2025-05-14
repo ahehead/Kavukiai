@@ -2,6 +2,7 @@ import { cn } from "renderer/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority";
 import TriangleIcon from 'src/resources/public/triangleIcon/triangle.svg?react'
 import { Circle } from 'lucide-react';
+import React from "react";
 
 export const nodePanel = cva(
   ["bg-node-bg text-node-fg flex flex-col rounded-md border border-node-outline shadow-sm hover:ring-2 hover:ring-accent/70"],
@@ -18,17 +19,18 @@ export const nodePanel = cva(
   }
 )
 
-export function NodePanel({ selected, ...props }: React.ComponentProps<"div"> & VariantProps<typeof nodePanel>) {
-  return (
-    <div
-      data-testid="node"
-      className={cn(
-        nodePanel({ selected }),
-      )}
-      {...props}
-    />
-  )
-}
+export const NodePanel = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div"> & VariantProps<typeof nodePanel>
+>(({ selected, ...props }, ref) => (
+  <div
+    ref={ref}
+    data-testid="node"
+    className={cn(nodePanel({ selected }))}
+    {...props}
+  />
+))
+NodePanel.displayName = "NodePanel"
 
 export function NodePanelHeader({ ...props }: React.ComponentProps<"div">) {
   return (
