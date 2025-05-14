@@ -1,7 +1,7 @@
 import { ipcMain, dialog } from "electron";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { IpcChannel } from "shared/ApiType";
+import { IpcChannel, type IpcResult } from "shared/ApiType";
 import type { GraphJsonData } from "shared/JsonType";
 import { hashGraph } from "renderer/features/dirty-check/hash";
 import { getWindow } from "main/features/window";
@@ -32,6 +32,7 @@ export async function fileExists(filePath: string): Promise<boolean> {
 export function registerSaveHandlers(): void {
   // 保存時にダイアログを表示
   ipcMain.handle(IpcChannel.ShowSaveDialog, async (event, title) => {
+    // Configファイル
     const conf = ApplicationSettingsConf();
     const { canceled, filePath } = await dialog.showSaveDialog(
       getWindow(event.sender),
@@ -59,7 +60,7 @@ export function registerSaveHandlers(): void {
       filePath: string,
       graph: GraphJsonData,
       lastHash?: string // lastHashは、同じファイルを上書きする時だけ
-    ): Promise<{ filePath: string; fileName: string } | null> => {
+    ): Promise<IpcResult<{ filePath: string; fileName: string }>> => {
       try {
         // 同名かつファイルがあれば、上書き確認
         if (lastHash !== undefined && (await fileExists(filePath))) {
@@ -73,8 +74,10 @@ export function registerSaveHandlers(): void {
               defaultId: 0,
               cancelId: 1,
             });
-            // キャンセルされた場合は null を返す
-            if (res.response === 1) return null;
+            // キャンセルされた場合
+            if (res.response === 1) {
+              return { status: "cancel" };
+            }
           }
         }
 
@@ -84,10 +87,16 @@ export function registerSaveHandlers(): void {
 
         setLastDir(ApplicationSettingsConf(), path.dirname(filePath));
 
-        return { filePath, fileName: path.parse(filePath).name };
+        return {
+          status: "success",
+          data: { filePath, fileName: path.parse(filePath).name },
+        };
       } catch (error: any) {
         console.error(`Graph save failed: ${error.message}`);
-        throw new Error(`Graph save failed: ${error.message}`);
+        return {
+          status: "error",
+          message: `ファイルの保存に失敗しました: ${error.message}`,
+        };
       }
     }
   );
