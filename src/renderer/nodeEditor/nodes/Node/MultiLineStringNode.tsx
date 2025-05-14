@@ -2,19 +2,17 @@ import { ClassicPreset } from 'rete';
 import { createSocket } from '../Sockets';
 import { MultiLineControl } from '../Controls/TextArea';
 import type { HistoryPlugin } from 'rete-history-plugin';
-import type { AreaExtra, CustomSocketType, ExtraSizeData, Schemes } from 'renderer/nodeEditor/types';
+import { BaseNode, type AreaExtra, type CustomSocketType, type Schemes } from 'renderer/nodeEditor/types';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
-const { Node, Output } = ClassicPreset;
+const { Output } = ClassicPreset;
 
 // 長文文字列入力ノード
-export class MultiLineStringNode extends Node<
+export class MultiLineStringNode extends BaseNode<
   object,
   { out: CustomSocketType },
   { textArea: MultiLineControl }
-> implements ExtraSizeData {
-  public width?: number;
-  public height?: number;
+> {
 
   constructor(
     initial: string,
