@@ -1,23 +1,15 @@
 import { type BrowserWindow, dialog } from "electron";
-import { Conf } from "electron-conf";
-import {
-  type ApplicationSettings,
-  ConfFileName,
-  createDefaultApplicationSettings,
-} from "main/types";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { FileData } from "shared/ApiType";
 import type { GraphJsonData } from "shared/JsonType";
-import { getLastDir } from "./file/lastDirPath";
+import { getLastDir, setLastDir } from "./file/lastDirPath";
+import { ApplicationSettingsConf } from "./file/conf";
 
 export async function openDialogAndReadFile(
   window: BrowserWindow
 ): Promise<FileData | null> {
-  const conf = new Conf<ApplicationSettings>({
-    name: ConfFileName.ApplicationSettings,
-    defaults: createDefaultApplicationSettings(),
-  });
+  const conf = ApplicationSettingsConf();
 
   const { canceled, filePaths } = await dialog.showOpenDialog(window, {
     defaultPath: getLastDir(conf),
@@ -29,7 +21,7 @@ export async function openDialogAndReadFile(
 
   const content = await fs.readFile(filePaths[0], "utf-8");
 
-  conf.set("systemSettings.lastDir", path.dirname(filePaths[0]));
+  setLastDir(conf, path.dirname(filePaths[0]));
 
   return {
     filePath: filePaths[0],
