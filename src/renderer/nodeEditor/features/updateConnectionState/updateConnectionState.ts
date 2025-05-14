@@ -19,7 +19,6 @@ export function setupSocketConnectionState(
 ): void {
   // 1. connectioncreate 前のバリデーション
   editor.addPipe((context) => {
-    console.log("connect", context.type);
     if (
       context.type === "connectioncreate" &&
       !canCreateConnection(editor, context.data)
