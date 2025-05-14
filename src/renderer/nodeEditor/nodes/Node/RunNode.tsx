@@ -30,7 +30,4 @@ export class RunNode extends BaseNode<
   async execute(_: never, forward: (output: 'exec') => void): Promise<void> {
     forward('exec');
   }
-  toJSON(): object {
-    return {};
-  }
 }
