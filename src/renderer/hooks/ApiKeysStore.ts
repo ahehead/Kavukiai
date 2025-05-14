@@ -1,9 +1,10 @@
 // src/renderer/stores/apiKeysStore.ts
+
 import {
-  createApiKeysState,
-  type ApiKeysState,
   type ApiKeysFlags,
-} from "shared/AppType";
+  type ApiKeysState,
+  createApiKeysState,
+} from "shared/ApiKeysType";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
