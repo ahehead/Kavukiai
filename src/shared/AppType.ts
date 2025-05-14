@@ -16,13 +16,6 @@ export type UISettings = {
   theme: "light" | "dark" | "system";
 };
 
-/* ---------- Provider 拡張 ---------- */
-export const providers = ["openai", "google", "gemini", "ollama"] as const;
-export type Provider = (typeof providers)[number];
-
-type Flags<T extends string> = { [P in T]: boolean };
-type Secrets<T extends string> = { [P in T]: Buffer | null };
-
 /* ---------- タブ管理 ---------- */
 export type ActiveFileId = {
   activeFileId: string | null;
@@ -56,12 +49,6 @@ type MainStateBase<F> = {
 export type MainState = MainStateBase<File[]>;
 export type PersistedMainState = MainStateBase<PersistedFile[]>;
 
-/* ---------- ApiKeysState（認証情報だけ） ---------- */
-export type ApiKeysFlags = Flags<Provider>; // 実行時: { openai: true/false, … }
-export type ApiKeysSecrets = Secrets<Provider>; // 保存用: { openai: Buffer|null, … }
-
-export type ApiKeysState = { version: string; keys: ApiKeysFlags };
-export type PersistedApiKeysState = { version: string; keys: ApiKeysSecrets };
 /* ===========================================================
  * ファクトリ関数
  * ===========================================================
@@ -73,12 +60,6 @@ export function createUISettings(): UISettings {
 export function createActiveFileId(): ActiveFileId {
   return { activeFileId: null };
 }
-
-export const createApiKeysFlags = (): ApiKeysFlags =>
-  Object.fromEntries(providers.map((p) => [p, false])) as ApiKeysFlags;
-
-export const createApiKeysSecrets = (): ApiKeysSecrets =>
-  Object.fromEntries(providers.map((p) => [p, null])) as ApiKeysSecrets;
 
 export async function createFile(
   title: string,
@@ -122,32 +103,10 @@ export function createPersistedMainState(): PersistedMainState {
   };
 }
 
-export const createApiKeysState = (): ApiKeysState => ({
-  version: "1",
-  keys: createApiKeysFlags(),
-});
-
-export const createPersistedApiKeysState = (): PersistedApiKeysState => ({
-  version: "1",
-  keys: createApiKeysSecrets(),
-});
-
 /* ===========================================================
  * 変換ユーティリティ
  * ===========================================================
  */
-/* ------- ApiKeysSecrets ⇄ ApiKeysFlags ------- */
-export const secretsToFlags = (src: ApiKeysSecrets): ApiKeysFlags =>
-  Object.fromEntries(providers.map((p) => [p, !!src[p]])) as ApiKeysFlags;
-
-export const flagsToSecrets = (
-  flags: ApiKeysFlags,
-  prevSecrets: ApiKeysSecrets
-): ApiKeysSecrets =>
-  Object.fromEntries(
-    providers.map((p) => [p, flags[p] ? prevSecrets[p] : null])
-  ) as ApiKeysSecrets;
-
 export function convertPersistedFileToFile(file: PersistedFile): File {
   return { ...file, historyState: initializeHistoryState() };
 }
