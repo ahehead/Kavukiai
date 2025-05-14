@@ -1,21 +1,17 @@
 import { ClassicPreset } from 'rete';
 import { createSocket } from '../Sockets';
 import type { DataflowEngine } from 'rete-engine';
-import type { AreaExtra, CustomSocketType, ExtraSizeData, Schemes } from 'renderer/nodeEditor/types';
+import { BaseNode, type AreaExtra, type CustomSocketType, type Schemes } from 'renderer/nodeEditor/types';
 import type { AreaPlugin } from 'rete-area-plugin';
 import { MultiLineControl } from '../Controls/TextArea';
-const { Node, Input, Output } = ClassicPreset;
+const { Input, Output } = ClassicPreset;
 
 // View String ノード
-export class ViewStringNode extends Node<
+export class ViewStringNode extends BaseNode<
   { exec: CustomSocketType; stringValue: CustomSocketType },
   { exec: CustomSocketType; stringValue: CustomSocketType },
   { view: MultiLineControl }
-> implements ExtraSizeData {
-
-  public width?: number;
-  public height?: number;
-
+> {
   constructor(
     private dataflow: DataflowEngine<Schemes>,
     private area: AreaPlugin<Schemes, AreaExtra>
