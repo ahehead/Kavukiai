@@ -1,19 +1,18 @@
 import { ipcMain, safeStorage } from "electron";
 import { Conf } from "electron-conf/main";
-import { IpcChannel } from "shared/ApiType";
-import type {
-  MainState,
-  PersistedMainState,
-  PersistedApiKeysState,
-  ApiKeysSecrets,
-  ApiKeysFlags,
-} from "shared/AppType";
 import {
-  convertPersistedMainToMain,
+  type ApiKeysFlags,
+  type ApiKeysSecrets,
   createPersistedApiKeysState,
-  createPersistedMainState,
+  type PersistedApiKeysState,
   providers,
   secretsToFlags,
+} from "shared/ApiKeysType";
+import { IpcChannel } from "shared/ApiType";
+import type { MainState, PersistedMainState } from "shared/AppType";
+import {
+  convertPersistedMainToMain,
+  createPersistedMainState,
 } from "shared/AppType";
 
 // ストレージ初期化
