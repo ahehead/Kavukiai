@@ -40,7 +40,7 @@ import {
   type NodeEditorState,
   resetEditorState,
 } from "./features/editor_state/historyState";
-import { CustomNode } from "./custom/CustomBaseNode";
+import { createCustomNode } from "./custom/CustomBaseNode";
 import { nodeFactories } from "./nodes/nodeFactories";
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
 
@@ -103,6 +103,17 @@ export async function createNodeEditor(container: HTMLElement) {
   area.use(render);
   area.use(gridLine);
 
+  // ズームの値を保持
+  let currentZoom = 1;
+  area.addPipe((context) => {
+    if (context.type === "zoomed") {
+      currentZoom = context.data.zoom;
+      return context;
+    }
+    return context;
+  });
+  const getZoom = () => currentZoom;
+
   // コネクションの作成時と削除時に、ソケットの接続状態を更新
   setupSocketConnectionState(editor, area);
 
@@ -134,7 +145,7 @@ export async function createNodeEditor(container: HTMLElement) {
           return null;
         },
         node() {
-          return CustomNode;
+          return createCustomNode(area, history, getZoom);
         },
       },
     })
@@ -155,6 +166,7 @@ export async function createNodeEditor(container: HTMLElement) {
 
   return {
     destroy: () => area.destroy(),
+    // 現在のnode editorの状態を取得
     getCurrentEditorState: () => getCurrentEditorState(editor, area, history),
     resetEditorState: async (state: NodeEditorState) =>
       await resetEditorState(state, editor, area, dataflow, engine, history),
