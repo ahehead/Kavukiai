@@ -52,9 +52,29 @@ export class CustomSocketType extends ClassicPreset.Socket {
   }
 }
 
+export class BaseNode<
+  Inputs extends { [key in string]?: CustomSocketType },
+  Outputs extends { [key in string]?: CustomSocketType },
+  Controls extends {
+    [key in string]?:
+      | RunButtonControl
+      | MultiLineControl
+      | ClassicPreset.Control
+      | ClassicPreset.InputControl<"number">
+      | ClassicPreset.InputControl<"text">;
+  }
+> extends ClassicPreset.Node<Inputs, Outputs, Controls> {
+  public width?: number;
+  public height?: number;
+  setSize(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+  }
+}
+
 // 型参照用のインターフェイス
 export interface NodeInterface
-  extends ClassicPreset.Node<
+  extends BaseNode<
     { [key in string]?: CustomSocketType },
     { [key in string]?: CustomSocketType },
     {
@@ -65,7 +85,4 @@ export interface NodeInterface
         | ClassicPreset.InputControl<"number">
         | ClassicPreset.InputControl<"text">;
     }
-  > {
-  width?: number;
-  height?: number;
-}
+  > {}
