@@ -36,7 +36,7 @@ export class MultiLineStringNode extends BaseNode<
 
   async execute(): Promise<void> { }
 
-  toJSON(): { data: any } {
+  toJSON(): { data: { value: string, editable: boolean } } {
     return {
       data: {
         value: this.controls.textArea.value || '',
