@@ -27,7 +27,7 @@ export class StringNode extends BaseNode<
 
   async execute(): Promise<void> { }
 
-  toJSON(): { data: any } {
+  toJSON(): { data: { value: string } } {
     return {
       data:
         { value: this.controls.textInput.value || "" }
