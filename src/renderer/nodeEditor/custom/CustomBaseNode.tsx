@@ -3,7 +3,7 @@ import type { AreaExtra, NodeInterface, Schemes } from '../types'
 import { NodePanel, NodePanelSockets, NodePanelHeader, NodeSocketName, NodeSocketTypeLabel, NodeSocketWrapper, NodeTitle, NodePanelControls } from 'renderer/components/NodePanel'
 import type { AreaPlugin } from 'rete-area-plugin'
 import { useRef } from 'react'
-import type { HistoryAction, HistoryActions, HistoryPlugin } from 'rete-history-plugin'
+import type { HistoryAction, HistoryPlugin } from 'rete-history-plugin'
 
 type Props<S extends Schemes> = {
   data: NodeInterface
