@@ -1,15 +1,13 @@
 import { ClassicPreset } from 'rete';
 import { createSocket } from '../Sockets';
-import type { CustomSocketType, ExtraSizeData } from 'renderer/nodeEditor/types';
+import { BaseNode, type CustomSocketType } from 'renderer/nodeEditor/types';
 const { Node, Output } = ClassicPreset;
 // 短い文字列入力ノード
-export class StringNode extends Node<
+export class StringNode extends BaseNode<
   object,
   { out: CustomSocketType },
   { textInput: ClassicPreset.InputControl<'text'> }
-> implements ExtraSizeData {
-  public width?: number;
-  public height?: number;
+> {
   constructor(
     initial = ''
   ) {
