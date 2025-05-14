@@ -46,3 +46,8 @@ export type FileData = {
   fileName: string;
   json: GraphJsonData;
 };
+
+export type IpcResult<T> =
+  | { status: "success"; data: T }
+  | { status: "cancel" }
+  | { status: "error"; message: string; code?: string };
