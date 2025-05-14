@@ -55,8 +55,5 @@ export class ViewStringNode extends BaseNode<
     forward('exec');
   }
 
-  toJSON(): { data: any } {
-    return { data: this.controls.view.value || '' };
-  }
 }
 
