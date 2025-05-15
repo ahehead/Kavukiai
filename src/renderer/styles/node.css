@@ -19,7 +19,7 @@
   --hdr-string     : hsl(190 70% 93%);
   --hdr-run        : hsl(35 80% 94%);
 
-  --node-label: rgb(218, 255, 253);
+  --node-label: rgb(231, 237, 246);
   --node-border: var(--border);
 
   --node-state-pending: var(--accent);
