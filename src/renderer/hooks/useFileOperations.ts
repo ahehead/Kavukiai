@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { electronApiService } from "../services/appService";
+import { electronApiService } from "../features/services/appService";
 import { isFileDirty } from "../features/dirty-check/useIsFileDirty";
 import { hashGraph } from "../features/dirty-check/hash";
 import { notify } from "../features/toast-notice/notify";
