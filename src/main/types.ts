@@ -33,4 +33,5 @@ export function createDefaultApplicationSettings(): ApplicationSettings {
 
 export enum ConfFileName {
   ApplicationSettings = "app-settings",
+  ApiKeys = "api-keys",
 }
