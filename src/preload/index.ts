@@ -1,15 +1,14 @@
 import { contextBridge, ipcRenderer } from "electron";
+import type { ApiKeysFlags } from "shared/ApiKeysType";
 import {
   type FileData,
   IpcChannel,
   type IpcResult,
+  type IpcResultDialog,
   type OpenAIParams,
 } from "shared/ApiType";
-import type {
-  ApiKeysFlags,
-  MainState,
-  PersistedMainState,
-} from "shared/AppType";
+
+import type { MainState, PersistedMainState } from "shared/AppType";
 import type { GraphJsonData } from "shared/JsonType";
 
 declare global {
@@ -26,8 +25,12 @@ const API = {
   takeAppStateSnapshot: (state: PersistedMainState): void =>
     ipcRenderer.send(IpcChannel.SaveSnapshot, state),
 
-  saveApiKey: (key: string | null): Promise<ApiKeysFlags> =>
-    ipcRenderer.invoke(IpcChannel.SaveApiKey, key) as Promise<ApiKeysFlags>,
+  saveApiKey: (
+    service: keyof ApiKeysFlags,
+    key: string
+  ): Promise<IpcResult<ApiKeysFlags>> =>
+    ipcRenderer.invoke(IpcChannel.SaveApiKey, service, key),
+
   openAIRequest: (params: OpenAIParams): Promise<string> =>
     ipcRenderer.invoke(IpcChannel.OpenAIRequest, params),
   onOpenSettings: (callback: () => void): (() => void) => {
@@ -58,7 +61,7 @@ const API = {
     filePath: string,
     graph: GraphJsonData,
     lastHash?: string
-  ): Promise<IpcResult<{ filePath: string; fileName: string }>> =>
+  ): Promise<IpcResultDialog<{ filePath: string; fileName: string }>> =>
     ipcRenderer.invoke(IpcChannel.SaveJsonGraph, filePath, graph, lastHash),
 
   // 閉じる時の確認ダイアログ
