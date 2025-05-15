@@ -1,7 +1,7 @@
 import { ipcMain, dialog } from "electron";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { IpcChannel, type IpcResult } from "shared/ApiType";
+import { IpcChannel, type IpcResultDialog } from "shared/ApiType";
 import type { GraphJsonData } from "shared/JsonType";
 import { hashGraph } from "renderer/features/dirty-check/hash";
 import { getWindow } from "main/features/window";
@@ -60,7 +60,7 @@ export function registerSaveHandlers(): void {
       filePath: string,
       graph: GraphJsonData,
       lastHash?: string // lastHashは、同じファイルを上書きする時だけ
-    ): Promise<IpcResult<{ filePath: string; fileName: string }>> => {
+    ): Promise<IpcResultDialog<{ filePath: string; fileName: string }>> => {
       try {
         // 同名かつファイルがあれば、上書き確認
         if (lastHash !== undefined && (await fileExists(filePath))) {
