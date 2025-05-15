@@ -54,7 +54,7 @@ export function CloseFileButton({ isDirty, ...props }: { isDirty: boolean } & Re
   )
 }
 
-const menuButtonStyles = cva("flex-shrink-0 rounded-md cursor-pointer bg-transparent focus:outline-none forcus-visible:outline-none")
+const menuButtonStyles = cva("flex-shrink-0 rounded-md cursor-pointer bg-transparent")
 
 export function MenuButton({ ...props }: React.ComponentProps<"button">) {
   return (
@@ -69,5 +69,17 @@ export function BellButton({ haveUnread, ...props }: { haveUnread: boolean } & R
         <BellPlus className="icon-size-md" />
         : <Bell className="icon-size-md" />}
     </Button>
+  )
+}
+
+export function CloseButton({ ...props }: React.ComponentProps<"button">) {
+  return (
+    <Button className={cn(buttonVariants({ variant: "outline" }))} {...props} />
+  )
+}
+
+export function SaveButton({ ...props }: React.ComponentProps<"button">) {
+  return (
+    <Button className={cn(buttonVariants({ variant: "default" }), "text-white")} {...props} />
   )
 }
