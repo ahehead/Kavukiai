@@ -3,6 +3,7 @@ import { registerOpenAIHandlers } from "./openai";
 import { registerSaveHandlers } from "./save";
 import { registerCloseConfirmHandler } from "./close-confirm";
 import { registerLoadFileHandler } from "./load-file";
+import { registerApiKeysHandlers } from "./apikeys";
 // import { registerOtherServiceHandlers } from "./otherService";
 
 export function registerIpcHandlers(): void {
@@ -11,5 +12,6 @@ export function registerIpcHandlers(): void {
   registerSaveHandlers();
   registerCloseConfirmHandler();
   registerLoadFileHandler();
+  registerApiKeysHandlers();
   // registerOtherServiceHandlers();
 }
