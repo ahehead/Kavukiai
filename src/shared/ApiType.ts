@@ -49,5 +49,9 @@ export type FileData = {
 
 export type IpcResult<T> =
   | { status: "success"; data: T }
+  | { status: "error"; message: string; code?: string };
+
+export type IpcResultDialog<T> =
+  | { status: "success"; data: T }
   | { status: "cancel" }
   | { status: "error"; message: string; code?: string };
