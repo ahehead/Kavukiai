@@ -2,6 +2,7 @@
 @import "./styles/font.css";
 @import "./styles/node.css";
 @import "./styles/titlebar.css";
+@import "./styles/zindex.css";
 
 @custom-variant dark (&:is(.dark *));
 
