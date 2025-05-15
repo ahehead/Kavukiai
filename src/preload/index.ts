@@ -13,7 +13,7 @@ import type { GraphJsonData } from "shared/JsonType";
 
 declare global {
   interface Window {
-    App: typeof API;
+    App: typeof API; // This will infer the types from the API object
   }
 }
 
@@ -95,6 +95,10 @@ const API = {
   // ファイルを読み込む
   loadFile: (): Promise<FileData | null> =>
     ipcRenderer.invoke(IpcChannel.LoadFile),
+
+  // APIキーを読み込む
+  loadApiKeys: (): Promise<IpcResult<ApiKeysFlags>> =>
+    ipcRenderer.invoke(IpcChannel.LoadApiKeys),
 };
 
 contextBridge.exposeInMainWorld("App", API);
