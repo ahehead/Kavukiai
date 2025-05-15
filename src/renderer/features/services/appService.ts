@@ -11,7 +11,8 @@ type ApiKeys =
   | "onSaveGraphInitiate"
   | "onFileLoadedRequest"
   | "loadFile"
-  | "saveApiKey";
+  | "saveApiKey"
+  | "loadApiKeys";
 
 type ElectronService = Pick<typeof App, ApiKeys>;
 
