@@ -37,4 +37,20 @@ export function registerApiKeysHandlers(): void {
       }
     }
   );
+
+  // サービス鍵状態取得
+  ipcMain.handle(IpcChannel.LoadApiKeys, (): IpcResult<ApiKeysFlags> => {
+    try {
+      const apiKeysConf = ApiKeysConf();
+      const persistedKeys = apiKeysConf.get("keys") as ApiKeysSecrets;
+      const flags = secretsToFlags(persistedKeys);
+      return { status: "success", data: flags };
+    } catch (err) {
+      console.error("APIキー状態取得失敗:", err);
+      return {
+        status: "error",
+        message: `APIキー状態取得失敗: ${err}`,
+      };
+    }
+  });
 }
