@@ -14,13 +14,13 @@
   --background: rgb(255, 254, 251);
   --foreground: rgb(21 21 31);
 
-  --sidebar: rgb(206, 213, 234);
+  --sidebar: rgb(220, 225, 243);
   --sidebar-foreground: oklch(0.145 0 0);
 
-  --primary: rgb(27 76 156);
+  --primary: rgb(60, 191, 125);
   --primary-foreground: oklch(0.145 0 0);
 
-  --accent: rgb(182, 216, 230);
+  --accent: rgb(148, 231, 203);
   --accent-foreground: oklch(0.145 0 0);
 
   --destructive: rgb(185 18 49);
