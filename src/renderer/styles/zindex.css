@@ -1,0 +1,21 @@
+:root {
+  --zindex-top: calc(infinity);
+  --zindex-modal: 50;
+  --zindex-node: 40;
+  --zindex-connection: 30;
+}
+
+@layer utilities {
+  .z-top {
+    z-index: var(--zindex-top);
+  }
+  .z-modal {
+    z-index: var(--zindex-modal);
+  }
+  .z-node {
+    z-index: var(--zindex-node);
+  }
+  .z-connection {
+    z-index: var(--zindex-connection);
+  }
+}
