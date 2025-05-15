@@ -6,7 +6,7 @@ import { Toaster } from 'sonner';
 import NoticeButton from 'renderer/features/toast-notice/NoticeButton';
 import { useShallow } from 'zustand/react/shallow'
 import { useCallback, useEffect, useState } from 'react';
-import { electronApiService } from 'renderer/services/appService';
+import { electronApiService } from 'renderer/features/services/appService';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from 'renderer/components/ui/dropdown-menu';
 import { useFileOperations } from 'renderer/hooks/useFileOperations';
 import { MenuButton } from 'renderer/components/UIButton';
