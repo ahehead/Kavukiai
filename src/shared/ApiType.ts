@@ -5,6 +5,7 @@ export enum IpcChannel {
   SaveSnapshot = "save-snapshot",
 
   SaveApiKey = "save-api-key",
+  LoadApiKeys = "load-api-keys",
   OpenAIRequest = "openai-request",
 
   OpenSettings = "open-settings",
