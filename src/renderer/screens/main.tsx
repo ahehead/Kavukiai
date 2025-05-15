@@ -119,6 +119,7 @@ export function MainScreen() {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
+        <MenuButton onClick={() => setShowSettings(true)}>Setting</MenuButton>
       </div>
       {/* メインコンテンツ */}
       <main className="flex flex-1 flex-col">
