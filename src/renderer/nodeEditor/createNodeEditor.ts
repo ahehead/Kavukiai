@@ -45,6 +45,7 @@ import { nodeFactories } from "./nodes/nodeFactories";
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
 import { ConsoleControl, ConsoleControlView } from "./nodes/Controls/Console";
 import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
+import { setupNodeZOrder } from "./features/setupNodeZOder/setupNodeZOrder";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -166,13 +167,7 @@ export async function createNodeEditor(container: HTMLElement) {
   disableDoubleClickZoom(area);
 
   // コネクションよりノードを前に表示
-  area.addPipe((context) => {
-    if (context.type === "nodecreated") {
-      const nodeView = area.nodeViews.get(context.data.id);
-      nodeView?.element.classList.add("z-node");
-    }
-    return context;
-  });
+  setupNodeZOrder(area);
 
   return {
     destroy: () => area.destroy(),
