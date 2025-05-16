@@ -44,6 +44,7 @@ import { createCustomNode } from "./custom/CustomBaseNode";
 import { nodeFactories } from "./nodes/nodeFactories";
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
 import { ConsoleControl, ConsoleControlView } from "./nodes/Controls/Console";
+import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -161,10 +162,15 @@ export async function createNodeEditor(container: HTMLElement) {
 
   // マウスクリックと、マウス中ボタンで領域パン
   setupDragPan(area);
-
   // ダブルクリックでのズームを無効化
+  disableDoubleClickZoom(area);
+
+  // コネクションよりノードを前に表示
   area.addPipe((context) => {
-    if (context.type === "zoom" && context.data.source === "dblclick") return;
+    if (context.type === "nodecreated") {
+      const nodeView = area.nodeViews.get(context.data.id);
+      nodeView?.element.classList.add("z-node");
+    }
     return context;
   });
 
