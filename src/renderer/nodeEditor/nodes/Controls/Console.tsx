@@ -34,7 +34,7 @@ function Console(props: { value: string }): React.JSX.Element {
     <Drag.NoDrag>
       <textarea
         ref={textareaRef}
-        className="w-full h-full p-2 border-none resize-none text-sm text-gray-700 dark:text-gray-200 rounded-md bg-gray-100 overflow-auto"
+        className="w-full h-full p-2 border-none resize-none text-sm text-gray-700 dark:text-gray-200 rounded-md bg-gray-100 overflow-auto focus:outline-none"
         value={props.value}
         readOnly
         rows={1}
