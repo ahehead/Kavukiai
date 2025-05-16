@@ -1,7 +1,7 @@
 // --- サードパーティ・モジュール ---
 import { createRoot } from "react-dom/client";
 import { ClassicPreset, NodeEditor } from "rete";
-import { AreaPlugin } from "rete-area-plugin";
+import { AreaExtensions, AreaPlugin } from "rete-area-plugin";
 import {
   ConnectionPlugin,
   Presets as ConnectionPresets,
@@ -45,7 +45,6 @@ import { nodeFactories } from "./nodes/nodeFactories";
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
 import { ConsoleControl, ConsoleControlView } from "./nodes/Controls/Console";
 import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
-import { setupNodeZOrder } from "./features/setupNodeZOder/setupNodeZOrder";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -72,6 +71,7 @@ export async function createNodeEditor(container: HTMLElement) {
   });
 
   const area = new AreaPlugin<Schemes, AreaExtra>(container);
+  AreaExtensions.simpleNodesOrder(area);
   const connection = new ConnectionPlugin<Schemes, AreaExtra>();
   const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
   // Context menu pluginのインスタンス化
@@ -165,9 +165,6 @@ export async function createNodeEditor(container: HTMLElement) {
   setupDragPan(area);
   // ダブルクリックでのズームを無効化
   disableDoubleClickZoom(area);
-
-  // コネクションよりノードを前に表示
-  setupNodeZOrder(area);
 
   return {
     destroy: () => area.destroy(),
