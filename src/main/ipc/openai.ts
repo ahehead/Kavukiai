@@ -1,15 +1,7 @@
-import { ipcMain, safeStorage } from "electron";
+import { ipcMain } from "electron";
 import OpenAI from "openai";
 import { IpcChannel, type OpenAIParams } from "shared/ApiType";
-import { ApiKeysConf } from "main/features/file/conf";
-
-function getApiKey(): string {
-  const apiKeysConf = ApiKeysConf();
-  const encrypted = apiKeysConf.get("keys.openai") as Buffer | null;
-  const apiKey = encrypted ? safeStorage.decryptString(encrypted) : null;
-  if (!apiKey) throw new Error("APIキー未設定");
-  return apiKey;
-}
+import { ApiKeyConf, getApiKeyConf } from "main/features/file/conf";
 
 // openaiリクエストを処理するハンドラを登録
 export function registerOpenAIHandlers(): void {
@@ -17,12 +9,16 @@ export function registerOpenAIHandlers(): void {
   ipcMain.handle(
     IpcChannel.OpenAIRequest,
     async (_evt, params: OpenAIParams) => {
-      const openai = new OpenAI({ apiKey: getApiKey() });
+      const apiKeysConf = ApiKeyConf();
+      const openai = new OpenAI({
+        apiKey: getApiKeyConf(apiKeysConf, "openai"),
+      });
       const completion = await openai.chat.completions.create(params);
       return completion.choices[0]?.message?.content;
     }
   );
 
+  // steamでchatgptを実行する
   ipcMain.on(IpcChannel.StreamChatGpt, async (evt, data) => {
     const { id, params } = data as {
       id: string;
@@ -39,7 +35,11 @@ export function registerOpenAIHandlers(): void {
     port.start();
 
     try {
-      const openai = new OpenAI({ apiKey: getApiKey() });
+      const apiKeysConf = ApiKeyConf();
+
+      const openai = new OpenAI({
+        apiKey: getApiKeyConf(apiKeysConf, "openai"),
+      });
       const stream = await openai.chat.completions.create(
         { ...params, stream: true },
         { signal: ctrl.signal }
