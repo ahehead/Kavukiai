@@ -170,11 +170,6 @@ export function MainScreen() {
         >
           <div ref={ref} className="w-full h-full" />
         </div>
-        {/* 通知ベル */}
-        <div className="fixed bottom-5 right-5 "
-          style={{ display: files.length === 0 ? 'none' : "flex" }}>
-          <NoticeButton />
-        </div>
         {
           // 設定画面
           showSettings && (
