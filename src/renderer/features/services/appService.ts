@@ -12,7 +12,8 @@ type ApiKeys =
   | "onFileLoadedRequest"
   | "loadFile"
   | "saveApiKey"
-  | "loadApiKeys";
+  | "loadApiKeys"
+  | "streamChatGpt";
 
 type ElectronService = Pick<typeof App, ApiKeys>;
 
