@@ -27,15 +27,15 @@ class SizeChangeHistory implements HistoryAction {
   }
 }
 
-const nodeMinWidth = 180
-const nodeMinHeight = 120
+
 
 export function createCustomNode(
   area: AreaPlugin<Schemes, AreaExtra>,
   history: HistoryPlugin<Schemes>, getZoom: () => number
 ) {
   return function CustomNode<Scheme extends Schemes>({ data, emit }: Props<Scheme>) {
-
+    const nodeMinWidth = 180
+    const nodeMinHeight = data.getMinHeight()
     const inputs = Object.entries(data.inputs)
     const outputs = Object.entries(data.outputs)
     const controls = Object.entries(data.controls)
@@ -51,12 +51,6 @@ export function createCustomNode(
     sortByIndex(controls)
 
     function getPanelSize(): { width: number; height: number } {
-      if (typeof width === 'number' &&
-        typeof height === 'number' &&
-        Number.isFinite(width) &&
-        Number.isFinite(height)) {
-        return { width, height }
-      }
       if (panelRef.current) {
         const rect = panelRef.current.getBoundingClientRect()
         const zoom = getZoom()
@@ -85,12 +79,15 @@ export function createCustomNode(
         window.removeEventListener('pointermove', move);
         window.removeEventListener('pointerup', up);
         // リサイズ終了時に一度だけヒストリーへ追加
+        const { width, height } = data.getSize();
+        console.log('size', width, height);
+        if (width === undefined || height === undefined) return;
         history.add(
           new SizeChangeHistory(
             data,
             area,
             { width: startW, height: startH },
-            { width: data.width as number, height: data.height as number }
+            { width: width, height: height }
           )
         );
       }
