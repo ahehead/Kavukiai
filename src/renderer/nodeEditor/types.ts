@@ -7,10 +7,12 @@ import type { RunButtonControl } from "./nodes/Controls/RunButton";
 import type { MultiLineControl } from "./nodes/Controls/TextArea";
 import type {
   MultiLineStringNode,
+  OpenAINode,
   RunNode,
   StringNode,
   ViewStringNode,
 } from "./nodes/Node";
+import type { ConsoleControl } from "./nodes/Controls/Console";
 
 export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
 
@@ -23,7 +25,8 @@ export type NodeTypes =
   | StringNode
   | RunNode
   | MultiLineStringNode
-  | ViewStringNode;
+  | ViewStringNode
+  | OpenAINode;
 
 export type ExtraSizeData = { width?: number; height?: number };
 
@@ -57,11 +60,12 @@ export class BaseNode<
   Outputs extends { [key in string]?: CustomSocketType },
   Controls extends {
     [key in string]?:
-      | RunButtonControl
-      | MultiLineControl
       | ClassicPreset.Control
       | ClassicPreset.InputControl<"number">
-      | ClassicPreset.InputControl<"text">;
+      | ClassicPreset.InputControl<"text">
+      | RunButtonControl
+      | MultiLineControl
+      | ConsoleControl;
   }
 > extends ClassicPreset.Node<Inputs, Outputs, Controls> {
   public width?: number;
@@ -69,6 +73,20 @@ export class BaseNode<
   setSize(width: number, height: number) {
     this.width = width;
     this.height = height;
+  }
+  getSize(): { width: number | undefined; height: number | undefined } {
+    return { width: this.width, height: this.height };
+  }
+  getMinHeight(): number {
+    const titleHeight = 30;
+    const socketHeight = 22;
+    const controlHeight = 55;
+    const socketCount =
+      Object.keys(this.inputs).length + Object.keys(this.outputs).length;
+    const controlCount = Object.keys(this.controls).length;
+    return (
+      titleHeight + socketHeight * socketCount + controlHeight * controlCount
+    );
   }
 }
 
@@ -83,6 +101,7 @@ export interface NodeInterface
         | MultiLineControl
         | ClassicPreset.Control
         | ClassicPreset.InputControl<"number">
-        | ClassicPreset.InputControl<"text">;
+        | ClassicPreset.InputControl<"text">
+        | ConsoleControl;
     }
   > {}
