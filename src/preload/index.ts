@@ -6,6 +6,7 @@ import {
   type IpcResult,
   type IpcResultDialog,
   type OpenAIParams,
+  type StreamArgs,
 } from "shared/ApiType";
 
 import type { MainState, PersistedMainState } from "shared/AppType";
@@ -99,6 +100,16 @@ const API = {
   // APIキーを読み込む
   loadApiKeys: (): Promise<IpcResult<ApiKeysFlags>> =>
     ipcRenderer.invoke(IpcChannel.LoadApiKeys),
+
+  streamChatGpt: ({ id, params }: StreamArgs) => {
+    const { port1, port2 } = new MessageChannel();
+
+    // ① port2 → Main
+    ipcRenderer.postMessage(IpcChannel.StreamChatGpt, { id, params }, [port2]);
+
+    // ② port1 → Renderer-MainWorld
+    window.postMessage({ type: "node-port", id }, "*", [port1]);
+  },
 };
 
 contextBridge.exposeInMainWorld("App", API);
