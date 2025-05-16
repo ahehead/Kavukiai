@@ -1,15 +1,14 @@
-import { ipcMain, safeStorage } from "electron";
-import {
-  type ApiKeysFlags,
-  type ApiKeysSecrets,
-  providers,
-  secretsToFlags,
-} from "shared/ApiKeysType";
+import { ipcMain } from "electron";
+import { type ApiKeysFlags, providers } from "shared/ApiKeysType";
 import { IpcChannel, type IpcResult } from "shared/ApiType";
-import { ApiKeysConf } from "main/features/file/conf";
+import {
+  ApiKeyConf,
+  getApiKeyFlagsConf,
+  saveApiKeyConf,
+} from "main/features/file/conf";
 
 export function registerApiKeysHandlers(): void {
-  // サービス鍵保存（暗号化）
+  // サービス鍵保存
   ipcMain.handle(
     IpcChannel.SaveApiKey,
     (
@@ -17,17 +16,14 @@ export function registerApiKeysHandlers(): void {
       service: keyof ApiKeysFlags,
       apiKey: string
     ): IpcResult<ApiKeysFlags> => {
+      if (!providers.includes(service)) {
+        return { status: "error", message: `不正なサービス名:${service}` };
+      }
+
       try {
-        const apiKeysConf = ApiKeysConf();
-
-        if (!providers.includes(service)) {
-          return { status: "error", message: `不正なサービス名:${service}` };
-        }
-
-        apiKeysConf.set(`keys.${service}`, safeStorage.encryptString(apiKey));
-
-        const flags = secretsToFlags(apiKeysConf.get("keys") as ApiKeysSecrets);
-        return { status: "success", data: flags };
+        const apiKeysConf = ApiKeyConf();
+        saveApiKeyConf(apiKeysConf, service, apiKey);
+        return { status: "success", data: getApiKeyFlagsConf(apiKeysConf) };
       } catch (err) {
         console.error(`APIキー保存失敗(${service}):`, err);
         return {
@@ -41,10 +37,8 @@ export function registerApiKeysHandlers(): void {
   // サービス鍵状態取得
   ipcMain.handle(IpcChannel.LoadApiKeys, (): IpcResult<ApiKeysFlags> => {
     try {
-      const apiKeysConf = ApiKeysConf();
-      const persistedKeys = apiKeysConf.get("keys") as ApiKeysSecrets;
-      const flags = secretsToFlags(persistedKeys);
-      return { status: "success", data: flags };
+      const apiKeysConf = ApiKeyConf();
+      return { status: "success", data: getApiKeyFlagsConf(apiKeysConf) };
     } catch (err) {
       console.error("APIキー状態取得失敗:", err);
       return {
