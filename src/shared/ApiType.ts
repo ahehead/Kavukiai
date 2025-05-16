@@ -1,3 +1,4 @@
+import type OpenAI from "openai";
 import type { GraphJsonData } from "./JsonType";
 
 export enum IpcChannel {
@@ -17,6 +18,8 @@ export enum IpcChannel {
 
   FileLoadedRequest = "file-loaded-request",
   LoadFile = "load-file",
+
+  StreamChatGpt = "stream-chat-gpt",
 }
 
 export type OpenAIParams = any;
@@ -48,6 +51,11 @@ export type FileData = {
   json: GraphJsonData;
 };
 
+export type StreamArgs = {
+  id: string;
+  params: OpenAI.Chat.ChatCompletionCreateParams;
+};
+
 export type IpcResult<T> =
   | { status: "success"; data: T }
   | { status: "error"; message: string; code?: string };
@@ -56,3 +64,9 @@ export type IpcResultDialog<T> =
   | { status: "success"; data: T }
   | { status: "cancel" }
   | { status: "error"; message: string; code?: string };
+
+export type StreamPortType =
+  | { type: "delta"; value: string }
+  | { type: "error"; message: string }
+  | { type: "abort" }
+  | { type: "done" };
