@@ -43,6 +43,7 @@ import {
 import { createCustomNode } from "./custom/CustomBaseNode";
 import { nodeFactories } from "./nodes/nodeFactories";
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
+import { ConsoleControl, ConsoleControlView } from "./nodes/Controls/Console";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -140,6 +141,9 @@ export async function createNodeEditor(container: HTMLElement) {
           }
           if (data.payload instanceof ClassicPreset.InputControl) {
             return ReactPresets.classic.Control;
+          }
+          if (data.payload instanceof ConsoleControl) {
+            return ConsoleControlView;
           }
 
           return null;
