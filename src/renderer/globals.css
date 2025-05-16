@@ -125,16 +125,6 @@
     width: calc(var(--spacing) * 5);
     height: calc(var(--spacing) * 5);
   }
-  .control {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-  .control > span {  /* 内側の無名 <span> も伸ばしたい場合 */
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
 }
 
 @layer base {
