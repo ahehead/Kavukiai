@@ -95,6 +95,12 @@ export function TextAreaControllView(props: {
       onChange={control.editable ? onChangeHandle : undefined}
       className={textAreaClasses({ editable: control.editable })}
       placeholder=".../"
+      rows={1}
+      onWheel={(e) => {
+        // areaのズームの無効化
+        e.stopPropagation();
+        e.preventDefault();
+      }}
     />
   );
 }
