@@ -10,8 +10,12 @@
 
 - nodes/README.node.md -- この文章
 
+## Controlの追加後
+- [types.ts](../types.ts)に追加
+- [createNodeEditor.ts](../createNodeEditor.ts)に追加
+
 ## ノードの追加後
 
-- nodes/Node/index.tsのバニラインポートに追加
-- nodeFactoryにコンストラクタの生成を記述
-- ../types.tsのNodeTypesに追加
+- [index.ts](Node/index.ts)のバニラインポートに追加
+- [nodeFactories.ts](nodeFactories.ts)にコンストラクタの生成を記述
+- [types.ts](../types.ts)のNodeTypesに追加
