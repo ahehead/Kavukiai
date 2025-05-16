@@ -3,7 +3,6 @@ import TabBar from 'renderer/features/tab/TabBar';
 import useNodeEditorSetup from 'renderer/hooks/useNodeEditorSetup';
 import useMainStore from 'renderer/hooks/MainStore';
 import { Toaster } from 'sonner';
-import NoticeButton from 'renderer/features/toast-notice/NoticeButton';
 import { useShallow } from 'zustand/react/shallow'
 import { useCallback, useEffect, useState } from 'react';
 import { electronApiService } from 'renderer/features/services/appService';
