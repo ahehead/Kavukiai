@@ -31,7 +31,7 @@ import {
   TextAreaControllView,
 } from "./nodes/Controls/TextArea";
 
-import { CustomExecSocket, CustomSocket } from "./custom";
+import { CustomExecSocket, CustomSocket } from "./component";
 
 import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
 import { setupDragPan } from "./features/dragPan";
@@ -40,7 +40,7 @@ import {
   type NodeEditorState,
   resetEditorState,
 } from "./features/editor_state/historyState";
-import { createCustomNode } from "./custom/CustomBaseNode";
+import { createCustomNode } from "./component/CustomBaseNode";
 import { nodeFactories } from "./nodes/nodeFactories";
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
 import { ConsoleControl, ConsoleControlView } from "./nodes/Controls/Console";
