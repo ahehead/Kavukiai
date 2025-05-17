@@ -15,6 +15,7 @@ import type {
 } from "./nodes/Node";
 import type { ConsoleControl } from "./nodes/Controls/Console";
 import type { InputValueControl } from "./nodes/Controls/InputValue";
+import type { CheckBoxControl } from "./nodes/Controls/CheckBox";
 
 export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
 
@@ -68,7 +69,8 @@ export class BaseNode<
       | MultiLineControl
       | ConsoleControl
       | InputValueControl<string>
-      | InputValueControl<number>;
+      | InputValueControl<number>
+      | CheckBoxControl;
   }
 > extends ClassicPreset.Node<Inputs, Outputs, Controls> {
   public width?: number;
@@ -105,6 +107,7 @@ export interface NodeInterface
         | ClassicPreset.Control
         | ConsoleControl
         | InputValueControl<string>
-        | InputValueControl<number>;
+        | InputValueControl<number>
+        | CheckBoxControl;
     }
   > {}
