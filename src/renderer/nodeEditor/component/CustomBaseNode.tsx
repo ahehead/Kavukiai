@@ -80,7 +80,6 @@ export function createCustomNode(
         window.removeEventListener('pointerup', up);
         // リサイズ終了時に一度だけヒストリーへ追加
         const { width, height } = data.getSize();
-        console.log('size', width, height);
         if (width === undefined || height === undefined) return;
         history.add(
           new SizeChangeHistory(
