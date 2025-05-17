@@ -61,18 +61,30 @@ export function NodePanelSockets({ ...props }: React.ComponentProps<"div">) {
 }
 
 
-export const textAreaClasses = cva(
-  ["w-full h-full py-2 px-2.5 resize-none border-none focus:outline-none ring-1 ring-gray-500 focus:ring-2 focus:ring-accent rounded-md"],
+export const textAreaStyles = cva(
+  ["w-full h-full py-2 px-2.5 resize-none border-none rounded-md"],
   {
     variants: {
       editable: {
-        true: "",
-        false: "cursor-not-allowed bg-gray-100",
+        true: " ring-1 ring-input focus:ring-2 focus:ring-accent",
+        false: " bg-gray-100 ring-0 focus:ring-0 outline-none focus:outline-none",
       },
     },
     defaultVariants: {
       editable: true,
     },
+  }
+);
+
+export const inputValueStyles = cva(
+  ["nodrag rounded-full border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"],
+  {
+    variants: {
+      editable: {
+        true: "",
+        false: "bg-gray-100 cursor-not-allowed",
+      }
+    }
   }
 );
 
