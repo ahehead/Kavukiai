@@ -18,7 +18,10 @@ const { Output } = ClassicPreset;
 export class OpenAIResponseParamNode extends BaseNode<
   object,
   { param: CustomSocketType },
-  { model: InputValueControl<string> }
+  {
+    model: InputValueControl<string>;
+    temperature: InputValueControl<number>;
+  }
 > {
   value = "";
   constructor(
@@ -44,6 +47,19 @@ export class OpenAIResponseParamNode extends BaseNode<
         },
       })
     );
+    this.addControl(
+      "temperature",
+      new InputValueControl<number>(0.7, {
+        type: "number",
+        label: "temperature",
+        editable: true,
+        history: history,
+        area: area,
+        onChange: (v: number) => {
+          resetCacheDataflow(dataflow, this.id);
+        },
+      })
+    );
   }
 
   data(): { param: OpenAI.Responses.ResponseCreateParamsStreaming } {
@@ -57,6 +73,7 @@ export class OpenAIResponseParamNode extends BaseNode<
       ],
       stream: true,
       store: false,
+      temperature: this.controls.temperature.getValue(),
     };
     return { param };
   }
