@@ -3,7 +3,7 @@ import type { DataflowEngine } from "rete-engine";
 
 export function resetCacheDataflow(
   dataflow: DataflowEngine<Schemes>,
-  id: string
+  id?: string
 ) {
   try {
     dataflow.reset(id);
