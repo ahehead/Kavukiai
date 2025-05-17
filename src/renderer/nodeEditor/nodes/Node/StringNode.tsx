@@ -1,15 +1,23 @@
 import { ClassicPreset } from 'rete';
 import { createSocket } from '../Sockets';
-import { BaseNode, type CustomSocketType } from 'renderer/nodeEditor/types';
+import { type AreaExtra, BaseNode, type Schemes, type CustomSocketType } from 'renderer/nodeEditor/types';
+import { InputValueControl } from '../Controls/InputValue';
+import type { HistoryPlugin } from 'rete-history-plugin';
+import type { AreaPlugin } from 'rete-area-plugin';
+import type { DataflowEngine } from 'rete-engine';
+import { resetCacheDataflow } from '../util/resetCacheDataflow';
 const { Node, Output } = ClassicPreset;
 // 短い文字列入力ノード
 export class StringNode extends BaseNode<
   object,
   { out: CustomSocketType },
-  { textInput: ClassicPreset.InputControl<'text'> }
+  { textInput: InputValueControl<string> }
 > {
   constructor(
-    initial = ''
+    initial: string,
+    history: HistoryPlugin<Schemes>,
+    area: AreaPlugin<Schemes, AreaExtra>,
+    dataflow: DataflowEngine<Schemes>
   ) {
     super('String');
     this.addOutput(
@@ -17,7 +25,15 @@ export class StringNode extends BaseNode<
       new Output(createSocket("string"), undefined));
     this.addControl(
       'textInput',
-      new ClassicPreset.InputControl('text', { initial: initial })
+      new InputValueControl<string>(initial, {
+        type: 'string',
+        editable: true,
+        history: history,
+        area: area,
+        onChange: (v: string) => {
+          resetCacheDataflow(dataflow, this.id);
+        }
+      })
     );
   }
 
@@ -29,8 +45,7 @@ export class StringNode extends BaseNode<
 
   toJSON(): { data: { value: string } } {
     return {
-      data:
-        { value: this.controls.textInput.value || "" }
+      data: { value: this.controls.textInput.value || "" }
     };
   }
 
