@@ -1,6 +1,6 @@
 import { ipcMain } from "electron";
 import OpenAI from "openai";
-import { IpcChannel, type OpenAIParams } from "shared/ApiType";
+import { IpcChannel, type StreamArgs, type OpenAIParams } from "shared/ApiType";
 import { ApiKeyConf, getApiKeyConf } from "main/features/file/conf";
 
 // openaiリクエストを処理するハンドラを登録
@@ -18,12 +18,9 @@ export function registerOpenAIHandlers(): void {
     }
   );
 
-  // steamでchatgptを実行する
+  // streamでchatgptを実行する
   ipcMain.on(IpcChannel.StreamChatGpt, async (evt, data) => {
-    const { id, params } = data as {
-      id: string;
-      params: OpenAI.Chat.ChatCompletionCreateParams;
-    };
+    const { id, param } = data as StreamArgs;
     const port = evt.ports[0];
 
     // abort
@@ -34,24 +31,28 @@ export function registerOpenAIHandlers(): void {
 
     port.start();
 
+    console.log("start stream", id, param);
+    // chatgptと通信
     try {
       const apiKeysConf = ApiKeyConf();
 
       const openai = new OpenAI({
         apiKey: getApiKeyConf(apiKeysConf, "openai"),
       });
-      const stream = await openai.chat.completions.create(
-        { ...params, stream: true },
-        { signal: ctrl.signal }
-      );
-      for await (const chunk of stream) {
-        console.log("chunk", chunk);
-        port.postMessage({
-          type: "delta",
-          value: chunk.choices[0].delta?.content ?? "",
-        });
+      const stream = await openai.responses.create(param);
+      for await (const event of stream) {
+        if (event.type === "error") {
+          port.postMessage({ type: "error", message: event.message });
+          console.error("Error:", event.message);
+        }
+        if (event.type === "response.output_text.delta") {
+          console.log("delta", event.delta);
+          port.postMessage({ type: "delta", value: event.delta });
+        }
+        if (event.type === "response.output_text.done") {
+          port.postMessage({ type: "done", text: event.text });
+        }
       }
-      port.postMessage({ type: "done" });
       port.close();
     } catch (error: any) {
       port.postMessage({ type: "error", message: error.message });
