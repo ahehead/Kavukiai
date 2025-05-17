@@ -101,11 +101,11 @@ const API = {
   loadApiKeys: (): Promise<IpcResult<ApiKeysFlags>> =>
     ipcRenderer.invoke(IpcChannel.LoadApiKeys),
 
-  streamChatGpt: ({ id, params }: StreamArgs) => {
+  streamChatGpt: ({ id, param }: StreamArgs) => {
     const { port1, port2 } = new MessageChannel();
 
     // ① port2 → Main
-    ipcRenderer.postMessage(IpcChannel.StreamChatGpt, { id, params }, [port2]);
+    ipcRenderer.postMessage(IpcChannel.StreamChatGpt, { id, param }, [port2]);
 
     // ② port1 → Renderer-MainWorld
     window.postMessage({ type: "node-port", id }, "*", [port1]);
