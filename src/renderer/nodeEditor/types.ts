@@ -6,6 +6,7 @@ import type { ContextMenuExtra } from "rete-context-menu-plugin";
 import type { RunButtonControl } from "./nodes/Controls/RunButton";
 import type { MultiLineControl } from "./nodes/Controls/TextArea";
 import type {
+  ChatContextNode,
   MultiLineStringNode,
   OpenAINode,
   OpenAIResponseParamNode,
@@ -16,6 +17,7 @@ import type {
 import type { ConsoleControl } from "./nodes/Controls/Console";
 import type { InputValueControl } from "./nodes/Controls/InputValue";
 import type { CheckBoxControl } from "./nodes/Controls/CheckBox";
+import type { ChatContextControl } from "./nodes/Controls/ChatContext/ChatContext";
 
 export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
 
@@ -30,7 +32,8 @@ export type NodeTypes =
   | MultiLineStringNode
   | ViewStringNode
   | OpenAINode
-  | OpenAIResponseParamNode;
+  | OpenAIResponseParamNode
+  | ChatContextNode;
 
 export type ExtraSizeData = { width?: number; height?: number };
 
@@ -70,6 +73,7 @@ export class BaseNode<
       | ConsoleControl
       | InputValueControl<string>
       | InputValueControl<number>
+      | ChatContextControl
       | CheckBoxControl;
   }
 > extends ClassicPreset.Node<Inputs, Outputs, Controls> {
@@ -108,6 +112,7 @@ export interface NodeInterface
         | ConsoleControl
         | InputValueControl<string>
         | InputValueControl<number>
+        | ChatContextControl
         | CheckBoxControl;
     }
   > {}
