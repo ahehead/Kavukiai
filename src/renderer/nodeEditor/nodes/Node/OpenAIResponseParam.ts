@@ -12,6 +12,7 @@ import type { HistoryPlugin } from "rete-history-plugin";
 import type { DataflowEngine } from "rete-engine";
 import { InputValueControl } from "../Controls/InputValue";
 import { resetCacheDataflow } from "../util/resetCacheDataflow";
+import { CheckBoxControl } from "../Controls/CheckBox";
 const { Output } = ClassicPreset;
 
 // Run ノード
@@ -20,6 +21,8 @@ export class OpenAIResponseParamNode extends BaseNode<
   { param: CustomSocketType },
   {
     model: InputValueControl<string>;
+    stream: CheckBoxControl;
+    store: CheckBoxControl;
     temperature: InputValueControl<number>;
   }
 > {
@@ -48,10 +51,35 @@ export class OpenAIResponseParamNode extends BaseNode<
       })
     );
     this.addControl(
+      "stream",
+      new CheckBoxControl(true, {
+        label: "stream",
+        editable: true,
+        history: history,
+        area: area,
+        onChange: (v: boolean) => {
+          resetCacheDataflow(dataflow, this.id);
+        },
+      })
+    );
+    this.addControl(
+      "store",
+      new CheckBoxControl(false, {
+        label: "store",
+        editable: false,
+        history: history,
+        area: area,
+        onChange: (v: boolean) => {
+          resetCacheDataflow(dataflow, this.id);
+        },
+      })
+    );
+    this.addControl(
       "temperature",
       new InputValueControl<number>(0.7, {
         type: "number",
         label: "temperature",
+        step: 0.1,
         editable: true,
         history: history,
         area: area,
@@ -62,8 +90,8 @@ export class OpenAIResponseParamNode extends BaseNode<
     );
   }
 
-  data(): { param: OpenAI.Responses.ResponseCreateParamsStreaming } {
-    const param: OpenAI.Responses.ResponseCreateParamsStreaming = {
+  data(): { param: OpenAI.Responses.ResponseCreateParams } {
+    const param: OpenAI.Responses.ResponseCreateParams = {
       model: this.controls.model.getValue(),
       input: [
         {
@@ -71,8 +99,8 @@ export class OpenAIResponseParamNode extends BaseNode<
           content: "Say hello.",
         },
       ],
-      stream: true,
-      store: false,
+      stream: this.controls.stream.getValue(),
+      store: this.controls.store.getValue(),
       temperature: this.controls.temperature.getValue(),
     };
     return { param };
