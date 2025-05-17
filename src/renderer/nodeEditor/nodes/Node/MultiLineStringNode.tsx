@@ -29,10 +29,8 @@ export class MultiLineStringNode extends BaseNode<
       'textArea',
       new MultiLineControl(initial, {
         editable: true,
-        nodeId: this.id,
         history: history,
         area: area,
-        dataflow: dataflow,
         onChange: (v: string) => {
           resetCacheDataflow(dataflow, this.id); // この階層じゃないとなぜかnodeIdがおかしくなる
         }
