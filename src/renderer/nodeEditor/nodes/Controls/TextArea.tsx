@@ -5,7 +5,6 @@ import type { AreaExtra, Schemes } from "../../types";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { textAreaStyles } from "renderer/components/NodePanel";
-import type { DataflowEngine } from "rete-engine";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
 class TextAreaAction implements HistoryAction {
@@ -31,30 +30,24 @@ class TextAreaAction implements HistoryAction {
 export class MultiLineControl extends ClassicPreset.Control {
   value: string;
   editable: boolean;
-  nodeId?: string;
   history?: HistoryPlugin<Schemes>;
   area?: AreaPlugin<Schemes, AreaExtra>;
-  dataflow?: DataflowEngine<Schemes>;
   onChange?: (v: string) => void;
 
   constructor(
     initial = "",
     options?: {
       editable?: boolean;
-      nodeId?: string;
       history?: HistoryPlugin<Schemes>;
       area?: AreaPlugin<Schemes, AreaExtra>;
-      dataflow?: DataflowEngine<Schemes>;
       onChange?: (v: string) => void;
     }
   ) {
     super();
     this.value = initial;
     this.editable = options?.editable ?? true;
-    this.nodeId = options?.nodeId;
     this.history = options?.history;
     this.area = options?.area;
-    this.dataflow = options?.dataflow;
     this.onChange = options?.onChange;
   }
   setValue(value: string) {
