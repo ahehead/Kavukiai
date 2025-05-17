@@ -10,6 +10,7 @@ import type { AreaExtra, NodeTypes, Schemes } from "../types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
+import { ChatContextNode } from "./Node/ChatContextNode";
 
 export type NodeDeps = {
   area: AreaPlugin<Schemes, AreaExtra>;
@@ -28,4 +29,6 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   OpenAI: ({ area, dataflow }) => new OpenAINode(area, dataflow),
   OpenAIResponseParam: ({ history, area, dataflow }) =>
     new OpenAIResponseParamNode(history, area, dataflow),
+  ChatContext: ({ history, area, dataflow }) =>
+    new ChatContextNode([], history, area, dataflow),
 };
