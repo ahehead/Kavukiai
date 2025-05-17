@@ -49,6 +49,14 @@ import {
   InputValueControl,
   InputValueControlView,
 } from "./nodes/Controls/InputValue";
+import {
+  CheckBoxControl,
+  CheckBoxControlView,
+} from "./nodes/Controls/CheckBox";
+import {
+  ChatContextControl,
+  ChatContextControlView,
+} from "./nodes/Controls/ChatContext/ChatContext";
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
 
@@ -138,9 +146,6 @@ export async function createNodeEditor(container: HTMLElement) {
           return CustomSocket;
         },
         control(data) {
-          if (data.payload instanceof ClassicPreset.InputControl) {
-            return ReactPresets.classic.Control;
-          }
           if (data.payload instanceof RunButtonControl) {
             return RunButtonControlView;
           }
@@ -153,9 +158,12 @@ export async function createNodeEditor(container: HTMLElement) {
           if (data.payload instanceof InputValueControl) {
             return InputValueControlView;
           }
-          // if (data.payload instanceof CheckBoxControl) {
-          //   return CheckBoxControlView;
-          // }
+          if (data.payload instanceof ChatContextControl) {
+            return ChatContextControlView;
+          }
+          if (data.payload instanceof CheckBoxControl) {
+            return CheckBoxControlView;
+          }
 
           return null;
         },
