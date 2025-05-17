@@ -33,6 +33,7 @@ export class InputValueControl<T extends string | number> extends ClassicPreset.
   history?: HistoryPlugin<Schemes>;
   area?: AreaPlugin<Schemes, AreaExtra>;
   onChange?: (v: T) => void;
+  step?: number;
 
   constructor(
     initial: T,
@@ -43,6 +44,7 @@ export class InputValueControl<T extends string | number> extends ClassicPreset.
       history?: HistoryPlugin<Schemes>;
       area?: AreaPlugin<Schemes, AreaExtra>;
       onChange?: (v: T) => void;
+      step?: number;
     }
   ) {
     super();
@@ -53,6 +55,7 @@ export class InputValueControl<T extends string | number> extends ClassicPreset.
     this.history = options?.history;
     this.area = options?.area;
     this.onChange = options?.onChange;
+    this.step = options?.step;
   }
 
   setValue(value: T) {
@@ -104,7 +107,7 @@ export function InputValueControlView<T extends string | number>(props: {
   return (
     <div className="flex flex-col">
       {control.label && (
-        <label htmlFor={control.id} className="text-xs text-gray-500 mb-1">
+        <label htmlFor={control.id} className="text-xs text-gray-500 my-1.5">
           {control.label}
         </label>
       )}
@@ -112,16 +115,13 @@ export function InputValueControlView<T extends string | number>(props: {
         id={control.id}
         ref={ref}
         type={control.type === "number" ? "number" : "text"}
+        step={control.type === "number" ? control.step : undefined} // step属性を設定
         value={uiValue}
         readOnly={!control.editable}
         onFocus={handleFocus}
         onChange={control.editable ? handleChange : undefined}
         className={inputValueStyles({ editable: control.editable })}
         placeholder="..."
-        onWheel={(e) => {
-          // areaのズームの無効化
-          e.stopPropagation();
-        }}
       />
     </div>
   );
