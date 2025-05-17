@@ -6,6 +6,7 @@ import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { textAreaClasses } from "renderer/components/NodePanel";
 import type { DataflowEngine } from "rete-engine";
+import { resetCacheDataflow } from "../util/resetCacheDataflow";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
 class TextAreaAction implements HistoryAction {
@@ -44,12 +45,7 @@ export class MultiLineControl extends ClassicPreset.Control {
   }
   setValue(value: string) {
     this.value = value;
-    try {
-      //dataflowのキャッシュをクリア
-      this.dataflow?.reset()
-    } catch (e) {
-      console.error("dataNode reset error", e, this.value);
-    }
+    if (this.dataflow && this.nodeId) resetCacheDataflow(this.dataflow, this.nodeId);
     this.onChange?.(value);
   }
   // 設定用、画面に反映するならarea.update()を呼ぶ
