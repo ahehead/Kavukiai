@@ -4,6 +4,7 @@ import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
 import { ClassicPreset } from 'rete';
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
+import { useStopWheel } from "../util/useStopWheel";
 
 // なんか表示する用の用コントロール
 export class ConsoleControl extends ClassicPreset.Control {
@@ -23,7 +24,7 @@ export function ConsoleControlView(props: { data: ConsoleControl }): JSX.Element
 
 function Console(props: { value: string }): React.JSX.Element {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
+  useStopWheel(textareaRef);
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
@@ -38,9 +39,6 @@ function Console(props: { value: string }): React.JSX.Element {
         value={props.value}
         readOnly
         rows={1}
-        onWheel={(e) => {
-          e.stopPropagation();
-        }}
       />
     </Drag.NoDrag>
   );
