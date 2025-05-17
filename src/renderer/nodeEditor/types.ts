@@ -8,6 +8,7 @@ import type { MultiLineControl } from "./nodes/Controls/TextArea";
 import type {
   MultiLineStringNode,
   OpenAINode,
+  OpenAIResponseParamNode,
   RunNode,
   StringNode,
   ViewStringNode,
@@ -26,7 +27,8 @@ export type NodeTypes =
   | RunNode
   | MultiLineStringNode
   | ViewStringNode
-  | OpenAINode;
+  | OpenAINode
+  | OpenAIResponseParamNode;
 
 export type ExtraSizeData = { width?: number; height?: number };
 
