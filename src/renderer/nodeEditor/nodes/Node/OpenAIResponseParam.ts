@@ -8,16 +8,16 @@ import {
 import { createSocket } from "../Sockets";
 import type OpenAI from "openai";
 import type { AreaPlugin } from "rete-area-plugin";
-import { MultiLineControl } from "../Controls/TextArea";
 import type { HistoryPlugin } from "rete-history-plugin";
 import type { DataflowEngine } from "rete-engine";
+import { InputValueControl } from "../Controls/InputValue";
 const { Output } = ClassicPreset;
 
 // Run ノード
 export class OpenAIResponseParamNode extends BaseNode<
   object,
   { param: CustomSocketType },
-  { model: MultiLineControl }
+  { model: InputValueControl<string> }
 > {
   value = "";
   constructor(
@@ -32,13 +32,21 @@ export class OpenAIResponseParamNode extends BaseNode<
     );
     this.addControl(
       "model",
-      new MultiLineControl("", true, this.id, history, area, dataflow)
+      new InputValueControl<string>("gpt-4.1", {
+        type: "string",
+        label: "model",
+        editable: true,
+        nodeId: this.id,
+        history: history,
+        area: area,
+        dataflow: dataflow,
+      })
     );
   }
 
   data(): { param: OpenAI.Responses.ResponseCreateParamsStreaming } {
     const param: OpenAI.Responses.ResponseCreateParamsStreaming = {
-      model: "gpt-4.1",
+      model: this.controls.model.getValue(),
       input: [
         {
           role: "user",
