@@ -49,7 +49,6 @@ import {
   InputValueControl,
   InputValueControlView,
 } from "./nodes/Controls/InputValue";
-
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
 
@@ -154,6 +153,9 @@ export async function createNodeEditor(container: HTMLElement) {
           if (data.payload instanceof InputValueControl) {
             return InputValueControlView;
           }
+          // if (data.payload instanceof CheckBoxControl) {
+          //   return CheckBoxControlView;
+          // }
 
           return null;
         },
