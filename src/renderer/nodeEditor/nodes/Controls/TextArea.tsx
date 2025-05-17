@@ -4,9 +4,8 @@ import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
-import { textAreaClasses } from "renderer/components/NodePanel";
+import { textAreaStyles } from "renderer/components/NodePanel";
 import type { DataflowEngine } from "rete-engine";
-import { resetCacheDataflow } from "../util/resetCacheDataflow";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
 class TextAreaAction implements HistoryAction {
@@ -31,26 +30,45 @@ class TextAreaAction implements HistoryAction {
 // 長文プロンプト入力用コントロール
 export class MultiLineControl extends ClassicPreset.Control {
   value: string;
+  editable: boolean;
+  nodeId?: string;
+  history?: HistoryPlugin<Schemes>;
+  area?: AreaPlugin<Schemes, AreaExtra>;
+  dataflow?: DataflowEngine<Schemes>;
+  onChange?: (v: string) => void;
+
   constructor(
-    initial = '',
-    public editable = true,
-    public nodeId?: string,
-    public history?: HistoryPlugin<Schemes>,
-    public area?: AreaPlugin<Schemes, AreaExtra>,
-    public dataflow?: DataflowEngine<Schemes>,
-    public onChange?: (v: string) => void,
+    initial = "",
+    options?: {
+      editable?: boolean;
+      nodeId?: string;
+      history?: HistoryPlugin<Schemes>;
+      area?: AreaPlugin<Schemes, AreaExtra>;
+      dataflow?: DataflowEngine<Schemes>;
+      onChange?: (v: string) => void;
+    }
   ) {
     super();
     this.value = initial;
+    this.editable = options?.editable ?? true;
+    this.nodeId = options?.nodeId;
+    this.history = options?.history;
+    this.area = options?.area;
+    this.dataflow = options?.dataflow;
+    this.onChange = options?.onChange;
   }
   setValue(value: string) {
     this.value = value;
-    if (this.dataflow && this.nodeId) resetCacheDataflow(this.dataflow, this.nodeId);
     this.onChange?.(value);
   }
-  // 設定用、画面に反映するならarea.update()を呼ぶ
-  setEditable(editable: boolean) {
+  setEditable(editable: boolean, isUpdate = false) {
     this.editable = editable;
+    if (isUpdate && this.area) {
+      this.area.update("control", this.id);
+    }
+  }
+  getValue(): string {
+    return this.value;
   }
 }
 
@@ -60,20 +78,20 @@ export function TextAreaControllView(props: {
   data: MultiLineControl;
 }): JSX.Element {
   const control = props.data;
-  const [uiText, setUiText] = useState(control.value);
-  const [prevText, setPrevText] = useState(control.value);
+  const [uiText, setUiText] = useState(control.getValue());
+  const [prevText, setPrevText] = useState(control.getValue());
   const ref = useRef<HTMLTextAreaElement | null>(null);
   Drag.useNoDrag(ref);
   useEffect(() => {
-    setUiText(control.value);
+    setUiText(control.getValue());
   }, [control.value]);
 
   const onChangeHandle = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const v = e.target.value;
-    // キー入力ごとに履歴登録
-    if (control.history && control.area) control.history.add(new TextAreaAction(control, control.area, uiText, v));
-    setUiText(v);
-    control.setValue(v);
+    const newValue = e.target.value;
+    // 履歴登録
+    if (control.history && control.area) control.history.add(new TextAreaAction(control, control.area, uiText, newValue));
+    setUiText(newValue);
+    control.setValue(newValue);
   }
 
   return (
@@ -82,20 +100,13 @@ export function TextAreaControllView(props: {
       value={uiText}
       readOnly={!control.editable}
       onFocus={() => { setPrevText(uiText); }}
-      onBlur={() => {
-        // 変更確定時に履歴へ登録
-        if (uiText !== prevText && control.history && control.area) {
-          control.history.add(new TextAreaAction(control, control.area, prevText, uiText));
-        }
-      }}
       onChange={control.editable ? onChangeHandle : undefined}
-      className={textAreaClasses({ editable: control.editable })}
-      placeholder=".../"
+      className={textAreaStyles({ editable: control.editable })}
+      placeholder="..."
       rows={1}
       onWheel={(e) => {
         // areaのズームの無効化
         e.stopPropagation();
-        e.preventDefault();
       }}
     />
   );
