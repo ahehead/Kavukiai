@@ -5,7 +5,7 @@ import { ClassicPreset } from 'rete';
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 
-// Run ボタン用コントロール
+// なんか表示する用の用コントロール
 export class ConsoleControl extends ClassicPreset.Control {
   value = "";
   constructor(private area: AreaPlugin<Schemes, AreaExtra>) {
@@ -40,7 +40,6 @@ function Console(props: { value: string }): React.JSX.Element {
         rows={1}
         onWheel={(e) => {
           e.stopPropagation();
-          e.preventDefault();
         }}
       />
     </Drag.NoDrag>
