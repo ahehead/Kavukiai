@@ -53,7 +53,7 @@ export type FileData = {
 
 export type StreamArgs = {
   id: string;
-  params: OpenAI.Chat.ChatCompletionCreateParams;
+  param: OpenAI.Responses.ResponseCreateParamsStreaming;
 };
 
 export type IpcResult<T> =
@@ -69,4 +69,4 @@ export type StreamPortType =
   | { type: "delta"; value: string }
   | { type: "error"; message: string }
   | { type: "abort" }
-  | { type: "done" };
+  | { type: "done"; text: string };
