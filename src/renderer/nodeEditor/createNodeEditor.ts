@@ -45,6 +45,10 @@ import { nodeFactories } from "./nodes/nodeFactories";
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
 import { ConsoleControl, ConsoleControlView } from "./nodes/Controls/Console";
 import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
+import {
+  InputValueControl,
+  InputValueControlView,
+} from "./nodes/Controls/InputValue";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -135,17 +139,20 @@ export async function createNodeEditor(container: HTMLElement) {
           return CustomSocket;
         },
         control(data) {
+          if (data.payload instanceof ClassicPreset.InputControl) {
+            return ReactPresets.classic.Control;
+          }
           if (data.payload instanceof RunButtonControl) {
             return RunButtonControlView;
           }
           if (data.payload instanceof MultiLineControl) {
             return TextAreaControllView;
           }
-          if (data.payload instanceof ClassicPreset.InputControl) {
-            return ReactPresets.classic.Control;
-          }
           if (data.payload instanceof ConsoleControl) {
             return ConsoleControlView;
+          }
+          if (data.payload instanceof InputValueControl) {
+            return InputValueControlView;
           }
 
           return null;
