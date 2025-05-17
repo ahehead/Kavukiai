@@ -5,6 +5,7 @@ import type { HistoryPlugin } from 'rete-history-plugin';
 import { BaseNode, type AreaExtra, type CustomSocketType, type Schemes } from 'renderer/nodeEditor/types';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
+import { resetCacheDataflow } from '../util/resetCacheDataflow';
 const { Output } = ClassicPreset;
 
 // 長文文字列入力ノード
@@ -26,12 +27,23 @@ export class MultiLineStringNode extends BaseNode<
       new Output(createSocket("string"), undefined));
     this.addControl(
       'textArea',
-      new MultiLineControl(initial, true, this.id, history, area, dataflow));
+      new MultiLineControl(initial, {
+        editable: true,
+        nodeId: this.id,
+        history: history,
+        area: area,
+        dataflow: dataflow,
+        onChange: (v: string) => {
+          resetCacheDataflow(dataflow, this.id); // この階層じゃないとなぜかnodeIdがおかしくなる
+        }
+      })
+    );
   }
 
   // dataflowで流す
   data(): { out: string } {
-    return { out: this.controls.textArea.value || '' };
+    console.log('data', this.controls.textArea.getValue());
+    return { out: this.controls.textArea.getValue() || '' };
   }
 
   async execute(): Promise<void> { }
@@ -39,7 +51,7 @@ export class MultiLineStringNode extends BaseNode<
   toJSON(): { data: { value: string, editable: boolean } } {
     return {
       data: {
-        value: this.controls.textArea.value || '',
+        value: this.controls.textArea.getValue() || '',
         editable: this.controls.textArea.editable,
       }
     };
