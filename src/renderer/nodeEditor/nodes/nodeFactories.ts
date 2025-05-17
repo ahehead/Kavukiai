@@ -1,6 +1,7 @@
 import {
   MultiLineStringNode,
   OpenAINode,
+  OpenAIResponseParamNode,
   RunNode,
   StringNode,
   ViewStringNode,
@@ -23,5 +24,7 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
     new MultiLineStringNode("", history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
   ViewString: ({ dataflow, area }) => new ViewStringNode(dataflow, area),
-  OpenAI: ({ area }) => new OpenAINode(area),
+  OpenAI: ({ area, dataflow }) => new OpenAINode(area, dataflow),
+  OpenAIResponseParam: ({ history, area, dataflow }) =>
+    new OpenAIResponseParamNode(history, area, dataflow),
 };
