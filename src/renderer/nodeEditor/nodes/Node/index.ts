@@ -5,3 +5,4 @@ export { RunNode } from "./RunNode";
 export { ViewStringNode } from "./ViewStringNode";
 export { OpenAINode } from "./OpenAI";
 export { OpenAIResponseParamNode } from "./OpenAIResponseParam";
+export { ChatContextNode } from "./ChatContextNode";
