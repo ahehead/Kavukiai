@@ -53,7 +53,7 @@ export type FileData = {
 
 export type StreamArgs = {
   id: string;
-  param: OpenAI.Responses.ResponseCreateParamsStreaming;
+  param: OpenAI.Responses.ResponseCreateParams;
 };
 
 export type IpcResult<T> =
