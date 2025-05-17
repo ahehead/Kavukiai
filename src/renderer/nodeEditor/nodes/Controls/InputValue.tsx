@@ -4,8 +4,6 @@ import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
-import type { DataflowEngine } from "rete-engine";
-import { resetCacheDataflow } from "../util/resetCacheDataflow";
 import { inputValueStyles } from "renderer/components/NodePanel";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
@@ -32,10 +30,8 @@ export class InputValueControl<T extends string | number> extends ClassicPreset.
   type: "string" | "number";
   label?: string;
   editable: boolean;
-  nodeId?: string;
   history?: HistoryPlugin<Schemes>;
   area?: AreaPlugin<Schemes, AreaExtra>;
-  dataflow?: DataflowEngine<Schemes>;
   onChange?: (v: T) => void;
 
   constructor(
@@ -44,10 +40,8 @@ export class InputValueControl<T extends string | number> extends ClassicPreset.
       type?: "string" | "number";
       label?: string;
       editable?: boolean;
-      nodeId?: string;
       history?: HistoryPlugin<Schemes>;
       area?: AreaPlugin<Schemes, AreaExtra>;
-      dataflow?: DataflowEngine<Schemes>;
       onChange?: (v: T) => void;
     }
   ) {
@@ -56,16 +50,13 @@ export class InputValueControl<T extends string | number> extends ClassicPreset.
     this.type = options?.type ?? (typeof initial === "string" ? "string" : "number");
     this.label = options?.label;
     this.editable = options?.editable ?? true;
-    this.nodeId = options?.nodeId;
     this.history = options?.history;
     this.area = options?.area;
-    this.dataflow = options?.dataflow;
     this.onChange = options?.onChange;
   }
 
   setValue(value: T) {
     this.value = value;
-    if (this.dataflow && this.nodeId) resetCacheDataflow(this.dataflow, this.nodeId);
     this.onChange?.(value);
   }
 
