@@ -11,6 +11,7 @@ import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
 import type { DataflowEngine } from "rete-engine";
 import { InputValueControl } from "../Controls/InputValue";
+import { resetCacheDataflow } from "../util/resetCacheDataflow";
 const { Output } = ClassicPreset;
 
 // Run ノード
@@ -36,10 +37,11 @@ export class OpenAIResponseParamNode extends BaseNode<
         type: "string",
         label: "model",
         editable: true,
-        nodeId: this.id,
         history: history,
         area: area,
-        dataflow: dataflow,
+        onChange: (v: string) => {
+          resetCacheDataflow(dataflow, this.id);
+        },
       })
     );
   }
