@@ -76,7 +76,8 @@ export function CheckBoxControlView(props: {
   const control = props.data;
   const [uiValue, setUiValue] = useState<boolean>(control.getValue());
   const ref = useRef<HTMLInputElement | null>(null);
-  Drag.useNoDrag(ref); // input要素へのドラッグ操作を無効化
+  Drag.useNoDrag(ref); // areaのdragを無効化
+
 
   useEffect(() => {
     setUiValue(control.getValue());
@@ -98,7 +99,7 @@ export function CheckBoxControlView(props: {
     <div className="flex items-center my-1">
       <label
         htmlFor={control.id}
-        className="text-xs text-gray-500 mr-2 cursor-pointer select-none"
+        className="text-xs text-gray-500 mr-2 my-1.5 cursor-pointer select-none"
       >
         {control.label}
       </label>
@@ -110,13 +111,9 @@ export function CheckBoxControlView(props: {
         disabled={!control.editable}
         onChange={control.editable ? handleChange : undefined}
         className={cn(
-          "nodrag h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500",
+          "h-4 w-4 rounded opacity-90 bg-gray-100 border-input accent-gray-100 hover:accent-gray-300",
           !control.editable && "cursor-not-allowed opacity-50"
         )}
-        onWheel={(e) => {
-          // areaのズームの無効化
-          e.stopPropagation();
-        }}
       />
     </div>
   );
