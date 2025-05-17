@@ -1,7 +1,7 @@
 {
   "displayName": "My Electron App",
   "name": "my-electron-app",
-  "description": "Your awesome app description",
+  "description": "Desktop app to play with local AI and other things in Node UI.",
   "version": "0.0.0",
   "main": "./node_modules/.dev/main/index.js",
   "resources": "src/resources",
