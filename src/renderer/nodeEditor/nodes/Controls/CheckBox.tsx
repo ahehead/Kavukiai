@@ -98,7 +98,7 @@ export function CheckBoxControlView(props: {
     <div className="flex items-center my-1">
       <label
         htmlFor={control.id}
-        className="text-sm text-gray-700 mr-2 cursor-pointer select-none"
+        className="text-xs text-gray-500 mr-2 cursor-pointer select-none"
       >
         {control.label}
       </label>
