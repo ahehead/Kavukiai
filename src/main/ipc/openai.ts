@@ -39,21 +39,32 @@ export function registerOpenAIHandlers(): void {
       const openai = new OpenAI({
         apiKey: getApiKeyConf(apiKeysConf, "openai"),
       });
-      const stream = await openai.responses.create(param);
-      for await (const event of stream) {
-        if (event.type === "error") {
-          port.postMessage({ type: "error", message: event.message });
-          console.error("Error:", event.message);
+      if (param.stream === false) {
+        const response = await openai.responses.create(param, {
+          signal: ctrl.signal,
+        });
+        port.postMessage({ type: "done", text: response.output_text });
+        port.close();
+      } else if (param.stream === true) {
+        const stream = await openai.responses.create(param, {
+          signal: ctrl.signal,
+        });
+
+        for await (const event of stream) {
+          if (event.type === "error") {
+            port.postMessage({ type: "error", message: event.message });
+            console.error("Error:", event.message);
+          }
+          if (event.type === "response.output_text.delta") {
+            console.log("delta", event.delta);
+            port.postMessage({ type: "delta", value: event.delta });
+          }
+          if (event.type === "response.output_text.done") {
+            port.postMessage({ type: "done", text: event.text });
+          }
         }
-        if (event.type === "response.output_text.delta") {
-          console.log("delta", event.delta);
-          port.postMessage({ type: "delta", value: event.delta });
-        }
-        if (event.type === "response.output_text.done") {
-          port.postMessage({ type: "done", text: event.text });
-        }
+        port.close();
       }
-      port.close();
     } catch (error: any) {
       port.postMessage({ type: "error", message: error.message });
       console.error("Error:", error.message);
