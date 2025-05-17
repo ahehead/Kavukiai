@@ -19,7 +19,8 @@ export type NodeDeps = {
 };
 
 export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
-  String: () => new StringNode(""),
+  String: ({ history, area, dataflow }) =>
+    new StringNode("", history, area, dataflow),
   MultiLineString: ({ history, area, dataflow }) =>
     new MultiLineStringNode("", history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
