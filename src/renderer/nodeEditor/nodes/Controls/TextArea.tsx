@@ -5,9 +5,10 @@ import type { AreaExtra, Schemes } from "../../types";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { textAreaStyles } from "renderer/components/NodePanel";
+import { useStopWheel } from "../util/useStopWheel";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
-class TextAreaAction implements HistoryAction {
+export class TextAreaAction implements HistoryAction {
   constructor(
     private control: MultiLineControl,
     private area: AreaPlugin<Schemes, AreaExtra>,
@@ -75,6 +76,7 @@ export function TextAreaControllView(props: {
   const [prevText, setPrevText] = useState(control.getValue());
   const ref = useRef<HTMLTextAreaElement | null>(null);
   Drag.useNoDrag(ref);
+  useStopWheel(ref);
   useEffect(() => {
     setUiText(control.getValue());
   }, [control.value]);
@@ -87,6 +89,7 @@ export function TextAreaControllView(props: {
     control.setValue(newValue);
   }
 
+
   return (
     <textarea
       ref={ref}
@@ -97,10 +100,6 @@ export function TextAreaControllView(props: {
       className={textAreaStyles({ editable: control.editable })}
       placeholder="..."
       rows={1}
-      onWheel={(e) => {
-        // areaのズームの無効化
-        e.stopPropagation();
-      }}
     />
   );
 }
