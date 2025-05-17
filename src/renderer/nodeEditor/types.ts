@@ -14,6 +14,7 @@ import type {
   ViewStringNode,
 } from "./nodes/Node";
 import type { ConsoleControl } from "./nodes/Controls/Console";
+import type { InputValueControl } from "./nodes/Controls/InputValue";
 
 export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
 
@@ -63,11 +64,11 @@ export class BaseNode<
   Controls extends {
     [key in string]?:
       | ClassicPreset.Control
-      | ClassicPreset.InputControl<"number">
-      | ClassicPreset.InputControl<"text">
       | RunButtonControl
       | MultiLineControl
-      | ConsoleControl;
+      | ConsoleControl
+      | InputValueControl<string>
+      | InputValueControl<number>;
   }
 > extends ClassicPreset.Node<Inputs, Outputs, Controls> {
   public width?: number;
@@ -102,8 +103,8 @@ export interface NodeInterface
         | RunButtonControl
         | MultiLineControl
         | ClassicPreset.Control
-        | ClassicPreset.InputControl<"number">
-        | ClassicPreset.InputControl<"text">
-        | ConsoleControl;
+        | ConsoleControl
+        | InputValueControl<string>
+        | InputValueControl<number>;
     }
   > {}
