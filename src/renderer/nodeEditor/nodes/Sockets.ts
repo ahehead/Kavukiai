@@ -2,6 +2,9 @@ import { CustomSocketType } from "../types";
 
 type SocketType =
   | "string"
+  | "boolean"
+  | "number"
+  | "array"
   | "exec"
   | "setting"
   | "image"
