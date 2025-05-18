@@ -27,8 +27,8 @@ import {
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
 import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
 
-import { ContextMenu } from "./features/ContextMenu/Menu";
-import { setupContextMenu } from "./features/ContextMenu/setupContextMenu";
+import { CustomContextMenu } from "./component/CustomContextMenu";
+import { setupContextMenu } from "./features/contextMenu/setupContextMenu";
 import { customReactPresets } from "./features/customReactPresets/customReactPresets";
 
 export async function createNodeEditor(container: HTMLElement) {
@@ -97,7 +97,7 @@ export async function createNodeEditor(container: HTMLElement) {
   render.addPreset({
     render(context: any) {
       if (context.data.type === "contextmenu") {
-        return ContextMenu({
+        return CustomContextMenu({
           items: context.data.items,
           searchBar: context.data.searchBar,
           onHide: context.data.onHide,
