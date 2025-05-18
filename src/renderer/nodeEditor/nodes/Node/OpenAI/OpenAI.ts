@@ -4,15 +4,15 @@ import {
   BaseNode,
   type CustomSocketType,
   type Schemes,
-} from "../../types";
-import { createSocket } from "../Sockets";
-import { ConsoleControl } from "../Controls/Console";
+} from "../../../types";
+import { createSocket } from "../../Sockets";
+import { ConsoleControl } from "../../Controls/Console";
 import { electronApiService } from "renderer/features/services/appService";
 import type OpenAI from "openai";
 import type { StreamArgs, StreamPortType } from "shared/ApiType";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
-import { resetCacheDataflow } from "../util/resetCacheDataflow";
+import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 const { Output, Input } = ClassicPreset;
 
 // Run ノード

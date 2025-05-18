@@ -4,15 +4,15 @@ import {
   BaseNode,
   type CustomSocketType,
   type Schemes,
-} from "../../types";
-import { createSocket } from "../Sockets";
+} from "../../../types";
+import { createSocket } from "../../Sockets";
 import type OpenAI from "openai";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
 import type { DataflowEngine } from "rete-engine";
-import { InputValueControl } from "../Controls/InputValue";
-import { resetCacheDataflow } from "../util/resetCacheDataflow";
-import { CheckBoxControl } from "../Controls/CheckBox";
+import { InputValueControl } from "../../Controls/InputValue";
+import { resetCacheDataflow } from "../../util/resetCacheDataflow";
+import { CheckBoxControl } from "../../Controls/CheckBox";
 const { Output } = ClassicPreset;
 
 // Run ノード
