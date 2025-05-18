@@ -88,6 +88,28 @@ export const inputValueStyles = cva(
   }
 );
 
+const inputSocketsWrapperStyles = cva(
+  ""
+  , {
+    variants: {
+      isViewControl: {
+        true: "w-full h-full p-2",
+        false: null
+      }
+    },
+    defaultVariants: {
+      isViewControl: false,
+    },
+  }
+)
+export function NodeInputSocketsWrapper({
+  isViewControl,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof inputSocketsWrapperStyles>) {
+  return <div {...props}
+    className={inputSocketsWrapperStyles({ isViewControl })} />;
+}
+
 const nodeSocketWrapperStyles = cva(
   ["flex flex-row items-center node-socket-text-size tracking-tight"],
   {
@@ -96,6 +118,10 @@ const nodeSocketWrapperStyles = cva(
         input: "justify-start",
         output: "justify-end",
       },
+      isViewControl: {
+        true: "w-full h-full p-2",
+        false: null
+      }
     },
     defaultVariants: {
       side: "input",
@@ -106,10 +132,11 @@ const nodeSocketWrapperStyles = cva(
 // ソケット行のラッパー
 export function NodeSocketWrapper({
   side,
+  isViewControl,
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof nodeSocketWrapperStyles>) {
   return <div {...props}
-    className={nodeSocketWrapperStyles({ side })} />;
+    className={nodeSocketWrapperStyles({ side, isViewControl })} />;
 }
 
 // ソケットの名前（ラベル）
