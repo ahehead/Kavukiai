@@ -37,7 +37,7 @@ export type NodeTypes =
 
 export type ExtraSizeData = { width?: number; height?: number };
 
-class Connection<
+export class Connection<
   A extends NodeInterface,
   B extends NodeInterface
 > extends ClassicPreset.Connection<A, B> {
