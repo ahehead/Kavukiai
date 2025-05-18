@@ -1,6 +1,6 @@
 import { Presets, type RenderEmit } from 'rete-react-plugin'
 import type { AreaExtra, NodeInterface, Schemes } from '../types'
-import { NodePanel, NodePanelSockets, NodePanelHeader, NodeSocketName, NodeSocketTypeLabel, NodeSocketWrapper, NodeTitle, NodePanelControls } from 'renderer/components/NodePanel'
+import { NodePanel, NodePanelSockets, NodePanelHeader, NodeSocketName, NodeSocketTypeLabel, NodeSocketWrapper, NodeTitle, NodePanelControls, } from 'renderer/components/NodePanel'
 import type { AreaPlugin } from 'rete-area-plugin'
 import { useRef } from 'react'
 import type { HistoryAction, HistoryPlugin } from 'rete-history-plugin'
@@ -144,15 +144,17 @@ export function createCustomNode(
                 key={key}
                 data-testid={`input-${key}`}
               >
-                <Presets.classic.RefSocket
-                  name="input-socket"
-                  side="input"
-                  socketKey={key}
-                  nodeId={id}
-                  emit={emit}
-                  payload={input.socket}
-                  data-testid="input-socket"
-                />
+                {!(input.control && input.showControl) && (
+                  <Presets.classic.RefSocket
+                    name="input-socket"
+                    side="input"
+                    socketKey={key}
+                    nodeId={id}
+                    emit={emit}
+                    payload={input.socket}
+                    data-testid="input-socket"
+                  />
+                )}
                 {(!input.control || !input.showControl) && (
                   <>
                     <NodeSocketTypeLabel data-testid="input-type">
@@ -164,17 +166,20 @@ export function createCustomNode(
                   </>
                 )}
                 {input.control && input.showControl && (
-                  <Presets.classic.RefControl
-                    key={key}
-                    name="input-control"
-                    emit={emit}
-                    payload={input.control}
-                    data-testid="input-control"
-                  />
+                  <div className='pl-2'>
+                    <Presets.classic.RefControl
+                      key={key}
+                      name="input-control"
+                      emit={emit}
+                      payload={input.control}
+                      data-testid="input-control"
+                    />
+                  </div>
                 )}
               </NodeSocketWrapper>
             ) : null
           )}
+
         </NodePanelSockets>
         {/* Controls */}
         <NodePanelControls>
