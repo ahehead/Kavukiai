@@ -2,9 +2,10 @@ import { Menu, MenuItemComponent, MenuSeparator, type ItemType } from "./Context
 
 interface RenderItemsProps {
   items: ItemType[];
+  onHide?: () => void;
 }
 
-const RenderItems: React.FC<RenderItemsProps> = ({ items }) => {
+const RenderItems: React.FC<RenderItemsProps> = ({ items, onHide }) => {
 
   return (
     <div className="relative">
@@ -23,6 +24,7 @@ const RenderItems: React.FC<RenderItemsProps> = ({ items }) => {
                 if (!item.subitems && !item.disabled) {
                   item.handler();
                 }
+                if (onHide) { onHide() }
                 e.stopPropagation();
               }}
               hasSubitems={hasSubitems}
@@ -41,7 +43,7 @@ const RenderItems: React.FC<RenderItemsProps> = ({ items }) => {
                 style={{ minWidth: '220px' }}
               >
                 <Menu>
-                  {item.subitems ? <RenderItems items={item.subitems} /> : null}
+                  {item.subitems ? <RenderItems items={item.subitems} onHide={onHide} /> : null}
                 </Menu>
               </div>
             )}
@@ -52,12 +54,12 @@ const RenderItems: React.FC<RenderItemsProps> = ({ items }) => {
   );
 };
 
-export function ContextMenu({ items, searchBar }: { items: ItemType[]; searchBar?: boolean; }) {
+export function ContextMenu({ items, searchBar, onHide }: { items: ItemType[]; searchBar?: boolean; onHide?: () => void }) {
 
   return (
     <Menu>
       {items.length > 0 ? (
-        <RenderItems items={items} />
+        <RenderItems items={items} onHide={onHide} />
       ) : (
         <div className="py-2 px-4 text-sm text-muted-foreground italic">
           項目がありません
