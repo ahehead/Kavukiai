@@ -7,7 +7,6 @@ import {
   Presets as ConnectionPresets,
 } from "rete-connection-plugin";
 import { ReactPlugin, Presets as ReactPresets } from "rete-react-plugin";
-import { ContextMenuPlugin } from "rete-context-menu-plugin";
 import {
   Presets as HistoryPresets,
   HistoryExtensions,
@@ -35,6 +34,7 @@ import { setupDragPan } from "./features/dragPan";
 import {
   getCurrentEditorState,
   type NodeEditorState,
+  patchHistoryAdd,
   resetEditorState,
 } from "./features/editor_state/historyState";
 import { createCustomNode } from "./component/CustomBaseNode";
@@ -54,10 +54,7 @@ import {
   ChatContextControlView,
 } from "./nodes/Controls/ChatContext/ChatContext";
 import { ContextMenu } from "./features/ContextMenu/Menu";
-
-import { removeNodeWithConnections } from "./nodes/util/removeNode";
-import { createReteContextMenuItems } from "./features/ContextMenu/createContextMenu";
-import { contextMenuStructure } from "./nodes/nodeFactories";
+import { setupContextMenu } from "./features/ContextMenu/setupContextMenu";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -87,40 +84,12 @@ export async function createNodeEditor(container: HTMLElement) {
   AreaExtensions.simpleNodesOrder(area);
   const connection = new ConnectionPlugin<Schemes, AreaExtra>();
   const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
-  const contextMenu = new ContextMenuPlugin({
-    items: (context, plugin) => {
-      console.log("context", context);
-
-      if (context === "root") {
-        return {
-          searchBar: true,
-          list: createReteContextMenuItems(contextMenuStructure, editor, {
-            area,
-            dataflow,
-            controlflow,
-            history,
-          }),
-        };
-      }
-      return {
-        searchBar: false,
-        list: [
-          {
-            label: "Delete",
-            key: "delete",
-            async handler() {
-              if ("source" in context && "target" in context) {
-                // connection
-                await editor.removeConnection(context.id);
-              } else {
-                // node
-                await removeNodeWithConnections(editor, context.id);
-              }
-            },
-          },
-        ],
-      };
-    },
+  const contextMenu = setupContextMenu({
+    editor,
+    area,
+    dataflow,
+    controlflow,
+    history,
   });
 
   const gridLine = new GridLineSnapPlugin<Schemes>({ baseSize: 20 });
@@ -154,7 +123,6 @@ export async function createNodeEditor(container: HTMLElement) {
   render.addPreset({
     render(context: any) {
       if (context.data.type === "contextmenu") {
-        console.log("contextmenu", context);
         return ContextMenu({
           items: context.data.items,
           searchBar: context.data.searchBar,
@@ -216,32 +184,18 @@ export async function createNodeEditor(container: HTMLElement) {
     destroy: () => area.destroy(),
     // 現在のnode editorの状態を取得
     getCurrentEditorState: () => getCurrentEditorState(editor, area, history),
-    resetEditorState: async (state: NodeEditorState) =>
-      await resetEditorState(
-        state,
+    resetEditorState: async (payload: NodeEditorState) =>
+      await resetEditorState({
+        payload,
         editor,
         area,
         dataflow,
         controlflow,
-        history
-      ),
+        history,
+      }),
 
     // historyのaddをオーバーライドして、履歴が追加されたときにコールバックを実行する
-    patchHistoryAdd: (callback: () => void) => {
-      let timer: ReturnType<typeof setTimeout> | null = null;
-      const orig = history.add.bind(history);
-
-      history.add = (action) => {
-        orig(action);
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(callback, 200);
-      };
-
-      // 解除用関数を返す
-      return () => {
-        history.add = orig;
-        if (timer) clearTimeout(timer);
-      };
-    },
+    patchHistoryAdd: (callback: () => void) =>
+      patchHistoryAdd(history, callback),
   };
 }
