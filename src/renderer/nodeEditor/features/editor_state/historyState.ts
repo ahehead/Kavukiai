@@ -20,7 +20,6 @@ export function createNodeEditorState(graph: GraphJsonData): NodeEditorState {
   };
 }
 
-// memo:historyプラグインの状態は公開されていないので、無理やり取得する
 export interface HistoryState {
   active: boolean;
   produced: any[];
@@ -28,6 +27,16 @@ export interface HistoryState {
   limit?: number;
 }
 
+export function initializeHistoryState(): HistoryState {
+  return {
+    active: false,
+    produced: [],
+    reserved: [],
+    limit: undefined,
+  };
+}
+
+// memo:historyプラグインの状態は公開されていないので、直接アクセスする
 export function getCurrentEditorState(
   editor: NodeEditor<Schemes>,
   area: AreaPlugin<Schemes, AreaExtra>,
@@ -44,32 +53,39 @@ export function getCurrentEditorState(
   };
 }
 
-export function initializeHistoryState(): HistoryState {
-  return {
-    active: false,
-    produced: [],
-    reserved: [],
-    limit: undefined,
-  };
+interface ResetEditorStateParams {
+  payload: NodeEditorState;
+  editor: NodeEditor<Schemes>;
+  area: AreaPlugin<Schemes, AreaExtra>;
+  dataflow: DataflowEngine<Schemes>;
+  controlflow: ControlFlowEngine<Schemes>;
+  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>;
 }
 
-export async function resetEditorState(
-  payload: NodeEditorState,
-  editor: NodeEditor<Schemes>,
-  area: AreaPlugin<Schemes, AreaExtra>,
-  dataflow: DataflowEngine<Schemes>,
-  engine: ControlFlowEngine<Schemes>,
-  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
-): Promise<void> {
+export async function resetEditorState({
+  payload,
+  editor,
+  area,
+  dataflow,
+  controlflow,
+  history,
+}: ResetEditorStateParams): Promise<void> {
   await editor.clear();
   history.clear();
   dataflow.reset();
-  await createNodes(payload.graph, area, editor, dataflow, engine, history);
-  setHistoryState(history, payload);
+  await createNodes(
+    payload.graph,
+    area,
+    editor,
+    dataflow,
+    controlflow,
+    history
+  );
+  updateHistoryState(history, payload);
   await AreaExtensions.zoomAt(area, editor.getNodes());
 }
 
-function setHistoryState(
+function updateHistoryState(
   history: HistoryPlugin<Schemes, HistoryActions<Schemes>>,
   payload: NodeEditorState
 ) {
@@ -77,4 +93,24 @@ function setHistoryState(
   (history as any).history.produced = payload.historyState.produced.slice();
   (history as any).history.reserved = payload.historyState.reserved.slice();
   (history as any).history.limit = payload.historyState.limit;
+}
+
+export function patchHistoryAdd(
+  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>,
+  callback: () => void
+) {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  const orig = history.add.bind(history);
+
+  history.add = (action) => {
+    orig(action);
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(callback, 200);
+  };
+
+  // 解除用関数を返す
+  return () => {
+    history.add = orig;
+    if (timer) clearTimeout(timer);
+  };
 }
