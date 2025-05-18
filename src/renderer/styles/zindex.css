@@ -1,5 +1,4 @@
 :root {
-  --zindex-top: calc(infinity);
   --zindex-modal: 50;
   --zindex-node: 40;
   --zindex-connection: 30;
