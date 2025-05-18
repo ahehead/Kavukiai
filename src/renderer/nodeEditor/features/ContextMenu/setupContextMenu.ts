@@ -1,12 +1,13 @@
 import { ContextMenuPlugin } from "rete-context-menu-plugin";
 import type { NodeEditor } from "rete";
 import type { Schemes, AreaExtra } from "../../types";
-import { createReteContextMenuItems } from "./createContextMenu";
+
 import { contextMenuStructure, type NodeDeps } from "../../nodes/nodeFactories";
 import { removeNodeWithConnections } from "../../nodes/util/removeNode";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
+import { createReteContextMenuItems } from "./createContextMenu";
 
 type ContextMenuDependencies = {
   editor: NodeEditor<Schemes>;
@@ -25,7 +26,6 @@ export function setupContextMenu({
 }: ContextMenuDependencies) {
   return new ContextMenuPlugin<Schemes>({
     items: (context) => {
-      console.log("context", context);
       const nodeDeps: NodeDeps = { area, dataflow, controlflow, history };
 
       if (context === "root") {
