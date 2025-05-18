@@ -1,4 +1,4 @@
-import { Menu, MenuItemComponent, MenuSeparator, type ItemType } from "./ContextMenuComponent";
+import { Menu, MenuItemComponent, MenuSeparator, type ItemType } from "../../components/ContextMenuComponent";
 
 interface RenderItemsProps {
   items: ItemType[];
@@ -54,16 +54,12 @@ const RenderItems: React.FC<RenderItemsProps> = ({ items, onHide }) => {
   );
 };
 
-export function ContextMenu({ items, searchBar, onHide }: { items: ItemType[]; searchBar?: boolean; onHide?: () => void }) {
+export function CustomContextMenu({ items, searchBar, onHide }: { items: ItemType[]; searchBar?: boolean; onHide?: () => void }) {
 
   return (
     <Menu>
-      {items.length > 0 ? (
+      {items.length > 0 && (
         <RenderItems items={items} onHide={onHide} />
-      ) : (
-        <div className="py-2 px-4 text-sm text-muted-foreground italic">
-          項目がありません
-        </div>
       )}
     </Menu>
   );
