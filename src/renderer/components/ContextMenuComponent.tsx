@@ -22,7 +22,7 @@ const menuStyle = cva(
     "min-w-[220px]",
     "ring-1",
     "ring-border/5",
-    "opacity-90",
+    "opacity-97",
   ]
 )
 
@@ -48,15 +48,15 @@ const menuItemStyle = cva(
     "pl-8",
     "rounded-sm",
     "cursor-pointer",
-    "hover:bg-accent/20", // アクセントカラーを薄くする
+    "hover:bg-accent/25",
     "hover:text-accent-foreground",
     "focus:outline-none",
-    "focus:bg-accent/20", // アクセントカラーを薄くする
+    "focus:bg-accent/25",
     "focus:text-accent-foreground",
     "data-[disabled]:opacity-50",
     "data-[disabled]:pointer-events-none",
     "relative",
-    "transition-colors", // 色の変化をスムーズにする
+    "transition-colors",
   ]
 )
 
