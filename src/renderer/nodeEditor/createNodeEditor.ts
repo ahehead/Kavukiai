@@ -57,6 +57,7 @@ import {
   ChatContextControl,
   ChatContextControlView,
 } from "./nodes/Controls/ChatContext/ChatContext";
+import { ContextMenu } from "./nodes/ContextMenu/Menu";
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
 
@@ -87,22 +88,50 @@ export async function createNodeEditor(container: HTMLElement) {
   const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
   // Context menu pluginのインスタンス化
   const contextMenu = new ContextMenuPlugin({
-    items: ContextMenuPresets.classic.setup(
-      // 右クリックメニューの項目リスト
-      Object.entries(nodeFactories).map(
-        ([name, factory]) =>
-          [
-            name,
-            () =>
-              factory({
-                area,
-                dataflow,
-                controlflow: engine,
-                history,
-              }),
-          ] as const
-      )
-    ),
+    items: (context, plugin) => {
+      if (context === "root") {
+        return {
+          searchBar: true,
+          list: [
+            {
+              label: "test",
+              key: "test_aaaa",
+              handler: () => {
+                console.log("test");
+              },
+            },
+            {
+              label: "test2",
+              key: "test2",
+              handler: () => {
+                console.log("test");
+              },
+              subitems: [
+                {
+                  label: "test2-1",
+                  key: "test2-1",
+                  handler: () => {
+                    console.log("test2-1");
+                  },
+                },
+              ],
+            },
+          ],
+        };
+      }
+      return {
+        searchBar: false,
+        list: [
+          {
+            label: "test2",
+            key: "test2",
+            handler: () => {
+              console.log("test2");
+            },
+          },
+        ],
+      };
+    },
   });
 
   const gridLine = new GridLineSnapPlugin<Schemes>({ baseSize: 20 });
@@ -133,7 +162,16 @@ export async function createNodeEditor(container: HTMLElement) {
 
   //// ここよりプリセットの設定 ////
 
-  render.addPreset(ReactPresets.contextMenu.setup());
+  render.addPreset({
+    render(context: any) {
+      if (context.data.type === "contextmenu") {
+        return ContextMenu({
+          items: context.data.items,
+          searchBar: context.data.searchBar,
+        });
+      }
+    },
+  });
   connection.addPreset(ConnectionPresets.classic.setup());
   // カスタムコントロール用レンダリング設定
   render.addPreset(
