@@ -6,7 +6,7 @@ import {
   ConnectionPlugin,
   Presets as ConnectionPresets,
 } from "rete-connection-plugin";
-import { ReactPlugin, Presets as ReactPresets } from "rete-react-plugin";
+import { ReactPlugin } from "rete-react-plugin";
 import {
   Presets as HistoryPresets,
   HistoryExtensions,
@@ -16,19 +16,6 @@ import {
 import type { Schemes, AreaExtra } from "./types";
 import { ControlFlowEngine, DataflowEngine } from "rete-engine";
 
-// --- 自作モジュール ---
-import {
-  RunButtonControl,
-  RunButtonControlView,
-} from "./nodes/Controls/RunButton";
-
-import {
-  MultiLineControl,
-  TextAreaControllView,
-} from "./nodes/Controls/TextArea";
-
-import { CustomExecSocket, CustomSocket } from "./component";
-
 import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
 import { setupDragPan } from "./features/dragPan";
 import {
@@ -37,24 +24,12 @@ import {
   patchHistoryAdd,
   resetEditorState,
 } from "./features/editor_state/historyState";
-import { createCustomNode } from "./component/CustomBaseNode";
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
-import { ConsoleControl, ConsoleControlView } from "./nodes/Controls/Console";
 import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
-import {
-  InputValueControl,
-  InputValueControlView,
-} from "./nodes/Controls/InputValue";
-import {
-  CheckBoxControl,
-  CheckBoxControlView,
-} from "./nodes/Controls/CheckBox";
-import {
-  ChatContextControl,
-  ChatContextControlView,
-} from "./nodes/Controls/ChatContext/ChatContext";
+
 import { ContextMenu } from "./features/ContextMenu/Menu";
 import { setupContextMenu } from "./features/ContextMenu/setupContextMenu";
+import { customReactPresets } from "./features/customReactPresets/customReactPresets";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -118,8 +93,7 @@ export async function createNodeEditor(container: HTMLElement) {
   // コネクションの作成時と削除時に、ソケットの接続状態を更新
   setupSocketConnectionState(editor, area);
 
-  //// ここよりプリセットの設定 ////
-
+  // context menuのカスタマイズ
   render.addPreset({
     render(context: any) {
       if (context.data.type === "contextmenu") {
@@ -132,58 +106,23 @@ export async function createNodeEditor(container: HTMLElement) {
     },
   });
   connection.addPreset(ConnectionPresets.classic.setup());
-  // カスタムコントロール用レンダリング設定
-  render.addPreset(
-    ReactPresets.classic.setup({
-      customize: {
-        socket(data) {
-          if (data.payload.name === "exec") {
-            return CustomExecSocket;
-          }
-          return CustomSocket;
-        },
-        control(data) {
-          if (data.payload instanceof RunButtonControl) {
-            return RunButtonControlView;
-          }
-          if (data.payload instanceof MultiLineControl) {
-            return TextAreaControllView;
-          }
-          if (data.payload instanceof ConsoleControl) {
-            return ConsoleControlView;
-          }
-          if (data.payload instanceof InputValueControl) {
-            return InputValueControlView;
-          }
-          if (data.payload instanceof ChatContextControl) {
-            return ChatContextControlView;
-          }
-          if (data.payload instanceof CheckBoxControl) {
-            return CheckBoxControlView;
-          }
-
-          return null;
-        },
-        node() {
-          return createCustomNode(area, history, getZoom);
-        },
-      },
-    })
-  );
+  // react pluginのカスタマイズ
+  render.addPreset(customReactPresets(area, history, getZoom));
 
   // Undo/Redo機能有効化
   history.addPreset(HistoryPresets.classic.setup());
   HistoryExtensions.keyboard(history);
 
-  // マウスクリックと、マウス中ボタンで領域パン
+  // マウスクリックと、マウス中ボタンで領域パンするようにする
   setupDragPan(area);
-  // ダブルクリックでのズームを無効化
+  // ダブルクリックでズームするのを無効化
   disableDoubleClickZoom(area);
 
   return {
     destroy: () => area.destroy(),
     // 現在のnode editorの状態を取得
     getCurrentEditorState: () => getCurrentEditorState(editor, area, history),
+    // node stateを再設定
     resetEditorState: async (payload: NodeEditorState) =>
       await resetEditorState({
         payload,
