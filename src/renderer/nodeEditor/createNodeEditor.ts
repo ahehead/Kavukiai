@@ -1,16 +1,13 @@
 // --- サードパーティ・モジュール ---
 import { createRoot } from "react-dom/client";
-import { ClassicPreset, NodeEditor } from "rete";
+import { NodeEditor } from "rete";
 import { AreaExtensions, AreaPlugin } from "rete-area-plugin";
 import {
   ConnectionPlugin,
   Presets as ConnectionPresets,
 } from "rete-connection-plugin";
 import { ReactPlugin, Presets as ReactPresets } from "rete-react-plugin";
-import {
-  ContextMenuPlugin,
-  Presets as ContextMenuPresets,
-} from "rete-context-menu-plugin";
+import { ContextMenuPlugin } from "rete-context-menu-plugin";
 import {
   Presets as HistoryPresets,
   HistoryExtensions,
@@ -41,7 +38,6 @@ import {
   resetEditorState,
 } from "./features/editor_state/historyState";
 import { createCustomNode } from "./component/CustomBaseNode";
-import { nodeFactories } from "./nodes/nodeFactories";
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
 import { ConsoleControl, ConsoleControlView } from "./nodes/Controls/Console";
 import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
@@ -57,7 +53,12 @@ import {
   ChatContextControl,
   ChatContextControlView,
 } from "./nodes/Controls/ChatContext/ChatContext";
-import { ContextMenu } from "./nodes/ContextMenu/Menu";
+import { ContextMenu } from "./features/ContextMenu/Menu";
+
+import { removeNodeWithConnections } from "./nodes/util/removeNode";
+import { createReteContextMenuItems } from "./features/ContextMenu/createContextMenu";
+import { contextMenuStructure } from "./nodes/nodeFactories";
+
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
 
@@ -70,7 +71,7 @@ export async function createNodeEditor(container: HTMLElement) {
         Object.keys(outputs).filter((name) => name !== "exec"),
     };
   });
-  const engine = new ControlFlowEngine<Schemes>(() => {
+  const controlflow = new ControlFlowEngine<Schemes>(() => {
     return {
       inputs: (): ["exec"] => ["exec"],
       outputs: (): ["exec"] => ["exec"],
@@ -86,47 +87,35 @@ export async function createNodeEditor(container: HTMLElement) {
   AreaExtensions.simpleNodesOrder(area);
   const connection = new ConnectionPlugin<Schemes, AreaExtra>();
   const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
-  // Context menu pluginのインスタンス化
   const contextMenu = new ContextMenuPlugin({
     items: (context, plugin) => {
+      console.log("context", context);
+
       if (context === "root") {
         return {
           searchBar: true,
-          list: [
-            {
-              label: "test",
-              key: "test_aaaa",
-              handler: () => {
-                console.log("test");
-              },
-            },
-            {
-              label: "test2",
-              key: "test2",
-              handler: () => {
-                console.log("test");
-              },
-              subitems: [
-                {
-                  label: "test2-1",
-                  key: "test2-1",
-                  handler: () => {
-                    console.log("test2-1");
-                  },
-                },
-              ],
-            },
-          ],
+          list: createReteContextMenuItems(contextMenuStructure, editor, {
+            area,
+            dataflow,
+            controlflow,
+            history,
+          }),
         };
       }
       return {
         searchBar: false,
         list: [
           {
-            label: "test2",
-            key: "test2",
-            handler: () => {
-              console.log("test2");
+            label: "Delete",
+            key: "delete",
+            async handler() {
+              if ("source" in context && "target" in context) {
+                // connection
+                await editor.removeConnection(context.id);
+              } else {
+                // node
+                await removeNodeWithConnections(editor, context.id);
+              }
             },
           },
         ],
@@ -138,7 +127,7 @@ export async function createNodeEditor(container: HTMLElement) {
 
   // エディタにプラグインを接続
   editor.use(dataflow);
-  editor.use(engine);
+  editor.use(controlflow);
   editor.use(area);
   area.use(history);
   area.use(connection);
@@ -165,9 +154,11 @@ export async function createNodeEditor(container: HTMLElement) {
   render.addPreset({
     render(context: any) {
       if (context.data.type === "contextmenu") {
+        console.log("contextmenu", context);
         return ContextMenu({
           items: context.data.items,
           searchBar: context.data.searchBar,
+          onHide: context.data.onHide,
         });
       }
     },
@@ -226,7 +217,14 @@ export async function createNodeEditor(container: HTMLElement) {
     // 現在のnode editorの状態を取得
     getCurrentEditorState: () => getCurrentEditorState(editor, area, history),
     resetEditorState: async (state: NodeEditorState) =>
-      await resetEditorState(state, editor, area, dataflow, engine, history),
+      await resetEditorState(
+        state,
+        editor,
+        area,
+        dataflow,
+        controlflow,
+        history
+      ),
 
     // historyのaddをオーバーライドして、履歴が追加されたときにコールバックを実行する
     patchHistoryAdd: (callback: () => void) => {
