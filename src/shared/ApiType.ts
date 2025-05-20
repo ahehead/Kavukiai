@@ -19,7 +19,7 @@ export enum IpcChannel {
   FileLoadedRequest = "file-loaded-request",
   LoadFile = "load-file",
 
-  StreamChatGpt = "stream-chat-gpt",
+  PortChatGpt = "port-chat-gpt",
 }
 
 export type OpenAIParams = any;
@@ -51,7 +51,7 @@ export type FileData = {
   json: GraphJsonData;
 };
 
-export type StreamArgs = {
+export type OpenAIRequestArgs = {
   id: string;
   param: OpenAI.Responses.ResponseCreateParams;
 };
@@ -65,7 +65,7 @@ export type IpcResultDialog<T> =
   | { status: "cancel" }
   | { status: "error"; message: string; code?: string };
 
-export type StreamPortType =
+export type PortEventType =
   | { type: "delta"; value: string }
   | { type: "error"; message: string }
   | { type: "abort" }
