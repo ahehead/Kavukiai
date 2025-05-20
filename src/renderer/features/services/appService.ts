@@ -13,7 +13,7 @@ type ApiKeys =
   | "loadFile"
   | "saveApiKey"
   | "loadApiKeys"
-  | "streamChatGpt";
+  | "sendChatGptMessage";
 
 type ElectronService = Pick<typeof App, ApiKeys>;
 
