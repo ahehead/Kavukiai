@@ -13,6 +13,7 @@ import type { DataflowEngine } from "rete-engine";
 import { InputValueControl } from "../../Controls/InputValue";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import { CheckBoxControl } from "../../Controls/CheckBox";
+import { getInputValue } from "../../util/getInput";
 const { Output, Input } = ClassicPreset;
 
 // Run ノード
@@ -37,11 +38,14 @@ export class OpenAIResponseParamNode extends BaseNode<
       "param",
       new Output(createSocket("OpenAIResponseParam"), undefined, true)
     );
-    this.addInput("model", new Input(createSocket("string"), "model", false));
+    this.addInput(
+      "model",
+      new Input(createSocket("string"), "model (Default gpt-4.1)", false)
+    );
     this.inputs.model?.addControl(
       new InputValueControl<string>("gpt-4.1", {
         type: "string",
-        label: "model",
+        label: "model (Default gpt-4.1)",
         editable: true,
         history: history,
         area: area,
@@ -77,23 +81,6 @@ export class OpenAIResponseParamNode extends BaseNode<
         },
       })
     );
-    this.addInput(
-      "temperature",
-      new Input(createSocket("number"), "temperature", false)
-    );
-    this.inputs.temperature?.addControl(
-      new InputValueControl<number>(0.7, {
-        type: "number",
-        label: "temperature",
-        step: 0.1,
-        editable: true,
-        history: history,
-        area: area,
-        onChange: (v: number) => {
-          resetCacheDataflow(dataflow, this.id);
-        },
-      })
-    );
   }
 
   data(inputs: {
@@ -105,7 +92,6 @@ export class OpenAIResponseParamNode extends BaseNode<
     console.log("inputs", inputs);
     const stream = getInputValue(this.inputs, "stream", inputs);
     const store = getInputValue(this.inputs, "store", inputs);
-    const temperature = getInputValue(this.inputs, "temperature", inputs);
     const param: OpenAI.Responses.ResponseCreateParams = {
       model: getInputValue(this.inputs, "model", inputs) ?? "gpt-4.1",
       input: [
@@ -116,28 +102,8 @@ export class OpenAIResponseParamNode extends BaseNode<
       ],
       ...(stream !== undefined && { stream }),
       ...(store !== undefined && { store }),
-      ...(temperature !== undefined && { temperature }),
     };
     return { param };
   }
   async execute(): Promise<void> {}
-}
-
-export function getInputValue(
-  inputs: any,
-  inputName: string,
-  nodeInputsFromDataflow: any
-) {
-  const reteInput = inputs[inputName];
-
-  if (reteInput?.control && reteInput.showControl) {
-    return reteInput.control.getValue();
-  }
-
-  const values = nodeInputsFromDataflow[inputName];
-  if (Array.isArray(values) && values.length > 0) {
-    return values[0];
-  }
-
-  return undefined;
 }
