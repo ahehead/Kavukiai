@@ -9,7 +9,7 @@ import { createSocket } from "../../Sockets";
 import { ConsoleControl } from "../../Controls/Console";
 import { electronApiService } from "renderer/features/services/appService";
 import type OpenAI from "openai";
-import type { StreamArgs, StreamPortType } from "shared/ApiType";
+import type { OpenAIRequestArgs, PortEventType } from "shared/ApiType";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
@@ -57,19 +57,23 @@ export class OpenAINode extends BaseNode<
     forward: (output: "exec") => void
   ): Promise<void> {
     const { param } = (await this.dataflow.fetchInputs(this.id)) as {
-      param?: OpenAI.Responses.ResponseCreateParamsStreaming[];
+      param?: OpenAI.Responses.ResponseCreateParams[];
     };
-    console.log("param", param);
+    this.controls.console.addValue(`param: ${JSON.stringify(param, null, 2)}`);
     if (!param) {
       this.controls.console.addValue("Error: No param");
       console.error("Error: No param");
       return;
     }
-    const port = await startChatGptStream({ id: this.id, param: param[0] });
+    this.controls.console.addValue("start");
+    const port = await createOpenAIMessagePort({
+      id: this.id,
+      param: param[0],
+    });
 
     port.onmessage = (e: MessageEvent) => {
-      const result = e.data as StreamPortType;
-      console.log("result", result);
+      const result = e.data as PortEventType;
+      //console.log("result", result);
       if (result.type === "error") {
         this.controls.console.addValue(`Error: ${result.message}`);
         console.error("Error:", result.message);
@@ -80,6 +84,8 @@ export class OpenAINode extends BaseNode<
       }
       if (result.type === "done") {
         this.setString(result.text);
+        console.log("done", result);
+        this.controls.console.addValue("done");
         port.close();
       }
       forward("exec");
@@ -87,10 +93,10 @@ export class OpenAINode extends BaseNode<
   }
 }
 
-async function startChatGptStream({
+async function createOpenAIMessagePort({
   id,
   param,
-}: StreamArgs): Promise<MessagePort> {
+}: OpenAIRequestArgs): Promise<MessagePort> {
   return new Promise<MessagePort>((resolve) => {
     const handler = (e: MessageEvent) => {
       if (e.data?.type === "node-port" && e.data.id === id) {
@@ -101,6 +107,6 @@ async function startChatGptStream({
       }
     };
     window.addEventListener("message", handler);
-    electronApiService.streamChatGpt({ id, param });
+    electronApiService.sendChatGptMessage({ id, param });
   });
 }
