@@ -1,6 +1,11 @@
 import { ipcMain } from "electron";
 import OpenAI from "openai";
-import { IpcChannel, type StreamArgs, type OpenAIParams } from "shared/ApiType";
+import {
+  IpcChannel,
+  type OpenAIRequestArgs,
+  type OpenAIParams,
+  type PortEventType,
+} from "shared/ApiType";
 import { ApiKeyConf, getApiKeyConf } from "main/features/file/conf";
 
 // openaiリクエストを処理するハンドラを登録
@@ -18,58 +23,79 @@ export function registerOpenAIHandlers(): void {
     }
   );
 
-  // streamでchatgptを実行する
-  ipcMain.on(IpcChannel.StreamChatGpt, async (evt, data) => {
-    const { id, param } = data as StreamArgs;
-    const port = evt.ports[0];
+  // chatgptと通信する
+  ipcMain.on(IpcChannel.PortChatGpt, async (evt, data) => {
+    const { id, param } = data as OpenAIRequestArgs;
+    const messagePort = evt.ports[0];
 
-    // abort
-    const ctrl = new AbortController();
-    port.on("message", (e) => {
-      if (e.data?.type === "abort") ctrl.abort();
+    // abort controllerを作成
+    const abortController = new AbortController();
+    messagePort.on("message", (e) => {
+      if (e.data?.type === "abort") abortController.abort();
     });
 
-    port.start();
+    // port を開始
+    messagePort.start();
+    console.log("PortChatGPT start:", id, param);
 
-    console.log("start stream", id, param);
     // chatgptと通信
     try {
-      const apiKeysConf = ApiKeyConf();
+      const apiKeysConfig = ApiKeyConf();
 
-      const openai = new OpenAI({
-        apiKey: getApiKeyConf(apiKeysConf, "openai"),
+      const openaiClient = new OpenAI({
+        apiKey: getApiKeyConf(apiKeysConfig, "openai"),
       });
+      // 非ストリーム対応
       if (param.stream === false) {
-        const response = await openai.responses.create(param, {
-          signal: ctrl.signal,
+        const response = await openaiClient.responses.create(param, {
+          signal: abortController.signal,
         });
-        port.postMessage({ type: "done", text: response.output_text });
-        port.close();
-      } else if (param.stream === true) {
-        const stream = await openai.responses.create(param, {
-          signal: ctrl.signal,
+        postMessageToPort(messagePort, {
+          type: "done",
+          text: response.output_text,
+        });
+        messagePort.close();
+      }
+
+      // ストリーミング対応
+      // 型チェックのため、明示的にtrueを指定
+      if (param.stream === true) {
+        const stream = await openaiClient.responses.create(param, {
+          signal: abortController.signal,
         });
 
         for await (const event of stream) {
           if (event.type === "error") {
-            port.postMessage({ type: "error", message: event.message });
-            console.error("Error:", event.message);
+            postMessageToPort(messagePort, {
+              type: "error",
+              message: event.message,
+            });
           }
           if (event.type === "response.output_text.delta") {
-            console.log("delta", event.delta);
-            port.postMessage({ type: "delta", value: event.delta });
+            postMessageToPort(messagePort, {
+              type: "delta",
+              value: event.delta,
+            });
           }
           if (event.type === "response.output_text.done") {
-            port.postMessage({ type: "done", text: event.text });
+            postMessageToPort(messagePort, { type: "done", text: event.text });
           }
         }
-        port.close();
+        messagePort.close();
       }
     } catch (error: any) {
-      port.postMessage({ type: "error", message: error.message });
-      console.error("Error:", error.message);
+      postMessageToPort(messagePort, { type: "error", message: error.message });
     } finally {
-      port.close();
+      messagePort.close();
     }
   });
+}
+
+function postMessageToPort(
+  port: Electron.MessagePortMain,
+  msg: PortEventType
+): void {
+  port.postMessage(msg);
+  if (msg.type === "done") console.log("PortChatGPT Done", msg.text);
+  if (msg.type === "error") console.error("PortChatGPT Error:", msg.message);
 }
