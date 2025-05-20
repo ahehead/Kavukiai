@@ -14,6 +14,7 @@ export class ConsoleControl extends ClassicPreset.Control {
   }
   addValue: (addValue: string) => void = (addValue) => {
     this.value += addValue;
+    this.value += "\n-----------\n"
     this.area.update("control", this.id);
   };
 }
