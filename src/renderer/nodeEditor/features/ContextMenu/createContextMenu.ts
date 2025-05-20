@@ -5,13 +5,7 @@ import {
   nodeFactories,
 } from "../../nodes/nodeFactories";
 import type { Schemes } from "../../types";
-
-type MenuItem = {
-  label: string;
-  key: string;
-  handler: () => void;
-  subitems?: MenuItem[];
-};
+import type { Item } from "rete-context-menu-plugin/_types/types";
 
 // Helper function to generate context menu items
 export function createReteContextMenuItems(
@@ -20,7 +14,7 @@ export function createReteContextMenuItems(
   nodeDepsArgs: NodeDeps
 ) {
   return definitions.map((itemDef) => {
-    const menuItem: MenuItem = {
+    const menuItem: Item = {
       label: itemDef.label,
       key: itemDef.key,
       handler: itemDef.factoryKey
