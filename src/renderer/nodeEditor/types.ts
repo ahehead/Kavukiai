@@ -86,16 +86,9 @@ export class BaseNode<
   getSize(): { width: number | undefined; height: number | undefined } {
     return { width: this.width, height: this.height };
   }
-  getMinHeight(): number {
-    const titleHeight = 30;
-    const socketHeight = 22;
-    const controlHeight = 55;
-    const socketCount =
-      Object.keys(this.inputs).length + Object.keys(this.outputs).length;
-    const controlCount = Object.keys(this.controls).length;
-    return (
-      titleHeight + socketHeight * socketCount + controlHeight * controlCount
-    );
+  clearSize() {
+    this.width = undefined;
+    this.height = undefined;
   }
   clearHeight() {
     this.height = undefined;
