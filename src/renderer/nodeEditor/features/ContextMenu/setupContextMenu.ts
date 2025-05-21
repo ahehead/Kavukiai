@@ -1,11 +1,6 @@
 import { ContextMenuPlugin } from "rete-context-menu-plugin";
-import type { ClassicPreset, NodeEditor } from "rete";
-import type {
-  Schemes,
-  AreaExtra,
-  NodeInterface,
-  CustomSocketType,
-} from "../../types";
+import type { NodeEditor } from "rete";
+import type { Schemes, AreaExtra, NodeInterface } from "../../types";
 
 import { contextMenuStructure, type NodeDeps } from "../../nodes/nodeFactories";
 import type { AreaPlugin } from "rete-area-plugin";
