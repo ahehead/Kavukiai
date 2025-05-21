@@ -119,7 +119,7 @@ const nodeSocketWrapperStyles = cva(
         output: "justify-end",
       },
       isViewControl: {
-        true: "w-full h-full p-2",
+        true: "w-full h-full",
         false: null
       }
     },
@@ -151,7 +151,7 @@ export function NodeSocketTypeLabel({ ...props }: React.ComponentProps<"div">) {
 
 export function NodePanelControls({ ...props }: React.ComponentProps<"div">) {
   return (
-    <div className='w-full h-full p-2'{...props} />
+    <div className='w-full h-full p-2 empty:p-0' {...props} />
   )
 }
 
