@@ -5,7 +5,7 @@ import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
 import { exportGraph } from "../exportGraphJson/exportGraph";
 import { createNodes } from "../createGraph/createNodes";
 import { AreaExtensions } from "rete-area-plugin";
-import type { AreaExtra, Schemes } from "../../types";
+import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { GraphJsonData } from "shared/JsonType";
 
 export interface NodeEditorState {

@@ -1,16 +1,16 @@
 import { ClassicPreset } from 'rete';
-import { createSocket } from '../Sockets';
-import { type AreaExtra, BaseNode, type Schemes, type CustomSocketType } from 'renderer/nodeEditor/types';
+import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import { InputValueControl } from '../Controls/InputValue';
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
 import { resetCacheDataflow } from '../util/resetCacheDataflow';
+import { type AreaExtra, createSocket, type NodeSocket, type Schemes } from 'renderer/nodeEditor/types';
 const { Node, Output } = ClassicPreset;
 // 短い文字列入力ノード
 export class StringNode extends BaseNode<
   object,
-  { out: CustomSocketType },
+  { out: NodeSocket },
   { textInput: InputValueControl<string> }
 > {
   constructor(

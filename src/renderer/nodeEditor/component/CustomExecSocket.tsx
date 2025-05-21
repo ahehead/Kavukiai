@@ -1,7 +1,7 @@
 import { NodeExecSocket } from 'renderer/components/NodePanel'
-import type { CustomSocketType } from '../types'
+import type { NodeSocket } from "../types/NodeSocket"
 
-export function CustomExecSocket<T extends CustomSocketType>(
+export function CustomExecSocket<T extends NodeSocket>(
   props: { data: T }
 ): React.ReactElement {
   const { data } = props

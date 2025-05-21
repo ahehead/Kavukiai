@@ -1,6 +1,6 @@
 import { type AreaPlugin, Drag } from "rete-area-plugin";
-import type { AreaExtra } from "../../types";
-import type { Schemes } from "../../types";
+import type { AreaExtra } from "../../types/Schemes";
+import type { Schemes } from "../../types/Schemes";
 
 export function setupDragPan(area: AreaPlugin<Schemes, AreaExtra>) {
   area.area.setDragHandler(

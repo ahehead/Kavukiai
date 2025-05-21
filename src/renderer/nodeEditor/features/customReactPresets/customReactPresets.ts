@@ -1,7 +1,6 @@
 import { type ReactArea2D, Presets as ReactPresets } from "rete-react-plugin";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
-import type { Schemes, AreaExtra } from "../../types";
 import {
   RunButtonControl,
   RunButtonControlView,
@@ -31,6 +30,7 @@ import {
   CustomSocket,
   createCustomNode,
 } from "../../component";
+import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
 
 export function customReactPresets(
   area: AreaPlugin<Schemes, AreaExtra>,

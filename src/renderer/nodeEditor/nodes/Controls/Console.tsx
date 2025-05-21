@@ -1,6 +1,6 @@
 import type React from "react"
 import { useEffect, useRef, type JSX } from 'react';
-import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
+import type { AreaExtra, Schemes } from "renderer/nodeEditor/types/Schemes";
 import { ClassicPreset } from 'rete';
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";

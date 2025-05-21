@@ -1,12 +1,6 @@
 import { ClassicPreset } from "rete";
-import { createSocket } from "../Sockets";
 import type { HistoryPlugin } from "rete-history-plugin";
-import {
-  BaseNode,
-  type AreaExtra,
-  type CustomSocketType,
-  type Schemes,
-} from "renderer/nodeEditor/types";
+import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "../util/resetCacheDataflow";
@@ -14,12 +8,18 @@ import {
   type ChatContext,
   ChatContextControl,
 } from "../Controls/ChatContext/ChatContext";
+import {
+  type AreaExtra,
+  createSocket,
+  type NodeSocket,
+  type Schemes,
+} from "renderer/nodeEditor/types";
 const { Output } = ClassicPreset;
 
 // 長文文字列入力ノード
 export class ChatContextNode extends BaseNode<
   object,
-  { out: CustomSocketType },
+  { out: NodeSocket },
   { chatContext: ChatContextControl }
 > {
   constructor(

@@ -1,12 +1,8 @@
 import type { NodeEditor, ClassicPreset } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
-import type {
-  Schemes,
-  AreaExtra,
-  NodeInterface,
-  CustomSocketType,
-} from "../../../types";
+import type { Schemes, AreaExtra, NodeInterface } from "../../../types/Schemes";
+import type { NodeSocket } from "renderer/nodeEditor/types/NodeSocket";
 import { removeLinkedSockets } from "../../../nodes/util/removeNode";
 import { resetCacheDataflow } from "renderer/nodeEditor/nodes/util/resetCacheDataflow";
 import type { Item } from "rete-context-menu-plugin/_types/types";
@@ -18,7 +14,7 @@ export function createToggleInputControlMenuItem(
   dataflow: DataflowEngine<Schemes>,
   inputlist: Array<{
     key: string;
-    input: ClassicPreset.Input<CustomSocketType>;
+    input: ClassicPreset.Input<NodeSocket>;
   }>
 ): Item {
   return {
@@ -43,13 +39,13 @@ export function createToggleInputControlMenuItem(
 // controlを持っているinputをキー付きでlistで返す
 export function filterInputControls(
   inputs: NodeInterface["inputs"]
-): Array<{ key: string; input: ClassicPreset.Input<CustomSocketType> }> {
+): Array<{ key: string; input: ClassicPreset.Input<NodeSocket> }> {
   const entries = Object.entries(inputs) as [
     string,
-    ClassicPreset.Input<CustomSocketType> | undefined
+    ClassicPreset.Input<NodeSocket> | undefined
   ][];
   const filtered = entries.filter(
-    (entry): entry is [string, ClassicPreset.Input<CustomSocketType>] => {
+    (entry): entry is [string, ClassicPreset.Input<NodeSocket>] => {
       const input = entry[1];
       return input?.control != null;
     }

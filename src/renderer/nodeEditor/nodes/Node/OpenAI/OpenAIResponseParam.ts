@@ -1,11 +1,5 @@
 import { ClassicPreset } from "rete";
-import {
-  type AreaExtra,
-  BaseNode,
-  type CustomSocketType,
-  type Schemes,
-} from "../../../types";
-import { createSocket } from "../../Sockets";
+import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type OpenAI from "openai";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
@@ -14,17 +8,23 @@ import { InputValueControl } from "../../Controls/InputValue";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import { CheckBoxControl } from "../../Controls/CheckBox";
 import { getInputValue } from "../../util/getInput";
+import {
+  type AreaExtra,
+  createSocket,
+  type NodeSocket,
+  type Schemes,
+} from "renderer/nodeEditor/types";
 const { Output, Input } = ClassicPreset;
 
 // Run ノード
 export class OpenAIResponseParamNode extends BaseNode<
   {
-    model: CustomSocketType;
-    stream: CustomSocketType;
-    store: CustomSocketType;
-    temperature: CustomSocketType;
+    model: NodeSocket;
+    stream: NodeSocket;
+    store: NodeSocket;
+    temperature: NodeSocket;
   },
-  { param: CustomSocketType },
+  { param: NodeSocket },
   object
 > {
   value = "";

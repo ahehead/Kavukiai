@@ -14,7 +14,7 @@ export class RunButtonControl extends ClassicPreset.Control {
 }
 
 // カスタム Run ボタンコンポーネント
-export function RunButtonControlView(props: { data: RunButtonControl }): JSX.Element {
+export function RunButtonControlView(props: { data: RunButtonControl }) {
   return <RunButton label={props.data.label} onClick={props.data.onClick} />;
 }
 

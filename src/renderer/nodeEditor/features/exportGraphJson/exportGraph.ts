@@ -1,6 +1,6 @@
 import type { NodeEditor } from "rete";
 import type { GraphJsonData, NodeJson } from "../../../../shared/JsonType";
-import type { AreaExtra, Schemes } from "../../types";
+import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 
 /**

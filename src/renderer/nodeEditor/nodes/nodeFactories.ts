@@ -6,7 +6,7 @@ import {
   StringNode,
   ViewStringNode,
 } from "./Node";
-import type { AreaExtra, NodeTypes, Schemes } from "../types";
+import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";

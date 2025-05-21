@@ -1,4 +1,4 @@
-import type { Schemes } from "renderer/nodeEditor/types";
+import type { Schemes } from "renderer/nodeEditor/types/Schemes";
 import type { DataflowEngine } from "rete-engine";
 
 export function resetCacheDataflow(

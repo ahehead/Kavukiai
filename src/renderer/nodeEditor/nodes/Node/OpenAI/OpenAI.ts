@@ -1,11 +1,4 @@
 import { ClassicPreset } from "rete";
-import {
-  type AreaExtra,
-  BaseNode,
-  type CustomSocketType,
-  type Schemes,
-} from "../../../types";
-import { createSocket } from "../../Sockets";
 import { ConsoleControl } from "../../Controls/Console";
 import { electronApiService } from "renderer/features/services/appService";
 import type OpenAI from "openai";
@@ -13,12 +6,19 @@ import type { OpenAIRequestArgs, PortEventType } from "shared/ApiType";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
+import {
+  type AreaExtra,
+  BaseNode,
+  createSocket,
+  type NodeSocket,
+  type Schemes,
+} from "renderer/nodeEditor/types";
 const { Output, Input } = ClassicPreset;
 
 // Run ノード
 export class OpenAINode extends BaseNode<
-  { exec: CustomSocketType; param: CustomSocketType },
-  { exec: CustomSocketType; message: CustomSocketType },
+  { exec: NodeSocket; param: NodeSocket },
+  { exec: NodeSocket; message: NodeSocket },
   { console: ConsoleControl }
 > {
   value = "";

@@ -13,7 +13,6 @@ import {
   type HistoryActions,
   HistoryPlugin,
 } from "rete-history-plugin";
-import type { Schemes, AreaExtra } from "./types";
 import { ControlFlowEngine, DataflowEngine } from "rete-engine";
 
 import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
@@ -30,6 +29,7 @@ import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/dis
 import { CustomContextMenu } from "./component/CustomContextMenu";
 import { setupContextMenu } from "./features/contextMenu/setupContextMenu";
 import { customReactPresets } from "./features/customReactPresets/customReactPresets";
+import type { AreaExtra, Schemes } from "./types";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();

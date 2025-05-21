@@ -1,4 +1,4 @@
-import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
+import type { AreaExtra, Schemes } from "renderer/nodeEditor/types/Schemes";
 import { nodeFactories } from "../../nodes/nodeFactories";
 import { ClassicPreset, type NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";

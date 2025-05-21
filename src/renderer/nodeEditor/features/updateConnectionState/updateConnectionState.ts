@@ -1,6 +1,6 @@
 import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { Schemes, AreaExtra } from "../../types";
+import type { Schemes, AreaExtra } from "../../types/Schemes";
 import {
   canCreateConnection,
   getConnectionPorts,

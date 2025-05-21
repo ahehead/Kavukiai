@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type JSX } from "react";
 import { ClassicPreset } from "rete";
 import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
-import type { AreaExtra, Schemes } from "../../types";
+import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { inputValueStyles } from "renderer/components/NodePanel";

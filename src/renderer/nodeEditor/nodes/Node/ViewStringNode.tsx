@@ -1,16 +1,16 @@
 import { ClassicPreset } from 'rete';
-import { createSocket } from '../Sockets';
 import type { DataflowEngine } from 'rete-engine';
-import { BaseNode, type AreaExtra, type CustomSocketType, type Schemes } from 'renderer/nodeEditor/types';
+import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type { AreaPlugin } from 'rete-area-plugin';
 import { MultiLineControl } from '../Controls/TextArea';
 import { resetCacheDataflow } from '../util/resetCacheDataflow';
+import { type AreaExtra, createSocket, type NodeSocket, type Schemes } from 'renderer/nodeEditor/types';
 const { Input, Output } = ClassicPreset;
 
 // View String ノード
 export class ViewStringNode extends BaseNode<
-  { exec: CustomSocketType; inputString: CustomSocketType },
-  { exec: CustomSocketType; outputString: CustomSocketType },
+  { exec: NodeSocket; inputString: NodeSocket },
+  { exec: NodeSocket; outputString: NodeSocket },
   { view: MultiLineControl }
 > {
   constructor(
