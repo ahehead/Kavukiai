@@ -97,6 +97,9 @@ export class BaseNode<
       titleHeight + socketHeight * socketCount + controlHeight * controlCount
     );
   }
+  clearHeight() {
+    this.height = undefined;
+  }
 }
 
 // 型参照用のインターフェイス
