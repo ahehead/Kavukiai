@@ -1,6 +1,6 @@
 import { Presets, type RenderEmit } from 'rete-react-plugin'
 import type { AreaExtra, NodeInterface, Schemes } from '../types/Schemes'
-import { NodeContainer, NodeSocketsWrapper, NodeHeader, NodeSocketName, NodeSocketTypeLabel, NodePort, NodeTitle, NodeControlsWrapper, } from 'renderer/components/NodePanel'
+import { NodeContainer, NodeSocketsWrapper, NodeHeader, NodeSocketName, NodeSocketTypeLabel, NodePort, NodeTitle, NodeControlsWrapper, } from 'renderer/nodeEditor/component/NodePanel'
 import type { AreaPlugin } from 'rete-area-plugin'
 import { useRef } from 'react'
 import { useNodeResize } from '../hooks/useNodeResize'

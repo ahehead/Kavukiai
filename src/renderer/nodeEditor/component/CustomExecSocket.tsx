@@ -1,4 +1,4 @@
-import { NodeExecSocket } from 'renderer/components/NodePanel'
+import { NodeExecSocket } from 'renderer/nodeEditor/component/NodePanel'
 import type { NodeSocket } from "../types/NodeSocket"
 
 export function CustomExecSocket<T extends NodeSocket>(

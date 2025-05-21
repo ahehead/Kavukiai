@@ -4,8 +4,7 @@ import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
-import { cn } from "renderer/lib/utils";
-import { CheckBoxLabel, checkBoxStyles, CheckBoxWrapper } from "renderer/components/NodePanel";
+import { CheckBoxLabel, checkBoxStyles, CheckBoxWrapper } from "renderer/nodeEditor/component/NodePanel";
 
 // HistoryActionの定義
 class CheckBoxAction implements HistoryAction {

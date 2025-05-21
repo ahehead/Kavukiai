@@ -4,7 +4,7 @@ import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
-import { InputControlLabel, InputControlWrapper, inputValueStyles } from "renderer/components/NodePanel";
+import { InputControlLabel, InputControlWrapper, inputValueStyles } from "renderer/nodeEditor/component/NodePanel";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
 class InputValueAction<T extends string | number> implements HistoryAction {

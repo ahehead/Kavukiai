@@ -4,7 +4,7 @@ import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
-import { textAreaStyles } from "renderer/components/NodePanel";
+import { textAreaStyles } from "renderer/nodeEditor/component/NodePanel";
 import { useStopWheel } from "../util/useStopWheel";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義

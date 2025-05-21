@@ -1,4 +1,4 @@
-import { NodeDataSocket } from "renderer/components/NodePanel"
+import { NodeDataSocket } from "renderer/nodeEditor/component/NodePanel"
 import type { NodeSocket } from "../types/NodeSocket"
 
 export function CustomSocket<T extends NodeSocket>(
