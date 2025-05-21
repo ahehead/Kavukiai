@@ -54,15 +54,11 @@ export function NodeTitle({ ...props }: React.ComponentProps<"div">) {
 export function NodeSocketsWrapper({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex flex-col pt-1 gap-1")}
+      className={cn("grid grid-cols-1 py-1 gap-2")}
       {...props}
     />
   )
 }
-
-
-
-
 
 
 const nodePortStyles = cva(
@@ -213,6 +209,34 @@ export const inputValueStyles = cva(
       editable: {
         true: "",
         false: "bg-gray-100 cursor-not-allowed",
+      }
+    }
+  }
+);
+
+export function CheckBoxWrapper({ ...props }: React.ComponentProps<"div">) {
+  return (
+    <div className="flex items-center" {...props} />
+  )
+}
+
+export function CheckBoxLabel({ ...props }: React.ComponentProps<"label">) {
+  return (
+    // biome-ignore lint/a11y/noLabelWithoutControl: <explanation>
+    <label
+      className="text-xs text-gray-500 mr-2 cursor-pointer select-none"
+      {...props}
+    />
+  )
+}
+
+export const checkBoxStyles = cva(
+  ["h-4 w-4 rounded opacity-90 bg-gray-100 border-input accent-gray-100 hover:accent-gray-300"],
+  {
+    variants: {
+      editable: {
+        true: "",
+        false: "cursor-not-allowed opacity-50",
       }
     }
   }
