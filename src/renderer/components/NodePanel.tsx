@@ -98,14 +98,14 @@ const nodePortStyles = cva(
         input: "justify-start",
         output: "justify-end",
       },
-      isShowControl: {
+      isShowAndHaveControl: {
         true: "w-full h-full px-2",
         false: null
       }
     },
     defaultVariants: {
       side: "input",
-      isShowControl: false,
+      isShowAndHaveControl: false,
     },
   }
 );
@@ -113,11 +113,11 @@ const nodePortStyles = cva(
 // input/outputのポート
 export function NodePort({
   side,
-  isShowControl,
+  isShowAndHaveControl: isShowControl,
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof nodePortStyles>) {
   return <div {...props}
-    className={nodePortStyles({ side, isShowControl })} />;
+    className={nodePortStyles({ side, isShowAndHaveControl: isShowControl })} />;
 }
 
 // ソケットの名前（ラベル）
