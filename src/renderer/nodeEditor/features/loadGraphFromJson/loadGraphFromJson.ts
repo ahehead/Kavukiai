@@ -7,7 +7,7 @@ import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
 import type { GraphJsonData } from "shared/JsonType";
 
 // JSON からノードを生成してエディタに登録
-export async function createNodes(
+export async function loadGraphFromJson(
   graphJsonData: GraphJsonData,
   area: AreaPlugin<Schemes, AreaExtra>,
   editor: NodeEditor<Schemes>,

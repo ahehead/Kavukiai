@@ -2,8 +2,8 @@ import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
-import { exportGraph } from "../exportGraphJson/exportGraph";
-import { createNodes } from "../createGraph/createNodes";
+import { serializeGraph } from "../serializeGraph/serializeGraph";
+import { loadGraphFromJson } from "../loadGraphFromJson/loadGraphFromJson";
 import { AreaExtensions } from "rete-area-plugin";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { GraphJsonData } from "shared/JsonType";
@@ -43,7 +43,7 @@ export function getCurrentEditorState(
   history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
 ): NodeEditorState {
   return {
-    graph: exportGraph(editor, area),
+    graph: serializeGraph(editor, area),
     historyState: {
       active: (history as any).history.active,
       produced: (history as any).history.produced.slice(),
@@ -73,7 +73,7 @@ export async function resetEditorState({
   await editor.clear();
   history.clear();
   dataflow.reset();
-  await createNodes(
+  await loadGraphFromJson(
     payload.graph,
     area,
     editor,

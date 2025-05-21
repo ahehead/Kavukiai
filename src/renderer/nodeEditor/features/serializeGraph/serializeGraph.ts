@@ -6,7 +6,7 @@ import type { AreaPlugin } from "rete-area-plugin";
 /**
  * editor の状態を GraphJsonData 形式にシリアライズして返す
  */
-export function exportGraph(
+export function serializeGraph(
   editor: NodeEditor<Schemes>,
   area: AreaPlugin<Schemes, AreaExtra>
 ): GraphJsonData {
