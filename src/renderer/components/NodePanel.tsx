@@ -77,7 +77,7 @@ export const textAreaStyles = cva(
 );
 
 export const inputValueStyles = cva(
-  ["nodrag rounded-full border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"],
+  ["nodrag w-full rounded-full border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"],
   {
     variants: {
       editable: {
@@ -111,7 +111,7 @@ export function NodeInputSocketsWrapper({
 }
 
 const nodeSocketWrapperStyles = cva(
-  ["flex flex-row items-center node-socket-text-size tracking-tight"],
+  ["flex flex-row w-full items-center node-socket-text-size tracking-tight"],
   {
     variants: {
       side: {
