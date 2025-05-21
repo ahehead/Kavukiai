@@ -1,6 +1,6 @@
 import { Presets, type RenderEmit } from 'rete-react-plugin'
 import type { AreaExtra, NodeInterface, Schemes } from '../types'
-import { NodePanel, NodePanelSockets, NodePanelHeader, NodeSocketName, NodeSocketTypeLabel, NodeSocketWrapper, NodeTitle, NodePanelControls, } from 'renderer/components/NodePanel'
+import { NodeContainer, NodeSocketsWrapper, NodeHeader, NodeSocketName, NodeSocketTypeLabel, NodePort, NodeTitle, NodeControlsWrapper, } from 'renderer/components/NodePanel'
 import type { AreaPlugin } from 'rete-area-plugin'
 import { useRef } from 'react'
 import type { HistoryAction, HistoryPlugin } from 'rete-history-plugin'
@@ -35,7 +35,7 @@ export function createCustomNode(
 ) {
   return function CustomNode<Scheme extends Schemes>({ data, emit }: Props<Scheme>) {
     const nodeMinWidth = 180
-    const nodeMinHeight = data.getMinHeight()
+    const nodeMinHeight = 100
     const inputs = Object.entries(data.inputs)
     const outputs = Object.entries(data.outputs)
     const controls = Object.entries(data.controls)
@@ -56,10 +56,11 @@ export function createCustomNode(
         const zoom = getZoom()
         return { width: rect.width / zoom, height: rect.height / zoom }
       }
+      console.log('panelRef is null')
       return { width: nodeMinWidth, height: nodeMinHeight }
     }
 
-    function startResize(e: React.PointerEvent) {
+    async function startResize(e: React.PointerEvent) {
       e.stopPropagation();
       const { width: startW, height: startH } = getPanelSize();
       const startX = e.clientX;
@@ -97,7 +98,7 @@ export function createCustomNode(
 
 
     return (
-      <NodePanel
+      <NodeContainer
         ref={panelRef}
         selected={selected}
         style={{
@@ -105,15 +106,15 @@ export function createCustomNode(
           height: Number.isFinite(height) ? `${height}px` : 'auto'
         }}
       >
-        <NodePanelHeader>
+        <NodeHeader>
           <NodeTitle>{label}</NodeTitle>
-        </NodePanelHeader>
+        </NodeHeader>
 
-        <NodePanelSockets>
+        <NodeSocketsWrapper>
           {/* Outputs */}
           {outputs.map(([key, output]) =>
             output && (
-              <NodeSocketWrapper
+              <NodePort
                 key={key}
                 data-testid={`output-${key}`}
                 side="output">
@@ -132,15 +133,16 @@ export function createCustomNode(
                   payload={output.socket}
                   data-testid="output-socket"
                 />
-              </NodeSocketWrapper>
+              </NodePort>
             )
           )}
 
           {/* Inputs */}
           {inputs.map(([key, input]) =>
             input ? (
-              <NodeSocketWrapper
+              <NodePort
                 side="input"
+                isShowControl={input.showControl}
                 key={key}
                 data-testid={`input-${key}`}
               >
@@ -166,23 +168,22 @@ export function createCustomNode(
                   </>
                 )}
                 {input.control && input.showControl && (
-                  <div className='px-2 w-full h-full'>
-                    <Presets.classic.RefControl
-                      key={key}
-                      name="input-control"
-                      emit={emit}
-                      payload={input.control}
-                      data-testid="input-control"
-                    />
-                  </div>
+                  <Presets.classic.RefControl
+                    key={key}
+                    name="input-control"
+                    emit={emit}
+                    payload={input.control}
+                    data-testid="input-control"
+                  />
+
                 )}
-              </NodeSocketWrapper>
+              </NodePort>
             ) : null
           )}
 
-        </NodePanelSockets>
+        </NodeSocketsWrapper>
         {/* Controls */}
-        <NodePanelControls>
+        <NodeControlsWrapper>
           {controls.map(([key, control]) =>
             control ? (
               <Presets.classic.RefControl
@@ -194,13 +195,13 @@ export function createCustomNode(
               />
             ) : null
           )}
-        </NodePanelControls>
+        </NodeControlsWrapper>
 
         <div
           className="absolute right-0 bottom-0 w-4 h-4 cursor-se-resize bg-transparent"
           onPointerDown={startResize}
         />
-      </NodePanel>
+      </NodeContainer>
     )
   }
 }
