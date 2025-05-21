@@ -19,7 +19,7 @@ export type NodeJson = {
 export type ConnectionJson = {
   id: string;
   source: string; // 接続元ノードID
-  sourcePort: string; // 接続元ソケット名
+  sourcePort: string; // 接続元outputsのkey名
   target: string; // 接続先ノードID
-  targetPort: string; // 接続先ソケット名
+  targetPort: string; // 接続先inputsのkey名
 };
