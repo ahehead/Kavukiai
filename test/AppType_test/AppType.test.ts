@@ -2,13 +2,8 @@ import { expect, test } from "vitest";
 import {
   createApiKeysFlags,
   createApiKeysSecrets,
-  createUISettings,
   providers,
-} from "@shared/AppType";
-
-test("test", () => {
-  expect(createUISettings()).toBeDefined();
-});
+} from "@shared/ApiKeysType";
 
 test("createApiKeysFlags returns flags for all providers set to false", () => {
   const keys = createApiKeysFlags();
