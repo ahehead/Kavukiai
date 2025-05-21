@@ -5,6 +5,7 @@ import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { cn } from "renderer/lib/utils";
+import { CheckBoxLabel, checkBoxStyles, CheckBoxWrapper } from "renderer/components/NodePanel";
 
 // HistoryActionの定義
 class CheckBoxAction implements HistoryAction {
@@ -96,13 +97,12 @@ export function CheckBoxControlView(props: {
   };
 
   return (
-    <div className="flex items-center">
-      <label
+    <CheckBoxWrapper>
+      <CheckBoxLabel
         htmlFor={control.id}
-        className="text-xs text-gray-500 mr-2 my-1.5 cursor-pointer select-none"
       >
         {control.label}
-      </label>
+      </CheckBoxLabel>
       <input
         id={control.id}
         ref={ref}
@@ -110,11 +110,8 @@ export function CheckBoxControlView(props: {
         checked={uiValue}
         disabled={!control.editable}
         onChange={control.editable ? handleChange : undefined}
-        className={cn(
-          "h-4 w-4 rounded opacity-90 bg-gray-100 border-input accent-gray-100 hover:accent-gray-300",
-          !control.editable && "cursor-not-allowed opacity-50"
-        )}
+        className={checkBoxStyles({ editable: control.editable })}
       />
-    </div>
+    </CheckBoxWrapper>
   );
 }
