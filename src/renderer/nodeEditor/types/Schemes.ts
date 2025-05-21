@@ -9,6 +9,7 @@ import type {
   OpenAIResponseParamNode,
   RunNode,
   StringNode,
+  TestNode,
   ViewStringNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
@@ -24,6 +25,7 @@ export type Schemes = GetSchemes<
 >;
 
 export type NodeTypes =
+  | TestNode
   | StringNode
   | RunNode
   | MultiLineStringNode
@@ -37,7 +39,5 @@ export interface NodeInterface
   extends BaseNode<
     { [key in string]?: NodeSocket },
     { [key in string]?: NodeSocket },
-    {
-      [key in string]?: NodeControl;
-    }
+    { [key in string]?: NodeControl }
   > {}
