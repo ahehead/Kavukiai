@@ -32,6 +32,7 @@ export function createToggleInputControlMenuItem(
         input.showControl = !input.showControl;
         await removeLinkedSockets(editor, context.id, key);
         resetCacheDataflow(dataflow, context.id);
+        context.clearHeight();
         await area.update("node", context.id);
         console.log(`Toggled showControl for ${key} to ${input.showControl}`);
       },
