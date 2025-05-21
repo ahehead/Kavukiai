@@ -142,7 +142,7 @@ export function createCustomNode(
             input ? (
               <NodePort
                 side="input"
-                isShowControl={input.showControl}
+                isShowAndHaveControl={input.control && input.showControl}
                 key={key}
                 data-testid={`input-${key}`}
               >
