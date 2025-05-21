@@ -45,7 +45,7 @@ export function NodeTitle({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-testid="title"
-      className={cn(["node-title-size leading-none pl-2 py-2 tracking-tight font-semibold"])}
+      className={cn(["node-title-size leading-none pl-2 py-2 tracking-tight font-semibold inline-block max-w-full truncate"])}
       {...props}
     />
   )
@@ -54,7 +54,7 @@ export function NodeTitle({ ...props }: React.ComponentProps<"div">) {
 export function NodeSocketsWrapper({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex flex-col w-full pt-1 gap-1")}
+      className={cn("flex flex-col pt-1 gap-1")}
       {...props}
     />
   )
@@ -77,7 +77,7 @@ export const textAreaStyles = cva(
 );
 
 export const inputValueStyles = cva(
-  ["nodrag w-full rounded-full border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"],
+  ["w-full min-w-0 rounded-full border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"],
   {
     variants: {
       editable: {
@@ -91,7 +91,7 @@ export const inputValueStyles = cva(
 
 
 const nodePortStyles = cva(
-  ["flex flex-row w-full items-center node-socket-text-size tracking-tight"],
+  ["flex w-full node-socket-text-size tracking-tight"],
   {
     variants: {
       side: {
@@ -99,8 +99,8 @@ const nodePortStyles = cva(
         output: "justify-end",
       },
       isShowAndHaveControl: {
-        true: "w-full h-full px-2",
-        false: null
+        true: "h-full px-2",
+        false: "flex-row items-center"
       }
     },
     defaultVariants: {
@@ -122,12 +122,12 @@ export function NodePort({
 
 // ソケットの名前（ラベル）
 export function NodeSocketName({ ...props }: React.ComponentProps<"div">) {
-  return <div {...props} className="inline-block align-middle mx-1" />;
+  return <div {...props} className="inline-block align-middle mx-1 min-w-0 truncate" />;
 }
 
 // ソケットの型表示
 export function NodeSocketTypeLabel({ ...props }: React.ComponentProps<"div">) {
-  return <div {...props} className=" px-1 bg-node-label" />;
+  return <div {...props} className=" px-1 bg-node-label inline-block max-w-full truncate" />;
 }
 
 const socketIconWrapperStyles = cva(
