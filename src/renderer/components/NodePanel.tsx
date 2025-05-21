@@ -19,7 +19,7 @@ export const nodePanel = cva(
   }
 )
 
-export const NodePanel = React.forwardRef<
+export const NodeContainer = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & VariantProps<typeof nodePanel>
 >(({ selected, ...props }, ref) => (
@@ -30,9 +30,9 @@ export const NodePanel = React.forwardRef<
     {...props}
   />
 ))
-NodePanel.displayName = "NodePanel"
+NodeContainer.displayName = "NodePanel"
 
-export function NodePanelHeader({ ...props }: React.ComponentProps<"div">) {
+export function NodeHeader({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn("rounded-t-md bg-gradient-to-r from-node-header/90 to-node-header")}
@@ -51,10 +51,10 @@ export function NodeTitle({ ...props }: React.ComponentProps<"div">) {
   )
 }
 
-export function NodePanelSockets({ ...props }: React.ComponentProps<"div">) {
+export function NodeSocketsWrapper({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex flex-col pt-1 gap-1")}
+      className={cn("flex flex-col w-full pt-1 gap-1")}
       {...props}
     />
   )
@@ -88,29 +88,9 @@ export const inputValueStyles = cva(
   }
 );
 
-const inputSocketsWrapperStyles = cva(
-  ""
-  , {
-    variants: {
-      isViewControl: {
-        true: "w-full h-full p-2",
-        false: null
-      }
-    },
-    defaultVariants: {
-      isViewControl: false,
-    },
-  }
-)
-export function NodeInputSocketsWrapper({
-  isViewControl,
-  ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof inputSocketsWrapperStyles>) {
-  return <div {...props}
-    className={inputSocketsWrapperStyles({ isViewControl })} />;
-}
 
-const nodeSocketWrapperStyles = cva(
+
+const nodePortStyles = cva(
   ["flex flex-row w-full items-center node-socket-text-size tracking-tight"],
   {
     variants: {
@@ -118,41 +98,36 @@ const nodeSocketWrapperStyles = cva(
         input: "justify-start",
         output: "justify-end",
       },
-      isViewControl: {
-        true: "w-full h-full",
+      isShowControl: {
+        true: "w-full h-full px-2",
         false: null
       }
     },
     defaultVariants: {
       side: "input",
+      isShowControl: false,
     },
   }
 );
 
-// ソケット行のラッパー
-export function NodeSocketWrapper({
+// input/outputのポート
+export function NodePort({
   side,
-  isViewControl,
+  isShowControl,
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof nodeSocketWrapperStyles>) {
+}: React.ComponentProps<"div"> & VariantProps<typeof nodePortStyles>) {
   return <div {...props}
-    className={nodeSocketWrapperStyles({ side, isViewControl })} />;
+    className={nodePortStyles({ side, isShowControl })} />;
 }
 
 // ソケットの名前（ラベル）
 export function NodeSocketName({ ...props }: React.ComponentProps<"div">) {
-  return <div {...props} className="inline-block align-middle mr-1" />;
+  return <div {...props} className="inline-block align-middle mx-1" />;
 }
 
 // ソケットの型表示
 export function NodeSocketTypeLabel({ ...props }: React.ComponentProps<"div">) {
   return <div {...props} className=" px-1 bg-node-label" />;
-}
-
-export function NodePanelControls({ ...props }: React.ComponentProps<"div">) {
-  return (
-    <div className='w-full h-full p-2 empty:p-0' {...props} />
-  )
 }
 
 const socketIconWrapperStyles = cva(
@@ -212,5 +187,11 @@ export function NodeDataSocket({ isConnected, title }: { title: string } & Varia
         <Circle className={dataIconStyles({ isConnected })} />
       </div>
     </div>
+  )
+}
+
+export function NodeControlsWrapper({ ...props }: React.ComponentProps<"div">) {
+  return (
+    <div className='w-full h-full p-2 empty:p-0' {...props} />
   )
 }
