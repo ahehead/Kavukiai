@@ -105,9 +105,9 @@ export function InputValueControlView<T extends string | number>(props: {
   };
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="grid grid-cols-1 w-full">
       {control.label && (
-        <label htmlFor={control.id} className="w-full text-xs text-gray-500 my-1.5">
+        <label htmlFor={control.id} className="block w-full truncate text-xs text-gray-500 mb-1.5">
           {control.label}
         </label>
       )}
