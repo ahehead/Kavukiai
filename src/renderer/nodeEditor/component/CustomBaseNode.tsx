@@ -166,7 +166,7 @@ export function createCustomNode(
                   </>
                 )}
                 {input.control && input.showControl && (
-                  <div className='pl-2'>
+                  <div className='px-2 w-full h-full'>
                     <Presets.classic.RefControl
                       key={key}
                       name="input-control"
