@@ -40,12 +40,12 @@ export class OpenAIResponseParamNode extends BaseNode<
     );
     this.addInput(
       "model",
-      new Input(createSocket("string"), "model (Default gpt-4.1)", false)
+      new Input(createSocket("string"), 'model (Default "gpt-4.1")', false)
     );
     this.inputs.model?.addControl(
       new InputValueControl<string>("gpt-4.1", {
         type: "string",
-        label: "model (Default gpt-4.1)",
+        label: 'model (Default "gpt-4.1")',
         editable: true,
         history: history,
         area: area,
