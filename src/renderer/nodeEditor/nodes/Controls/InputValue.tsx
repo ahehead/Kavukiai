@@ -4,7 +4,7 @@ import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
-import { inputValueStyles } from "renderer/components/NodePanel";
+import { InputControlLabel, InputControlWrapper, inputValueStyles } from "renderer/components/NodePanel";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
 class InputValueAction<T extends string | number> implements HistoryAction {
@@ -105,11 +105,11 @@ export function InputValueControlView<T extends string | number>(props: {
   };
 
   return (
-    <div className="grid grid-cols-1 w-full">
+    <InputControlWrapper>
       {control.label && (
-        <label htmlFor={control.id} className="block w-full truncate text-xs text-gray-500 mb-1.5">
+        <InputControlLabel htmlFor={control.id}>
           {control.label}
-        </label>
+        </InputControlLabel>
       )}
       <input
         id={control.id}
@@ -123,6 +123,6 @@ export function InputValueControlView<T extends string | number>(props: {
         className={inputValueStyles({ editable: control.editable })}
         placeholder="..."
       />
-    </div>
+    </InputControlWrapper>
   );
 }
