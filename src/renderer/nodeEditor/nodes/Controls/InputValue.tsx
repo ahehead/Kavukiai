@@ -88,8 +88,6 @@ export class InputValueControl<T extends string | number> extends ClassicPreset.
 
   toJSON(): ControlJson {
     return {
-      id: this.id,
-      __type: "InputValueControl",
       data: {
         value: this.value,
         type: this.type,
@@ -99,20 +97,13 @@ export class InputValueControl<T extends string | number> extends ClassicPreset.
       },
     };
   }
-  static fromJSON(json: ControlJson, ctx?: ControlContext): InputValueControl<any> {
-    const { value, type, label, editable, step } = json.data as any;
-    return new InputValueControl(
-      value,
-      {
-        type,
-        label,
-        editable,
-        step,
-        history: ctx?.history,
-        area: ctx?.area,
-        onChange: ctx?.onChange,
-      }
-    );
+  setFromJSON({ data }: ControlJson): void {
+    const { value, type, label, editable, step } = data as any;
+    this.value = value;
+    this.type = type;
+    this.label = label;
+    this.editable = editable;
+    this.step = step;
   }
 }
 
