@@ -26,9 +26,12 @@ export function createToggleInputControlMenuItem(
       key: `${context.id}_${input.id}`,
       async handler() {
         input.showControl = !input.showControl;
+        // 接続されているコネクションを削除
         await removeLinkedSockets(editor, context.id, key);
+        // dataflowをリセット
         resetCacheDataflow(dataflow, context.id);
-        context.clearHeight();
+        // sizeをリセット
+        //context.clearHeight();
         await area.update("node", context.id);
         console.log(`Toggled showControl for ${key} to ${input.showControl}`);
       },
