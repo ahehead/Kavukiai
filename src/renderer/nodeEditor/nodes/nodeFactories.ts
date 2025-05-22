@@ -4,6 +4,7 @@ import {
   OpenAIParamNode,
   RunNode,
   StringNode,
+  UnknownNode,
   ViewStringNode,
 } from "./Node";
 import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
@@ -20,6 +21,7 @@ export type NodeDeps = {
 };
 
 export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
+  UnknownNode: () => new UnknownNode(),
   String: ({ history, area, dataflow }) =>
     new StringNode("", history, area, dataflow),
   MultiLineString: ({ history, area, dataflow }) =>
