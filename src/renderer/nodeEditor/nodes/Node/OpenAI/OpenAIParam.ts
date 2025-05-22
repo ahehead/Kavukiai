@@ -1,5 +1,4 @@
 import { ClassicPreset } from "rete";
-import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type OpenAI from "openai";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
