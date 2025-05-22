@@ -69,13 +69,16 @@ export class MultiLineControl extends ClassicPreset.Control implements Serializa
 
   toJSON(): ControlJson {
     return {
-      id: this.id,
-      __type: "MultiLineControl",
       data: {
         value: this.value,
         editable: this.editable,
       }
     };
+  }
+  setFromJSON({ data }: ControlJson): void {
+    const { value, editable } = data as any;
+    this.value = value;
+    this.editable = editable;
   }
 }
 
