@@ -10,6 +10,7 @@ import {
   type AreaExtra,
   createSocket,
   type NodeSocket,
+  NodeStatus,
   type Schemes,
   SerializableInputsNode,
 } from "renderer/nodeEditor/types";
@@ -18,7 +19,7 @@ const { Output, Input } = ClassicPreset;
 
 // Run ノード
 export class OpenAINode extends SerializableInputsNode<
-  { exec: NodeSocket; param: NodeSocket },
+  { exec: NodeSocket; exec2: NodeSocket; param: NodeSocket },
   { exec: NodeSocket; message: NodeSocket },
   { console: ConsoleControl }
 > {
@@ -29,16 +30,23 @@ export class OpenAINode extends SerializableInputsNode<
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("OpenAI");
-    this.addInput("exec", new Input(createSocket("exec"), undefined, true));
+    this.addInput("exec", new Input(createSocket("exec"), "Run", true));
     this.inputs.exec?.addControl(
       new ButtonControl("Run", async (e) => {
         e.stopPropagation();
         this.controlflow.execute(this.id);
       })
     );
-    if (this.inputs.exec) {
-      this.inputs.exec.showControl = false;
-    }
+    if (this.inputs.exec) this.inputs.exec.showControl = false;
+
+    this.addInput("exec2", new Input(createSocket("exec"), "Stop", true));
+    this.inputs.exec2?.addControl(
+      new ButtonControl("Stop", async (e) => {
+        e.stopPropagation();
+        this.setStatus(this.area, NodeStatus.RUNNING);
+      })
+    );
+    if (this.inputs.exec2) this.inputs.exec2.showControl = false;
 
     this.addInput(
       "param",
@@ -68,6 +76,7 @@ export class OpenAINode extends SerializableInputsNode<
     input: "exec",
     forward: (output: "exec") => void
   ): Promise<void> {
+    this.setStatus(this.area, NodeStatus.RUNNING);
     const { param } = (await this.dataflow.fetchInputs(this.id)) as {
       param?: OpenAI.Responses.ResponseCreateParams[];
     };
@@ -75,6 +84,7 @@ export class OpenAINode extends SerializableInputsNode<
     if (!param) {
       this.controls.console.addValue("Error: No param");
       console.error("Error: No param");
+      this.setStatus(this.area, NodeStatus.ERROR);
       return;
     }
     this.controls.console.addValue("start");
@@ -89,6 +99,7 @@ export class OpenAINode extends SerializableInputsNode<
       if (result.type === "error") {
         this.controls.console.addValue(`Error: ${result.message}`);
         console.error("Error:", result.message);
+        this.setStatus(this.area, NodeStatus.ERROR);
         port.close();
       }
       if (result.type === "delta") {
@@ -99,6 +110,7 @@ export class OpenAINode extends SerializableInputsNode<
         console.log("done", result);
         this.controls.console.addValue("done");
         port.close();
+        this.setStatus(this.area, NodeStatus.COMPLETED);
       }
       forward("exec");
     };
