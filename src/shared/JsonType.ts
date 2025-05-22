@@ -17,16 +17,11 @@ export type NodeJson = {
 };
 
 export type InputPortJson = {
-  id: string; // 入力ポートのID
-  label?: string; // 入力ポートのラベル
-  socket: { name: string };
   isShowControl: boolean; // コントロールの表示状態
   control?: ControlJson;
 };
 
 export type ControlJson = {
-  id: string; // コントロールのID
-  __type: string; // コントロールの種類
   data?: Record<string, unknown>; // コントロールのデータ
 };
 
