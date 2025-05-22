@@ -4,7 +4,7 @@ import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { NodeInterface, Schemes, AreaExtra } from "../types/Schemes";
 
-const nodeMinWidth = 190;
+const nodeMinWidth = 220;
 const nodeMinHeight = 100;
 
 class SizeChangeHistory implements HistoryAction {
