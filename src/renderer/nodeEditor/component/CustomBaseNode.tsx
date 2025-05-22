@@ -92,18 +92,16 @@ export function createCustomNode(
                 data-testid={`input-${key}`}
               >
                 {!(input.control && input.showControl) && (
-                  <Presets.classic.RefSocket
-                    name="input-socket"
-                    side="input"
-                    socketKey={key}
-                    nodeId={id}
-                    emit={emit}
-                    payload={input.socket}
-                    data-testid="input-socket"
-                  />
-                )}
-                {(!input.control || !input.showControl) && (
                   <>
+                    <Presets.classic.RefSocket
+                      name="input-socket"
+                      side="input"
+                      socketKey={key}
+                      nodeId={id}
+                      emit={emit}
+                      payload={input.socket}
+                      data-testid="input-socket"
+                    />
                     <NodeSocketTypeLabel data-testid="input-type">
                       {input.socket.name}
                     </NodeSocketTypeLabel>
