@@ -18,10 +18,10 @@ export async function loadGraphFromJson(
   // ノードの登録
   for (const { id, type, position, size, data } of graphJsonData.nodes) {
     // ノードごとのファクトリを取得
-    const factory = nodeFactories[type];
+    let factory = nodeFactories[type];
     if (!factory) {
-      console.error(`Unknown node type: ${type}`);
-      continue;
+      factory = nodeFactories.UnknownNode;
+      console.warn(`Unknown node type: ${type}. Using UnknownNode.`);
     }
 
     // ノードのインスタンスを生成
