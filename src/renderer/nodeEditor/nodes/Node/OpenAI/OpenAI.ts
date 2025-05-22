@@ -4,7 +4,7 @@ import { electronApiService } from "renderer/features/services/appService";
 import type OpenAI from "openai";
 import type { OpenAIRequestArgs, PortEventType } from "shared/ApiType";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import {
   type AreaExtra,
@@ -13,6 +13,7 @@ import {
   type NodeSocket,
   type Schemes,
 } from "renderer/nodeEditor/types";
+import { ButtonControl } from "../../Controls/Button";
 const { Output, Input } = ClassicPreset;
 
 // Run ノード
@@ -24,10 +25,21 @@ export class OpenAINode extends BaseNode<
   value = "";
   constructor(
     private area: AreaPlugin<Schemes, AreaExtra>,
-    private dataflow: DataflowEngine<Schemes>
+    private dataflow: DataflowEngine<Schemes>,
+    private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("OpenAI");
     this.addInput("exec", new Input(createSocket("exec"), undefined, true));
+    this.inputs.exec?.addControl(
+      new ButtonControl("Run", async (e) => {
+        e.stopPropagation();
+        this.controlflow.execute(this.id);
+      })
+    );
+    if (this.inputs.exec) {
+      this.inputs.exec.showControl = false;
+    }
+
     this.addInput(
       "param",
       new Input(createSocket("OpenAIParam"), undefined, true)
