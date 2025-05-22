@@ -46,6 +46,7 @@ export function createCustomNode(
       <NodeContainer
         ref={panelRef}
         selected={selected}
+        status={data.status}
         style={{
           width: `${Number.isFinite(width) ? width : nodeMinWidth}px`,
           height: Number.isFinite(height) ? `${height}px` : 'auto'
