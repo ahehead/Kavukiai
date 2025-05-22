@@ -2,8 +2,18 @@ import { ClassicPreset } from "rete";
 import type { NodeSocket } from "./NodeSocket";
 import type { NodeControl, SerializableControl } from "./NodeControl";
 import type { InputPortJson } from "shared/JsonType";
+import type { AreaExtra, Schemes } from ".";
+import type { AreaPlugin } from "rete-area-plugin";
 
-// ClassicPreset.Nodeを拡張
+export enum NodeStatus {
+  IDLE = "IDLE",
+  RUNNING = "RUNNING",
+  COMPLETED = "COMPLETED",
+  ERROR = "ERROR",
+  WARNING = "WARNING",
+}
+
+// ClassicPreset.Nodeを拡張 サイズとステータスを追加
 export class BaseNode<
   Inputs extends {
     [key in string]?: NodeSocket;
@@ -17,19 +27,38 @@ export class BaseNode<
 > extends ClassicPreset.Node<Inputs, Outputs, Controls> {
   public width?: number;
   public height?: number;
+  public status: NodeStatus;
+
+  constructor(label: string, initialStatus: NodeStatus = NodeStatus.IDLE) {
+    super(label);
+    this.status = initialStatus;
+  }
+
   setSize(width: number, height: number) {
     this.width = width;
     this.height = height;
   }
+
   getSize(): { width: number | undefined; height: number | undefined } {
     return { width: this.width, height: this.height };
   }
+
   clearSize() {
     this.width = undefined;
     this.height = undefined;
   }
+
   clearHeight() {
     this.height = undefined;
+  }
+
+  setStatus(area: AreaPlugin<Schemes, AreaExtra>, status: NodeStatus) {
+    this.status = status;
+    area.update("node", this.id);
+  }
+
+  getStatus(): NodeStatus {
+    return this.status;
   }
 }
 
