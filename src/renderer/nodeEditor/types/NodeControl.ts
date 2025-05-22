@@ -22,6 +22,7 @@ export type NodeControl =
 
 export interface SerializableControl {
   toJSON(): ControlJson;
+  setFromJSON({ data }: ControlJson): void;
 }
 
 export interface SerializableControlConstructor {
