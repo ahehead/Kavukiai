@@ -11,8 +11,24 @@ export type NodeJson = {
   type: string; // ノードの種類
   position: { x: number; y: number };
   size: { width?: number; height?: number }; // サイズ、なければ自然なサイズ
+  inputs?: { [key: string]: InputPortJson }; // 入力ポートの情報
   data?: Record<string, unknown>; // ノード固有のデータ
   parentId?: string; // グループ化／ネスト用の親ノードID
+};
+
+export type InputPortJson = {
+  id: string; // 入力ポートのID
+  key: string; // 入力ポートのkey名
+  label?: string; // 入力ポートのラベル
+  socket: {
+    name: string; // ソケットの名前
+  };
+  isShowControl: boolean; // コントロールの表示状態
+  control?: {
+    id: string; // コントロールのID
+    type: string; // コントロールの種類
+    data?: Record<string, unknown>; // コントロールのデータ
+  };
 };
 
 // 接続情報の型
