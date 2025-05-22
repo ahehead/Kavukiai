@@ -10,6 +10,7 @@ import type {
   RunNode,
   StringNode,
   TestNode,
+  UnknownNode,
   ViewStringNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
@@ -25,6 +26,7 @@ export type Schemes = GetSchemes<
 >;
 
 export type NodeTypes =
+  | UnknownNode
   | TestNode
   | StringNode
   | RunNode
