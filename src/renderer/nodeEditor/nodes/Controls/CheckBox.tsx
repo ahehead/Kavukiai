@@ -5,6 +5,8 @@ import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { CheckBoxLabel, checkBoxStyles, CheckBoxWrapper } from "renderer/nodeEditor/component/NodePanel";
+import type { SerializableControl } from "renderer/nodeEditor/types";
+import type { ControlJson } from "shared/JsonType";
 
 // HistoryActionの定義
 class CheckBoxAction implements HistoryAction {
@@ -25,7 +27,7 @@ class CheckBoxAction implements HistoryAction {
 }
 
 // boolean入力用コントロール
-export class CheckBoxControl extends ClassicPreset.Control {
+export class CheckBoxControl extends ClassicPreset.Control implements SerializableControl {
   value: boolean;
   label: string;
   editable: boolean;
@@ -66,6 +68,21 @@ export class CheckBoxControl extends ClassicPreset.Control {
 
   getValue(): boolean {
     return this.value;
+  }
+  toJSON(): ControlJson {
+    return {
+      data: {
+        value: this.value,
+        label: this.label,
+        editable: this.editable,
+      },
+    };
+  }
+  setFromJSON({ data }: ControlJson): void {
+    const { value, label, editable } = data as any;
+    this.value = value;
+    this.label = label;
+    this.editable = editable;
   }
 }
 
