@@ -4,7 +4,7 @@ import { ClassicPreset, type NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
-import type { GraphJsonData } from "shared/JsonType";
+import type { GraphJsonData, InputPortJson } from "shared/JsonType";
 
 // JSON からノードを生成してエディタに登録
 export async function loadGraphFromJson(
@@ -16,7 +16,14 @@ export async function loadGraphFromJson(
   history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
 ): Promise<void> {
   // ノードの登録
-  for (const { id, type, position, size, data } of graphJsonData.nodes) {
+  for (const {
+    id,
+    type,
+    position,
+    size,
+    data,
+    inputs,
+  } of graphJsonData.nodes) {
     // ノードごとのファクトリを取得
     let factory = nodeFactories[type];
     if (!factory) {
@@ -35,6 +42,11 @@ export async function loadGraphFromJson(
     // ノードにfromJsonがあり、データがある場合はデータをセット
     if (typeof (node as any).fromJSON === "function" && data) {
       (node as any).fromJSON(data as Record<string, unknown>);
+    }
+
+    // ノードにsetFromInputsJsonがあり、inputsデータがある場合はデータをセット
+    if (typeof (node as any).setFromInputsJson === "function" && inputs) {
+      (node as any).setFromInputsJson(inputs as Record<string, InputPortJson>);
     }
 
     node.id = id;
