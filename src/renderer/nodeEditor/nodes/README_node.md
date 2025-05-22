@@ -11,7 +11,7 @@
 ## Controlの追加後
 - [TestNode.ts](Node/TestNode.tsx)のコントロールに追加
 - [NodeControl.ts](../types/NodeControl.ts)に追加
-- [createNodeEditor.ts](../createNodeEditor.ts)に追加
+- [customReactPresets](../features/customReactPresets/customReactPresets.ts)に追加
 
 ## ノードの追加後
 
