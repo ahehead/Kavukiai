@@ -28,7 +28,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
     new MultiLineStringNode("", history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
   ViewString: ({ dataflow, area }) => new ViewStringNode(dataflow, area),
-  OpenAI: ({ area, dataflow }) => new OpenAINode(area, dataflow),
+  OpenAI: ({ area, dataflow, controlflow }) =>
+    new OpenAINode(area, dataflow, controlflow),
   OpenAIParam: ({ history, area, dataflow }) =>
     new OpenAIParamNode(history, area, dataflow),
   ChatContext: ({ history, area, dataflow }) =>
