@@ -13,12 +13,12 @@ import {
   createSocket,
   type NodeSocket,
   type Schemes,
+  SerializableInputsNode,
 } from "renderer/nodeEditor/types";
-import type { ControlJson, InputPortJson } from "shared/JsonType";
 const { Output, Input } = ClassicPreset;
 
 // Run ノード
-export class OpenAIParamNode extends BaseNode<
+export class OpenAIParamNode extends SerializableInputsNode<
   {
     model: NodeSocket;
     stream: NodeSocket;
@@ -107,27 +107,4 @@ export class OpenAIParamNode extends BaseNode<
     return { param };
   }
   async execute(): Promise<void> {}
-
-  toInputsJson() {
-    const inputsJson: Record<string, InputPortJson> = {};
-
-    const hasToJson = (c: unknown): c is { toJSON: () => ControlJson } =>
-      typeof (c as any)?.toJSON === "function";
-
-    for (const [key, input] of Object.entries(this.inputs)) {
-      inputsJson[key] = {
-        id: input.id,
-        label: input.label,
-        socket: { name: input.socket.name },
-        isShowControl: input.showControl,
-        ...(hasToJson(input.control)
-          ? { control: input.control.toJSON() }
-          : {}),
-      };
-    }
-
-    return {
-      inputs: inputsJson,
-    };
-  }
 }
