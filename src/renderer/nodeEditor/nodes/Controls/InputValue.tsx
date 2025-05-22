@@ -5,6 +5,8 @@ import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { InputControlLabel, InputControlWrapper, inputValueStyles } from "renderer/nodeEditor/component/NodePanel";
+import type { ControlJson } from "shared/JsonType";
+import type { ControlContext, SerializableControl } from "renderer/nodeEditor/types";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
 class InputValueAction<T extends string | number> implements HistoryAction {
@@ -25,7 +27,7 @@ class InputValueAction<T extends string | number> implements HistoryAction {
 }
 
 // stringまたはnumber入力用コントロール
-export class InputValueControl<T extends string | number> extends ClassicPreset.Control {
+export class InputValueControl<T extends string | number> extends ClassicPreset.Control implements SerializableControl {
   value: T;
   type: "string" | "number";
   label?: string;
@@ -70,8 +72,47 @@ export class InputValueControl<T extends string | number> extends ClassicPreset.
     }
   }
 
+  setHistory(history: HistoryPlugin<Schemes> | undefined) {
+    this.history = history;
+  }
+  setArea(area: AreaPlugin<Schemes, AreaExtra> | undefined) {
+    this.area = area;
+  }
+  setOnChange(onChange: (v: T) => void) {
+    this.onChange = onChange;
+  }
+
   getValue(): T {
     return this.value;
+  }
+
+  toJSON(): ControlJson {
+    return {
+      id: this.id,
+      __type: "InputValueControl",
+      data: {
+        value: this.value,
+        type: this.type,
+        label: this.label,
+        editable: this.editable,
+        step: this.step,
+      },
+    };
+  }
+  static fromJSON(json: ControlJson, ctx?: ControlContext): InputValueControl<any> {
+    const { value, type, label, editable, step } = json.data as any;
+    return new InputValueControl(
+      value,
+      {
+        type,
+        label,
+        editable,
+        step,
+        history: ctx?.history,
+        area: ctx?.area,
+        onChange: ctx?.onChange,
+      }
+    );
   }
 }
 
