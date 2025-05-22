@@ -77,14 +77,6 @@ export class OpenAINode extends SerializableInputsNode<
     input: "exec" | "exec2",
     forward: (output: "exec") => void
   ): Promise<void> {
-    // idleとcomplete以外の状態で実行された場合は何もしない
-    if (
-      !(this.status === NodeStatus.IDLE || this.status === NodeStatus.COMPLETED)
-    ) {
-      this.controls.console.addValue("Info: Already running");
-      return;
-    }
-
     // exec2が実行された場合は、ポートを閉じて終了
     if (input === "exec2" && this.port) {
       const message: PortEventType = { type: "abort" };
@@ -95,7 +87,14 @@ export class OpenAINode extends SerializableInputsNode<
       this.controls.console.addValue("stop");
       return;
     }
-    // execが実行された場合は、ポートを作成して開始
+
+    // idleとcomplete以外の状態で実行された場合は何もしない
+    if (
+      !(this.status === NodeStatus.IDLE || this.status === NodeStatus.COMPLETED)
+    ) {
+      this.controls.console.addValue("Info: Already running");
+      return;
+    }
     this.setStatus(this.area, NodeStatus.RUNNING);
     this.setString("");
     const { param } = (await this.dataflow.fetchInputs(this.id)) as {
