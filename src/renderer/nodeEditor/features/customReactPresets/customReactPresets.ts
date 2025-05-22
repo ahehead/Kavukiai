@@ -31,6 +31,10 @@ import {
   createCustomNode,
 } from "../../component";
 import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
+import {
+  ButtonControl,
+  ButtonControlView,
+} from "renderer/nodeEditor/nodes/Controls/Button";
 
 export function customReactPresets(
   area: AreaPlugin<Schemes, AreaExtra>,
@@ -63,6 +67,9 @@ export function customReactPresets(
         }
         if (data.payload instanceof CheckBoxControl) {
           return CheckBoxControlView;
+        }
+        if (data.payload instanceof ButtonControl) {
+          return ButtonControlView;
         }
         return null;
       },
