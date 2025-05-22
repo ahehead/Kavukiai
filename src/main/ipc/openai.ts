@@ -41,12 +41,11 @@ export function registerOpenAIHandlers(): void {
     // chatgptと通信
     try {
       const apiKeysConfig = ApiKeyConf();
-
       const openaiClient = new OpenAI({
         apiKey: getApiKeyConf(apiKeysConfig, "openai"),
       });
       // 非ストリーム対応
-      if (param.stream === false) {
+      if (param.stream === false || param.stream === undefined) {
         const response = await openaiClient.responses.create(param, {
           signal: abortController.signal,
         });
