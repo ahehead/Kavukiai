@@ -5,16 +5,24 @@ import { Circle } from 'lucide-react';
 import React from "react";
 
 export const nodePanel = cva(
-  ["bg-node-bg text-node-fg flex flex-col rounded-md border border-node-outline shadow-sm hover:ring-2 hover:ring-accent/70"],
+  ["bg-node-bg text-node-fg flex flex-col rounded-md border border-node-outline shadow-sm hover:ring-2 hover:ring-accent/50"],
   {
     variants: {
       selected: {
-        true: ["border-node-selected"],
+        true: ["ring-2 ring-node-selected"],
         false: null,
-      }
+      },
+      status: {
+        IDLE: "",
+        RUNNING: "border-node-running border-2 pulse-border hover:ring-node-running/70",
+        COMPLETED: "border-node-success/70",
+        ERROR: "bg-node-error/90 border-node-error/70",
+        WARNING: "bg-node-warning border-node-warning/70",
+      },
     },
     defaultVariants: {
       selected: false,
+      status: "IDLE",
     },
   }
 )
@@ -22,15 +30,16 @@ export const nodePanel = cva(
 export const NodeContainer = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & VariantProps<typeof nodePanel>
->(({ selected, ...props }, ref) => (
+>(({ selected, status, ...props }, ref) => (
   <div
     ref={ref}
     data-testid="node"
-    className={cn(nodePanel({ selected }))}
+    data-status={status}
+    className={cn(nodePanel({ selected, status }))}
     {...props}
   />
 ))
-NodeContainer.displayName = "NodePanel"
+NodeContainer.displayName = "NodeContainer"
 
 export function NodeHeader({ ...props }: React.ComponentProps<"div">) {
   return (
