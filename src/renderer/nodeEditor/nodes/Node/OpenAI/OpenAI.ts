@@ -24,6 +24,7 @@ export class OpenAINode extends SerializableInputsNode<
   { console: ConsoleControl }
 > {
   value = "";
+  port: MessagePort | null = null;
   constructor(
     private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
@@ -34,7 +35,7 @@ export class OpenAINode extends SerializableInputsNode<
     this.inputs.exec?.addControl(
       new ButtonControl("Run", async (e) => {
         e.stopPropagation();
-        this.controlflow.execute(this.id);
+        this.controlflow.execute(this.id, "exec");
       })
     );
     if (this.inputs.exec) this.inputs.exec.showControl = false;
@@ -43,7 +44,7 @@ export class OpenAINode extends SerializableInputsNode<
     this.inputs.exec2?.addControl(
       new ButtonControl("Stop", async (e) => {
         e.stopPropagation();
-        this.setStatus(this.area, NodeStatus.RUNNING);
+        this.controlflow.execute(this.id, "exec2");
       })
     );
     if (this.inputs.exec2) this.inputs.exec2.showControl = false;
@@ -73,10 +74,30 @@ export class OpenAINode extends SerializableInputsNode<
     return { message: this.value };
   }
   async execute(
-    input: "exec",
+    input: "exec" | "exec2",
     forward: (output: "exec") => void
   ): Promise<void> {
+    // idleとcomplete以外の状態で実行された場合は何もしない
+    if (
+      !(this.status === NodeStatus.IDLE || this.status === NodeStatus.COMPLETED)
+    ) {
+      this.controls.console.addValue("Info: Already running");
+      return;
+    }
+
+    // exec2が実行された場合は、ポートを閉じて終了
+    if (input === "exec2" && this.port) {
+      const message: PortEventType = { type: "abort" };
+      this.port.postMessage(message);
+      this.port.close();
+      this.port = null;
+      this.setStatus(this.area, NodeStatus.IDLE);
+      this.controls.console.addValue("stop");
+      return;
+    }
+    // execが実行された場合は、ポートを作成して開始
     this.setStatus(this.area, NodeStatus.RUNNING);
+    this.setString("");
     const { param } = (await this.dataflow.fetchInputs(this.id)) as {
       param?: OpenAI.Responses.ResponseCreateParams[];
     };
@@ -88,19 +109,20 @@ export class OpenAINode extends SerializableInputsNode<
       return;
     }
     this.controls.console.addValue("start");
-    const port = await createOpenAIMessagePort({
+    this.port = await createOpenAIMessagePort({
       id: this.id,
       param: param[0],
     });
 
-    port.onmessage = (e: MessageEvent) => {
+    this.port.onmessage = (e: MessageEvent) => {
       const result = e.data as PortEventType;
       //console.log("result", result);
       if (result.type === "error") {
         this.controls.console.addValue(`Error: ${result.message}`);
         console.error("Error:", result.message);
         this.setStatus(this.area, NodeStatus.ERROR);
-        port.close();
+        this.port?.close();
+        this.port = null;
       }
       if (result.type === "delta") {
         this.addString(result.value);
@@ -109,7 +131,8 @@ export class OpenAINode extends SerializableInputsNode<
         this.setString(result.text);
         console.log("done", result);
         this.controls.console.addValue("done");
-        port.close();
+        this.port?.close();
+        this.port = null;
         this.setStatus(this.area, NodeStatus.COMPLETED);
       }
       forward("exec");
