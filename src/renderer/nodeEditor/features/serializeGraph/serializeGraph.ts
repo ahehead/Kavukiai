@@ -31,9 +31,16 @@ export function serializeGraph(
     if (typeof (node as any).toJSON === "function") {
       nodeData = (node as any).toJSON();
     }
+
+    let inputsData = {};
+    if (typeof (node as any).toInputsJson === "function") {
+      inputsData = (node as any).toInputsJson();
+    }
+
     nodes.push({
       ...baseData,
       ...nodeData,
+      ...inputsData,
     });
   }
 
