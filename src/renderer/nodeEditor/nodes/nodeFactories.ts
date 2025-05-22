@@ -1,7 +1,7 @@
 import {
   MultiLineStringNode,
   OpenAINode,
-  OpenAIResponseParamNode,
+  OpenAIParamNode,
   RunNode,
   StringNode,
   ViewStringNode,
@@ -27,8 +27,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   Run: ({ controlflow }) => new RunNode(controlflow),
   ViewString: ({ dataflow, area }) => new ViewStringNode(dataflow, area),
   OpenAI: ({ area, dataflow }) => new OpenAINode(area, dataflow),
-  OpenAIResponseParam: ({ history, area, dataflow }) =>
-    new OpenAIResponseParamNode(history, area, dataflow),
+  OpenAIParam: ({ history, area, dataflow }) =>
+    new OpenAIParamNode(history, area, dataflow),
   ChatContext: ({ history, area, dataflow }) =>
     new ChatContextNode([], history, area, dataflow),
 };
@@ -81,9 +81,9 @@ export const contextMenuStructure: MenuItemDefinition[] = [
     subitems: [
       { label: "OpenAI Node", key: "openai-node", factoryKey: "OpenAI" },
       {
-        label: "Response Param",
-        key: "openai-response-param-node",
-        factoryKey: "OpenAIResponseParam",
+        label: "OpenAI Param",
+        key: "openai-param-node",
+        factoryKey: "OpenAIParam",
       },
     ],
   },

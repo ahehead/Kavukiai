@@ -30,7 +30,7 @@ export class OpenAINode extends BaseNode<
     this.addInput("exec", new Input(createSocket("exec"), undefined, true));
     this.addInput(
       "param",
-      new Input(createSocket("OpenAIResponseParam"), undefined, true)
+      new Input(createSocket("OpenAIParam"), undefined, true)
     );
     this.addOutput("exec", new Output(createSocket("exec"), "stream", true));
     this.addOutput(

@@ -5,5 +5,5 @@ export { MultiLineStringNode } from "./MultiLineStringNode";
 export { RunNode } from "./RunNode";
 export { ViewStringNode } from "./ViewStringNode";
 export { OpenAINode } from "./OpenAI/OpenAI";
-export { OpenAIResponseParamNode } from "./OpenAI/OpenAIResponseParam";
+export { OpenAIParamNode } from "./OpenAI/OpenAIParam";
 export { ChatContextNode } from "./ChatContextNode";

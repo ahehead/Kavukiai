@@ -17,7 +17,7 @@ import {
 const { Output, Input } = ClassicPreset;
 
 // Run ノード
-export class OpenAIResponseParamNode extends BaseNode<
+export class OpenAIParamNode extends BaseNode<
   {
     model: NodeSocket;
     stream: NodeSocket;
@@ -33,10 +33,10 @@ export class OpenAIResponseParamNode extends BaseNode<
     area: AreaPlugin<Schemes, AreaExtra>,
     dataflow: DataflowEngine<Schemes>
   ) {
-    super("OpenAIResponseParam");
+    super("OpenAIParam");
     this.addOutput(
       "param",
-      new Output(createSocket("OpenAIResponseParam"), undefined, true)
+      new Output(createSocket("OpenAIParam"), undefined, true)
     );
     this.addInput(
       "model",

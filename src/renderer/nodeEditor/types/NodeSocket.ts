@@ -25,7 +25,7 @@ export type NodeSocketType =
   | "exec"
   | "setting"
   | "image"
-  | "OpenAIResponseParam"
+  | "OpenAIParam"
   | "chatContext";
 
 export function createSocket(socketType: NodeSocketType): NodeSocket {

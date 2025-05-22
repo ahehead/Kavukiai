@@ -6,7 +6,7 @@ import type {
   ChatContextNode,
   MultiLineStringNode,
   OpenAINode,
-  OpenAIResponseParamNode,
+  OpenAIParamNode,
   RunNode,
   StringNode,
   TestNode,
@@ -31,7 +31,7 @@ export type NodeTypes =
   | MultiLineStringNode
   | ViewStringNode
   | OpenAINode
-  | OpenAIResponseParamNode
+  | OpenAIParamNode
   | ChatContextNode;
 
 // BaseNodeを埋めたもの
