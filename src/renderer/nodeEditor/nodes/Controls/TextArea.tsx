@@ -6,6 +6,8 @@ import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { textAreaStyles } from "renderer/nodeEditor/component/NodePanel";
 import { useStopWheel } from "../util/useStopWheel";
+import type { SerializableControl } from "renderer/nodeEditor/types";
+import type { ControlJson } from "shared/JsonType";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
 export class TextAreaAction implements HistoryAction {
@@ -28,7 +30,7 @@ export class TextAreaAction implements HistoryAction {
 
 
 // 長文プロンプト入力用コントロール
-export class MultiLineControl extends ClassicPreset.Control {
+export class MultiLineControl extends ClassicPreset.Control implements SerializableControl {
   value: string;
   editable: boolean;
   history?: HistoryPlugin<Schemes>;
@@ -63,6 +65,17 @@ export class MultiLineControl extends ClassicPreset.Control {
   }
   getValue(): string {
     return this.value;
+  }
+
+  toJSON(): ControlJson {
+    return {
+      id: this.id,
+      __type: "MultiLineControl",
+      data: {
+        value: this.value,
+        editable: this.editable,
+      }
+    };
   }
 }
 
