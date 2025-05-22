@@ -4,6 +4,8 @@ import type { HistoryPlugin } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ResponseInputImage } from "openai/resources/responses/responses.mjs";
+import type { SerializableControl } from "renderer/nodeEditor/types";
+import type { ControlJson } from "shared/JsonType";
 
 type Role = "user" | "assistant" | "developer";
 type Content = string | Array<ResponseInputImage>;
@@ -12,7 +14,7 @@ type Message = { role: Role; content: Content; data: ResponseData };
 export type ChatContext = Array<Message>;
 
 // チャット入力用コントロール
-export class ChatContextControl extends ClassicPreset.Control {
+export class ChatContextControl extends ClassicPreset.Control implements SerializableControl {
   chatContext: ChatContext;
   totalTokens = 0;
   editable: boolean;
@@ -49,8 +51,11 @@ export class ChatContextControl extends ClassicPreset.Control {
   getContext(): ChatContext {
     return this.chatContext;
   }
-
+  toJSON(): ControlJson { return {} }
+  setFromJSON({ data }: ControlJson): void { }
 }
+
+
 
 
 // カスタムコンポーネント
