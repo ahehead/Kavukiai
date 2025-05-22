@@ -60,6 +60,15 @@ export function NodeSocketsWrapper({ ...props }: React.ComponentProps<"div">) {
   )
 }
 
+export function NodeInputSocketsWrapper({ ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("grid grid-cols-[max-content_max-content_1fr] gap-x-1 gap-y-2")}
+      {...props}
+    />
+  )
+}
+
 
 const nodePortStyles = cva(
   ["flex w-full node-socket-text-size tracking-tight"],
@@ -89,6 +98,15 @@ export function NodePort({
 }: React.ComponentProps<"div"> & VariantProps<typeof nodePortStyles>) {
   return <div {...props}
     className={nodePortStyles({ side, isShowAndHaveControl: isShowControl })} />;
+}
+
+export function NodeInputPort({ ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("grid grid-cols-[subgrid] items-center gap-x-2")}
+      {...props}
+    />
+  )
 }
 
 // ソケットの名前（ラベル）
@@ -216,7 +234,7 @@ export const inputValueStyles = cva(
 
 export function CheckBoxWrapper({ ...props }: React.ComponentProps<"div">) {
   return (
-    <div className="flex items-center" {...props} />
+    <div className="grid auto-cols-max grid-flow-col gap-x-2 items-center" {...props} />
   )
 }
 
