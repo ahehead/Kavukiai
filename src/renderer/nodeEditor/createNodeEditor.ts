@@ -38,14 +38,16 @@ export async function createNodeEditor(container: HTMLElement) {
   const dataflow = new DataflowEngine<Schemes>(({ inputs, outputs }) => {
     return {
       inputs: (): string[] =>
-        Object.keys(inputs).filter((name) => name !== "exec"),
+        Object.keys(inputs).filter(
+          (name) => name !== "exec" && name !== "exec2"
+        ),
       outputs: (): string[] =>
         Object.keys(outputs).filter((name) => name !== "exec"),
     };
   });
   const controlflow = new ControlFlowEngine<Schemes>(() => {
     return {
-      inputs: (): ["exec"] => ["exec"],
+      inputs: (): ["exec", "exec2"] => ["exec", "exec2"],
       outputs: (): ["exec"] => ["exec"],
     };
   });
@@ -118,11 +120,14 @@ export async function createNodeEditor(container: HTMLElement) {
   // ダブルクリックでズームするのを無効化
   disableDoubleClickZoom(area);
 
+  // 外部に公開するAPI
   return {
     destroy: () => area.destroy(),
+
     // 現在のnode editorの状態を取得
     getCurrentEditorState: () => getCurrentEditorState(editor, area, history),
-    // node stateを再設定
+
+    // Editorの状態を再設定
     resetEditorState: async (payload: NodeEditorState) =>
       await resetEditorState({
         payload,
