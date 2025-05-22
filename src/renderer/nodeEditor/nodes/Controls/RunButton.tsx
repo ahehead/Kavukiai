@@ -1,5 +1,4 @@
 import type React from "react"
-import type { JSX } from 'react';
 import { ClassicPreset } from 'rete';
 import { Drag } from "rete-react-plugin";
 
