@@ -7,7 +7,7 @@
   --dataSocket: hsl(220, 65%, 55%);
   --execSocket: hsl(22, 87%, 60%);
 
-  --socket-icon-size: 0.7rem;              /* ソケット直径 */
+  --socket-icon-size: 0.7rem;
 
   --node-bg: var(--card);
   --node-fg: var(--card-foreground);
@@ -27,6 +27,11 @@
   --node-state-error: var(--destructive);
 
   --node-selected: var(--accent);
+
+  --node-success: hsl(214, 100%, 76%);
+  --node-error: hsl(0, 100%, 93%);
+  --node-warning: hsl(53, 100%, 93%);
+  --node-running: rgb(244, 255, 142);
 }
 
 .dark {
@@ -42,6 +47,13 @@
   --color-node-label: var(--node-label);
 
   --color-node-outline: var(--node-outline);
+  --color-node-selected: var(--node-selected);
+
+  --color-node-success      : var(--node-success);
+  --color-node-error        : var(--node-error);
+  --color-node-warning      : var(--node-warning);
+  --color-node-running      : var(--node-running);
+
 }
 
 
@@ -64,4 +76,17 @@
 @layer components {
   .node-title-size { @apply text-sm; }
   .node-socket-text-size { @apply text-xs; }
+
+  .pulse-border {
+    animation: pulseBorder 1.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulseBorder {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(244, 255, 142, 0.5);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(244, 255, 142, 0.3);
+    }
+  }
 }
