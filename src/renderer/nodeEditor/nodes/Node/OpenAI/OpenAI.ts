@@ -8,16 +8,16 @@ import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import {
   type AreaExtra,
-  BaseNode,
   createSocket,
   type NodeSocket,
   type Schemes,
+  SerializableInputsNode,
 } from "renderer/nodeEditor/types";
 import { ButtonControl } from "../../Controls/Button";
 const { Output, Input } = ClassicPreset;
 
 // Run ノード
-export class OpenAINode extends BaseNode<
+export class OpenAINode extends SerializableInputsNode<
   { exec: NodeSocket; param: NodeSocket },
   { exec: NodeSocket; message: NodeSocket },
   { console: ConsoleControl }
