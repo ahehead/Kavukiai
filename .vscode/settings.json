@@ -32,5 +32,10 @@
       "source": "PowerShell",
       "args": ["-NoExit", "-Command", "chcp 65001"]
     }
-  }
+  },
+
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": ["^(node:)?os$"]
 }
