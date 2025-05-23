@@ -52,8 +52,8 @@ export function createCustomNode(
           height: Number.isFinite(height) ? `${height}px` : 'auto'
         }}
       >
-        <NodeHeader>
-          <NodeTitle>{label}</NodeTitle>
+        <NodeHeader status={data.status}>
+          <NodeTitle status={data.status}>{label}</NodeTitle>
         </NodeHeader>
 
         <NodeSocketsWrapper>
