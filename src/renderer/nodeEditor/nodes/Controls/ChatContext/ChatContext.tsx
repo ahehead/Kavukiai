@@ -12,6 +12,7 @@ type Content = string | Array<ResponseInputImage>;
 type ResponseData = { model: string; token?: number; finish_reason?: string };
 type Message = { role: Role; content: Content; data: ResponseData };
 export type ChatContext = Array<Message>;
+export type OpenAIInput = ChatContext | string;
 
 // チャット入力用コントロール
 export class ChatContextControl extends ClassicPreset.Control implements SerializableControl {
