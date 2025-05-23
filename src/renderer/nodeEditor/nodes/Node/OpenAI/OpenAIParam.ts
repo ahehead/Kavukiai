@@ -100,7 +100,6 @@ export class OpenAIParamNode extends SerializableInputsNode<
     store?: boolean[];
     temperature?: number[];
   }): { param: OpenAI.Responses.ResponseCreateParams } {
-    console.log("inputs", inputs);
     const stream = getInputValue(this.inputs, "stream", inputs);
     const store = getInputValue(this.inputs, "store", inputs);
     const param: OpenAI.Responses.ResponseCreateParams = {
