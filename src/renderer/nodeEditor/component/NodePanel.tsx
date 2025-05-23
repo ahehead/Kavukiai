@@ -1,7 +1,7 @@
 import { cn } from "renderer/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority";
 import TriangleIcon from 'src/resources/public/triangleIcon/triangle.svg?react'
-import { Circle } from 'lucide-react';
+import { Circle, Loader2 } from 'lucide-react';
 import React from "react";
 
 export const nodePanel = cva(
@@ -41,22 +41,61 @@ export const NodeContainer = React.forwardRef<
 ))
 NodeContainer.displayName = "NodeContainer"
 
-export function NodeHeader({ ...props }: React.ComponentProps<"div">) {
+const nodeHeaderStyles = cva(
+  ["rounded-t-md"],
+  {
+    variants: {
+      status: {
+        IDLE: "bg-gradient-to-r from-node-header/90 to-node-header",
+        RUNNING: "bg-gradient-to-r from-node-header/90 to-node-running",
+        COMPLETED: "bg-gradient-to-r from-node-header/90 to-node-header",
+        ERROR: "bg-gradient-to-r from-node-header/90 to-node-header",
+        WARNING: "bg-gradient-to-r from-node-header/90 to-node-header",
+      }
+    },
+    defaultVariants: {
+      status: "IDLE",
+    }
+  }
+)
+
+export function NodeHeader({ status, ...props }: React.ComponentProps<"div"> & VariantProps<typeof nodeHeaderStyles>) {
   return (
     <div
-      className={cn("rounded-t-md bg-gradient-to-r from-node-header/90 to-node-header")}
+      className={cn(nodeHeaderStyles({ status }))}
       {...props}
     />
   )
 }
 
-export function NodeTitle({ ...props }: React.ComponentProps<"div">) {
+const nodeTitleStyles = cva(
+  ["node-title-size leading-none pl-2 py-2 tracking-tight font-semibold inline-block max-w-full truncate"],
+  {
+    variants: {
+      status: {
+        IDLE: "",
+        RUNNING: "",
+        COMPLETED: "",
+        ERROR: "",
+        WARNING: "",
+      }
+    },
+    defaultVariants: {
+      status: "IDLE",
+    }
+  }
+)
+
+export function NodeTitle({ status, children, ...props }: React.ComponentProps<"div"> & VariantProps<typeof nodeTitleStyles>) {
   return (
     <div
       data-testid="title"
-      className={cn(["node-title-size leading-none pl-2 py-2 tracking-tight font-semibold inline-block max-w-full truncate"])}
+      className={cn(nodeTitleStyles({ status }))}
       {...props}
-    />
+    >
+      {status === "RUNNING" && <Loader2 className="inline animate-spin mr-1 h-4 w-4" />}
+      {children}
+    </div>
   )
 }
 
