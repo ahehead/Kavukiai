@@ -49,6 +49,7 @@ export function registerOpenAIHandlers(): void {
         const response = await openaiClient.responses.create(param, {
           signal: abortController.signal,
         });
+        console.log("PortChatGPT response:", response);
         postMessageToPort(messagePort, {
           type: "done",
           text: response.output_text,
