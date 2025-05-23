@@ -14,11 +14,13 @@ import {
   type Schemes,
   SerializableInputsNode,
 } from "renderer/nodeEditor/types";
+import type { OpenAIInput } from "../../Controls/ChatContext/ChatContext";
 const { Output, Input } = ClassicPreset;
 
 // Run ノード
 export class OpenAIParamNode extends SerializableInputsNode<
   {
+    openaiInput: NodeSocket;
     model: NodeSocket;
     stream: NodeSocket;
     store: NodeSocket;
@@ -37,6 +39,14 @@ export class OpenAIParamNode extends SerializableInputsNode<
     this.addOutput(
       "param",
       new Output(createSocket("OpenAIParam"), undefined, true)
+    );
+    this.addInput(
+      "openaiInput",
+      new Input(
+        createSocket(["string", "chatContext"]),
+        "string|ChatContext",
+        false
+      )
     );
     this.addInput(
       "model",
@@ -84,6 +94,7 @@ export class OpenAIParamNode extends SerializableInputsNode<
   }
 
   data(inputs: {
+    openaiInput?: OpenAIInput[];
     model?: string[];
     stream?: boolean[];
     store?: boolean[];
@@ -94,12 +105,7 @@ export class OpenAIParamNode extends SerializableInputsNode<
     const store = getInputValue(this.inputs, "store", inputs);
     const param: OpenAI.Responses.ResponseCreateParams = {
       model: getInputValue(this.inputs, "model", inputs) ?? "gpt-4.1",
-      input: [
-        {
-          role: "user",
-          content: "こんにちは.",
-        },
-      ],
+      input: inputs.openaiInput?.[0] || "",
       ...(stream !== undefined && { stream }),
       ...(store !== undefined && { store }),
     };
