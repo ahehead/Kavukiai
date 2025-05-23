@@ -21,7 +21,7 @@ const tsconfigPaths = tsconfigPathsPlugin({
 
 export default defineConfig({
   main: {
-    plugins: [tsconfigPaths, externalizeDepsPlugin()],
+    plugins: [tsconfigPaths, externalizeDepsPlugin({ exclude: ["arktype"] })],
 
     build: {
       rollupOptions: {
@@ -37,7 +37,7 @@ export default defineConfig({
   },
 
   preload: {
-    plugins: [tsconfigPaths, externalizeDepsPlugin()],
+    plugins: [tsconfigPaths, externalizeDepsPlugin({ exclude: ["arktype"] })],
 
     build: {
       outDir: resolve(devPath, "preload"),
