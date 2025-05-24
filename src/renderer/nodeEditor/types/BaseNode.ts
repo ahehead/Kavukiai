@@ -5,6 +5,22 @@ import type { InputPortJson } from "shared/JsonType";
 import type { AreaExtra, Schemes } from ".";
 import type { AreaPlugin } from "rete-area-plugin";
 
+export class TooltipInput<
+  S extends ClassicPreset.Socket
+> extends ClassicPreset.Input<S> {
+  tooltip?: string;
+
+  constructor(
+    socket: S,
+    label?: string,
+    multipleConnections?: boolean,
+    tooltip?: string
+  ) {
+    super(socket, label, multipleConnections);
+    this.tooltip = tooltip;
+  }
+}
+
 export enum NodeStatus {
   IDLE = "IDLE",
   RUNNING = "RUNNING",
