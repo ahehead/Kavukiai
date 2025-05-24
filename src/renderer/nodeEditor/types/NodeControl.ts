@@ -9,6 +9,7 @@ import type { HistoryPlugin } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from ".";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ButtonControl } from "../nodes/Controls/Button";
+import type { SelectControl } from "../nodes/Controls/Select";
 
 export type NodeControl =
   | RunButtonControl
@@ -18,7 +19,8 @@ export type NodeControl =
   | InputValueControl<number>
   | ChatContextControl
   | CheckBoxControl
-  | ButtonControl;
+  | ButtonControl
+  | SelectControl<any>;
 
 export interface SerializableControl {
   toJSON(): ControlJson;
