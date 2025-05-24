@@ -15,6 +15,8 @@ import {
   SerializableInputsNode,
 } from "renderer/nodeEditor/types";
 import type { OpenAIInput } from "../../Controls/ChatContext/ChatContext";
+import { type } from "arktype";
+import { SelectControl } from "../../Controls/Select";
 const { Output, Input } = ClassicPreset;
 
 // Run ノード
@@ -25,6 +27,7 @@ export class OpenAIParamNode extends SerializableInputsNode<
     stream: NodeSocket;
     store: NodeSocket;
     temperature: NodeSocket;
+    serviceTier: NodeSocket;
   },
   { param: NodeSocket },
   object
@@ -90,6 +93,25 @@ export class OpenAIParamNode extends SerializableInputsNode<
           resetCacheDataflow(dataflow, this.id);
         },
       })
+    );
+    this.addInput(
+      "serviceTier",
+      new Input(
+        createSocket(type("'auto' | 'default' | 'flex'")),
+        "service_tier",
+        false
+      )
+    );
+    this.inputs.serviceTier?.addControl(
+      new SelectControl<"auto" | "default" | "flex">(
+        "auto",
+        [
+          { label: "auto", value: "auto" },
+          { label: "default", value: "default" },
+          { label: "flex", value: "flex" },
+        ],
+        { label: "service_tier" }
+      )
     );
   }
 
