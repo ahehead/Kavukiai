@@ -35,6 +35,10 @@ import {
   ButtonControl,
   ButtonControlView,
 } from "renderer/nodeEditor/nodes/Controls/Button";
+import {
+  SelectControl,
+  SelectControlView,
+} from "renderer/nodeEditor/nodes/Controls/Select";
 
 export function customReactPresets(
   area: AreaPlugin<Schemes, AreaExtra>,
@@ -70,6 +74,9 @@ export function customReactPresets(
         }
         if (data.payload instanceof ButtonControl) {
           return ButtonControlView;
+        }
+        if (data.payload instanceof SelectControl) {
+          return SelectControlView;
         }
         return null;
       },
