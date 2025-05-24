@@ -6,7 +6,7 @@ import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { InputControlLabel, InputControlWrapper, inputValueStyles } from "renderer/nodeEditor/component/NodePanel";
 import type { ControlJson } from "shared/JsonType";
-import type { ControlContext, SerializableControl } from "renderer/nodeEditor/types";
+import type { SerializableControl } from "renderer/nodeEditor/types";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
 class InputValueAction<T extends string | number> implements HistoryAction {
@@ -144,7 +144,7 @@ export function InputValueControlView<T extends string | number>(props: {
         id={control.id}
         ref={ref}
         type={control.type === "number" ? "number" : "text"}
-        step={control.type === "number" ? control.step : undefined} // step属性を設定
+        step={control.type === "number" ? control.step : undefined}
         value={uiValue}
         readOnly={!control.editable}
         onFocus={handleFocus}
