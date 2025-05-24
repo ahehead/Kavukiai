@@ -10,8 +10,11 @@ export const socketSchemas = {
   image: type({ data: "unknown" }).or("string"),
   OpenAIParam: type({ model: "string" }),
   chatContext: type([{ role: "string", content: "string" }]),
+  date: type("Date"),
+  json: type("string"),
   any: type("unknown"), // ワイルドカード
   exec: type.unit("'__EXEC__'"), // 制御フロー用ダミー
+  schema: type.unit("'__ARKTYPE_SCHEMA__'"), // ArkType スキーマ用ダミー
 } as const;
 
 export type NodeSocketType = keyof typeof socketSchemas;
@@ -66,11 +69,6 @@ export class NodeSocket extends ClassicPreset.Socket {
     }
     // それ以外は ArkType の extends 判定
     return this.schema.extends(other.schema);
-  }
-
-  /* 実データ検証*/
-  assert(value: unknown) {
-    this.schema.assert(value);
   }
 }
 
