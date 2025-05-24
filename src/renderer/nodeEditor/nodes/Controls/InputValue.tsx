@@ -65,11 +65,8 @@ export class InputValueControl<T extends string | number> extends ClassicPreset.
     this.onChange?.(value);
   }
 
-  setEditable(editable: boolean, isUpdate = false) {
+  setEditable(editable: boolean) {
     this.editable = editable;
-    if (isUpdate && this.area) {
-      this.area.update("control", this.id);
-    }
   }
 
   setHistory(history: HistoryPlugin<Schemes> | undefined) {
