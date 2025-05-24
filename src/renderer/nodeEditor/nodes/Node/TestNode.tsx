@@ -4,6 +4,7 @@ import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import { createSocket, type NodeSocket, type Schemes } from 'renderer/nodeEditor/types';
 import { CheckBoxControl } from '../Controls/CheckBox';
 import { ButtonControl } from '../Controls/Button';
+import { SelectControl } from '../Controls/Select';
 const { Output } = ClassicPreset;
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
@@ -11,7 +12,7 @@ const { Output } = ClassicPreset;
 export class TestNode extends BaseNode<
   object,
   { exec: NodeSocket },
-  { check: CheckBoxControl, button: ButtonControl }
+  { check: CheckBoxControl, button: ButtonControl, select: SelectControl<string> }
 > {
   constructor(
     private engine: ControlFlowEngine<Schemes>
@@ -25,6 +26,13 @@ export class TestNode extends BaseNode<
     this.addControl(
       'button',
       new ButtonControl('Button', async () => { })
+    );
+    this.addControl(
+      'select',
+      new SelectControl('option1', [
+        { label: 'Option 1', value: 'option1' },
+        { label: 'Option 2', value: 'option2' },
+      ], { label: 'Select Option' })
     );
   }
 
