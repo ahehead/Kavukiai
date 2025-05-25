@@ -44,15 +44,16 @@ export function setupContextMenu({
 
   return new ContextMenuPlugin<Schemes>({
     items: (context) => {
-      //console.log("context", context);
-
+      // 右クリックを押されたときの場所。
+      const pointer = area.area.pointer;
       if (context === "root") {
         return {
           searchBar: true,
           list: createReteContextMenuItems(
             contextMenuStructure,
             editor,
-            nodeDeps
+            nodeDeps,
+            pointer
           ),
         };
       }
