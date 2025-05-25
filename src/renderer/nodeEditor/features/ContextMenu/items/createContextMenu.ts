@@ -11,14 +11,15 @@ import type { Item } from "rete-context-menu-plugin/_types/types";
 export function createReteContextMenuItems(
   definitions: MenuItemDefinition[],
   editor: NodeEditor<Schemes>,
-  nodeDepsArgs: NodeDeps
+  nodeDepsArgs: NodeDeps,
+  pointer: { x: number; y: number }
 ) {
   return definitions.map((itemDef) => {
     const menuItem: Item = {
       label: itemDef.label,
       key: itemDef.key,
       handler: itemDef.factoryKey
-        ? createHandler(itemDef.factoryKey, editor, nodeDepsArgs)
+        ? createHandler(itemDef.factoryKey, editor, nodeDepsArgs, pointer)
         : () => void 0,
     };
 
@@ -26,7 +27,8 @@ export function createReteContextMenuItems(
       menuItem.subitems = createReteContextMenuItems(
         itemDef.subitems,
         editor,
-        nodeDepsArgs
+        nodeDepsArgs,
+        pointer
       );
     }
     return menuItem;
@@ -36,17 +38,15 @@ export function createReteContextMenuItems(
 function createHandler(
   factoryKey: string,
   editor: NodeEditor<Schemes>,
-  nodeDepsArgs: NodeDeps
+  nodeDepsArgs: NodeDeps,
+  pointer: { x: number; y: number }
 ): () => Promise<void> {
   return async () => {
     const nodeFactory = nodeFactories[factoryKey];
     if (nodeFactory) {
       const node = nodeFactory(nodeDepsArgs);
       await editor.addNode(node);
-      await nodeDepsArgs.area.translate(
-        node.id,
-        nodeDepsArgs.area.area.pointer
-      );
+      await nodeDepsArgs.area.translate(node.id, pointer);
     } else {
       console.error(`Node factory not found for key: ${factoryKey}`);
     }
