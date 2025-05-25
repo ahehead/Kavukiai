@@ -29,7 +29,7 @@ import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/dis
 import { setupContextMenu } from "./features/contextMenu/setupContextMenu";
 import { customReactPresets } from "./features/customReactPresets/customReactPresets";
 import type { AreaExtra, Schemes } from "./types";
-import { customContextMenuPreset } from "./features/customReactPresets/customContextMenuPreset";
+import { customContextMenuPreset } from "./features/contextMenu/customContextMenuPreset";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
