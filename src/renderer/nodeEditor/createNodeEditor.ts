@@ -26,10 +26,10 @@ import {
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
 import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
 
-import { CustomContextMenu } from "./component/CustomContextMenu";
 import { setupContextMenu } from "./features/contextMenu/setupContextMenu";
 import { customReactPresets } from "./features/customReactPresets/customReactPresets";
 import type { AreaExtra, Schemes } from "./types";
+import { customContextMenuPreset } from "./features/customReactPresets/customContextMenuPreset";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -96,17 +96,8 @@ export async function createNodeEditor(container: HTMLElement) {
   setupSocketConnectionState(editor, area);
 
   // context menuのカスタマイズ
-  render.addPreset({
-    render(context: any) {
-      if (context.data.type === "contextmenu") {
-        return CustomContextMenu({
-          items: context.data.items,
-          searchBar: context.data.searchBar,
-          onHide: context.data.onHide,
-        });
-      }
-    },
-  });
+  render.addPreset(customContextMenuPreset());
+
   connection.addPreset(ConnectionPresets.classic.setup());
   // react pluginのカスタマイズ
   render.addPreset(customReactPresets(area, history, getZoom));
