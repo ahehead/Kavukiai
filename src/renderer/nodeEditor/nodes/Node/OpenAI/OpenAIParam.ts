@@ -45,11 +45,7 @@ export class OpenAIParamNode extends SerializableInputsNode<
     );
     this.addInput(
       "openaiInput",
-      new Input(
-        createSocket(["string", "chatContext"]),
-        "string|ChatContext",
-        false
-      )
+      new Input(createSocket(["string", "chatContext"]), "input", false)
     );
     this.addInput(
       "model",
