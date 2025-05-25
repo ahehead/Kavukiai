@@ -31,7 +31,7 @@ export function getEditorWindowSize(element: HTMLElement) {
 
 export function getMenuHeight(items: Item[]) {
   const itemHeight = 30; // 各アイテムの高さ
-  return itemHeight * items.length + 20; // 20はパディング
+  return itemHeight * items.length;
 }
 
 /**
