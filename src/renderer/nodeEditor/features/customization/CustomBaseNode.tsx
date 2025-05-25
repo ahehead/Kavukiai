@@ -1,9 +1,12 @@
 import { Presets, type RenderEmit } from 'rete-react-plugin'
-import type { AreaExtra, NodeInterface, Schemes } from '../types/Schemes'
-import { NodeContainer, NodeSocketsWrapper, NodeHeader, NodeSocketName, NodeSocketTypeLabel, NodePort, NodeTitle, NodeControlsWrapper, } from 'renderer/nodeEditor/component/NodePanel'
+import type { AreaExtra, NodeInterface, Schemes } from '../../types/Schemes'
+import { NodeContainer, NodeHeader, NodeTitle, NodeControlsWrapper, } from 'renderer/nodeEditor/component/nodeParts/NodePanel'
+import { NodeSocketName, NodeSocketTypeLabel } from "renderer/nodeEditor/component/nodeParts/NodeSocketParts"
+import { NodePort } from "renderer/nodeEditor/component/nodeParts/NodeSocketParts"
+import { NodeSocketsWrapper } from "renderer/nodeEditor/component/nodeParts/NodeSocketParts"
 import type { AreaPlugin } from 'rete-area-plugin'
 import { useRef } from 'react'
-import { useNodeResize } from '../hooks/useNodeResize'
+import { useNodeResize } from '../../hooks/useNodeResize'
 import type { HistoryPlugin } from 'rete-history-plugin'
 
 type Props<S extends Schemes> = {

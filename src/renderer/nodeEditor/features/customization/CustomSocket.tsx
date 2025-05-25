@@ -1,5 +1,5 @@
-import { NodeDataSocket } from "renderer/nodeEditor/component/NodePanel"
-import type { NodeSocket } from "../types/NodeSocket"
+import { NodeDataSocket } from "renderer/nodeEditor/component/nodeParts/NodeSocketParts"
+import type { NodeSocket } from "../../types/NodeSocket"
 
 export function CustomSocket<T extends NodeSocket>(
   props: { data: T }

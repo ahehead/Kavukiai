@@ -3,15 +3,6 @@ import { cn } from "renderer/lib/utils"
 import { ChevronRight, Search } from "lucide-react";
 import { Drag } from "rete-react-plugin";
 
-export type ItemType = {
-  label: string;
-  key: string;
-  handler: () => void;
-  subitems?: ItemType[];
-  disabled?: boolean;
-  icon?: React.ReactNode;
-}
-
 const menuStyle = cva(
   [
     "bg-background",
@@ -35,6 +26,52 @@ export function Menu({ className, ...props }: React.ComponentProps<"div"> & Vari
         {...props}
       />
     </Drag.NoDrag>
+  )
+}
+
+const menuItemLayoutStyle = cva(
+  [
+    "relative",
+    "group",
+  ]
+)
+
+export function MenuItemLayout({ className, children, ...props }: React.ComponentProps<"div"> & VariantProps<typeof menuItemLayoutStyle>) {
+  return (
+    <div className={cn(menuItemLayoutStyle(), className)} {...props}>
+      {children}
+    </div>
+  )
+}
+
+const subMenuLayoutStyle = cva(
+  [
+    "absolute",
+    "top-[-1px]", // 親アイテムの Menu の padding (p-1) を考慮した位置
+    "z-10",
+    // "hidden", // opacity と visibility で制御するため不要に
+    // "group-hover:block", // opacity と visibility で制御するため不要に
+    // ホバー対策: 左に4px食い込ませ、その分パディングで内側のコンテンツを右にずらす
+    "left-[calc(100%-4px)]",
+    "pl-[4px]",
+    "transition-opacity", // opacityのトランジションを有効化
+    "duration-100",     // トランジションの期間を100msに設定
+    "opacity-0",        // デフォルトは非表示（透明）
+    "invisible",        // デフォルトは非表示（領域も確保しない）
+    "pointer-events-none", // デフォルトは操作不可
+    "group-hover:opacity-100", // groupホバー時に表示（不透明）
+    "group-hover:visible",     // groupホバー時に表示（領域を確保）
+    "group-hover:pointer-events-auto", // groupホバー時に操作可能
+    "group-hover:delay-50",     // groupホバー時の表示遅延を50msに設定
+    "delay-150" // groupホバーが外れた時の非表示遅延を300msに設定 (例として少し延長)
+  ]
+)
+
+export function SubMenuLayout({ className, children, style, ...props }: React.ComponentProps<"div"> & VariantProps<typeof subMenuLayoutStyle> & { style?: React.CSSProperties }) {
+  return (
+    <div className={cn(subMenuLayoutStyle(), className)} style={style} {...props}>
+      {children}
+    </div>
   )
 }
 

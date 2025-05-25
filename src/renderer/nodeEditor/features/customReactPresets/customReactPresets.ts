@@ -25,11 +25,7 @@ import {
   CheckBoxControl,
   CheckBoxControlView,
 } from "../../nodes/Controls/CheckBox";
-import {
-  CustomExecSocket,
-  CustomSocket,
-  createCustomNode,
-} from "../../component";
+
 import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
 import {
   ButtonControl,
@@ -39,6 +35,11 @@ import {
   SelectControl,
   SelectControlView,
 } from "renderer/nodeEditor/nodes/Controls/Select";
+import {
+  CustomExecSocket,
+  CustomSocket,
+  createCustomNode,
+} from "../customization";
 
 export function customReactPresets(
   area: AreaPlugin<Schemes, AreaExtra>,

@@ -4,7 +4,7 @@ import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
-import { InputControlLabel, InputControlWrapper } from "renderer/nodeEditor/component/NodePanel";
+import { InputControlLabel, InputControlWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
 import type { SerializableControl } from "renderer/nodeEditor/types";
 import { ChevronDown } from "lucide-react";
