@@ -190,7 +190,7 @@ export function SelectControlView<T>(props: {
           type="button"
           onClick={toggleDropdown}
           disabled={!control.editable}
-          className={`w-full px-2 py-1 text-left bg-input border border-input rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 flex justify-between items-center ${control.editable ? 'cursor-default' : ''}`}
+          className={`w-full px-2 py-1 text-left bg-node-bg border border-input rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 flex justify-between items-center ${control.editable ? 'cursor-default' : ''}`}
         >
           <span className={currentValue === undefined && control.placeholder ? "text-muted-foreground" : ""}>
             {displayLabel}
@@ -200,7 +200,7 @@ export function SelectControlView<T>(props: {
         {isOpen && control.editable && (
           <div
             ref={dropdownRef}
-            className="absolute z-10 mt-1 w-full bg-popover border border-border rounded-md shadow-lg max-h-60 overflow-auto"
+            className="absolute z-10 mt-1 w-full bg-node-bg border border-border rounded-md shadow-lg max-h-60 overflow-auto"
           >
             <ul className="py-1">
               {control.options.map((option) => (
