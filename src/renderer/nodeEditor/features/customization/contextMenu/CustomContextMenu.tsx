@@ -3,6 +3,7 @@ import type { Item } from "rete-context-menu-plugin/_types/types";
 import type { ContextMenuRender } from "rete-react-plugin/_types/presets/context-menu/types";
 import { computeMenuPlacement } from "./menuPosition";
 import { useContextMenu } from "./useContextMenu";
+import { MenuContainer, MenuItemContainer, SubmenuWrapper } from "./ContextMenuPresentaitional";
 
 export function CustomContextMenu({ element, type, items, searchBar, onHide }: ContextMenuRender["data"]) {
 
@@ -12,7 +13,11 @@ export function CustomContextMenu({ element, type, items, searchBar, onHide }: C
 
   return (
     <div
-      style={{ position: "fixed", left: x, top: y }}
+      style={{
+        position: "fixed",
+        left: x,
+        top: y
+      }}
     >
       <Menu
         items={items}
@@ -46,18 +51,14 @@ export function Menu({
 
   return (
     // menu
-    <div
-      data-testid="context-menu"
-      className="bg-node-bg w-[200px] shadow-lg text-sm"
+    <MenuContainer
+      width={menuWidth}
     >
       {/* items */}
       {items.map(item => {
         return (
           // item
-          // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-          <div
-            data-testid="context-menu-item"
-            className="bg-node-bg hover:bg-accent/60 px-1 relative  transition-colors duration-290 delay-50"
+          <MenuItemContainer
             key={item.key}
             onClick={() => { item.handler(); onHide(); }}
             onPointerEnter={() => handleEnterMenuItem(item)}
@@ -65,11 +66,11 @@ export function Menu({
           >
             {item.label}
             {item.subitems && viewSubmenu && viewSubmenu.key === item.key && (
-              <div
+              <SubmenuWrapper
+                side={side}
+                width={menuWidth}
                 onPointerEnter={() => handleEnterSubmenu(item)}
                 onPointerLeave={handleLeaveMenuItem}
-                // 横に表示
-                className={`absolute ${side === "right" ? "left-[200px]" : "right-[200px]"} top-0`}
               >
                 <Menu
                   items={item.subitems}
@@ -77,12 +78,12 @@ export function Menu({
                   onHide={onHide}
                   menuWidth={menuWidth}
                 />
-              </div>
+              </SubmenuWrapper>
             )}
-          </div>
+          </MenuItemContainer>
         );
       })}
-    </div>
+    </MenuContainer>
   );
 }
 
