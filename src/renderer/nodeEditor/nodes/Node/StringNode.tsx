@@ -5,12 +5,12 @@ import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
 import { resetCacheDataflow } from '../util/resetCacheDataflow';
-import { type AreaExtra, createSocket, type NodeSocket, type Schemes } from 'renderer/nodeEditor/types';
+import { type AreaExtra, createSocket, type TypedSocket, type Schemes } from 'renderer/nodeEditor/types';
 const { Node, Output } = ClassicPreset;
 // 短い文字列入力ノード
 export class StringNode extends BaseNode<
   object,
-  { out: NodeSocket },
+  { out: TypedSocket },
   { textInput: InputValueControl<string> }
 > {
   constructor(

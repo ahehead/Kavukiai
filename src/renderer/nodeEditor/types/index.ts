@@ -1,4 +1,4 @@
-export * from "./NodeSocket";
+export * from "./TypedSocket";
 export * from "./BaseNode";
 export * from "./NodeControl";
 export * from "./Schemes";

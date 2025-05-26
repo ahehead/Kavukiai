@@ -3,13 +3,13 @@ import type { DataflowEngine } from 'rete-engine';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type { AreaPlugin } from 'rete-area-plugin';
 import { MultiLineControl } from '../Controls/TextArea';
-import { type AreaExtra, createSocket, type NodeSocket, type Schemes } from 'renderer/nodeEditor/types';
+import { type AreaExtra, createSocket, type TypedSocket, type Schemes } from 'renderer/nodeEditor/types';
 const { Input, Output } = ClassicPreset;
 
 // View String ノード
 export class ViewStringNode extends BaseNode<
-  { exec: NodeSocket; inputAny: NodeSocket },
-  { exec: NodeSocket; outputAny: NodeSocket },
+  { exec: TypedSocket; inputAny: TypedSocket },
+  { exec: TypedSocket; outputAny: TypedSocket },
   { view: MultiLineControl }
 > {
   constructor(

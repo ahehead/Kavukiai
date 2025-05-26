@@ -11,7 +11,7 @@ import {
 import {
   type AreaExtra,
   createSocket,
-  type NodeSocket,
+  type TypedSocket,
   type Schemes,
 } from "renderer/nodeEditor/types";
 const { Output } = ClassicPreset;
@@ -19,7 +19,7 @@ const { Output } = ClassicPreset;
 // 長文文字列入力ノード
 export class ChatContextNode extends BaseNode<
   object,
-  { out: NodeSocket },
+  { out: TypedSocket },
   { chatContext: ChatContextControl }
 > {
   constructor(

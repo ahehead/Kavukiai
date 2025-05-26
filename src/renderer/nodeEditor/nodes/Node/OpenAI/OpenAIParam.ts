@@ -10,7 +10,7 @@ import { getInputValue } from "../../util/getInput";
 import {
   type AreaExtra,
   createSocket,
-  type NodeSocket,
+  type TypedSocket,
   type Schemes,
   SerializableInputsNode,
 } from "renderer/nodeEditor/types";
@@ -22,14 +22,14 @@ const { Output, Input } = ClassicPreset;
 // Run ノード
 export class OpenAIParamNode extends SerializableInputsNode<
   {
-    openaiInput: NodeSocket;
-    model: NodeSocket;
-    stream: NodeSocket;
-    store: NodeSocket;
-    temperature: NodeSocket;
-    serviceTier: NodeSocket;
+    openaiInput: TypedSocket;
+    model: TypedSocket;
+    stream: TypedSocket;
+    store: TypedSocket;
+    temperature: TypedSocket;
+    serviceTier: TypedSocket;
   },
-  { param: NodeSocket },
+  { param: TypedSocket },
   object
 > {
   value = "";

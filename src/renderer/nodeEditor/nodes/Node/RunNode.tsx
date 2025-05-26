@@ -2,13 +2,13 @@ import { ClassicPreset } from 'rete';
 import type { ControlFlowEngine } from 'rete-engine';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import { RunButtonControl } from '../Controls/RunButton';
-import { createSocket, type NodeSocket, type Schemes } from 'renderer/nodeEditor/types';
+import { createSocket, type TypedSocket, type Schemes } from 'renderer/nodeEditor/types';
 const { Output } = ClassicPreset;
 
 // Run ノード
 export class RunNode extends BaseNode<
   object,
-  { exec: NodeSocket },
+  { exec: TypedSocket },
   { btn: RunButtonControl }
 > {
   constructor(

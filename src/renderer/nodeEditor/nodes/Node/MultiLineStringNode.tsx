@@ -5,13 +5,13 @@ import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
 import { resetCacheDataflow } from '../util/resetCacheDataflow';
-import { type AreaExtra, createSocket, type NodeSocket, type Schemes } from 'renderer/nodeEditor/types';
+import { type AreaExtra, createSocket, type TypedSocket, type Schemes } from 'renderer/nodeEditor/types';
 const { Output } = ClassicPreset;
 
 // 長文文字列入力ノード
 export class MultiLineStringNode extends BaseNode<
   object,
-  { out: NodeSocket },
+  { out: TypedSocket },
   { textArea: MultiLineControl }
 > {
 

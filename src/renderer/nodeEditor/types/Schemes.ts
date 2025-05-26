@@ -15,7 +15,7 @@ import type {
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./BaseNode";
-import type { NodeSocket } from "./NodeSocket";
+import type { TypedSocket } from "./TypedSocket";
 import type { NodeControl } from "./NodeControl";
 
 export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
@@ -39,7 +39,7 @@ export type NodeTypes =
 // BaseNodeを埋めたもの
 export interface NodeInterface
   extends BaseNode<
-    { [key in string]?: NodeSocket },
-    { [key in string]?: NodeSocket },
+    { [key in string]?: TypedSocket },
+    { [key in string]?: TypedSocket },
     { [key in string]?: NodeControl }
   > {}

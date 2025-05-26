@@ -1,9 +1,9 @@
 import type { Schemes } from "renderer/nodeEditor/types/Schemes";
-import type { NodeSocket } from "renderer/nodeEditor/types/NodeSocket";
+import type { TypedSocket } from "renderer/nodeEditor/types/TypedSocket";
 import type { ClassicPreset, NodeEditor } from "rete";
 
-export type Input = ClassicPreset.Input<NodeSocket>;
-export type Output = ClassicPreset.Output<NodeSocket>;
+export type Input = ClassicPreset.Input<TypedSocket>;
+export type Output = ClassicPreset.Output<TypedSocket>;
 
 export function canCreateConnection(
   editor: NodeEditor<Schemes>,
@@ -40,12 +40,12 @@ export function getConnectionSockets(
   editor: NodeEditor<Schemes>,
   connection: Schemes["Connection"]
 ): {
-  source: NodeSocket | undefined;
-  target: NodeSocket | undefined;
+  source: TypedSocket | undefined;
+  target: TypedSocket | undefined;
 } {
   const { output, input } = getConnectionPorts(editor, connection);
-  const source = output?.socket as NodeSocket;
-  const target = input?.socket as NodeSocket;
+  const source = output?.socket as TypedSocket;
+  const target = input?.socket as TypedSocket;
 
   return {
     source,

@@ -9,7 +9,7 @@ import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import {
   type AreaExtra,
   createSocket,
-  type NodeSocket,
+  type TypedSocket,
   NodeStatus,
   type Schemes,
   SerializableInputsNode,
@@ -19,8 +19,8 @@ const { Output, Input } = ClassicPreset;
 
 // Run ノード
 export class OpenAINode extends SerializableInputsNode<
-  { exec: NodeSocket; exec2: NodeSocket; param: NodeSocket },
-  { exec: NodeSocket; message: NodeSocket },
+  { exec: TypedSocket; exec2: TypedSocket; param: TypedSocket },
+  { exec: TypedSocket; message: TypedSocket },
   { console: ConsoleControl }
 > {
   value = "";
