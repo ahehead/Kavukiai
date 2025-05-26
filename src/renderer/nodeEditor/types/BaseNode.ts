@@ -1,12 +1,12 @@
 import { ClassicPreset } from "rete";
-import type { NodeSocket } from "./NodeSocket";
+import { TypedSocket } from "./TypedSocket";
 import type { NodeControl, SerializableControl } from "./NodeControl";
 import type { InputPortJson } from "shared/JsonType";
-import type { AreaExtra, Schemes } from ".";
+import type { AreaExtra, Schemes, NodeSchemaSpec } from ".";
 import type { AreaPlugin } from "rete-area-plugin";
 
 export class TooltipInput<
-  S extends ClassicPreset.Socket
+  S extends TypedSocket
 > extends ClassicPreset.Input<S> {
   tooltip?: string;
 
@@ -28,18 +28,12 @@ export enum NodeStatus {
   ERROR = "ERROR",
   WARNING = "WARNING",
 }
-
-// ClassicPreset.Nodeを拡張 サイズとステータスを追加
+const { Output, Input } = ClassicPreset;
+// ClassicPreset.Nodeを拡張
 export class BaseNode<
-  Inputs extends {
-    [key in string]?: NodeSocket;
-  },
-  Outputs extends {
-    [key in string]?: NodeSocket;
-  },
-  Controls extends {
-    [key in string]?: NodeControl;
-  }
+  Inputs extends { [key in string]?: TypedSocket },
+  Outputs extends { [key in string]?: TypedSocket },
+  Controls extends { [key in string]?: NodeControl }
 > extends ClassicPreset.Node<Inputs, Outputs, Controls> {
   public width?: number;
   public height?: number;
@@ -48,6 +42,30 @@ export class BaseNode<
   constructor(label: string, initialStatus: NodeStatus = NodeStatus.IDLE) {
     super(label);
     this.status = initialStatus;
+  }
+
+  addTooltipInput<
+    K extends keyof Inputs,
+    S extends Exclude<Inputs[K], undefined>
+  >({
+    key,
+    schema,
+    label,
+    tooltip,
+  }: {
+    key: K;
+    schema: NodeSchemaSpec;
+    label?: string;
+    tooltip?: string;
+  }): void {
+    // createSocket の戻り値を S にアサート
+    const input = new TooltipInput<S>(
+      new TypedSocket(schema) as S,
+      label,
+      false,
+      tooltip
+    );
+    this.addInput(key, input);
   }
 
   setSize(width: number, height: number) {
@@ -80,8 +98,8 @@ export class BaseNode<
 
 // inputsをシリアライズできるように拡張したノードクラス
 export class SerializableInputsNode<
-  Inputs extends { [key in string]?: NodeSocket },
-  Outputs extends { [key in string]?: NodeSocket },
+  Inputs extends { [key in string]?: TypedSocket },
+  Outputs extends { [key in string]?: TypedSocket },
   Controls extends { [key in string]?: NodeControl }
 > extends BaseNode<Inputs, Outputs, Controls> {
   protected hasToJson = (c: unknown): c is SerializableControl =>
