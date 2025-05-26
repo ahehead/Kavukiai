@@ -1,22 +1,6 @@
 import { ClassicPreset } from "rete";
 import { type, type Type } from "arktype";
-
-/* ---------- ノードで使うスキーマ一覧 ---------- */
-export const defaultSchemas = {
-  string: type("string"),
-  number: type("number"),
-  boolean: type("boolean"),
-  array: type("unknown[]"),
-  image: type({ data: "unknown" }).or("string"),
-  OpenAIParam: type({ model: "string" }),
-  chatContext: type([{ role: "string", content: "string" }]),
-  date: type("Date"),
-  jsonSchema: type("string"),
-  any: type("unknown"), // ワイルドカード
-  exec: type.unit("'__EXEC__'"), // 制御フロー用ダミー
-} as const;
-
-export type DefaultSchemaKey = keyof typeof defaultSchemas;
+import { type DefaultSchemaKey, defaultNodeSchemas } from "./DefaultNodeSchema";
 
 /* ---------- 受け取れる型 ---------- */
 export type NodeSchemaSpec =
@@ -29,12 +13,12 @@ export type NodeSchemaSpec =
 function normalizeSchema(schemaSpec: NodeSchemaSpec): Type {
   if (schemaSpec === "any") return type("unknown");
   if (Array.isArray(schemaSpec)) return unionSchemas(schemaSpec);
-  if (typeof schemaSpec === "string") return defaultSchemas[schemaSpec];
+  if (typeof schemaSpec === "string") return defaultNodeSchemas[schemaSpec];
   return schemaSpec; // 既に Type
 }
 
 function unionSchemas(keys: DefaultSchemaKey[]): Type {
-  return keys.map((k) => defaultSchemas[k]).reduce((a, b) => a.or(b)); // 可変長 union
+  return keys.map((k) => defaultNodeSchemas[k]).reduce((a, b) => a.or(b)); // 可変長 union
 }
 
 export class TypedSocket extends ClassicPreset.Socket {
