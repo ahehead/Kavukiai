@@ -27,6 +27,7 @@ export interface SerializableControl {
   setFromJSON({ data }: ControlJson): void;
 }
 
+// 以降のinterfaceは使っていない
 export interface SerializableControlConstructor {
   fromJSON(json: ControlJson, ctx?: ControlContext): SerializableControl;
 }
