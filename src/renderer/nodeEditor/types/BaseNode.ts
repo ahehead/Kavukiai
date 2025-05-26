@@ -4,22 +4,8 @@ import type { NodeControl, SerializableControl } from "./NodeControl";
 import type { InputPortJson } from "shared/JsonType";
 import type { AreaExtra, Schemes, NodeSchemaSpec } from ".";
 import type { AreaPlugin } from "rete-area-plugin";
-
-export class TooltipInput<
-  S extends TypedSocket
-> extends ClassicPreset.Input<S> {
-  tooltip?: string;
-
-  constructor(
-    socket: S,
-    label?: string,
-    multipleConnections?: boolean,
-    tooltip?: string
-  ) {
-    super(socket, label, multipleConnections);
-    this.tooltip = tooltip;
-  }
-}
+import { TooltipInput } from "./Input";
+const { Output, Input } = ClassicPreset;
 
 export enum NodeStatus {
   IDLE = "IDLE",
@@ -28,7 +14,6 @@ export enum NodeStatus {
   ERROR = "ERROR",
   WARNING = "WARNING",
 }
-const { Output, Input } = ClassicPreset;
 // ClassicPreset.Nodeを拡張
 export class BaseNode<
   Inputs extends { [key in string]?: TypedSocket },
@@ -49,20 +34,19 @@ export class BaseNode<
     S extends Exclude<Inputs[K], undefined>
   >({
     key,
-    schema,
+    schemaSpec,
     label,
     tooltip,
   }: {
     key: K;
-    schema: NodeSchemaSpec;
+    schemaSpec: NodeSchemaSpec;
     label?: string;
     tooltip?: string;
   }): void {
-    // createSocket の戻り値を S にアサート
     const input = new TooltipInput<S>(
-      new TypedSocket(schema) as S,
+      new TypedSocket(schemaSpec) as S,
       label,
-      false,
+      false, // 複数接続可能にすると、同じノードから複数つながっているのに重なって見えないということが発生したので、input側を単一接続固定にします検証中
       tooltip
     );
     this.addInput(key, input);
