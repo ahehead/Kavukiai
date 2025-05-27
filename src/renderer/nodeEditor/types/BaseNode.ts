@@ -29,10 +29,7 @@ export class BaseNode<
     this.status = initialStatus;
   }
 
-  addTooltipInput<
-    K extends keyof Inputs,
-    S extends Exclude<Inputs[K], undefined>
-  >({
+  addIn<K extends keyof Inputs, S extends Exclude<Inputs[K], undefined>>({
     key,
     schemaSpec,
     label,
@@ -50,6 +47,31 @@ export class BaseNode<
       tooltip
     );
     this.addInput(key, input);
+  }
+
+  addOut<K extends keyof Outputs, S extends Exclude<Outputs[K], undefined>>({
+    key,
+    schemaSpec,
+    label,
+  }: {
+    key: keyof Outputs;
+    schemaSpec: NodeSchemaSpec;
+    label?: string;
+  }): void {
+    this.addOutput(
+      key,
+      new Output(new TypedSocket(schemaSpec) as S, label, true)
+    );
+  }
+
+  addCon<K extends keyof Controls>({
+    key,
+    control,
+  }: {
+    key: K;
+    control: Controls[K];
+  }): void {
+    this.addControl(key, control);
   }
 
   setSize(width: number, height: number) {
@@ -86,23 +108,15 @@ export class SerializableInputsNode<
   Outputs extends { [key in string]?: TypedSocket },
   Controls extends { [key in string]?: NodeControl }
 > extends BaseNode<Inputs, Outputs, Controls> {
-  protected hasToJson = (c: unknown): c is SerializableControl =>
-    typeof (c as SerializableControl | undefined)?.toJSON === "function";
-
-  protected hasSetFromJson = (c: unknown): c is SerializableControl =>
-    typeof (c as any).setFromJSON === "function";
-
   toInputsJson(): { inputs: Record<string, InputPortJson> } {
     const inputsJson: Record<string, InputPortJson> = {};
     for (const [key, input] of Object.entries(this.inputs)) {
-      if (input) {
-        inputsJson[key] = {
-          isShowControl: input.showControl,
-          ...(this.hasToJson(input.control) && {
-            control: input.control.toJSON(),
-          }),
-        };
-      }
+      if (!input) continue;
+      const controlJson = input.control?.toJSON();
+      inputsJson[key] = {
+        isShowControl: input.showControl,
+        ...(controlJson !== undefined ? { control: controlJson } : {}),
+      };
     }
     return { inputs: inputsJson };
   }
@@ -110,15 +124,12 @@ export class SerializableInputsNode<
   setFromInputsJson(inputsJson: Record<string, InputPortJson>): void {
     for (const [key, inputJson] of Object.entries(inputsJson)) {
       const input = this.inputs[key as keyof Inputs];
-      if (input) {
-        input.showControl = inputJson.isShowControl;
-        if (
-          inputJson.control &&
-          input.control &&
-          this.hasSetFromJson(input.control)
-        ) {
-          input.control.setFromJSON(inputJson.control);
-        }
+      if (!input) continue;
+      input.showControl = inputJson.isShowControl;
+      if (inputJson.control && input.control) {
+        (input.control as unknown as SerializableControl).setFromJSON(
+          inputJson.control
+        );
       }
     }
   }
