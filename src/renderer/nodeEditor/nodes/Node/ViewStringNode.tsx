@@ -1,15 +1,20 @@
-import { ClassicPreset } from 'rete';
+
 import type { DataflowEngine } from 'rete-engine';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type { AreaPlugin } from 'rete-area-plugin';
 import { MultiLineControl } from '../Controls/TextArea';
-import { type AreaExtra, createSocket, type TypedSocket, type Schemes } from 'renderer/nodeEditor/types';
-const { Input, Output } = ClassicPreset;
+import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
 
 // View String ノード
 export class ViewStringNode extends BaseNode<
-  { exec: TypedSocket; inputAny: TypedSocket },
-  { exec: TypedSocket; outputAny: TypedSocket },
+  {
+    exec: TypedSocket;
+    inputAny: TypedSocket
+  },
+  {
+    exec: TypedSocket;
+    outputAny: TypedSocket
+  },
   { view: MultiLineControl }
 > {
   constructor(
@@ -18,23 +23,30 @@ export class ViewStringNode extends BaseNode<
   ) {
     super('ViewString');
 
-    this.addInput(
-      'exec',
-      new Input(createSocket("exec"), undefined, false));
-    this.addInput(
-      'inputAny',
-      new Input(createSocket("any"), undefined, false));
+    this.addIn({
+      key: "exec",
+      schemaSpec: "exec",
+      tooltip: "実行トリガー",
+    });
+    this.addIn({
+      key: "inputAny",
+      schemaSpec: "any",
+      tooltip: "表示するデータ",
+    });
 
-    this.addOutput(
-      'exec',
-      new Output(createSocket("exec"), undefined, true));
-    this.addOutput(
-      'outputAny',
-      new Output(createSocket("any"), undefined, true));
+    this.addOut({
+      key: "exec",
+      schemaSpec: "exec",
+    });
+    this.addOut({
+      key: "outputAny",
+      schemaSpec: "any",
+    });
 
-    this.addControl(
-      'view',
-      new MultiLineControl("", { editable: false, }));
+    this.addCon({
+      key: 'view',
+      control: new MultiLineControl("", { editable: false, })
+    });
   }
 
   data(inputs: { inputAny?: any[] }): { outputAny: string } {
