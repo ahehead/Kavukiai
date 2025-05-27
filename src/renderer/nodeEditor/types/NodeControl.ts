@@ -5,11 +5,9 @@ import type { ConsoleControl } from "../nodes/Controls/Console";
 import type { InputValueControl } from "../nodes/Controls/InputValue";
 import type { RunButtonControl } from "../nodes/Controls/RunButton";
 import type { MultiLineControl } from "../nodes/Controls/TextArea";
-import type { HistoryPlugin } from "rete-history-plugin";
-import type { AreaExtra, Schemes } from ".";
-import type { AreaPlugin } from "rete-area-plugin";
 import type { ButtonControl } from "../nodes/Controls/Button";
 import type { SelectControl } from "../nodes/Controls/Select";
+import { ClassicPreset } from "rete";
 
 export type NodeControl =
   | RunButtonControl
@@ -23,17 +21,16 @@ export type NodeControl =
   | SelectControl<any>;
 
 export interface SerializableControl {
-  toJSON(): ControlJson;
+  toJSON(): ControlJson | undefined;
   setFromJSON({ data }: ControlJson): void;
 }
 
-// 以降のinterfaceは使っていない
-export interface SerializableControlConstructor {
-  fromJSON(json: ControlJson, ctx?: ControlContext): SerializableControl;
-}
-
-export interface ControlContext {
-  history?: HistoryPlugin<Schemes>;
-  area?: AreaPlugin<Schemes, AreaExtra>;
-  onChange?: (v: unknown) => void;
+export abstract class BaseControl
+  extends ClassicPreset.Control
+  implements SerializableControl
+{
+  toJSON(): ControlJson | undefined {
+    return undefined;
+  }
+  setFromJSON({ data }: ControlJson): void {}
 }
