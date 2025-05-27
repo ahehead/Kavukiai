@@ -1,19 +1,18 @@
 import type React from "react"
-import type { SerializableControl } from "renderer/nodeEditor/types";
-import { ClassicPreset } from 'rete';
+import { BaseControl } from "renderer/nodeEditor/types";
 import { Drag } from "rete-react-plugin";
 import type { ControlJson } from "shared/JsonType";
 
 // Run ボタン用コントロール
-export class ButtonControl extends ClassicPreset.Control implements SerializableControl {
+export class ButtonControl extends BaseControl {
   constructor(
     public label: string,
     public onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
   ) {
     super();
   }
-  toJSON(): ControlJson { return { data: { label: this.label } } }
-  setFromJSON({ data }: ControlJson): void {
+  override toJSON(): ControlJson { return { data: { label: this.label } } }
+  override setFromJSON({ data }: ControlJson): void {
     const { label } = data as any;
     this.label = label;
   }

@@ -1,13 +1,13 @@
 import type React from "react"
 import { useEffect, useRef, type JSX } from 'react';
 import type { AreaExtra, Schemes } from "renderer/nodeEditor/types/Schemes";
-import { ClassicPreset } from 'rete';
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { useStopWheel } from "../util/useStopWheel";
+import { BaseControl } from "renderer/nodeEditor/types";
 
 // なんか表示する用の用コントロール
-export class ConsoleControl extends ClassicPreset.Control {
+export class ConsoleControl extends BaseControl {
   value = "";
   constructor(private area: AreaPlugin<Schemes, AreaExtra>) {
     super();

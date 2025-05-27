@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState, type JSX } from "react";
-import { ClassicPreset } from "rete";
 import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { textAreaStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import { useStopWheel } from "../util/useStopWheel";
-import type { SerializableControl } from "renderer/nodeEditor/types";
+import { BaseControl } from "renderer/nodeEditor/types";
 import type { ControlJson } from "shared/JsonType";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
@@ -30,7 +29,7 @@ export class TextAreaAction implements HistoryAction {
 
 
 // 長文プロンプト入力用コントロール
-export class MultiLineControl extends ClassicPreset.Control implements SerializableControl {
+export class MultiLineControl extends BaseControl {
   value: string;
   editable: boolean;
   history?: HistoryPlugin<Schemes>;
@@ -67,7 +66,7 @@ export class MultiLineControl extends ClassicPreset.Control implements Serializa
     return this.value;
   }
 
-  toJSON(): ControlJson {
+  override toJSON(): ControlJson {
     return {
       data: {
         value: this.value,
@@ -75,7 +74,7 @@ export class MultiLineControl extends ClassicPreset.Control implements Serializa
       }
     };
   }
-  setFromJSON({ data }: ControlJson): void {
+  override setFromJSON({ data }: ControlJson): void {
     const { value, editable } = data as any;
     this.value = value;
     this.editable = editable;

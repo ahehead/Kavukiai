@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState, type JSX } from "react";
-import { ClassicPreset } from "rete";
 import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { InputControlLabel, InputControlWrapper, inputValueStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
-import type { SerializableControl } from "renderer/nodeEditor/types";
+import { BaseControl } from "renderer/nodeEditor/types";
 
 // 入力をhistoryプラグインで補足するために、HistoryActionの定義
 class InputValueAction<T extends string | number> implements HistoryAction {
@@ -27,7 +26,7 @@ class InputValueAction<T extends string | number> implements HistoryAction {
 }
 
 // stringまたはnumber入力用コントロール
-export class InputValueControl<T extends string | number> extends ClassicPreset.Control implements SerializableControl {
+export class InputValueControl<T extends string | number> extends BaseControl {
   value: T;
   type: "string" | "number";
   label?: string;
@@ -83,7 +82,7 @@ export class InputValueControl<T extends string | number> extends ClassicPreset.
     return this.value;
   }
 
-  toJSON(): ControlJson {
+  override toJSON(): ControlJson {
     return {
       data: {
         value: this.value,
@@ -94,7 +93,7 @@ export class InputValueControl<T extends string | number> extends ClassicPreset.
       },
     };
   }
-  setFromJSON({ data }: ControlJson): void {
+  override setFromJSON({ data }: ControlJson): void {
     const { value, type, label, editable, step } = data as any;
     this.value = value;
     this.type = type;

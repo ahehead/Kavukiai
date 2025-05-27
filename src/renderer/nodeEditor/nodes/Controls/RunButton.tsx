@@ -1,9 +1,9 @@
 import type React from "react"
-import { ClassicPreset } from 'rete';
+import { BaseControl } from "renderer/nodeEditor/types";
 import { Drag } from "rete-react-plugin";
 
 // Run ボタン用コントロール
-export class RunButtonControl extends ClassicPreset.Control {
+export class RunButtonControl extends BaseControl {
   constructor(
     public label: string,
     public onClick: (e: React.MouseEvent<HTMLButtonElement>) => void

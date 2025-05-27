@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState, type JSX, useCallback } from "react";
-import { ClassicPreset } from "rete";
 import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { InputControlLabel, InputControlWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
-import type { SerializableControl } from "renderer/nodeEditor/types";
+import { BaseControl } from "renderer/nodeEditor/types";
 import { ChevronDown } from "lucide-react";
 
 // HistoryActionの定義
@@ -32,7 +31,7 @@ export interface SelectOption<T> {
   value: T;
 }
 
-export class SelectControl<T> extends ClassicPreset.Control implements SerializableControl {
+export class SelectControl<T> extends BaseControl {
   value: T;
   options: SelectOption<T>[];
   label?: string;
@@ -95,7 +94,7 @@ export class SelectControl<T> extends ClassicPreset.Control implements Serializa
     return this.options.find(opt => opt.value === value)?.label;
   }
 
-  toJSON(): ControlJson {
+  override toJSON(): ControlJson {
     return {
       data: {
         value: this.value,
@@ -106,7 +105,7 @@ export class SelectControl<T> extends ClassicPreset.Control implements Serializa
       },
     };
   }
-  setFromJSON({ data }: ControlJson): void {
+  override setFromJSON({ data }: ControlJson): void {
     const { value, options, label, placeholder, editable } = data as any;
     this.value = value;
     this.options = options;

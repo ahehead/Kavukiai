@@ -1,10 +1,9 @@
 import { useState, type JSX } from "react";
-import { ClassicPreset } from "rete";
 import type { HistoryPlugin } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ResponseInputImage } from "openai/resources/responses/responses.mjs";
-import type { SerializableControl } from "renderer/nodeEditor/types";
+import { BaseControl } from "renderer/nodeEditor/types";
 import type { ControlJson } from "shared/JsonType";
 
 type Role = "user" | "assistant" | "developer";
@@ -15,7 +14,7 @@ export type ChatContext = Array<Message>;
 export type OpenAIInput = ChatContext | string;
 
 // チャット入力用コントロール
-export class ChatContextControl extends ClassicPreset.Control implements SerializableControl {
+export class ChatContextControl extends BaseControl {
   chatContext: ChatContext;
   totalTokens = 0;
   editable: boolean;
@@ -52,8 +51,7 @@ export class ChatContextControl extends ClassicPreset.Control implements Seriali
   getContext(): ChatContext {
     return this.chatContext;
   }
-  toJSON(): ControlJson { return {} }
-  setFromJSON({ data }: ControlJson): void { }
+
 }
 
 

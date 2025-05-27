@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState, type JSX } from "react";
-import { ClassicPreset } from "rete";
 import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { CheckBoxWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import { CheckBoxLabel, checkBoxStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
-import type { SerializableControl } from "renderer/nodeEditor/types";
+import { BaseControl, } from "renderer/nodeEditor/types";
 import type { ControlJson } from "shared/JsonType";
 
 // HistoryActionの定義
@@ -28,7 +27,7 @@ class CheckBoxAction implements HistoryAction {
 }
 
 // boolean入力用コントロール
-export class CheckBoxControl extends ClassicPreset.Control implements SerializableControl {
+export class CheckBoxControl extends BaseControl {
   value: boolean;
   label: string;
   editable: boolean;
@@ -70,7 +69,7 @@ export class CheckBoxControl extends ClassicPreset.Control implements Serializab
   getValue(): boolean {
     return this.value;
   }
-  toJSON(): ControlJson {
+  override toJSON(): ControlJson {
     return {
       data: {
         value: this.value,
@@ -79,7 +78,7 @@ export class CheckBoxControl extends ClassicPreset.Control implements Serializab
       },
     };
   }
-  setFromJSON({ data }: ControlJson): void {
+  override setFromJSON({ data }: ControlJson): void {
     const { value, label, editable } = data as any;
     this.value = value;
     this.label = label;
