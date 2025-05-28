@@ -23,25 +23,23 @@ export class ViewStringNode extends BaseNode<
   ) {
     super('ViewString');
 
-    this.addInputPort({
+    this.addInputPort([{
       key: "exec",
       schemaSpec: "exec",
       tooltip: "実行トリガー",
-    });
-    this.addInputPort({
+    }, {
       key: "inputAny",
       schemaSpec: "any",
       tooltip: "表示するデータ",
-    });
+    }]);
 
-    this.addOutputPort({
+    this.addOutputPort([{
       key: "exec",
       schemaSpec: "exec",
-    });
-    this.addOutputPort({
+    }, {
       key: "outputAny",
       schemaSpec: "any",
-    });
+    }]);
 
     this.addControlByKey({
       key: 'view',
