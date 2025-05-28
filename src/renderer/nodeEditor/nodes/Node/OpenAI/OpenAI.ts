@@ -31,14 +31,15 @@ export class OpenAINode extends SerializableInputsNode<
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("OpenAI");
-    this.addInput("exec", new Input(createSocket("exec"), "Run", true));
-    this.inputs.exec?.addControl(
-      new ButtonControl("Run", async (e) => {
+    this.addInputPort({
+      key: "exec",
+      schemaSpec: "exec",
+      label: "Run",
+      control: new ButtonControl("Run", async (e) => {
         e.stopPropagation();
         this.controlflow.execute(this.id, "exec");
-      })
-    );
-    if (this.inputs.exec) this.inputs.exec.showControl = false;
+      }),
+    });
 
     this.addInput("exec2", new Input(createSocket("exec"), "Stop", true));
     this.inputs.exec2?.addControl(
