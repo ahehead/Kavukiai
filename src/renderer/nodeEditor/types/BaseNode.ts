@@ -2,7 +2,7 @@ import { ClassicPreset } from "rete";
 import { TypedSocket } from "./TypedSocket";
 import type { NodeControl, SerializableControl } from "./NodeControl";
 import type { InputPortJson } from "shared/JsonType";
-import type { AreaExtra, Schemes, NodeSchemaSpec } from ".";
+import type { AreaExtra, Schemes, NodeSchemaSpec, BaseControl } from ".";
 import type { AreaPlugin } from "rete-area-plugin";
 import { TooltipInput } from "./Input";
 const { Output, Input } = ClassicPreset;
@@ -14,6 +14,16 @@ export enum NodeStatus {
   ERROR = "ERROR",
   WARNING = "WARNING",
 }
+
+type InputPortConfig<K> = {
+  key: K;
+  schemaSpec: NodeSchemaSpec;
+  label?: string;
+  tooltip?: string;
+  control?: BaseControl;
+};
+type InputSpec<K> = InputPortConfig<K> | InputPortConfig<K>[];
+
 // ClassicPreset.Nodeを拡張
 export class BaseNode<
   Inputs extends { [key in string]?: TypedSocket },
@@ -29,17 +39,20 @@ export class BaseNode<
     this.status = initialStatus;
   }
 
-  addIn<K extends keyof Inputs, S extends Exclude<Inputs[K], undefined>>({
-    key,
-    schemaSpec,
-    label,
-    tooltip,
-  }: {
-    key: K;
-    schemaSpec: NodeSchemaSpec;
-    label?: string;
-    tooltip?: string;
-  }): void {
+  addInputPort<K extends keyof Inputs>(param: InputSpec<K>) {
+    if (Array.isArray(param)) {
+      for (const p of param) {
+        this._addInputPort(p);
+      }
+    } else {
+      this._addInputPort(param);
+    }
+  }
+
+  _addInputPort<
+    K extends keyof Inputs,
+    S extends Exclude<Inputs[K], undefined>
+  >({ key, schemaSpec, label, tooltip, control }: InputPortConfig<K>): void {
     const input = new TooltipInput<S>(
       new TypedSocket(schemaSpec) as S,
       label,
@@ -47,14 +60,21 @@ export class BaseNode<
       tooltip
     );
     this.addInput(key, input);
+    if (control) {
+      input.addControl(control);
+      input.showControl = false; // デフォルトではコントロールを非表示にする
+    }
   }
 
-  addOut<K extends keyof Outputs, S extends Exclude<Outputs[K], undefined>>({
+  addOutputPort<
+    K extends keyof Outputs,
+    S extends Exclude<Outputs[K], undefined>
+  >({
     key,
     schemaSpec,
     label,
   }: {
-    key: keyof Outputs;
+    key: K;
     schemaSpec: NodeSchemaSpec;
     label?: string;
   }): void {
@@ -64,7 +84,7 @@ export class BaseNode<
     );
   }
 
-  addCon<K extends keyof Controls>({
+  addControlByKey<K extends keyof Controls>({
     key,
     control,
   }: {
