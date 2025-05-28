@@ -1,11 +1,8 @@
-import { ClassicPreset } from "rete";
-import { TypedSocket } from "./TypedSocket";
 import type { NodeControl, SerializableControl } from "./NodeControl";
 import type { InputPortJson } from "shared/JsonType";
-import type { AreaExtra, Schemes, NodeSchemaSpec, BaseControl } from ".";
+import type { AreaExtra, Schemes, TypedSocket } from ".";
 import type { AreaPlugin } from "rete-area-plugin";
-import { TooltipInput } from "./Input";
-const { Output, Input } = ClassicPreset;
+import { NodeIO } from "./Node/NodeIO";
 
 export enum NodeStatus {
   IDLE = "IDLE",
@@ -15,28 +12,11 @@ export enum NodeStatus {
   WARNING = "WARNING",
 }
 
-type InputPortConfig<K> = {
-  key: K;
-  schemaSpec: NodeSchemaSpec;
-  label?: string;
-  tooltip?: string;
-  control?: BaseControl;
-};
-type InputSpec<K> = InputPortConfig<K> | InputPortConfig<K>[];
-
-type OutputPortConfig<K> = {
-  key: K;
-  schemaSpec: NodeSchemaSpec;
-  label?: string;
-};
-type OutputSpec<K> = OutputPortConfig<K> | OutputPortConfig<K>[];
-
-// ClassicPreset.Nodeを拡張
 export class BaseNode<
   Inputs extends { [key in string]?: TypedSocket },
   Outputs extends { [key in string]?: TypedSocket },
   Controls extends { [key in string]?: NodeControl }
-> extends ClassicPreset.Node<Inputs, Outputs, Controls> {
+> extends NodeIO<Inputs, Outputs, Controls> {
   public width?: number;
   public height?: number;
   public status: NodeStatus;
@@ -44,54 +24,6 @@ export class BaseNode<
   constructor(label: string, initialStatus: NodeStatus = NodeStatus.IDLE) {
     super(label);
     this.status = initialStatus;
-  }
-
-  addInputPort<K extends keyof Inputs>(param: InputSpec<K>) {
-    if (Array.isArray(param)) {
-      for (const p of param) {
-        this._addInputPort(p);
-      }
-    } else {
-      this._addInputPort(param);
-    }
-  }
-
-  _addInputPort<
-    K extends keyof Inputs,
-    S extends Exclude<Inputs[K], undefined>
-  >({ key, schemaSpec, label, tooltip, control }: InputPortConfig<K>): void {
-    const input = new TooltipInput<S>(
-      new TypedSocket(schemaSpec) as S,
-      label,
-      false, // 複数接続可能にすると、同じノードから複数つながっているのに重なって見えないということが発生したので、input側を単一接続固定にします検証中
-      tooltip
-    );
-    this.addInput(key, input);
-    if (control) {
-      input.addControl(control);
-      input.showControl = false; // デフォルトではコントロールを非表示にする
-    }
-  }
-
-  /** 単一 or 複数の出力ポート定義を受け取れるように */
-  public addOutputPort<K extends keyof Outputs>(param: OutputSpec<K>): void {
-    if (Array.isArray(param)) {
-      for (const p of param) {
-        this._addOutputPort(p);
-      }
-    } else {
-      this._addOutputPort(param);
-    }
-  }
-
-  private _addOutputPort<
-    K extends keyof Outputs,
-    S extends Exclude<Outputs[K], undefined>
-  >({ key, schemaSpec, label }: OutputPortConfig<K>): void {
-    this.addOutput(
-      key,
-      new Output(new TypedSocket(schemaSpec) as S, label, true)
-    );
   }
 
   addControlByKey<K extends keyof Controls>({
