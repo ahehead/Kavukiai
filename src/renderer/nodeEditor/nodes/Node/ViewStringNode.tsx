@@ -23,27 +23,27 @@ export class ViewStringNode extends BaseNode<
   ) {
     super('ViewString');
 
-    this.addIn({
+    this.addInputPort({
       key: "exec",
       schemaSpec: "exec",
       tooltip: "実行トリガー",
     });
-    this.addIn({
+    this.addInputPort({
       key: "inputAny",
       schemaSpec: "any",
       tooltip: "表示するデータ",
     });
 
-    this.addOut({
+    this.addOutputPort({
       key: "exec",
       schemaSpec: "exec",
     });
-    this.addOut({
+    this.addOutputPort({
       key: "outputAny",
       schemaSpec: "any",
     });
 
-    this.addCon({
+    this.addControlByKey({
       key: 'view',
       control: new MultiLineControl("", { editable: false, })
     });
