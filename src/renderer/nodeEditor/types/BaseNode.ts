@@ -24,6 +24,13 @@ type InputPortConfig<K> = {
 };
 type InputSpec<K> = InputPortConfig<K> | InputPortConfig<K>[];
 
+type OutputPortConfig<K> = {
+  key: K;
+  schemaSpec: NodeSchemaSpec;
+  label?: string;
+};
+type OutputSpec<K> = OutputPortConfig<K> | OutputPortConfig<K>[];
+
 // ClassicPreset.Nodeを拡張
 export class BaseNode<
   Inputs extends { [key in string]?: TypedSocket },
@@ -66,18 +73,21 @@ export class BaseNode<
     }
   }
 
-  addOutputPort<
+  /** 単一 or 複数の出力ポート定義を受け取れるように */
+  public addOutputPort<K extends keyof Outputs>(param: OutputSpec<K>): void {
+    if (Array.isArray(param)) {
+      for (const p of param) {
+        this._addOutputPort(p);
+      }
+    } else {
+      this._addOutputPort(param);
+    }
+  }
+
+  private _addOutputPort<
     K extends keyof Outputs,
     S extends Exclude<Outputs[K], undefined>
-  >({
-    key,
-    schemaSpec,
-    label,
-  }: {
-    key: K;
-    schemaSpec: NodeSchemaSpec;
-    label?: string;
-  }): void {
+  >({ key, schemaSpec, label }: OutputPortConfig<K>): void {
     this.addOutput(
       key,
       new Output(new TypedSocket(schemaSpec) as S, label, true)
