@@ -1,83 +1,45 @@
 import { useEffect, useRef, useState, type JSX } from "react";
-import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
-import type { AreaExtra, Schemes } from "../../types/Schemes";
-import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { textAreaStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import { useStopWheel } from "../util/useStopWheel";
-import { BaseControl } from "renderer/nodeEditor/types";
+import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 import type { ControlJson } from "shared/JsonType";
 
-// 入力をhistoryプラグインで補足するために、HistoryActionの定義
-export class TextAreaAction implements HistoryAction {
-  constructor(
-    private control: MultiLineControl,
-    private area: AreaPlugin<Schemes, AreaExtra>,
-    private prev: string,
-    private next: string
-  ) { }
-  async undo() {
-    this.control.setValue(this.prev);
-    this.area.update("control", this.control.id)
-  }
-  async redo() {
-    this.control.setValue(this.next);
-    this.area.update("control", this.control.id)
-  }
+export interface MultiLineControlParams extends ControlOptions<string> {
+  value: string;
 }
 
-
-
 // 長文プロンプト入力用コントロール
-export class MultiLineControl extends BaseControl {
+export class MultiLineControl extends BaseControl<string, MultiLineControlParams> {
+
   value: string;
-  editable: boolean;
-  history?: HistoryPlugin<Schemes>;
-  area?: AreaPlugin<Schemes, AreaExtra>;
-  onChange?: (v: string) => void;
-
-  constructor(
-    initial = "",
-    options?: {
-      editable?: boolean;
-      history?: HistoryPlugin<Schemes>;
-      area?: AreaPlugin<Schemes, AreaExtra>;
-      onChange?: (v: string) => void;
-    }
-  ) {
-    super();
-    this.value = initial;
-    this.editable = options?.editable ?? true;
-    this.history = options?.history;
-    this.area = options?.area;
-    this.onChange = options?.onChange;
-  }
-
-  setValue(value: string) {
-    this.value = value;
-    this.onChange?.(value);
-  }
-
-  setEditable(editable: boolean) {
-    this.editable = editable;
+  constructor(params: MultiLineControlParams) {
+    super(params);
+    this.value = params.value;
   }
 
   getValue(): string {
     return this.value;
   }
 
+  setValue(value: string) {
+    this.value = value;
+    this.opts.onChange?.(value);
+  }
+
   override toJSON(): ControlJson {
     return {
       data: {
         value: this.value,
-        editable: this.editable,
+        editable: this.opts.editable,
       }
     };
   }
+
   override setFromJSON({ data }: ControlJson): void {
     const { value, editable } = data as any;
     this.value = value;
-    this.editable = editable;
+    this.opts.editable = editable;
   }
 }
 
@@ -98,8 +60,8 @@ export function TextAreaControllView(props: {
 
   const onChangeHandle = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
-    // 履歴登録
-    if (control.history && control.area) control.history.add(new TextAreaAction(control, control.area, uiText, newValue));
+
+    control.addHistory(uiText, newValue);// 履歴登録
     setUiText(newValue);
     control.setValue(newValue);
   }
@@ -109,10 +71,10 @@ export function TextAreaControllView(props: {
     <textarea
       ref={ref}
       value={uiText}
-      readOnly={!control.editable}
+      readOnly={!control.opts.editable}
       onFocus={() => { setPrevText(uiText); }}
-      onChange={control.editable ? onChangeHandle : undefined}
-      className={textAreaStyles({ editable: control.editable })}
+      onChange={control.opts.editable ? onChangeHandle : undefined}
+      className={textAreaStyles({ editable: control.opts.editable })}
       placeholder="..."
       rows={1}
     />
