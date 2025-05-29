@@ -68,7 +68,6 @@ export function SelectControlView<T>(props: {
   const [currentValue, setCurrentValue] = useState<T>(control.getValue());
   const ref = useRef<HTMLDivElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  Drag.useNoDrag(ref);
 
   useEffect(() => {
     setCurrentValue(control.getValue());
@@ -120,50 +119,52 @@ export function SelectControlView<T>(props: {
   const displayLabel = control.getOptionLabel(currentValue) || "Select...";
 
   return (
-    <InputControlWrapper ref={ref}>
-      {control.opts.label && (
-        <InputControlLabel htmlFor={control.id}>
-          {control.opts.label}
-        </InputControlLabel>
-      )}
-      <div className="relative w-full">
-        <button
-          id={control.id}
-          type="button"
-          onClick={toggleDropdown}
-          disabled={!control.opts.editable}
-          className={`w-full px-2 py-1 text-left bg-node-bg border border-input rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 flex justify-between items-center ${control.opts.editable ? 'cursor-default' : ''}`}
-        >
-          <span>
-            {displayLabel}
-          </span>
-          <ChevronDown className={`h-4 w-4 opacity-50 transition-transform ${isOpen ? "rotate-180" : ""}`} />
-        </button>
-        {isOpen && control.opts.editable && (
-          <div
-            ref={dropdownRef}
-            className="absolute z-10 mt-1 w-full bg-node-bg border border-border rounded-md shadow-lg max-h-60 overflow-auto"
-          >
-            <ul className="py-1">
-              {control.options.map((option) => (
-                // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-                <li
-                  key={String(option.value)}
-                  onClick={() => handleSelect(option)}
-                  className="px-3 py-1.5 text-sm cursor-pointer hover:bg-node-accent/50"
-                >
-                  {option.label}
-                </li>
-              ))}
-              {control.options.length === 0 && (
-                <li className="px-3 py-1.5 text-sm text-muted-foreground">
-                  No options
-                </li>
-              )}
-            </ul>
-          </div>
+    <Drag.NoDrag>
+      <InputControlWrapper ref={ref}>
+        {control.opts.label && (
+          <InputControlLabel htmlFor={control.id}>
+            {control.opts.label}
+          </InputControlLabel>
         )}
-      </div>
-    </InputControlWrapper>
+        <div className="relative w-full">
+          <button
+            id={control.id}
+            type="button"
+            onClick={toggleDropdown}
+            disabled={!control.opts.editable}
+            className={`w-full px-2 py-1 text-left bg-node-bg border border-input rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 flex justify-between items-center ${control.opts.editable ? 'cursor-default' : ''}`}
+          >
+            <span>
+              {displayLabel}
+            </span>
+            <ChevronDown className={`h-4 w-4 opacity-50 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+          </button>
+          {isOpen && control.opts.editable && (
+            <div
+              ref={dropdownRef}
+              className="absolute z-10 mt-1 w-full bg-node-bg border border-border rounded-md shadow-lg max-h-60 overflow-auto"
+            >
+              <ul className="py-1">
+                {control.options.map((option) => (
+                  // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+                  <li
+                    key={String(option.value)}
+                    onClick={() => handleSelect(option)}
+                    className="px-3 py-1.5 text-sm cursor-pointer hover:bg-node-accent/50"
+                  >
+                    {option.label}
+                  </li>
+                ))}
+                {control.options.length === 0 && (
+                  <li className="px-3 py-1.5 text-sm text-muted-foreground">
+                    No options
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
+        </div>
+      </InputControlWrapper>
+    </Drag.NoDrag>
   );
 }
