@@ -43,7 +43,7 @@ export class ViewStringNode extends BaseNode<
 
     this.addControlByKey({
       key: 'view',
-      control: new MultiLineControl("", { editable: false, })
+      control: new MultiLineControl({ value: "", editable: false })
     });
   }
 
