@@ -1,22 +1,20 @@
 import type React from "react"
 import { useEffect, useRef, type JSX } from 'react';
-import type { AreaExtra, Schemes } from "renderer/nodeEditor/types/Schemes";
-import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { useStopWheel } from "../util/useStopWheel";
-import { BaseControl } from "renderer/nodeEditor/types";
+import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 
 // なんか表示する用の用コントロール
-export class ConsoleControl extends BaseControl {
+export class ConsoleControl extends BaseControl<any, ControlOptions<any>> {
   value = "";
-  constructor(private area: AreaPlugin<Schemes, AreaExtra>) {
-    super();
-  }
   addValue: (addValue: string) => void = (addValue) => {
     this.value += addValue;
     this.value += "\n-----------\n"
-    this.area.update("control", this.id);
+    this.opts.area?.update("control", this.id);
   };
+  setValue(value: string) {
+    this.value = value
+  }
 }
 
 export function ConsoleControlView(props: { data: ConsoleControl }): JSX.Element {
