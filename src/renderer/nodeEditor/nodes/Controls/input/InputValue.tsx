@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
-import { InputControlLabel, InputControlWrapper, inputValueStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
+import { ControlLabel, ControlWrapper, inputValueStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 
@@ -80,11 +80,11 @@ export function InputValueControlView<T extends string | number>(props: {
 
   return (
     <Drag.NoDrag>
-      <InputControlWrapper>
+      <ControlWrapper cols={1}>
         {control.opts.label && (
-          <InputControlLabel htmlFor={control.id}>
+          <ControlLabel type={"input"} htmlFor={control.id}>
             {control.opts.label}
-          </InputControlLabel>
+          </ControlLabel>
         )}
         <input
           id={control.id}
@@ -97,7 +97,7 @@ export function InputValueControlView<T extends string | number>(props: {
           className={inputValueStyles({ editable: control.opts.editable })}
           placeholder="..."
         />
-      </InputControlWrapper>
+      </ControlWrapper>
     </Drag.NoDrag>
   );
 }
