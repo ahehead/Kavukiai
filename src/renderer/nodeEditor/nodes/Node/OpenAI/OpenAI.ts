@@ -14,7 +14,6 @@ import {
   SerializableInputsNode,
 } from "renderer/nodeEditor/types";
 import { ButtonControl } from "../../Controls/Button";
-const { Output, Input } = ClassicPreset;
 
 // Run ノード
 export class OpenAINode extends SerializableInputsNode<
@@ -22,7 +21,7 @@ export class OpenAINode extends SerializableInputsNode<
   { exec: TypedSocket; message: TypedSocket },
   { console: ConsoleControl }
 > {
-  value = "";
+  value = ""; // apiからの応答を保持する
   port: MessagePort | null = null;
   constructor(
     private area: AreaPlugin<Schemes, AreaExtra>,
@@ -35,18 +34,24 @@ export class OpenAINode extends SerializableInputsNode<
         key: "exec",
         schemaSpec: "exec",
         label: "Run",
-        control: new ButtonControl("Run", async (e) => {
-          e.stopPropagation();
-          this.controlflow.execute(this.id, "exec");
+        control: new ButtonControl({
+          label: "Run",
+          onClick: async (e) => {
+            e.stopPropagation();
+            this.controlflow.execute(this.id, "exec");
+          },
         }),
       },
       {
         key: "exec2",
         schemaSpec: "exec",
         label: "Stop",
-        control: new ButtonControl("Stop", async (e) => {
-          e.stopPropagation();
-          this.controlflow.execute(this.id, "exec2");
+        control: new ButtonControl({
+          label: "Stop",
+          onClick: async (e) => {
+            e.stopPropagation();
+            this.controlflow.execute(this.id, "exec2");
+          },
         }),
       },
       {
@@ -66,7 +71,7 @@ export class OpenAINode extends SerializableInputsNode<
         schemaSpec: "string",
       },
     ]);
-    this.addControl("console", new ConsoleControl(area));
+    this.addControl("console", new ConsoleControl({ area }));
   }
 
   addString(value: string): void {
