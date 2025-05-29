@@ -27,10 +27,10 @@ export class MultiLineStringNode extends BaseNode<
       new Output(createSocket("string"), undefined));
     this.addControl(
       'textArea',
-      new MultiLineControl(initial, {
-        editable: true,
-        history: history,
-        area: area,
+      new MultiLineControl({
+        value: initial,
+        history,
+        area,
         onChange: (v: string) => {
           resetCacheDataflow(dataflow, this.id); // この階層じゃないとなぜかnodeIdがおかしくなる
         }
@@ -46,18 +46,16 @@ export class MultiLineStringNode extends BaseNode<
 
   async execute(): Promise<void> { }
 
-  toJSON(): { data: { value: string, editable: boolean } } {
+  toJSON(): { data: { value: string } } {
     return {
       data: {
         value: this.controls.textArea.getValue() || '',
-        editable: this.controls.textArea.editable,
       }
     };
   }
 
   // JSONから復元
-  fromJSON(data: { value: string, editable: boolean }): void {
+  fromJSON(data: { value: string }): void {
     this.controls.textArea.setValue(data.value);
-    this.controls.textArea.setEditable(data.editable);
   }
 }
