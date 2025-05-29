@@ -9,7 +9,6 @@ import { CheckBoxControl } from "../../Controls/CheckBox";
 import { getInputValue } from "../../util/getInput";
 import {
   type AreaExtra,
-  createSocket,
   type TypedSocket,
   type Schemes,
   SerializableInputsNode,
@@ -39,76 +38,70 @@ export class OpenAIParamNode extends SerializableInputsNode<
     dataflow: DataflowEngine<Schemes>
   ) {
     super("OpenAIParam");
-    this.addOutput(
-      "param",
-      new Output(createSocket("OpenAIParam"), undefined, true)
-    );
-    this.addInput(
-      "openaiInput",
-      new Input(createSocket(["string", "chatContext"]), "input", false)
-    );
-    this.addInput(
-      "model",
-      new Input(createSocket("string"), 'model (Default "gpt-4.1")', false)
-    );
-    this.inputs.model?.addControl(
-      new InputValueControl<string>("gpt-4.1", {
-        type: "string",
+    const opts = {
+      history,
+      area,
+      editable: true,
+      onChange: () => resetCacheDataflow(dataflow, this.id),
+    };
+
+    this.addInputPort([
+      {
+        key: "openaiInput",
+        schemaSpec: ["string", "chatContext"],
+        label: "input",
+      },
+      {
+        key: "model",
+        schemaSpec: "string",
         label: 'model (Default "gpt-4.1")',
-        editable: true,
-        history: history,
-        area: area,
-        onChange: (v: string) => {
-          resetCacheDataflow(dataflow, this.id);
-        },
-      })
-    );
-    this.addInput(
-      "stream",
-      new Input(createSocket("boolean"), "stream", false)
-    );
-    this.inputs.stream?.addControl(
-      new CheckBoxControl(true, {
+        control: new InputValueControl<string>("gpt-4.1", {
+          type: "string",
+          label: 'model (Default "gpt-4.1")',
+          ...opts,
+        }),
+      },
+      {
+        key: "stream",
+        schemaSpec: "boolean",
         label: "stream",
-        editable: true,
-        history: history,
-        area: area,
-        onChange: (v: boolean) => {
-          resetCacheDataflow(dataflow, this.id);
-        },
-      })
-    );
-    this.addInput("store", new Input(createSocket("boolean"), "store", false));
-    this.inputs.store?.addControl(
-      new CheckBoxControl(false, {
+        control: new CheckBoxControl(true, {
+          label: "stream",
+          ...opts,
+        }),
+      },
+      {
+        key: "store",
+        schemaSpec: "boolean",
         label: "store",
-        editable: false,
-        history: history,
-        area: area,
-        onChange: (v: boolean) => {
-          resetCacheDataflow(dataflow, this.id);
-        },
-      })
-    );
-    this.addInput(
-      "serviceTier",
-      new Input(
-        createSocket(type("'auto' | 'default' | 'flex'")),
-        "service_tier",
-        false
-      )
-    );
-    this.inputs.serviceTier?.addControl(
-      new SelectControl<"auto" | "default" | "flex">(
-        "auto",
-        [
-          { label: "auto", value: "auto" },
-          { label: "default", value: "default" },
-          { label: "flex", value: "flex" },
-        ],
-        { label: "service_tier" }
-      )
-    );
+        control: new CheckBoxControl(false, {
+          label: "store",
+          ...opts,
+        }),
+      },
+      {
+        key: "serviceTier",
+        schemaSpec: type("'auto' | 'default' | 'flex'"),
+        label: "service_tier",
+        control: new SelectControl<"auto" | "default" | "flex">(
+          "auto",
+          [
+            { label: "auto", value: "auto" },
+            { label: "default", value: "default" },
+            { label: "flex", value: "flex" },
+          ],
+          {
+            label: "service_tier",
+            ...opts,
+          }
+        ),
+      },
+    ]);
+
+    this.addOutputPort({
+      key: "param",
+      schemaSpec: "OpenAIParam",
+    });
   }
 
   data(inputs: {
