@@ -18,9 +18,11 @@ export class RunNode extends BaseNode<
     this.addOutput('exec', new Output(createSocket("exec"), undefined, true));
     this.addControl(
       'btn',
-      new RunButtonControl('Run', async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation();
-        this.engine.execute(this.id);
+      new RunButtonControl({
+        onClick: async (e: React.MouseEvent<HTMLButtonElement>) => {
+          e.stopPropagation();
+          this.engine.execute(this.id);
+        }
       })
     );
   }
