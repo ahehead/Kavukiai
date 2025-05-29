@@ -8,7 +8,6 @@ import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import {
   type AreaExtra,
-  createSocket,
   type TypedSocket,
   NodeStatus,
   type Schemes,
@@ -31,34 +30,42 @@ export class OpenAINode extends SerializableInputsNode<
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("OpenAI");
-    this.addInputPort({
-      key: "exec",
-      schemaSpec: "exec",
-      label: "Run",
-      control: new ButtonControl("Run", async (e) => {
-        e.stopPropagation();
-        this.controlflow.execute(this.id, "exec");
-      }),
-    });
-
-    this.addInput("exec2", new Input(createSocket("exec"), "Stop", true));
-    this.inputs.exec2?.addControl(
-      new ButtonControl("Stop", async (e) => {
-        e.stopPropagation();
-        this.controlflow.execute(this.id, "exec2");
-      })
-    );
-    if (this.inputs.exec2) this.inputs.exec2.showControl = false;
-
-    this.addInput(
-      "param",
-      new Input(createSocket("OpenAIParam"), undefined, true)
-    );
-    this.addOutput("exec", new Output(createSocket("exec"), "stream", true));
-    this.addOutput(
-      "message",
-      new Output(createSocket("string"), undefined, true)
-    );
+    this.addInputPort([
+      {
+        key: "exec",
+        schemaSpec: "exec",
+        label: "Run",
+        control: new ButtonControl("Run", async (e) => {
+          e.stopPropagation();
+          this.controlflow.execute(this.id, "exec");
+        }),
+      },
+      {
+        key: "exec2",
+        schemaSpec: "exec",
+        label: "Stop",
+        control: new ButtonControl("Stop", async (e) => {
+          e.stopPropagation();
+          this.controlflow.execute(this.id, "exec2");
+        }),
+      },
+      {
+        key: "param",
+        schemaSpec: "OpenAIParam",
+        tooltip: "OpenAI用パラメータ",
+      },
+    ]);
+    this.addOutputPort([
+      {
+        key: "exec",
+        schemaSpec: "exec",
+        label: "stream",
+      },
+      {
+        key: "message",
+        schemaSpec: "string",
+      },
+    ]);
     this.addControl("console", new ConsoleControl(area));
   }
 
