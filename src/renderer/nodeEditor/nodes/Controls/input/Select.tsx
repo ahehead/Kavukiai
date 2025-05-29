@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type JSX, useCallback } from "react";
 import { Drag } from "rete-react-plugin";
-import { InputControlLabel, InputControlWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
+import { ControlLabel, ControlWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 import { ChevronDown } from "lucide-react";
@@ -120,11 +120,11 @@ export function SelectControlView<T>(props: {
 
   return (
     <Drag.NoDrag>
-      <InputControlWrapper ref={ref}>
+      <ControlWrapper cols={2} ref={ref}>
         {control.opts.label && (
-          <InputControlLabel htmlFor={control.id}>
+          <ControlLabel type="checkbox" htmlFor={control.id}>
             {control.opts.label}
-          </InputControlLabel>
+          </ControlLabel>
         )}
         <div className="relative w-full">
           <button
@@ -134,9 +134,7 @@ export function SelectControlView<T>(props: {
             disabled={!control.opts.editable}
             className={`w-full px-2 py-1 text-left bg-node-bg border border-input rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 flex justify-between items-center ${control.opts.editable ? 'cursor-default' : ''}`}
           >
-            <span>
-              {displayLabel}
-            </span>
+            {displayLabel}
             <ChevronDown className={`h-4 w-4 opacity-50 transition-transform ${isOpen ? "rotate-180" : ""}`} />
           </button>
           {isOpen && control.opts.editable && (
@@ -164,7 +162,7 @@ export function SelectControlView<T>(props: {
             </div>
           )}
         </div>
-      </InputControlWrapper>
+      </ControlWrapper>
     </Drag.NoDrag>
   );
 }
