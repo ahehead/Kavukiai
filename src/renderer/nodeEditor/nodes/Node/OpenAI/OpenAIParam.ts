@@ -29,13 +29,13 @@ export class OpenAIParamNode extends SerializableInputsNode<
   { param: TypedSocket },
   object
 > {
-  value = "";
   constructor(
     history: HistoryPlugin<Schemes>,
     area: AreaPlugin<Schemes, AreaExtra>,
     dataflow: DataflowEngine<Schemes>
   ) {
     super("OpenAIParam");
+
     const opts = {
       history,
       area,
