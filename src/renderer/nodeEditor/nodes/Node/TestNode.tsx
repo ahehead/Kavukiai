@@ -21,18 +21,22 @@ export class TestNode extends BaseNode<
     this.addOutput('exec', new Output(createSocket("exec"), undefined, true));
     this.addControl(
       'check',
-      new CheckBoxControl(true, { label: 'CheckBox' })
+      new CheckBoxControl({ value: true, label: 'CheckBox' })
     );
     this.addControl(
       'button',
-      new ButtonControl('Button', async () => { })
+      new ButtonControl({ label: 'Button', onClick: async () => { } })
     );
     this.addControl(
       'select',
-      new SelectControl('option1', [
-        { label: 'Option 1', value: 'option1' },
-        { label: 'Option 2', value: 'option2' },
-      ], { label: 'Select Option' })
+      new SelectControl({
+        value: 'option1',
+        optionsList: [
+          { label: 'Option 1', value: 'option1' },
+          { label: 'Option 2', value: 'option2' },
+        ],
+        label: 'Select Option'
+      })
     );
   }
 
