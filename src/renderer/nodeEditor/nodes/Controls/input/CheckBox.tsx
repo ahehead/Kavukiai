@@ -52,7 +52,6 @@ export function CheckBoxControlView(props: {
 }): JSX.Element {
   const control = props.data;
   const [uiValue, setUiValue] = useState<boolean>(control.getValue());
-  const ref = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setUiValue(control.getValue());
@@ -73,7 +72,6 @@ export function CheckBoxControlView(props: {
         </CheckBoxLabel>
         <input
           id={control.id}
-          ref={ref}
           type="checkbox"
           checked={uiValue}
           disabled={!control.opts.editable}
