@@ -1,26 +1,34 @@
 import type React from "react"
-import { BaseControl } from "renderer/nodeEditor/types";
+import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 import { Drag } from "rete-react-plugin";
 import type { ControlJson } from "shared/JsonType";
 
-// Run ボタン用コントロール
-export class ButtonControl extends BaseControl {
+export interface ButtonControlParams extends ControlOptions<any> {
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+// ボタン用コントロール
+export class ButtonControl extends BaseControl<any, ButtonControlParams> {
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   constructor(
-    public label: string,
-    public onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
+    public params: ButtonControlParams
   ) {
-    super();
+    super(params);
+    this.onClick = params.onClick;
   }
-  override toJSON(): ControlJson { return { data: { label: this.label } } }
+  setValue(value: string): void { }
+
+  override toJSON(): ControlJson { return { data: { label: this.opts.label } } }
+
   override setFromJSON({ data }: ControlJson): void {
     const { label } = data as any;
-    this.label = label;
+    this.opts.label = label;
   }
 }
 
 // カスタム Run ボタンコンポーネント
 export function ButtonControlView(props: { data: ButtonControl }) {
-  return <Button label={props.data.label} onClick={props.data.onClick} />;
+  return <Button label={props.data.opts.label ?? ""} onClick={props.data.onClick} />;
 }
 
 function Button(props: {
