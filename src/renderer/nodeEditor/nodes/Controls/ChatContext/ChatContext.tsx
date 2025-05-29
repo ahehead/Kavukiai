@@ -1,10 +1,6 @@
 import { useState, type JSX } from "react";
-import type { HistoryPlugin } from "rete-history-plugin";
-import type { AreaExtra, Schemes } from "../../../types/Schemes";
-import type { AreaPlugin } from "rete-area-plugin";
 import type { ResponseInputImage } from "openai/resources/responses/responses.mjs";
-import { BaseControl } from "renderer/nodeEditor/types";
-import type { ControlJson } from "shared/JsonType";
+import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 
 type Role = "user" | "assistant" | "developer";
 type Content = string | Array<ResponseInputImage>;
@@ -13,41 +9,30 @@ type Message = { role: Role; content: Content; data: ResponseData };
 export type ChatContext = Array<Message>;
 export type OpenAIInput = ChatContext | string;
 
+export interface ChatContextControlParams extends ControlOptions<ChatContext> {
+  value: ChatContext;
+}
+
 // チャット入力用コントロール
-export class ChatContextControl extends BaseControl {
+export class ChatContextControl extends BaseControl<ChatContext, ChatContextControlParams> {
   chatContext: ChatContext;
   totalTokens = 0;
-  editable: boolean;
-  history?: HistoryPlugin<Schemes>;
-  area?: AreaPlugin<Schemes, AreaExtra>;
-  onChange?: (v: ChatContext) => void;
 
   constructor(
-    initial: ChatContext,
-    options?: {
-      editable?: boolean;
-      history?: HistoryPlugin<Schemes>;
-      area?: AreaPlugin<Schemes, AreaExtra>;
-      onChange?: (v: ChatContext) => void;
-    }
+    options: ChatContextControlParams,
   ) {
     super();
-    this.chatContext = initial;
-    this.editable = options?.editable ?? true;
-    this.history = options?.history;
-    this.area = options?.area;
-    this.onChange = options?.onChange;
+    this.chatContext = options.value ?? [];
+  }
+  setValue(value: ChatContext): void {
+    this.chatContext = value;
+    this.opts.onChange?.(this.getContext());
   }
   setContext(context: ChatContext) {
     this.chatContext = context;
-    this.onChange?.(this.getContext());
+    this.opts.onChange?.(this.getContext());
   }
-  setEditable(editable: boolean, isUpdate = false) {
-    this.editable = editable;
-    if (isUpdate && this.area) {
-      this.area.update("control", this.id);
-    }
-  }
+
   getContext(): ChatContext {
     return this.chatContext;
   }
