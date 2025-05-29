@@ -1,4 +1,3 @@
-import { ClassicPreset } from "rete";
 import { ConsoleControl } from "../../Controls/Console";
 import { electronApiService } from "renderer/features/services/appService";
 import type OpenAI from "openai";

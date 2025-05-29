@@ -13,7 +13,7 @@ export type InputPortConfig<K> = {
   schemaSpec: NodeSchemaSpec;
   label?: string;
   tooltip?: string;
-  control?: BaseControl;
+  control?: BaseControl<any, any>;
 };
 export type InputSpec<K> = InputPortConfig<K> | InputPortConfig<K>[];
 

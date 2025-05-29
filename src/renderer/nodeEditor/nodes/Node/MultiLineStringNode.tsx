@@ -1,5 +1,5 @@
 import { ClassicPreset } from 'rete';
-import { MultiLineControl } from '../Controls/TextArea';
+import { MultiLineControl } from '../Controls/input/TextArea';
 import type { HistoryPlugin } from 'rete-history-plugin';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type { AreaPlugin } from 'rete-area-plugin';

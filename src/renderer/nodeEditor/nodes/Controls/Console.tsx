@@ -10,7 +10,7 @@ export class ConsoleControl extends BaseControl<any, ControlOptions<any>> {
   addValue: (addValue: string) => void = (addValue) => {
     this.value += addValue;
     this.value += "\n-----------\n"
-    this.opts.area?.update("control", this.id);
+    this.opts.area?.update("control", this.id); // 画面更新。しないと一度に表示される
   };
   setValue(value: string) {
     this.value = value

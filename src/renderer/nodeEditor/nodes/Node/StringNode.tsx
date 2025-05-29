@@ -1,6 +1,6 @@
 import { ClassicPreset } from 'rete';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
-import { InputValueControl } from '../Controls/InputValue';
+import { InputValueControl } from '../Controls/input/InputValue';
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';

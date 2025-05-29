@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
 import { textAreaStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
-import { useStopWheel } from "../util/useStopWheel";
+import { useStopWheel } from "../../util/useStopWheel";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 import type { ControlJson } from "shared/JsonType";
 
@@ -52,8 +52,10 @@ export function TextAreaControllView(props: {
   const [uiText, setUiText] = useState(control.getValue());
   const [prevText, setPrevText] = useState(control.getValue());
   const ref = useRef<HTMLTextAreaElement | null>(null);
-  Drag.useNoDrag(ref);
-  useStopWheel(ref);
+
+  Drag.useNoDrag(ref); // areaのdragを無効化
+  useStopWheel(ref); // テキストエリアでのホイール拡大を無効化
+
   useEffect(() => {
     setUiText(control.getValue());
   }, [control.value]);

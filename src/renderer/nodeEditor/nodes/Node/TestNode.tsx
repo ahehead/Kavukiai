@@ -2,9 +2,9 @@ import { ClassicPreset } from 'rete';
 import type { ControlFlowEngine } from 'rete-engine';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import { createSocket, type TypedSocket, type Schemes } from 'renderer/nodeEditor/types';
-import { CheckBoxControl } from '../Controls/CheckBox';
+import { CheckBoxControl } from '../Controls/input/CheckBox';
 import { ButtonControl } from '../Controls/Button';
-import { SelectControl } from '../Controls/Select';
+import { SelectControl } from '../Controls/input/Select';
 const { Output } = ClassicPreset;
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts

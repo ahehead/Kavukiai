@@ -8,7 +8,7 @@ import {
 import {
   MultiLineControl,
   TextAreaControllView,
-} from "../../nodes/Controls/TextArea";
+} from "../../nodes/Controls/input/TextArea";
 import {
   ConsoleControl,
   ConsoleControlView,
@@ -16,7 +16,7 @@ import {
 import {
   InputValueControl,
   InputValueControlView,
-} from "../../nodes/Controls/InputValue";
+} from "../../nodes/Controls/input/InputValue";
 import {
   ChatContextControl,
   ChatContextControlView,
@@ -24,7 +24,7 @@ import {
 import {
   CheckBoxControl,
   CheckBoxControlView,
-} from "../../nodes/Controls/CheckBox";
+} from "../../nodes/Controls/input/CheckBox";
 
 import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
 import {
@@ -34,7 +34,7 @@ import {
 import {
   SelectControl,
   SelectControlView,
-} from "renderer/nodeEditor/nodes/Controls/Select";
+} from "renderer/nodeEditor/nodes/Controls/input/Select";
 import {
   CustomExecSocket,
   CustomSocket,

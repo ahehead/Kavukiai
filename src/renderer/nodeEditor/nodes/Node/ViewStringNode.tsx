@@ -2,7 +2,7 @@
 import type { DataflowEngine } from 'rete-engine';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type { AreaPlugin } from 'rete-area-plugin';
-import { MultiLineControl } from '../Controls/TextArea';
+import { MultiLineControl } from '../Controls/input/TextArea';
 import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
 
 // View String ノード

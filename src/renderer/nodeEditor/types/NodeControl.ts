@@ -1,12 +1,12 @@
 import type { ControlJson } from "shared/JsonType";
 import type { ChatContextControl } from "../nodes/Controls/ChatContext/ChatContext";
-import type { CheckBoxControl } from "../nodes/Controls/CheckBox";
+import type { CheckBoxControl } from "../nodes/Controls/input/CheckBox";
 import type { ConsoleControl } from "../nodes/Controls/Console";
-import type { InputValueControl } from "../nodes/Controls/InputValue";
+import type { InputValueControl } from "../nodes/Controls/input/InputValue";
 import type { RunButtonControl } from "../nodes/Controls/RunButton";
-import type { MultiLineControl } from "../nodes/Controls/TextArea";
+import type { MultiLineControl } from "../nodes/Controls/input/TextArea";
 import type { ButtonControl } from "../nodes/Controls/Button";
-import type { SelectControl } from "../nodes/Controls/Select";
+import type { SelectControl } from "../nodes/Controls/input/Select";
 import { ClassicPreset } from "rete";
 import type { HistoryPlugin } from "rete-history-plugin";
 import type { AreaExtra, Schemes } from ".";

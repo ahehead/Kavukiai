@@ -2,9 +2,9 @@ import type OpenAI from "openai";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
 import type { DataflowEngine } from "rete-engine";
-import { InputValueControl } from "../../Controls/InputValue";
+import { InputValueControl } from "../../Controls/input/InputValue";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
-import { CheckBoxControl } from "../../Controls/CheckBox";
+import { CheckBoxControl } from "../../Controls/input/CheckBox";
 import { getInputValue } from "../../util/getInput";
 import {
   type AreaExtra,
@@ -14,7 +14,7 @@ import {
 } from "renderer/nodeEditor/types";
 import type { OpenAIInput } from "../../Controls/ChatContext/ChatContext";
 import { type } from "arktype";
-import { SelectControl } from "../../Controls/Select";
+import { SelectControl } from "../../Controls/input/Select";
 
 // Run ノード
 export class OpenAIParamNode extends SerializableInputsNode<
