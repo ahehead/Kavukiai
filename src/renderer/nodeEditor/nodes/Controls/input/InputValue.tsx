@@ -60,8 +60,6 @@ export function InputValueControlView<T extends string | number>(props: {
   const control = props.data;
   const [uiValue, setUiValue] = useState<T>(control.getValue());
   const [prevValue, setPrevValue] = useState<T>(control.getValue());
-  const ref = useRef<HTMLInputElement | null>(null);
-  Drag.useNoDrag(ref);
 
   useEffect(() => {
     setUiValue(control.getValue());
@@ -81,24 +79,25 @@ export function InputValueControlView<T extends string | number>(props: {
   };
 
   return (
-    <InputControlWrapper>
-      {control.opts.label && (
-        <InputControlLabel htmlFor={control.id}>
-          {control.opts.label}
-        </InputControlLabel>
-      )}
-      <input
-        id={control.id}
-        ref={ref}
-        type={control.type === "number" ? "number" : "text"}
-        step={control.type === "number" ? control.step : undefined}
-        value={uiValue}
-        readOnly={!control.opts.editable}
-        onFocus={handleFocus}
-        onChange={control.opts.editable ? handleChange : undefined}
-        className={inputValueStyles({ editable: control.opts.editable })}
-        placeholder="..."
-      />
-    </InputControlWrapper>
+    <Drag.NoDrag>
+      <InputControlWrapper>
+        {control.opts.label && (
+          <InputControlLabel htmlFor={control.id}>
+            {control.opts.label}
+          </InputControlLabel>
+        )}
+        <input
+          id={control.id}
+          type={control.type === "number" ? "number" : "text"}
+          step={control.type === "number" ? control.step : undefined}
+          value={uiValue}
+          readOnly={!control.opts.editable}
+          onFocus={handleFocus}
+          onChange={control.opts.editable ? handleChange : undefined}
+          className={inputValueStyles({ editable: control.opts.editable })}
+          placeholder="..."
+        />
+      </InputControlWrapper>
+    </Drag.NoDrag>
   );
 }
