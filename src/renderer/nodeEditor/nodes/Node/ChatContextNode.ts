@@ -32,7 +32,8 @@ export class ChatContextNode extends BaseNode<
     this.addOutput("out", new Output(createSocket("chatContext"), undefined));
     this.addControl(
       "chatContext",
-      new ChatContextControl(initial, {
+      new ChatContextControl({
+        value: initial,
         editable: true,
         history: history,
         area: area,
