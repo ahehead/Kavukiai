@@ -53,8 +53,6 @@ export function CheckBoxControlView(props: {
   const control = props.data;
   const [uiValue, setUiValue] = useState<boolean>(control.getValue());
   const ref = useRef<HTMLInputElement | null>(null);
-  Drag.useNoDrag(ref); // areaのdragを無効化
-
 
   useEffect(() => {
     setUiValue(control.getValue());
@@ -68,21 +66,21 @@ export function CheckBoxControlView(props: {
   };
 
   return (
-    <CheckBoxWrapper>
-      <CheckBoxLabel
-        htmlFor={control.id}
-      >
-        {control.opts.label}
-      </CheckBoxLabel>
-      <input
-        id={control.id}
-        ref={ref}
-        type="checkbox"
-        checked={uiValue}
-        disabled={!control.opts.editable}
-        onChange={control.opts.editable ? handleChange : undefined}
-        className={checkBoxStyles({ editable: control.opts.editable })}
-      />
-    </CheckBoxWrapper>
+    <Drag.NoDrag>
+      <CheckBoxWrapper>
+        <CheckBoxLabel htmlFor={control.id}>
+          {control.opts.label}
+        </CheckBoxLabel>
+        <input
+          id={control.id}
+          ref={ref}
+          type="checkbox"
+          checked={uiValue}
+          disabled={!control.opts.editable}
+          onChange={control.opts.editable ? handleChange : undefined}
+          className={checkBoxStyles({ editable: control.opts.editable })}
+        />
+      </CheckBoxWrapper>
+    </Drag.NoDrag>
   );
 }
