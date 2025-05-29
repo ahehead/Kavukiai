@@ -52,16 +52,16 @@ export class MultiLineControl extends BaseControl {
     this.area = options?.area;
     this.onChange = options?.onChange;
   }
+
   setValue(value: string) {
     this.value = value;
     this.onChange?.(value);
   }
-  setEditable(editable: boolean, isUpdate = false) {
+
+  setEditable(editable: boolean) {
     this.editable = editable;
-    if (isUpdate && this.area) {
-      this.area.update("control", this.id);
-    }
   }
+
   getValue(): string {
     return this.value;
   }
