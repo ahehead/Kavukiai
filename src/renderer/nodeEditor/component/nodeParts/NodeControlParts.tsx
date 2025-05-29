@@ -6,8 +6,8 @@ export const textAreaStyles = cva(
   {
     variants: {
       editable: {
-        true: " ring-1 ring-input focus:ring-2 focus:ring-accent",
-        false: " bg-gray-100 ring-0 focus:ring-0 outline-none focus:outline-none",
+        true: "ring-1 ring-input focus:ring-2 focus:ring-accent",
+        false: "bg-gray-100 ring-0 focus:ring-0 outline-none focus:outline-none",
       },
     },
     defaultVariants: {
@@ -25,12 +25,22 @@ export function InputControlWrapper({ ...props }: React.ComponentProps<"div">) {
 }
 
 export const inputControlLabelStyles = cva(
-  "block w-full truncate text-xs text-gray-500 mb-1.5"
+  "block w-full truncate text-xs  mb-1.5"
 );
 
-export function InputControlLabel({ children, ...props }: React.ComponentProps<"label">) {
-  // biome-ignore lint/a11y/noLabelWithoutControl: <explanation>
-  return <label {...props} className={inputControlLabelStyles()}>{children}</label>;
+export function InputControlLabel({
+  htmlFor,
+  children,
+  ...props }: React.ComponentProps<"label">) {
+  return (
+    <label
+      htmlFor={htmlFor}
+      className={inputControlLabelStyles()}
+      {...props}
+    >
+      {children}
+    </label>
+  );
 }
 
 export const inputValueStyles = cva(
@@ -52,12 +62,18 @@ export function CheckBoxWrapper({ ...props }: React.ComponentProps<"div">) {
 }
 
 
-export function CheckBoxLabel({ ...props }: React.ComponentProps<"label">) {
+export function CheckBoxLabel({
+  htmlFor,
+  children,
+  ...props }: React.ComponentProps<"label">) {
   return (
-    // biome-ignore lint/a11y/noLabelWithoutControl: <explanation>
     <label
-      className="text-xs text-gray-500 mr-2 cursor-pointer select-none"
-      {...props} />
+      htmlFor={htmlFor}
+      className="text-xs mr-2 select-none cursor-pointer"
+      {...props}
+    >
+      {children}
+    </label>
   );
 }
 
