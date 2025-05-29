@@ -87,46 +87,45 @@ export function createCustomNode(
           )}
 
           {/* Inputs */}
-          {inputs.map(([key, input]) =>
-            input ? (
-              <NodePort
-                side="input"
-                isShowAndHaveControl={input.control && input.showControl}
+          {inputs.map(([key, input]) => {
+            if (!input) return null;
+            if (!(input.control && input.showControl)) {
+              return (
+                <NodePort
+                  side="input"
+                  isShowAndHaveControl={input.control && input.showControl}
+                  key={key}
+                  data-testid={`input-${key}`}
+                >
+                  <Presets.classic.RefSocket
+                    name="input-socket"
+                    side="input"
+                    socketKey={key}
+                    nodeId={id}
+                    emit={emit}
+                    payload={input.socket}
+                    data-testid="input-socket"
+                  />
+                  <NodeSocketTypeLabel data-testid="input-type">
+                    {input.socket.name}
+                  </NodeSocketTypeLabel>
+                  <NodeSocketName data-testid="input-title">
+                    {input.label}
+                  </NodeSocketName>
+                </NodePort>
+              )
+            }
+            return (
+              <Presets.classic.RefControl
                 key={key}
-                data-testid={`input-${key}`}
-              >
-                {!(input.control && input.showControl) && (
-                  <>
-                    <Presets.classic.RefSocket
-                      name="input-socket"
-                      side="input"
-                      socketKey={key}
-                      nodeId={id}
-                      emit={emit}
-                      payload={input.socket}
-                      data-testid="input-socket"
-                    />
-                    <NodeSocketTypeLabel data-testid="input-type">
-                      {input.socket.name}
-                    </NodeSocketTypeLabel>
-                    <NodeSocketName data-testid="input-title">
-                      {input.label}
-                    </NodeSocketName>
-                  </>
-                )}
-                {input.control && input.showControl && (
-                  <div className="flex-1">
-                    <Presets.classic.RefControl
-                      key={key}
-                      name="input-control"
-                      emit={emit}
-                      payload={input.control}
-                      data-testid="input-control"
-                    />
-                  </div>
-                )}
-              </NodePort>
-            ) : null
+                name="input-control"
+                emit={emit}
+                payload={input.control}
+                data-testid="input-control"
+              />
+
+            )
+          }
           )}
 
         </NodeSocketsWrapper>
