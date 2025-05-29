@@ -1,4 +1,3 @@
-import { ClassicPreset } from "rete";
 import type OpenAI from "openai";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
@@ -16,7 +15,6 @@ import {
 import type { OpenAIInput } from "../../Controls/ChatContext/ChatContext";
 import { type } from "arktype";
 import { SelectControl } from "../../Controls/Select";
-const { Output, Input } = ClassicPreset;
 
 // Run ノード
 export class OpenAIParamNode extends SerializableInputsNode<
@@ -55,7 +53,8 @@ export class OpenAIParamNode extends SerializableInputsNode<
         key: "model",
         schemaSpec: "string",
         label: 'model (Default "gpt-4.1")',
-        control: new InputValueControl<string>("gpt-4.1", {
+        control: new InputValueControl<string>({
+          value: "gpt-4.1",
           type: "string",
           label: 'model (Default "gpt-4.1")',
           ...opts,
@@ -65,7 +64,8 @@ export class OpenAIParamNode extends SerializableInputsNode<
         key: "stream",
         schemaSpec: "boolean",
         label: "stream",
-        control: new CheckBoxControl(true, {
+        control: new CheckBoxControl({
+          value: true,
           label: "stream",
           ...opts,
         }),
@@ -74,7 +74,8 @@ export class OpenAIParamNode extends SerializableInputsNode<
         key: "store",
         schemaSpec: "boolean",
         label: "store",
-        control: new CheckBoxControl(false, {
+        control: new CheckBoxControl({
+          value: false,
           label: "store",
           ...opts,
         }),
@@ -83,18 +84,16 @@ export class OpenAIParamNode extends SerializableInputsNode<
         key: "serviceTier",
         schemaSpec: type("'auto' | 'default' | 'flex'"),
         label: "service_tier",
-        control: new SelectControl<"auto" | "default" | "flex">(
-          "auto",
-          [
+        control: new SelectControl<"auto" | "default" | "flex">({
+          value: "auto",
+          optionsList: [
             { label: "auto", value: "auto" },
             { label: "default", value: "default" },
             { label: "flex", value: "flex" },
           ],
-          {
-            label: "service_tier",
-            ...opts,
-          }
-        ),
+          label: "service_tier",
+          ...opts,
+        }),
       },
     ]);
 
