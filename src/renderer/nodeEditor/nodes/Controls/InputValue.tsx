@@ -1,81 +1,31 @@
 import { useEffect, useRef, useState, type JSX } from "react";
-import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
-import type { AreaExtra, Schemes } from "../../types/Schemes";
-import type { AreaPlugin } from "rete-area-plugin";
 import { Drag } from "rete-react-plugin";
 import { InputControlLabel, InputControlWrapper, inputValueStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
-import { BaseControl } from "renderer/nodeEditor/types";
+import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 
-// 入力をhistoryプラグインで補足するために、HistoryActionの定義
-class InputValueAction<T extends string | number> implements HistoryAction {
-  constructor(
-    private control: InputValueControl<T>,
-    private area: AreaPlugin<Schemes, AreaExtra>,
-    private prev: T,
-    private next: T
-  ) { }
-  async undo() {
-    this.control.setValue(this.prev);
-    this.area.update("control", this.control.id);
-  }
-  async redo() {
-    this.control.setValue(this.next);
-    this.area.update("control", this.control.id);
-  }
+export interface InputValueActionParams<T> extends ControlOptions<T> {
+  value: T;
+  type?: "string" | "number";
+  step?: number;
 }
 
 // stringまたはnumber入力用コントロール
-export class InputValueControl<T extends string | number> extends BaseControl {
+export class InputValueControl<T extends string | number> extends BaseControl<T, InputValueActionParams<T>> {
   value: T;
   type: "string" | "number";
-  label?: string;
-  editable: boolean;
-  history?: HistoryPlugin<Schemes>;
-  area?: AreaPlugin<Schemes, AreaExtra>;
-  onChange?: (v: T) => void;
   step?: number;
 
-  constructor(
-    initial: T,
-    options?: {
-      type?: "string" | "number";
-      label?: string;
-      editable?: boolean;
-      history?: HistoryPlugin<Schemes>;
-      area?: AreaPlugin<Schemes, AreaExtra>;
-      onChange?: (v: T) => void;
-      step?: number;
-    }
-  ) {
-    super();
-    this.value = initial;
-    this.type = options?.type ?? (typeof initial === "string" ? "string" : "number");
-    this.label = options?.label;
-    this.editable = options?.editable ?? true;
-    this.history = options?.history;
-    this.area = options?.area;
-    this.onChange = options?.onChange;
+  constructor(options: InputValueActionParams<T>) {
+    super(options);
+    this.value = options.value;
+    this.type = options?.type ?? (typeof options.value === "string" ? "string" : "number");
     this.step = options?.step;
   }
 
   setValue(value: T) {
     this.value = value;
-    this.onChange?.(value);
-  }
-
-  setEditable(editable: boolean) {
-    this.editable = editable;
-  }
-
-  setHistory(history: HistoryPlugin<Schemes> | undefined) {
-    this.history = history;
-  }
-  setArea(area: AreaPlugin<Schemes, AreaExtra> | undefined) {
-    this.area = area;
-  }
-  setOnChange(onChange: (v: T) => void) {
-    this.onChange = onChange;
+    this.opts.onChange?.(value);
   }
 
   getValue(): T {
@@ -87,8 +37,8 @@ export class InputValueControl<T extends string | number> extends BaseControl {
       data: {
         value: this.value,
         type: this.type,
-        label: this.label,
-        editable: this.editable,
+        label: this.opts.label,
+        editable: this.opts.editable,
         step: this.step,
       },
     };
@@ -97,8 +47,8 @@ export class InputValueControl<T extends string | number> extends BaseControl {
     const { value, type, label, editable, step } = data as any;
     this.value = value;
     this.type = type;
-    this.label = label;
-    this.editable = editable;
+    this.opts.label = label;
+    this.opts.editable = editable;
     this.step = step;
   }
 }
@@ -121,9 +71,7 @@ export function InputValueControlView<T extends string | number>(props: {
     const rawValue = e.target.value;
     const newValue = (control.type === "number" ? Number.parseFloat(rawValue) : rawValue) as T;
 
-    if (control.history && control.area) {
-      control.history.add(new InputValueAction(control, control.area, uiValue, newValue));
-    }
+    control.addHistory(prevValue, newValue)
     setUiValue(newValue);
     control.setValue(newValue);
   };
@@ -134,9 +82,9 @@ export function InputValueControlView<T extends string | number>(props: {
 
   return (
     <InputControlWrapper>
-      {control.label && (
+      {control.opts.label && (
         <InputControlLabel htmlFor={control.id}>
-          {control.label}
+          {control.opts.label}
         </InputControlLabel>
       )}
       <input
@@ -145,10 +93,10 @@ export function InputValueControlView<T extends string | number>(props: {
         type={control.type === "number" ? "number" : "text"}
         step={control.type === "number" ? control.step : undefined}
         value={uiValue}
-        readOnly={!control.editable}
+        readOnly={!control.opts.editable}
         onFocus={handleFocus}
-        onChange={control.editable ? handleChange : undefined}
-        className={inputValueStyles({ editable: control.editable })}
+        onChange={control.opts.editable ? handleChange : undefined}
+        className={inputValueStyles({ editable: control.opts.editable })}
         placeholder="..."
       />
     </InputControlWrapper>
