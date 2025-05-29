@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, type JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
-import { CheckBoxWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
-import { CheckBoxLabel, checkBoxStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
+
+import { checkBoxStyles, ControlLabel, ControlWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import { BaseControl, type ControlOptions, } from "renderer/nodeEditor/types";
 import type { ControlJson } from "shared/JsonType";
 
@@ -66,10 +66,10 @@ export function CheckBoxControlView(props: {
 
   return (
     <Drag.NoDrag>
-      <CheckBoxWrapper>
-        <CheckBoxLabel htmlFor={control.id}>
+      <ControlWrapper cols={2}>
+        <ControlLabel type={"checkbox"} htmlFor={control.id}>
           {control.opts.label}
-        </CheckBoxLabel>
+        </ControlLabel>
         <input
           id={control.id}
           type="checkbox"
@@ -78,7 +78,7 @@ export function CheckBoxControlView(props: {
           onChange={control.opts.editable ? handleChange : undefined}
           className={checkBoxStyles({ editable: control.opts.editable })}
         />
-      </CheckBoxWrapper>
+      </ControlWrapper>
     </Drag.NoDrag>
   );
 }
