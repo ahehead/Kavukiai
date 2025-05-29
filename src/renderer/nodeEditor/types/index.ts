@@ -5,3 +5,4 @@ export * from "./Schemes";
 export * from "./Connection";
 export * from "./DefaultNodeSchema";
 export * from "./Input";
+export * from "./ValueHistoryAction";
