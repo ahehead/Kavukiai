@@ -1,20 +1,28 @@
 import type React from "react"
-import { BaseControl } from "renderer/nodeEditor/types";
+import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 import { Drag } from "rete-react-plugin";
 
+export interface RunButtonControlOptions extends ControlOptions<any> {
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
 // Run ボタン用コントロール
-export class RunButtonControl extends BaseControl {
-  constructor(
-    public label: string,
-    public onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
-  ) {
-    super();
+export class RunButtonControl extends BaseControl<any, RunButtonControlOptions> {
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  constructor(opts: RunButtonControlOptions) {
+    super(opts);
+    this.onClick = opts.onClick ?? (() => { });
   }
+  setValue(value: string): void { }
 }
 
 // カスタム Run ボタンコンポーネント
 export function RunButtonControlView(props: { data: RunButtonControl }) {
-  return <RunButton label={props.data.label} onClick={props.data.onClick} />;
+  const control = props.data;
+  return <RunButton
+    label={"Run"}
+    onClick={control.onClick}
+  />;
 }
 
 function RunButton(props: {
