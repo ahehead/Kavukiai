@@ -1,4 +1,5 @@
 import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 
 
 export const textAreaStyles = cva(
@@ -16,28 +17,35 @@ export const textAreaStyles = cva(
   }
 );
 
-export function InputControlWrapper({ ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={"grid grid-cols-1 w-full"}
-      {...props} />
-  );
+const wrapperStyles = cva("grid w-full px-3 py-0.5", {
+  variants: {
+    cols: {
+      1: "grid-cols-1 grid-cols-subgrid",
+      2: "grid-cols-2 gap-x-2 items-center"
+    }
+  },
+  defaultVariants: { cols: 1 }
+});
+
+export type ControlWrapperProps = VariantProps<typeof wrapperStyles> & React.ComponentProps<"div">;
+export function ControlWrapper({ cols, className, ...props }: ControlWrapperProps) {
+  return <div className={wrapperStyles({ cols, className })} {...props} />;
 }
 
-export const inputControlLabelStyles = cva(
-  "block w-full truncate text-xs  mb-1.5"
-);
+const labelStyles = cva("cursor-pointer", {
+  variants: {
+    type: {
+      input: "w-full truncate text-xs mb-1.5",
+      checkbox: "text-xs mr-2 select-none"
+    }
+  },
+  defaultVariants: { type: "input" }
+});
 
-export function InputControlLabel({
-  htmlFor,
-  children,
-  ...props }: React.ComponentProps<"label">) {
+export type ControlLabelProps = VariantProps<typeof labelStyles> & React.ComponentProps<"label">;
+export function ControlLabel({ type, htmlFor, className, children, ...props }: ControlLabelProps) {
   return (
-    <label
-      htmlFor={htmlFor}
-      className={inputControlLabelStyles()}
-      {...props}
-    >
+    <label htmlFor={htmlFor} className={labelStyles({ type, className })} {...props}>
       {children}
     </label>
   );
@@ -55,30 +63,8 @@ export const inputValueStyles = cva(
   }
 );
 
-export function CheckBoxWrapper({ ...props }: React.ComponentProps<"div">) {
-  return (
-    <div className="grid auto-cols-max grid-flow-col gap-x-2 items-center" {...props} />
-  );
-}
-
-
-export function CheckBoxLabel({
-  htmlFor,
-  children,
-  ...props }: React.ComponentProps<"label">) {
-  return (
-    <label
-      htmlFor={htmlFor}
-      className="text-xs mr-2 select-none cursor-pointer"
-      {...props}
-    >
-      {children}
-    </label>
-  );
-}
-
 export const checkBoxStyles = cva(
-  ["h-4 w-4 rounded opacity-90 bg-gray-100 border-input accent-gray-100 hover:accent-gray-300"],
+  ["h-4 rounded opacity-90 bg-gray-100 border-input accent-gray-100 hover:accent-gray-300"],
   {
     variants: {
       editable: {
