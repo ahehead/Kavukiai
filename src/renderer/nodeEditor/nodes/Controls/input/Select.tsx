@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type JSX, useCallback } from "react";
 import { Drag } from "rete-react-plugin";
 import { ControlLabel, ControlWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
+import { selectTriggerStyles, selectIconStyles, dropdownStyles, dropdownListStyles, dropdownItemStyles, noOptionsStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 import { ChevronDown } from "lucide-react";
@@ -32,9 +33,6 @@ export class SelectControl<T> extends BaseControl<T, SelectControlParams<T>> {
   setValue(value: T) {
     this.value = value;
     this.opts.onChange?.(value);
-    if (this.opts.area) {
-      this.opts.area.update("control", this.id);
-    }
   }
 
   getOptionLabel(value: T): string | undefined {
@@ -60,32 +58,31 @@ export class SelectControl<T> extends BaseControl<T, SelectControlParams<T>> {
   }
 }
 
-export function SelectControlView<T>(props: {
-  data: SelectControl<T>;
-}): JSX.Element {
+export function SelectControlView<T>(props: { data: SelectControl<T>; }): JSX.Element {
   const control = props.data;
+  const { editable, label } = control.opts;
   const [isOpen, setIsOpen] = useState(false);
-  const [currentValue, setCurrentValue] = useState<T>(control.getValue());
+  const [selectedValue, setSelectedValue] = useState<T>(control.getValue());
   const ref = useRef<HTMLDivElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setCurrentValue(control.getValue());
+    setSelectedValue(control.getValue());
   }, [control.value]);
 
   const handleSelect = (option: SelectOption<T>) => {
-    if (control.opts.editable) {
-      const oldValue = currentValue;
+    if (editable) {
+      const oldValue = selectedValue;
       const newValue = option.value;
       control.addHistory(oldValue, newValue);
       control.setValue(newValue);
-      setCurrentValue(newValue);
+      setSelectedValue(newValue);
       setIsOpen(false);
     }
   };
 
   const toggleDropdown = () => {
-    if (control.opts.editable) {
+    if (editable) {
       setIsOpen(!isOpen);
     }
   };
@@ -116,14 +113,14 @@ export function SelectControlView<T>(props: {
   }, [isOpen, handleClickOutside]);
 
 
-  const displayLabel = control.getOptionLabel(currentValue) || "Select...";
+  const displayLabel = control.getOptionLabel(selectedValue) ?? "Select...";
 
   return (
     <Drag.NoDrag>
       <ControlWrapper cols={2} ref={ref}>
-        {control.opts.label && (
+        {label && (
           <ControlLabel type="checkbox" htmlFor={control.id}>
-            {control.opts.label}
+            {label}
           </ControlLabel>
         )}
         <div className="relative w-full">
@@ -131,30 +128,30 @@ export function SelectControlView<T>(props: {
             id={control.id}
             type="button"
             onClick={toggleDropdown}
-            disabled={!control.opts.editable}
-            className={`w-full px-2 py-1 text-left bg-node-bg border border-input rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 flex justify-between items-center ${control.opts.editable ? 'cursor-default' : ''}`}
+            disabled={!editable}
+            className={selectTriggerStyles({ editable })}
+            aria-haspopup="listbox"
+            aria-expanded={isOpen}
           >
             {displayLabel}
-            <ChevronDown className={`h-4 w-4 opacity-50 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+            <ChevronDown className={selectIconStyles({ open: isOpen })} />
           </button>
-          {isOpen && control.opts.editable && (
-            <div
-              ref={dropdownRef}
-              className="absolute z-10 mt-1 w-full bg-node-bg border border-border rounded-md shadow-lg max-h-60 overflow-auto"
-            >
-              <ul className="py-1">
+          {isOpen && editable && (
+            <div ref={dropdownRef} className={dropdownStyles()}>
+              <ul className={dropdownListStyles()}>
                 {control.options.map((option) => (
                   // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
                   <li
                     key={String(option.value)}
+                    aria-selected={String(option.value) === String(selectedValue)}
                     onClick={() => handleSelect(option)}
-                    className="px-3 py-1.5 text-sm cursor-pointer hover:bg-node-accent/50"
+                    className={dropdownItemStyles()}
                   >
                     {option.label}
                   </li>
                 ))}
                 {control.options.length === 0 && (
-                  <li className="px-3 py-1.5 text-sm text-muted-foreground">
+                  <li className={noOptionsStyles()}>
                     No options
                   </li>
                 )}
