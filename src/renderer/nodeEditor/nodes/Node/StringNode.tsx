@@ -25,7 +25,8 @@ export class StringNode extends BaseNode<
       new Output(createSocket("string"), undefined));
     this.addControl(
       'textInput',
-      new InputValueControl<string>(initial, {
+      new InputValueControl<string>({
+        value: initial,
         type: 'string',
         editable: true,
         history: history,
