@@ -1,6 +1,6 @@
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
-
+import { cn } from "renderer/lib/utils"
 
 export const textAreaStyles = cva(
   ["w-full h-full py-2 px-2.5 resize-none border-none rounded-md"],
@@ -29,7 +29,7 @@ const wrapperStyles = cva("grid items-center w-full px-3 py-[0.2em]", {
 
 export type ControlWrapperProps = VariantProps<typeof wrapperStyles> & React.ComponentProps<"div">;
 export function ControlWrapper({ cols, className, ...props }: ControlWrapperProps) {
-  return <div className={wrapperStyles({ cols, className })} {...props} />;
+  return <div className={cn(wrapperStyles({ cols }), className)} {...props} />;
 }
 
 const labelStyles = cva("cursor-pointer", {
@@ -45,7 +45,7 @@ const labelStyles = cva("cursor-pointer", {
 export type ControlLabelProps = VariantProps<typeof labelStyles> & React.ComponentProps<"label">;
 export function ControlLabel({ type, htmlFor, className, children, ...props }: ControlLabelProps) {
   return (
-    <label htmlFor={htmlFor} className={labelStyles({ type, className })} {...props}>
+    <label htmlFor={htmlFor} className={cn(labelStyles({ type }), className)} {...props}>
       {children}
     </label>
   );
