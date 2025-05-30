@@ -1,4 +1,5 @@
-import type { NodeControl, SerializableControl } from "./NodeControl";
+import type { NodeControl } from "./NodeControl";
+import type { SerializableControl } from "./BaseControl";
 import type { InputPortJson } from "shared/JsonType";
 import type { AreaExtra, Schemes, TypedSocket } from ".";
 import type { AreaPlugin } from "rete-area-plugin";
