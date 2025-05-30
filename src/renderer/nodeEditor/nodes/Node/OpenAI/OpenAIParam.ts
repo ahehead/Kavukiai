@@ -12,20 +12,15 @@ import {
   type Schemes,
   SerializableInputsNode,
 } from "renderer/nodeEditor/types";
-import type { OpenAIInput } from "../../Controls/ChatContext/ChatContext";
 import { type } from "arktype";
 import { SelectControl } from "../../Controls/input/Select";
+import type { ResponseCreateParamsBase } from "openai/resources/responses/responses.mjs";
+
+type OpenAIParamKeys = keyof ResponseCreateParamsBase;
 
 // Run ノード
 export class OpenAIParamNode extends SerializableInputsNode<
-  {
-    openaiInput: TypedSocket;
-    model: TypedSocket;
-    stream: TypedSocket;
-    store: TypedSocket;
-    temperature: TypedSocket;
-    serviceTier: TypedSocket;
-  },
+  Record<OpenAIParamKeys, TypedSocket>,
   { param: TypedSocket },
   object
 > {
@@ -45,18 +40,26 @@ export class OpenAIParamNode extends SerializableInputsNode<
 
     this.addInputPort([
       {
-        key: "openaiInput",
+        key: "input",
         schemaSpec: ["string", "chatContext"],
-        label: "input",
+        label: "input (required)",
+        showControl: true,
+        control: new InputValueControl<string>({
+          value: "hello!",
+          type: "string",
+          label: "input (required)",
+          ...opts,
+        }),
       },
       {
         key: "model",
         schemaSpec: "string",
-        label: 'model (Default "gpt-4.1")',
+        label: "model (required)",
+        showControl: true,
         control: new InputValueControl<string>({
           value: "gpt-4.1",
           type: "string",
-          label: 'model (Default "gpt-4.1")',
+          label: "model (required)",
           ...opts,
         }),
       },
@@ -81,7 +84,18 @@ export class OpenAIParamNode extends SerializableInputsNode<
         }),
       },
       {
-        key: "serviceTier",
+        key: "instructions",
+        schemaSpec: "string",
+        label: "instructions",
+        control: new InputValueControl<string>({
+          value: "",
+          type: "string",
+          label: "instructions",
+          ...opts,
+        }),
+      },
+      {
+        key: "service_tier",
         schemaSpec: type("'auto' | 'default' | 'flex'"),
         label: "service_tier",
         control: new SelectControl<"auto" | "default" | "flex">({
@@ -103,22 +117,19 @@ export class OpenAIParamNode extends SerializableInputsNode<
     });
   }
 
-  data(inputs: {
-    openaiInput?: OpenAIInput[];
-    model?: string[];
-    stream?: boolean[];
-    store?: boolean[];
-    temperature?: number[];
-  }): { param: OpenAI.Responses.ResponseCreateParams } {
-    const stream = getInputValue(this.inputs, "stream", inputs);
-    const store = getInputValue(this.inputs, "store", inputs);
-    const param: OpenAI.Responses.ResponseCreateParams = {
-      model: getInputValue(this.inputs, "model", inputs) ?? "gpt-4.1",
-      input: inputs.openaiInput?.[0] || "",
-      ...(stream !== undefined && { stream }),
-      ...(store !== undefined && { store }),
-    };
-    return { param };
+  data(inputs: Partial<Record<OpenAIParamKeys, unknown[]>>): {
+    param: OpenAI.Responses.ResponseCreateParams;
+  } {
+    const param: Partial<OpenAI.Responses.ResponseCreateParams> = {};
+
+    for (const key of Object.keys(this.inputs) as OpenAIParamKeys[]) {
+      const value = getInputValue(this.inputs, key, inputs);
+      if (value !== undefined) {
+        (param as any)[key] = value;
+      }
+    }
+
+    return { param: param as OpenAI.Responses.ResponseCreateParams };
   }
   async execute(): Promise<void> {}
 }
