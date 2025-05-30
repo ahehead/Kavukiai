@@ -12,6 +12,7 @@ import type {
   TestNode,
   UnknownNode,
   ViewStringNode,
+  BoolNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./BaseNode";
@@ -34,7 +35,8 @@ export type NodeTypes =
   | ViewStringNode
   | OpenAINode
   | OpenAIParamNode
-  | ChatContextNode;
+  | ChatContextNode
+  | BoolNode;
 
 // BaseNodeを埋めたもの
 export interface NodeInterface
