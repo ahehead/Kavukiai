@@ -62,10 +62,10 @@ export function SwitchControlView(props: { data: SwitchControl }): JSX.Element {
 
   return (
     <Drag.NoDrag>
-      <ControlWrapper cols={2}>
-        <ControlLabel type="checkbox" htmlFor={control.id}>
+      <ControlWrapper cols={control.opts.label ? 2 : 1}>
+        {control.opts.label && <ControlLabel type="checkbox" htmlFor={control.id}>
           {control.opts.label}
-        </ControlLabel>
+        </ControlLabel>}
         <div className="grid grid-cols-2 gap-1">
           <div className="flex justify-end">
             <UISwitch
