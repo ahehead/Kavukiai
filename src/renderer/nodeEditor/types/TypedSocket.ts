@@ -10,7 +10,7 @@ export type NodeSchemaSpec =
   | Type; // 既に作られた ArkType スキーマ
 
 /* ---------- ヘルパー ---------- */
-function normalizeSchema(schemaSpec: NodeSchemaSpec): Type {
+export function normalizeSchema(schemaSpec: NodeSchemaSpec): Type {
   if (schemaSpec === "any") return type("unknown");
   if (Array.isArray(schemaSpec)) return unionSchemas(schemaSpec);
   if (typeof schemaSpec === "string") return defaultNodeSchemas[schemaSpec];
