@@ -14,7 +14,7 @@ type ViewSubmenu = { key: string } | false;
  * @returns 開閉制御用のステート＆ハンドラ群
  */
 export function useContextMenu(
-  submenuOpenDelay = 500,
+  submenuOpenDelay = 300,
   closeSubmenuTime = 1000
 ) {
   // どのサブメニューを開いているか保持
