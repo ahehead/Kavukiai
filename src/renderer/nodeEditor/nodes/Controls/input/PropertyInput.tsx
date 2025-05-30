@@ -80,7 +80,7 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
   return (
     <Drag.NoDrag>
       <ControlWrapper className="grid-cols-[minmax(7rem,max-content)_1fr_auto] gap-0.5" ref={ref}>
-
+        {/* TODO labelとデザインのバリアント */}
         {/* 型選択 */}
         <Select
           value={typeStr}
