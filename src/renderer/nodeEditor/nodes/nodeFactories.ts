@@ -48,9 +48,14 @@ export interface MenuItemDefinition {
 
 export const contextMenuStructure: MenuItemDefinition[] = [
   {
-    label: "Input",
-    key: "input-category",
+    label: "Primitive",
+    key: "primitive-category",
     subitems: [
+      {
+        label: "Run",
+        key: "run-node",
+        factoryKey: "Run",
+      },
       {
         label: "String",
         key: "string-node",
@@ -60,11 +65,6 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "Multi Line String",
         key: "multi-line-string-node",
         factoryKey: "MultiLineString",
-      },
-      {
-        label: "Chat Context",
-        key: "chat-context-node",
-        factoryKey: "ChatContext",
       },
     ],
   },
@@ -76,17 +76,6 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "View String",
         key: "view-string-node",
         factoryKey: "ViewString",
-      },
-    ],
-  },
-  {
-    label: "Control",
-    key: "control-category",
-    subitems: [
-      {
-        label: "Run",
-        key: "run-node",
-        factoryKey: "Run",
       },
     ],
   },
@@ -103,6 +92,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "OpenAI Param",
         key: "openai-param-node",
         factoryKey: "OpenAIParam",
+      },
+      {
+        label: "Chat Context",
+        key: "chat-context-node",
+        factoryKey: "ChatContext",
       },
     ],
   },
