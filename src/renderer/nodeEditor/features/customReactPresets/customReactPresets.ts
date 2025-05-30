@@ -48,6 +48,10 @@ import {
   SwitchControl,
   SwitchControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Switch";
+import {
+  PropertyInputControl,
+  PropertyInputControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/PropertyInput";
 
 export function customReactPresets(
   area: AreaPlugin<Schemes, AreaExtra>,
@@ -92,6 +96,9 @@ export function customReactPresets(
         }
         if (data.payload instanceof SwitchControl) {
           return SwitchControlView;
+        }
+        if (data.payload instanceof PropertyInputControl) {
+          return PropertyInputControlView;
         }
         return null;
       },
