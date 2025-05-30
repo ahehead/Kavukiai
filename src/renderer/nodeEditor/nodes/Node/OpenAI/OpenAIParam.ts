@@ -109,6 +109,20 @@ export class OpenAIParamNode extends SerializableInputsNode<
           ...opts,
         }),
       },
+      {
+        key: "truncation",
+        schemaSpec: type("'auto' | 'disabled'"),
+        label: "truncation",
+        control: new SelectControl<"auto" | "disabled">({
+          value: "auto",
+          optionsList: [
+            { label: "auto", value: "auto" },
+            { label: "disabled", value: "disabled" },
+          ],
+          label: "truncation",
+          ...opts,
+        }),
+      },
     ]);
 
     this.addOutputPort({
