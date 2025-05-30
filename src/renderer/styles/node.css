@@ -2,7 +2,6 @@
  *  Node‑Editor Specific Design Tokens
  * =================================================================*/
 
-
 :root {
   --dataSocket: hsl(220, 65%, 55%);
   --execSocket: hsl(22, 87%, 60%);
@@ -15,9 +14,9 @@
 
   --node-header: var(--color-sidebar);
   --node-header-fg: var(--foreground);
-  --hdr-default    : hsl(220 13% 95%);
-  --hdr-string     : hsl(190 70% 93%);
-  --hdr-run        : hsl(35 80% 94%);
+  --hdr-default: hsl(220 13% 95%);
+  --hdr-string: hsl(190 70% 93%);
+  --hdr-run: hsl(35 80% 94%);
 
   --node-label: rgb(231, 237, 246);
   --node-border: var(--border);
@@ -35,13 +34,16 @@
 }
 
 .dark {
-    --node-bg: var(--card);
-    --node-fg: var(--card-foreground);
+  --node-bg: var(--card);
+  --node-fg: var(--card-foreground);
 }
 
 @theme inline {
   --color-node-bg: var(--node-bg);
   --color-node-fg: var(--node-fg);
+
+  --color-node-border: var(--node-border);
+
   --color-node-header: var(--node-header);
   --color-node-header-fg: var(--node-header-fg);
   --color-node-label: var(--node-label);
@@ -49,13 +51,11 @@
   --color-node-outline: var(--node-outline);
   --color-node-selected: var(--node-selected);
 
-  --color-node-success      : var(--node-success);
-  --color-node-error        : var(--node-error);
-  --color-node-warning      : var(--node-warning);
-  --color-node-running      : var(--node-running);
-
+  --color-node-success: var(--node-success);
+  --color-node-error: var(--node-error);
+  --color-node-warning: var(--node-warning);
+  --color-node-running: var(--node-running);
 }
-
 
 @layer utilities {
   .socket-icon-size {
@@ -70,19 +70,23 @@
     width: calc(var(--socket-icon-size) * 1.6);
     height: calc(var(--socket-icon-size) * 1.6);
   }
-
 }
 
 @layer components {
-  .node-title-size { @apply text-sm; }
-  .node-socket-text-size { @apply text-xs; }
+  .node-title-size {
+    @apply text-sm;
+  }
+  .node-socket-text-size {
+    @apply text-xs;
+  }
 
   .pulse-border {
     animation: pulseBorder 1.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   @keyframes pulseBorder {
-    0%, 100% {
+    0%,
+    100% {
       box-shadow: 0 0 0 0 rgba(104, 139, 255, 0.5);
     }
     50% {
