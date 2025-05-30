@@ -4,10 +4,11 @@ import type { ContextMenuRender } from "rete-react-plugin/_types/presets/context
 import { computeMenuPlacement } from "./menuPosition";
 import { useContextMenu } from "./useContextMenu";
 import { MenuContainer, MenuItemContainer, SubmenuWrapper } from "./ContextMenuPresentaitional";
+import { ChevronRight } from 'lucide-react';
 
 export function CustomContextMenu({ element, type, items, searchBar, onHide }: ContextMenuRender["data"]) {
 
-  const menuWidth = 200; // メニューの幅を固定値で設定
+  const menuWidth = 230; // メニューの幅を固定値で設定
   // メニューの配置を計算
   const { x, y, side } = computeMenuPlacement(element, items, menuWidth)
 
@@ -64,7 +65,14 @@ export function Menu({
             onPointerEnter={() => handleEnterMenuItem(item)}
             onPointerLeave={handleLeaveMenuItem}
           >
-            {item.label}
+            <div className="col-start-2 col-span-4">
+              {item.label}
+            </div>
+            {item.subitems && (
+              <div className="flex justify-end items-center mr-1">
+                <ChevronRight className="w-[14px] h-[14px]" strokeWidth={0.8} />
+              </div>
+            )}
             {item.subitems && viewSubmenu && viewSubmenu.key === item.key && (
               <SubmenuWrapper
                 side={side}
