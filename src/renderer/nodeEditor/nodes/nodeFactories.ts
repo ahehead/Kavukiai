@@ -12,7 +12,7 @@ import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
-import { ChatContextNode } from "./Node/ChatContextNode";
+import { ChatContextNode } from "./Node/OpenAI/ChatContextNode";
 
 export type NodeDeps = {
   area: AreaPlugin<Schemes, AreaExtra>;

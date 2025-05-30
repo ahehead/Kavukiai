@@ -1,10 +1,10 @@
 // 新規 Node バレルファイル
 export { TestNode } from "./TestNode";
-export { StringNode } from "./StringNode";
-export { MultiLineStringNode } from "./MultiLineStringNode";
-export { RunNode } from "./RunNode";
+export { StringNode } from "./Primitive/StringNode";
+export { MultiLineStringNode } from "./Primitive/MultiLineStringNode";
+export { RunNode } from "./Primitive/RunNode";
 export { ViewStringNode } from "./ViewStringNode";
 export { OpenAINode } from "./OpenAI/OpenAI";
 export { OpenAIParamNode } from "./OpenAI/OpenAIParam";
-export { ChatContextNode } from "./ChatContextNode";
+export { ChatContextNode } from "./OpenAI/ChatContextNode";
 export { UnknownNode } from "./UnknownNode";

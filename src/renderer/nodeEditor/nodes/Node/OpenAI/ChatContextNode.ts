@@ -3,11 +3,11 @@ import type { HistoryPlugin } from "rete-history-plugin";
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
-import { resetCacheDataflow } from "../util/resetCacheDataflow";
+import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import {
   type ChatContext,
   ChatContextControl,
-} from "../Controls/ChatContext/ChatContext";
+} from "../../Controls/ChatContext/ChatContext";
 import {
   type AreaExtra,
   createSocket,
