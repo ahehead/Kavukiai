@@ -4,6 +4,7 @@ import {
   OpenAIParamNode,
   RunNode,
   StringNode,
+  TestNode,
   UnknownNode,
   ViewStringNode,
 } from "./Node";
@@ -34,6 +35,7 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
     new OpenAIParamNode(history, area, dataflow),
   ChatContext: ({ history, area, dataflow }) =>
     new ChatContextNode([], history, area, dataflow),
+  Test: () => new TestNode(),
 };
 
 export interface MenuItemDefinition {
@@ -49,7 +51,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
     label: "Input",
     key: "input-category",
     subitems: [
-      { label: "String", key: "string-node", factoryKey: "String" },
+      {
+        label: "String",
+        key: "string-node",
+        factoryKey: "String",
+      },
       {
         label: "Multi Line String",
         key: "multi-line-string-node",
@@ -76,17 +82,43 @@ export const contextMenuStructure: MenuItemDefinition[] = [
   {
     label: "Control",
     key: "control-category",
-    subitems: [{ label: "Run", key: "run-node", factoryKey: "Run" }],
+    subitems: [
+      {
+        label: "Run",
+        key: "run-node",
+        factoryKey: "Run",
+      },
+    ],
   },
   {
     label: "OpenAI",
     key: "openai-category",
     subitems: [
-      { label: "OpenAI Node", key: "openai-node", factoryKey: "OpenAI" },
+      {
+        label: "OpenAI Node",
+        key: "openai-node",
+        factoryKey: "OpenAI",
+      },
       {
         label: "OpenAI Param",
         key: "openai-param-node",
         factoryKey: "OpenAIParam",
+      },
+    ],
+  },
+  {
+    label: "Debug",
+    key: "debug-category",
+    subitems: [
+      {
+        label: "Unknown Node",
+        key: "unknown-node",
+        factoryKey: "UnknownNode",
+      },
+      {
+        label: "Test Node",
+        key: "test-node",
+        factoryKey: "Test",
       },
     ],
   },
