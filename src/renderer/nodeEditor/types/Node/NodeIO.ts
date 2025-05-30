@@ -14,6 +14,7 @@ export type InputPortConfig<K> = {
   label?: string;
   tooltip?: string;
   control?: BaseControl<any, any>;
+  showControl?: boolean;
 };
 export type InputSpec<K> = InputPortConfig<K> | InputPortConfig<K>[];
 
@@ -41,7 +42,14 @@ export abstract class NodeIO<
   private _addInputPort<
     K extends keyof Inputs,
     S extends Exclude<Inputs[K], undefined>
-  >({ key, schemaSpec, label, tooltip, control }: InputPortConfig<K>): void {
+  >({
+    key,
+    schemaSpec,
+    label,
+    tooltip,
+    control,
+    showControl,
+  }: InputPortConfig<K>): void {
     const input = new TooltipInput<S>(
       new TypedSocket(schemaSpec) as S,
       label,
@@ -51,7 +59,7 @@ export abstract class NodeIO<
     this.addInput(key, input);
     if (control) {
       input.addControl(control);
-      input.showControl = false;
+      input.showControl = showControl ?? false;
     }
   }
 
