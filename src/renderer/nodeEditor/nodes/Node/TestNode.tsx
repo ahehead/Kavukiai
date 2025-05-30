@@ -1,15 +1,15 @@
 import { ClassicPreset } from 'rete';
-import type { ControlFlowEngine } from 'rete-engine';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
-import { createSocket, type TypedSocket, type Schemes } from 'renderer/nodeEditor/types';
+import { createSocket, type TypedSocket } from 'renderer/nodeEditor/types';
 import { CheckBoxControl } from '../Controls/input/CheckBox';
 import { ButtonControl } from '../Controls/Button';
 import { SelectControl } from '../Controls/input/Select';
 import { ListControl } from '../Controls/input/List';
+import { SwitchControl } from '../Controls/input/Switch';
 const { Output } = ClassicPreset;
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
-// 型チェック回避用のNode…使うことはない。
+// コントロール等の確認と、型チェック回避用のNode。
 export class TestNode extends BaseNode<
   object,
   { exec: TypedSocket },
@@ -17,12 +17,12 @@ export class TestNode extends BaseNode<
     check: CheckBoxControl,
     button: ButtonControl,
     select: SelectControl<string>,
-    list: ListControl<string>
+    list: ListControl<string>,
+    switch: SwitchControl
+    // コントロールを作った場合まずここに追加
   }
 > {
-  constructor(
-    private engine: ControlFlowEngine<Schemes>
-  ) {
+  constructor() {
     super('Test');
     this.addOutput('exec', new Output(createSocket("exec"), undefined, true));
     this.addControl(
@@ -52,6 +52,12 @@ export class TestNode extends BaseNode<
         editable: true
       })
     );
+    this.addControl(
+      'switch',
+      new SwitchControl({ value: true, label: 'Switch' })
+    );
+
+    // ここに新しいコントロールを追加していく
   }
 
   data(): object { return {} }
