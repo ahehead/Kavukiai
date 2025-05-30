@@ -17,7 +17,7 @@ export const textAreaStyles = cva(
   }
 );
 
-const wrapperStyles = cva("grid items-center w-full px-3 py-0.5", {
+const wrapperStyles = cva("grid items-center w-full px-3 py-[0.2em]", {
   variants: {
     cols: {
       1: "grid-cols-1 grid-cols-subgrid",
@@ -64,7 +64,7 @@ export const inputValueStyles = cva(
 );
 
 export const checkBoxStyles = cva(
-  ["h-4 rounded opacity-90 bg-gray-100 border-input accent-gray-100 hover:accent-gray-300"],
+  ["w-[18px] h-[18px] rounded opacity-90 bg-gray-100 border-input accent-gray-100 hover:accent-gray-300"],
   {
     variants: {
       editable: {
@@ -75,44 +75,3 @@ export const checkBoxStyles = cva(
   }
 );
 
-export const selectTriggerStyles = cva(
-  [
-    "w-full px-2 py-1 text-left bg-node-bg border border-input rounded-md text-sm flex justify-between items-center",
-    "focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-  ],
-  {
-    variants: {
-      editable: {
-        true: "cursor-default",
-        false: "cursor-not-allowed"
-      }
-    },
-    defaultVariants: { editable: true }
-  }
-);
-
-export const selectIconStyles = cva(
-  ["h-4 w-4 opacity-50 transition-transform"],
-  {
-    variants: {
-      open: { true: "rotate-180", false: "" }
-    },
-    defaultVariants: { open: false }
-  }
-);
-
-export const dropdownStyles = cva(
-  ["absolute z-10 mt-1 w-full bg-node-bg rounded-md shadow-lg max-h-60 overflow-auto"]
-);
-
-export const dropdownListStyles = cva([
-  "py-1"
-]);
-
-export const dropdownItemStyles = cva(
-  ["px-3 py-1.5 text-sm cursor-pointer hover:bg-accent/50"]
-);
-
-export const noOptionsStyles = cva(
-  ["px-3 py-1.5 text-sm text-muted-foreground"]
-);
