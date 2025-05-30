@@ -8,6 +8,7 @@ import type { ButtonControl } from "../nodes/Controls/Button";
 import type { SelectControl } from "../nodes/Controls/input/Select";
 import type { ListControl } from "../nodes/Controls/input/List";
 import type { SwitchControl } from "../nodes/Controls/input/Switch";
+import type { PropertyInputControl } from "../nodes/Controls/input/PropertyInput";
 
 export type NodeControl =
   | RunButtonControl
@@ -20,4 +21,5 @@ export type NodeControl =
   | ButtonControl
   | SelectControl<any>
   | ListControl<any>
-  | SwitchControl;
+  | SwitchControl
+  | PropertyInputControl;
