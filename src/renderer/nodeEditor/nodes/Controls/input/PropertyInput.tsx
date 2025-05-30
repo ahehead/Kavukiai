@@ -1,4 +1,3 @@
-// filepath: c:\Users\segawa\ero-chat-hub3\src\renderer\nodeEditor\nodes\Controls\input\PropertyInput.tsx
 import { useState, useRef, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
 import { ControlWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
