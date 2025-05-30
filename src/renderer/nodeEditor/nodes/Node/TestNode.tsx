@@ -1,11 +1,12 @@
 import { ClassicPreset } from 'rete';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
-import { createSocket, type TypedSocket } from 'renderer/nodeEditor/types';
+import { createSocket, normalizeSchema, type TypedSocket } from 'renderer/nodeEditor/types';
 import { CheckBoxControl } from '../Controls/input/CheckBox';
 import { ButtonControl } from '../Controls/Button';
 import { SelectControl } from '../Controls/input/Select';
 import { ListControl } from '../Controls/input/List';
 import { SwitchControl } from '../Controls/input/Switch';
+import { PropertyInputControl } from '../Controls/input/PropertyInput';
 const { Output } = ClassicPreset;
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
@@ -18,7 +19,8 @@ export class TestNode extends BaseNode<
     button: ButtonControl,
     select: SelectControl<string>,
     list: ListControl<string>,
-    switch: SwitchControl
+    switch: SwitchControl,
+    propertyInput: PropertyInputControl
     // コントロールを作った場合まずここに追加
   }
 > {
@@ -55,6 +57,12 @@ export class TestNode extends BaseNode<
     this.addControl(
       'switch',
       new SwitchControl({ value: true, label: 'Switch' })
+    );
+    this.addControl(
+      'propertyInput',
+      new PropertyInputControl({
+        value: { key: 'example', typeStr: 'string', type: normalizeSchema('string') },
+      })
     );
 
     // ここに新しいコントロールを追加していく
