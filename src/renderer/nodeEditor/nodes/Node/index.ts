@@ -7,4 +7,5 @@ export { ViewStringNode } from "./ViewStringNode";
 export { OpenAINode } from "./OpenAI/OpenAI";
 export { OpenAIParamNode } from "./OpenAI/OpenAIParam";
 export { ChatContextNode } from "./OpenAI/ChatContextNode";
+export { BoolNode } from "./Primitive/BoolNode";
 export { UnknownNode } from "./UnknownNode";
