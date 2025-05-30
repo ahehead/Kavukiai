@@ -63,10 +63,11 @@ export function SwitchControlView(props: { data: SwitchControl }): JSX.Element {
   return (
     <Drag.NoDrag>
       <ControlWrapper cols={control.opts.label ? 2 : 1}>
-        {control.opts.label && <ControlLabel type="checkbox" htmlFor={control.id}>
-          {control.opts.label}
-        </ControlLabel>}
-        <div className="grid grid-cols-2 gap-1">
+        {control.opts.label &&
+          <ControlLabel type="checkbox" htmlFor={control.id}>
+            {control.opts.label}
+          </ControlLabel>}
+        <div className="grid grid-cols-2 gap-1 items-center">
           <div className="flex justify-end">
             <UISwitch
               id={control.id}
@@ -75,7 +76,7 @@ export function SwitchControlView(props: { data: SwitchControl }): JSX.Element {
               onCheckedChange={control.opts.editable ? handleChange : undefined}
             />
           </div>
-          <span className="text-sm">{uiValue ? 'true' : 'false'}</span>
+          <div className="text-sm">{uiValue ? 'true' : 'false'}</div>
         </div>
       </ControlWrapper>
     </Drag.NoDrag>
