@@ -44,6 +44,10 @@ import {
   ListControl,
   ListControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/List";
+import {
+  SwitchControl,
+  SwitchControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/Switch";
 
 export function customReactPresets(
   area: AreaPlugin<Schemes, AreaExtra>,
@@ -85,6 +89,9 @@ export function customReactPresets(
         }
         if (data.payload instanceof ListControl) {
           return ListControlView;
+        }
+        if (data.payload instanceof SwitchControl) {
+          return SwitchControlView;
         }
         return null;
       },
