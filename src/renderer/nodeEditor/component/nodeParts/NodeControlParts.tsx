@@ -17,11 +17,11 @@ export const textAreaStyles = cva(
   }
 );
 
-const wrapperStyles = cva("grid w-full px-3 py-0.5", {
+const wrapperStyles = cva("grid items-center w-full px-3 py-0.5", {
   variants: {
     cols: {
       1: "grid-cols-1 grid-cols-subgrid",
-      2: "grid-cols-2 gap-x-2 items-center"
+      2: "grid-cols-2 gap-x-2"
     }
   },
   defaultVariants: { cols: 1 }
