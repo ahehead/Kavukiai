@@ -21,19 +21,21 @@ function unionSchemas(keys: DefaultSchemaKey[]): Type {
   return keys.map((k) => defaultNodeSchemas[k]).reduce((a, b) => a.or(b)); // 可変長 union
 }
 
+function createSchemaLabel(schemaSpec: NodeSchemaSpec): string {
+  return Array.isArray(schemaSpec)
+    ? schemaSpec.join("|")
+    : typeof schemaSpec === "string"
+    ? schemaSpec
+    : "custom";
+}
+
 export class TypedSocket extends ClassicPreset.Socket {
   readonly schema: Type;
   readonly isExec: boolean;
   isConnected = false;
 
   constructor(schemaSpec: NodeSchemaSpec) {
-    const label = Array.isArray(schemaSpec)
-      ? schemaSpec.join("|")
-      : typeof schemaSpec === "string"
-      ? schemaSpec
-      : "custom";
-
-    super(label);
+    super(createSchemaLabel(schemaSpec));
 
     this.schema = normalizeSchema(schemaSpec);
     this.isExec = typeof schemaSpec === "string" && schemaSpec === "exec"; // exec 判定
