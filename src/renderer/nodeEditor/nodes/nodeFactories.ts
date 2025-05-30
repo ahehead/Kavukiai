@@ -7,6 +7,7 @@ import {
   TestNode,
   UnknownNode,
   ViewStringNode,
+  BoolNode,
 } from "./Node";
 import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
@@ -25,6 +26,7 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   UnknownNode: () => new UnknownNode(),
   String: ({ history, area, dataflow }) =>
     new StringNode("", history, area, dataflow),
+  Bool: ({ history, area, dataflow }) => new BoolNode(history, area, dataflow),
   MultiLineString: ({ history, area, dataflow }) =>
     new MultiLineStringNode("", history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
@@ -65,6 +67,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "Multi Line String",
         key: "multi-line-string-node",
         factoryKey: "MultiLineString",
+      },
+      {
+        label: "Bool",
+        key: "bool-node",
+        factoryKey: "Bool",
       },
     ],
   },
