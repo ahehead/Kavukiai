@@ -70,14 +70,16 @@ export function CheckBoxControlView(props: {
         <ControlLabel type={"checkbox"} htmlFor={control.id}>
           {control.opts.label}
         </ControlLabel>
-        <input
-          id={control.id}
-          type="checkbox"
-          checked={uiValue}
-          disabled={!control.opts.editable}
-          onChange={control.opts.editable ? handleChange : undefined}
-          className={checkBoxStyles({ editable: control.opts.editable })}
-        />
+        <div className="flex justify-center">
+          <input
+            id={control.id}
+            type="checkbox"
+            checked={uiValue}
+            disabled={!control.opts.editable}
+            onChange={control.opts.editable ? handleChange : undefined}
+            className={checkBoxStyles({ editable: control.opts.editable })}
+          />
+        </div>
       </ControlWrapper>
     </Drag.NoDrag>
   );
