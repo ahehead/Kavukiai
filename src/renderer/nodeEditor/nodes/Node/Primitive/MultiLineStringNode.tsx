@@ -40,7 +40,7 @@ export class MultiLineStringNode extends BaseNode<
 
   // dataflowで流す
   data(): { out: string } {
-    console.log('data', this.controls.textArea.getValue());
+    //console.log('data', this.controls.textArea.getValue());
     return { out: this.controls.textArea.getValue() || '' };
   }
 
