@@ -1,11 +1,7 @@
 
 import { cva } from "class-variance-authority";
 
-const menuContainer = cva("bg-node-bg shadow-lg text-sm");
-const menuItem = cva(
-  "bg-node-bg hover:bg-accent/60 px-1 relative transition-colors duration-290 delay-50"
-);
-const submenuContainer = cva("absolute top-0");
+const menuContainer = cva("bg-node-bg shadow-lg text-sm grid grid-cols-1 border border-node-border/20 rounded-md");
 
 export function MenuContainer({
   children,
@@ -26,6 +22,9 @@ export function MenuContainer({
     </div>
   );
 }
+const menuItem = cva(
+  "grid grid-cols-6 gap-1 hover:bg-accent/60 px-1 relative transition-colors duration-290 delay-50 py-1.25"
+);
 
 export function MenuItemContainer({
   children,
@@ -41,6 +40,8 @@ export function MenuItemContainer({
     </div>
   );
 }
+
+const submenuContainer = cva("absolute top-0");
 
 export function SubmenuWrapper({
   children,
