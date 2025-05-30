@@ -40,6 +40,10 @@ import {
   CustomSocket,
   createCustomNode,
 } from "../customization";
+import {
+  ListControl,
+  ListControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/List";
 
 export function customReactPresets(
   area: AreaPlugin<Schemes, AreaExtra>,
@@ -78,6 +82,9 @@ export function customReactPresets(
         }
         if (data.payload instanceof SelectControl) {
           return SelectControlView;
+        }
+        if (data.payload instanceof ListControl) {
+          return ListControlView;
         }
         return null;
       },
