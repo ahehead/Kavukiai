@@ -6,3 +6,4 @@ export * from "./Connection";
 export * from "./DefaultNodeSchema";
 export * from "./Input";
 export * from "./ValueHistoryAction";
+export * from "./BaseControl";
