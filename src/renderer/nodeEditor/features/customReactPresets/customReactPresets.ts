@@ -61,7 +61,7 @@ export function customReactPresets(
   return ReactPresets.classic.setup<Schemes, ReactArea2D<Schemes>>({
     customize: {
       socket(data) {
-        if (data.payload.name === "exec") {
+        if (data.payload.isExec) {
           return CustomExecSocket;
         }
         return CustomSocket;
