@@ -78,7 +78,6 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
   return (
     <Drag.NoDrag>
       <div className="grid grid-cols-[minmax(7rem,max-content)_1fr_auto] gap-0.5">
-        {/* TODO labelとデザインのバリアント */}
         {/* 型選択 */}
         <Select
           value={typeStr}
