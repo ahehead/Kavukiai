@@ -70,12 +70,14 @@ export function createCustomNode(
                 key={key}
                 data-testid={`output-${key}`}
               >
-                <NodeSocketName data-testid="output-title">
+                <NodeSocketName isExec={output.socket.isExec} data-testid="output-title">
                   {output.label}
                 </NodeSocketName>
-                <NodeSocketTypeLabel data-testid="output-type">
-                  {output.socket.name}
-                </NodeSocketTypeLabel>
+                {!output.socket.isExec && (
+                  <NodeSocketTypeLabel data-testid="output-type">
+                    {output.socket.name}
+                  </NodeSocketTypeLabel>
+                )}
                 <Presets.classic.RefSocket
                   name="output-socket"
                   side="output"
@@ -112,13 +114,15 @@ export function createCustomNode(
                       payload={input.socket}
                       data-testid="input-socket"
                     />
-                    <NodeSocketTypeLabel data-testid="input-type">
-                      {input.socket.name}
-                    </NodeSocketTypeLabel>
+                    {!input.socket.isExec && (
+                      <NodeSocketTypeLabel data-testid="input-type">
+                        {input.socket.name}
+                      </NodeSocketTypeLabel>
+                    )}
                     {input.tooltip ? (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <NodeSocketName data-testid="input-title">
+                          <NodeSocketName isExec={input.socket.isExec} data-testid="input-title">
                             {input.label}
                           </NodeSocketName>
                         </TooltipTrigger>
@@ -127,7 +131,7 @@ export function createCustomNode(
                         </TooltipContent>
                       </Tooltip>
                     ) : (
-                      <NodeSocketName data-testid="input-title">
+                      <NodeSocketName isExec={input.socket.isExec} data-testid="input-title">
                         {input.label}
                       </NodeSocketName>
                     )}
