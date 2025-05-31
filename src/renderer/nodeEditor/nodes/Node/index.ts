@@ -3,7 +3,7 @@ export { TestNode } from "./TestNode";
 export { StringNode } from "./Primitive/StringNode";
 export { MultiLineStringNode } from "./Primitive/MultiLineStringNode";
 export { RunNode } from "./Primitive/RunNode";
-export { ViewStringNode } from "./ViewStringNode";
+export { InspectorNode } from "./InspectorNode";
 export { OpenAINode } from "./OpenAI/OpenAI";
 export { OpenAIParamNode } from "./OpenAI/OpenAIParam";
 export { ChatContextNode } from "./OpenAI/ChatContextNode";
