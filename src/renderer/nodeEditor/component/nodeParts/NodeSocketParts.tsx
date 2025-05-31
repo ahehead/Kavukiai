@@ -54,10 +54,23 @@ export function NodeInputPort({
     className={cn(nodeInputPortStyles({ cols, showControl }), className)} />;
 }
 
-// ソケットの名前（ラベル）
+const socketNameStyles = cva(
+  ["inline-block align-middle mx-1 min-w-0 truncate"],
+  {
+    variants: {
+      isExec: {
+        true: "font-semibold",
+        false: "",
+      },
+    },
+    defaultVariants: {
+      isExec: false,
+    },
+  }
+);
 
-export function NodeSocketName({ className, ...props }: React.ComponentProps<"div">) {
-  return <div {...props} className={cn("inline-block align-middle mx-1 min-w-0 truncate", className)} />;
+export function NodeSocketName({ isExec, className, ...props }: React.ComponentProps<"div"> & VariantProps<typeof socketNameStyles>) {
+  return <div {...props} className={cn(socketNameStyles({ isExec }), className)} />;
 }
 // ソケットの型表示
 
