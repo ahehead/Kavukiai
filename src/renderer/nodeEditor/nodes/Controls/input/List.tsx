@@ -1,6 +1,5 @@
 import { useEffect, useRef, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
-import { ControlLabel, ControlWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 import { formatValue } from "../../util/formatValue";
@@ -80,23 +79,16 @@ export function ListControlView<T>(props: { data: ListControl<T> }): JSX.Element
 
   return (
     <Drag.NoDrag>
-      <ControlWrapper cols={1}>
-        {control.opts.label && (
-          <ControlLabel type="input" htmlFor={control.id}>
-            {control.opts.label}
-          </ControlLabel>
-        )}
-        <div
-          ref={containerRef}
-          className="w-full max-h-32 overflow-auto border border-input rounded-md bg-node-bg p-2"
-        >
-          {items.map((item, idx) => (
-            <div key={idx} className="text-sm py-0.5 border-b last:border-b-0">
-              {formatValue(item)}
-            </div>
-          ))}
-        </div>
-      </ControlWrapper>
+      <div
+        ref={containerRef}
+        className="w-full max-h-32 overflow-auto border border-input rounded-md bg-node-bg p-2"
+      >
+        {items.map((item, idx) => (
+          <div key={idx} className="text-sm py-0.5 border-b last:border-b-0">
+            {formatValue(item)}
+          </div>
+        ))}
+      </div>
     </Drag.NoDrag>
   );
 }
