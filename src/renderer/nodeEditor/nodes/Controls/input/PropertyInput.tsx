@@ -1,6 +1,5 @@
 import { useState, useRef, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
-import { ControlWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 import { defaultNodeSchemas, type DefaultSchemaKey } from "renderer/nodeEditor/types/DefaultNodeSchema";
@@ -67,7 +66,6 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
   const { editable } = control.opts;
   const [keyStr, setKeyStr] = useState(control.getValue().key);
   const [typeStr, setTypeStr] = useState<DefaultSchemaKey>(control.getValue().typeStr);
-  const ref = useRef<HTMLDivElement | null>(null);
 
   const handleAdd = (): void => {
     const schemaType = normalizeSchema(typeStr);
@@ -79,7 +77,7 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
 
   return (
     <Drag.NoDrag>
-      <ControlWrapper className="grid-cols-[minmax(7rem,max-content)_1fr_auto] gap-0.5" ref={ref}>
+      <div className="grid grid-cols-[minmax(7rem,max-content)_1fr_auto] gap-0.5">
         {/* TODO labelとデザインのバリアント */}
         {/* 型選択 */}
         <Select
@@ -119,7 +117,7 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
         >
           <Plus className="w-4 h-4" />
         </button>
-      </ControlWrapper>
+      </div>
     </Drag.NoDrag>
   );
 }
