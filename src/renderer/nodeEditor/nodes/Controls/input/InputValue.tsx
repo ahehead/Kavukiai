@@ -1,6 +1,6 @@
 import { useEffect, useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
-import { ControlLabel, ControlWrapper, inputValueStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
+import { inputValueStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 
@@ -80,24 +80,17 @@ export function InputValueControlView<T extends string | number>(props: {
 
   return (
     <Drag.NoDrag>
-      <ControlWrapper cols={1}>
-        {control.opts.label && (
-          <ControlLabel type={"input"} htmlFor={control.id}>
-            {control.opts.label}
-          </ControlLabel>
-        )}
-        <input
-          id={control.id}
-          type={control.type === "number" ? "number" : "text"}
-          step={control.type === "number" ? control.step : undefined}
-          value={uiValue}
-          readOnly={!control.opts.editable}
-          onFocus={handleFocus}
-          onChange={control.opts.editable ? handleChange : undefined}
-          className={inputValueStyles({ editable: control.opts.editable })}
-          placeholder="..."
-        />
-      </ControlWrapper>
+      <input
+        id={control.id}
+        type={control.type === "number" ? "number" : "text"}
+        step={control.type === "number" ? control.step : undefined}
+        value={uiValue}
+        readOnly={!control.opts.editable}
+        onFocus={handleFocus}
+        onChange={control.opts.editable ? handleChange : undefined}
+        className={inputValueStyles({ editable: control.opts.editable })}
+        placeholder="..."
+      />
     </Drag.NoDrag>
   );
 }
