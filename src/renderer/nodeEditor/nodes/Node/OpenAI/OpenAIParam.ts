@@ -44,6 +44,8 @@ export class OpenAIParamNode extends SerializableInputsNode<
         schemaSpec: ["string", "chatContext"],
         label: "input (required)",
         showControl: true,
+        tooltip:
+          "OpenAI APIに送るメッセージや、チャットコンテキスト、コンテンツ",
         control: new InputValueControl<string>({
           value: "hello!",
           type: "string",
