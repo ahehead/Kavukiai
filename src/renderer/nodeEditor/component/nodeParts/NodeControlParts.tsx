@@ -1,6 +1,8 @@
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
+import { useRef } from "react";
 import { cn } from "renderer/lib/utils"
+import { Drag } from "rete-react-plugin";
 
 export const textAreaStyles = cva(
   ["w-full h-full py-2 px-2.5 resize-none border-none rounded-md"],
@@ -45,8 +47,11 @@ const labelStyles = cva("cursor-pointer min-w-0 truncate", {
 
 export type ControlLabelProps = VariantProps<typeof labelStyles> & React.ComponentProps<"label">;
 export function ControlLabel({ cols, htmlFor, className, children, ...props }: ControlLabelProps) {
+  const ref = useRef<HTMLLabelElement | null>(null);
+  Drag.useNoDrag(ref); // areaのdragを無効化
   return (
     <label
+      ref={ref}
       htmlFor={htmlFor}
       className={cn(labelStyles({ cols }), className)}
       {...props}>
