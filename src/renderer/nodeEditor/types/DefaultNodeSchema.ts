@@ -19,8 +19,8 @@ export const defaultNodeSchemas = {
   chatContext: type([{ role: "string", content: "string" }]),
   date: type("Date"),
   jsonSchema: type("string"),
-  any: type("unknown"), // ワイルドカード
-  exec: type.unit("'__EXEC__'"), // 制御フロー用ダミー
+  unknown: type("unknown"),
+  exec: type.unit(Symbol("exec")), // 制御フロー用ダミー
 } as const;
 
 export type DefaultSchemaKey = keyof typeof defaultNodeSchemas;
