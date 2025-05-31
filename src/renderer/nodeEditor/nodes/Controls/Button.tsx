@@ -37,14 +37,12 @@ function Button(props: {
 }): React.JSX.Element {
   return (
     <Drag.NoDrag>
-      <div className="px-2">
-        <button
-          className="flex items-center justify-center p-1 overflow-hidden text-sm font-medium w-full rounded-lg border-border border-1 hover:bg-accent/50 text-foreground active:bg-accent/90 bg-node-bg"
-          onClick={props.onClick}
-        >
-          {props.label}
-        </button>
-      </div>
+      <button
+        className="flex items-center justify-center p-1 overflow-hidden text-sm font-medium w-full rounded-lg border-border border-1 hover:bg-accent/50 text-foreground active:bg-accent/90 bg-node-bg"
+        onClick={props.onClick}
+      >
+        {props.label}
+      </button>
     </Drag.NoDrag>
   )
 }
