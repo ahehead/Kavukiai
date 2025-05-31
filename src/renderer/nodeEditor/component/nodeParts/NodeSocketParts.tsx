@@ -56,8 +56,8 @@ export function NodeInputPort({
 
 // ソケットの名前（ラベル）
 
-export function NodeSocketName({ ...props }: React.ComponentProps<"div">) {
-  return <div {...props} className="inline-block align-middle mx-1 min-w-0 truncate" />;
+export function NodeSocketName({ className, ...props }: React.ComponentProps<"div">) {
+  return <div {...props} className={cn("inline-block align-middle mx-1 min-w-0 truncate", className)} />;
 }
 // ソケットの型表示
 
