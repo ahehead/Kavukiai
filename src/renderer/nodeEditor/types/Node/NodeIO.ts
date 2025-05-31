@@ -30,6 +30,10 @@ export abstract class NodeIO<
   Outputs extends { [key in string]?: TypedSocket },
   Controls extends { [key in string]?: NodeControl }
 > extends ClassicPreset.Node<Inputs, Outputs, Controls> {
+  declare inputs: {
+    [key in keyof Inputs]?: TooltipInput<Exclude<Inputs[key], undefined>>;
+  };
+
   /** 単一 or 複数の入力ポート */
   public addInputPort<K extends keyof Inputs>(param: InputSpec<K>): void {
     if (Array.isArray(param)) {
