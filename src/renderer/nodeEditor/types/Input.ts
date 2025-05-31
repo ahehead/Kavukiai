@@ -1,10 +1,12 @@
 import { ClassicPreset } from "rete";
 import type { TypedSocket } from "./TypedSocket";
+import type { NodeControl } from ".";
 
 export class TooltipInput<
   S extends TypedSocket
 > extends ClassicPreset.Input<S> {
   tooltip?: string;
+  override control: NodeControl | null;
 
   constructor(
     socket: S,
@@ -14,6 +16,7 @@ export class TooltipInput<
   ) {
     super(socket, label, multipleConnections);
     this.tooltip = tooltip;
+    this.control = null;
   }
 
   setSocket(socket: S) {
