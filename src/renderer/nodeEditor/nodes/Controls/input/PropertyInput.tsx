@@ -1,4 +1,4 @@
-import { useState, useRef, type JSX } from "react";
+import { useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
