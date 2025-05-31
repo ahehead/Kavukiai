@@ -1,7 +1,7 @@
 import { useEffect, useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
 
-import { checkBoxStyles, ControlLabel, ControlWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
+import { checkBoxStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import { BaseControl, type ControlOptions, } from "renderer/nodeEditor/types";
 import type { ControlJson } from "shared/JsonType";
 
@@ -18,6 +18,7 @@ export class CheckBoxControl extends BaseControl<boolean, CheckBoxControlPrams> 
   ) {
     super(options);
     this.value = options.value;
+    this.opts.cols = 2;
   }
 
   setValue(value: boolean) {
@@ -66,21 +67,16 @@ export function CheckBoxControlView(props: {
 
   return (
     <Drag.NoDrag>
-      <ControlWrapper cols={2}>
-        <ControlLabel type={"checkbox"} htmlFor={control.id}>
-          {control.opts.label}
-        </ControlLabel>
-        <div className="flex justify-center">
-          <input
-            id={control.id}
-            type="checkbox"
-            checked={uiValue}
-            disabled={!control.opts.editable}
-            onChange={control.opts.editable ? handleChange : undefined}
-            className={checkBoxStyles({ editable: control.opts.editable })}
-          />
-        </div>
-      </ControlWrapper>
+      <div className="flex justify-center">
+        <input
+          id={control.id}
+          type="checkbox"
+          checked={uiValue}
+          disabled={!control.opts.editable}
+          onChange={control.opts.editable ? handleChange : undefined}
+          className={checkBoxStyles({ editable: control.opts.editable })}
+        />
+      </div>
     </Drag.NoDrag>
   );
 }
