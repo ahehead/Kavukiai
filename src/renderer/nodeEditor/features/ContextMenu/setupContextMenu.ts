@@ -40,7 +40,7 @@ export function setupContextMenu({
   controlflow,
   history,
 }: ContextMenuDependencies) {
-  const nodeDeps: NodeDeps = { area, dataflow, controlflow, history };
+  const nodeDeps: NodeDeps = { editor, area, dataflow, controlflow, history };
 
   return new ContextMenuPlugin<Schemes>({
     items: (context) => {
