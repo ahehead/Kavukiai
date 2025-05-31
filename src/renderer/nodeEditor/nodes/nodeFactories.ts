@@ -6,16 +6,18 @@ import {
   StringNode,
   TestNode,
   UnknownNode,
-  ViewStringNode,
   BoolNode,
+  InspectorNode,
 } from "./Node";
 import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
 import { ChatContextNode } from "./Node/OpenAI/ChatContextNode";
+import type { NodeEditor } from "rete";
 
 export type NodeDeps = {
+  editor: NodeEditor<Schemes>;
   area: AreaPlugin<Schemes, AreaExtra>;
   dataflow: DataflowEngine<Schemes>;
   controlflow: ControlFlowEngine<Schemes>;
@@ -30,7 +32,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   MultiLineString: ({ history, area, dataflow }) =>
     new MultiLineStringNode("", history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
-  ViewString: ({ dataflow, area }) => new ViewStringNode(dataflow, area),
+  Inspector: ({ editor, dataflow, area }) =>
+    new InspectorNode(editor, dataflow, area),
   OpenAI: ({ area, dataflow, controlflow }) =>
     new OpenAINode(area, dataflow, controlflow),
   OpenAIParam: ({ history, area, dataflow }) =>
@@ -80,9 +83,9 @@ export const contextMenuStructure: MenuItemDefinition[] = [
     key: "output-category",
     subitems: [
       {
-        label: "View String",
-        key: "view-string-node",
-        factoryKey: "ViewString",
+        label: "Inspector",
+        key: "inspector-node",
+        factoryKey: "Inspector",
       },
     ],
   },
