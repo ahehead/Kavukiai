@@ -92,8 +92,8 @@ export async function createNodeEditor(container: HTMLElement) {
   });
   const getZoom = () => currentZoom;
 
-  // コネクションの作成時と削除時に、ソケットの接続状態を更新
-  setupSocketConnectionState(editor, area);
+  // コネクションの作成時と削除時に、ソケットの接続状態とデータフローを更新
+  setupSocketConnectionState(editor, area, dataflow);
 
   // context menuのカスタマイズ
   render.addPreset(customContextMenuPreset());
