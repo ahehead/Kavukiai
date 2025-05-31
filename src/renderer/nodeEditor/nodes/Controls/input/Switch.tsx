@@ -1,7 +1,5 @@
 import { useEffect, useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
-
-import { ControlLabel, ControlWrapper } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
 import { Switch as UISwitch } from "renderer/components/ui/switch";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
@@ -62,23 +60,17 @@ export function SwitchControlView(props: { data: SwitchControl }): JSX.Element {
 
   return (
     <Drag.NoDrag>
-      <ControlWrapper cols={control.opts.label ? 2 : 1}>
-        {control.opts.label &&
-          <ControlLabel type="checkbox" htmlFor={control.id}>
-            {control.opts.label}
-          </ControlLabel>}
-        <div className="grid grid-cols-2 gap-1 items-center">
-          <div className="flex justify-end">
-            <UISwitch
-              id={control.id}
-              checked={uiValue}
-              disabled={!control.opts.editable}
-              onCheckedChange={control.opts.editable ? handleChange : undefined}
-            />
-          </div>
-          <div className="text-sm">{uiValue ? 'true' : 'false'}</div>
+      <div className="grid grid-cols-2 gap-1 items-center">
+        <div className="flex justify-end">
+          <UISwitch
+            id={control.id}
+            checked={uiValue}
+            disabled={!control.opts.editable}
+            onCheckedChange={control.opts.editable ? handleChange : undefined}
+          />
         </div>
-      </ControlWrapper>
+        <div className="text-sm">{uiValue ? 'true' : 'false'}</div>
+      </div>
     </Drag.NoDrag>
   );
 }
