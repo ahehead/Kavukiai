@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+
 import { useEffect, useState, useId } from "react";
 import { useNoticeStore } from "./useNoticeStore";
 import type { Notice } from "./types";
