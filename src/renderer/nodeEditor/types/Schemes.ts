@@ -11,8 +11,8 @@ import type {
   StringNode,
   TestNode,
   UnknownNode,
-  ViewStringNode,
   BoolNode,
+  InspectorNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./BaseNode";
@@ -32,7 +32,7 @@ export type NodeTypes =
   | StringNode
   | RunNode
   | MultiLineStringNode
-  | ViewStringNode
+  | InspectorNode
   | OpenAINode
   | OpenAIParamNode
   | ChatContextNode
