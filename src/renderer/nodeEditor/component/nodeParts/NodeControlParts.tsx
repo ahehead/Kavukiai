@@ -32,20 +32,24 @@ export function ControlWrapper({ cols, className, ...props }: ControlWrapperProp
   return <div className={cn(wrapperStyles({ cols }), className)} {...props} />;
 }
 
-const labelStyles = cva("cursor-pointer", {
+const labelStyles = cva("cursor-pointer min-w-0 truncate", {
   variants: {
-    type: {
-      input: "w-full truncate text-xs mb-1.5",
-      checkbox: "text-xs mr-2 select-none"
+    cols: {
+      0: "",
+      1: "mb-1.5",
+      2: "",
     }
   },
-  defaultVariants: { type: "input" }
+  defaultVariants: { cols: 1 }
 });
 
 export type ControlLabelProps = VariantProps<typeof labelStyles> & React.ComponentProps<"label">;
-export function ControlLabel({ type, htmlFor, className, children, ...props }: ControlLabelProps) {
+export function ControlLabel({ cols, htmlFor, className, children, ...props }: ControlLabelProps) {
   return (
-    <label htmlFor={htmlFor} className={cn(labelStyles({ type }), className)} {...props}>
+    <label
+      htmlFor={htmlFor}
+      className={cn(labelStyles({ cols }), className)}
+      {...props}>
       {children}
     </label>
   );
