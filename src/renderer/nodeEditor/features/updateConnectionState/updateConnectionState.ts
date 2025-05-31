@@ -5,6 +5,8 @@ import {
   canCreateConnection,
   getConnectionPorts,
 } from "../socket_type_restriction/canCreateConnection";
+import type { DataflowEngine } from "rete-engine";
+import { resetCacheDataflow } from "renderer/nodeEditor/nodes/util/resetCacheDataflow";
 
 /**
  * ソケットの接続／切断イベントに応じて
@@ -15,7 +17,8 @@ import {
  */
 export function setupSocketConnectionState(
   editor: NodeEditor<Schemes>,
-  area: AreaPlugin<Schemes, AreaExtra>
+  area: AreaPlugin<Schemes, AreaExtra>,
+  dataflow: DataflowEngine<Schemes>
 ): void {
   // 1. connectioncreate 前のバリデーション
   editor.addPipe((context) => {
@@ -35,13 +38,16 @@ export function setupSocketConnectionState(
       context.type === "connectioncreate" ||
       context.type === "connectioncreated"
     ) {
-      syncSocketState(editor, area, context.data, true);
+      // データキャッシュの廃棄処理
+      resetCacheDataflow(dataflow, context.data.target);
+      syncSocketState(editor, area, context.data, true, dataflow);
     }
     if (
       context.type === "connectionremove" ||
       context.type === "connectionremoved"
     ) {
-      syncSocketState(editor, area, context.data, false);
+      resetCacheDataflow(dataflow, context.data.target);
+      syncSocketState(editor, area, context.data, false, dataflow);
     }
     return context;
   });
@@ -55,7 +61,8 @@ function syncSocketState(
   editor: NodeEditor<Schemes>,
   area: AreaPlugin<Schemes, AreaExtra>,
   data: any,
-  connected: boolean
+  connected: boolean,
+  dataflow: DataflowEngine<Schemes>
 ): void {
   const { output, input } = getConnectionPorts(editor, data);
   if (!output || !input) return;
