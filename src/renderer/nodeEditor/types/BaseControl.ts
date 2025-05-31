@@ -15,6 +15,7 @@ export interface ControlOptions<T> {
   editable?: boolean;
   history?: HistoryPlugin<Schemes>;
   area?: AreaPlugin<Schemes, AreaExtra>;
+  cols?: 0 | 1 | 2;
   onChange?: (v: T) => void;
 }
 
@@ -22,11 +23,11 @@ export abstract class BaseControl<T, O extends ControlOptions<T>>
   extends ClassicPreset.Control
   implements SerializableControl
 {
-  opts: ControlOptions<T>;
+  opts: ControlOptions<T> & { cols: 0 | 1 | 2; editable: boolean };
 
   constructor(opts: O = {} as O) {
     super();
-    this.opts = { editable: true, ...opts };
+    this.opts = { editable: true, cols: 1, ...opts };
   }
 
   abstract setValue(value: any): void;
