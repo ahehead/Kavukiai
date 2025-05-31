@@ -62,12 +62,10 @@ export function TextAreaControllView(props: {
 
   const onChangeHandle = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
-
     control.addHistory(uiText, newValue);// 履歴登録
     setUiText(newValue);
     control.setValue(newValue);
   }
-
 
   return (
     <textarea
