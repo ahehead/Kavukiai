@@ -9,6 +9,8 @@ import { useRef } from 'react'
 import { useNodeResize } from '../../hooks/useNodeResize'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { ControlLabel } from 'renderer/nodeEditor/component/nodeParts/NodeControlParts'
+import Markdown from 'react-markdown';
+import { Tooltip, TooltipTrigger, TooltipContent } from 'renderer/components/ui/tooltip';
 
 type Props<S extends Schemes> = {
   data: NodeInterface
@@ -113,9 +115,22 @@ export function createCustomNode(
                     <NodeSocketTypeLabel data-testid="input-type">
                       {input.socket.name}
                     </NodeSocketTypeLabel>
-                    <NodeSocketName data-testid="input-title">
-                      {input.label}
-                    </NodeSocketName>
+                    {input.tooltip ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <NodeSocketName data-testid="input-title">
+                            {input.label}
+                          </NodeSocketName>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <Markdown>{input.tooltip}</Markdown>
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <NodeSocketName data-testid="input-title">
+                        {input.label}
+                      </NodeSocketName>
+                    )}
                   </>
                 )
                 }
@@ -126,9 +141,21 @@ export function createCustomNode(
                         cols={input.control.opts.cols}
                         htmlFor={input.control.id}
                       >
-                        {input.control.opts.label}
+                        {input.tooltip ? (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className='inline-block'>{input.control.opts.label}</div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <Markdown>{input.tooltip}</Markdown>
+                            </TooltipContent>
+                          </Tooltip>
+                        ) : (
+                          <div>{input.control.opts.label}</div>
+                        )}
                       </ControlLabel>
-                    )}
+                    )
+                    }
                     <Presets.classic.RefControl
                       key={key}
                       name="input-control"
