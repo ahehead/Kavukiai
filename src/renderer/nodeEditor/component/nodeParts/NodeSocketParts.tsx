@@ -12,33 +12,46 @@ export function NodeSocketsWrapper({ ...props }: React.ComponentProps<"div">) {
   );
 }
 
+const outputPortStyles = cva(
+  ["flex w-full node-socket-text-size tracking-tight justify-end"]
+);
 
-const nodePortStyles = cva(
-  ["flex w-full node-socket-text-size tracking-tight"],
+export function NodeOutputPort({ className, ...props }: React.ComponentProps<"div">) {
+  return <div {...props}
+    className={cn(outputPortStyles(), className)} />;
+}
+
+const nodeInputPortStyles = cva(
+  ["node-socket-text-size tracking-tight"],
   {
     variants: {
-      side: {
-        input: "justify-start",
-        output: "justify-end",
+      showControl: {
+        true: "grid items-center w-full px-3 py-[0.2em]",
+        false: "flex w-full justify-start flex-row items-center"
       },
-      isShowAndHaveControl: {
-        true: "h-full px-2",
-        false: "flex-row items-center"
+      cols: {
+        0: "",
+        1: "",
+        2: ""
       }
     },
+    compoundVariants: [
+      { showControl: true, cols: 1, class: "grid-cols-1 grid-cols-subgrid" },
+      { showControl: true, cols: 2, class: "grid-cols-2 gap-x-2" },
+    ],
     defaultVariants: {
-      side: "input",
-      isShowAndHaveControl: false,
+      showControl: false,
+      cols: 0,
     },
   }
 );
 // input/outputのポート
 
-export function NodePort({
-  side, isShowAndHaveControl: isShowControl, ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof nodePortStyles>) {
+export function NodeInputPort({
+  cols, showControl, className, ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof nodeInputPortStyles>) {
   return <div {...props}
-    className={nodePortStyles({ side, isShowAndHaveControl: isShowControl })} />;
+    className={cn(nodeInputPortStyles({ cols, showControl }), className)} />;
 }
 
 // ソケットの名前（ラベル）
