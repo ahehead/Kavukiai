@@ -88,7 +88,7 @@ export class InspectorNode extends BaseNode<
   }
 
   disconnected(): void {
-    console.log("InspectorNode disconnected");
+    //console.log("InspectorNode disconnected");
     // デフォルトの型に戻す
     this.inputs.inputAny?.socket.setSchema(type("unknown"));
     this.outputs.outputAny?.socket.setSchema(type("unknown"));
