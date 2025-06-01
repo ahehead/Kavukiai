@@ -5,7 +5,7 @@
 @import "./styles/zindex.css";
 
 @custom-variant dark (&:is(.dark *));
-
+@plugin "@tailwindcss/typography";
 
 :root {
   --spacing: 0.25rem;
@@ -66,7 +66,6 @@
   --destructive: rgb(185 18 49);
   --destructive-foreground: oklch(0.637 0.237 25.331);
 }
-
 
 @theme inline {
   --color-titlebar: var(--titlebar);
@@ -184,6 +183,24 @@
   .dialog-animate-up {
     animation: modal-slide-up 310ms ease-out forwards;
   }
+}
+
+/* Tooltip用カスタムスクロールバー */
+.tooltip-scrollbar {
+  /* Firefox 用 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(89, 140, 157, 0.5) rgba(86, 86, 86, 0.1);
+}
+.tooltip-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.tooltip-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.5);
+  border-radius: 3px;
+}
+.tooltip-scrollbar::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 dialog::backdrop {
