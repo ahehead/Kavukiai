@@ -34,7 +34,9 @@ ${schema.toString()}
       return this.isExec && other.isExec;
     }
     // それ以外は ArkType の extends 判定
-    return this.schema.extends(other.schema);
+    return (
+      this.schema.extends(other.schema) || other.schema.extends(this.schema)
+    );
   }
 
   setSchema(schema: Type): void {
