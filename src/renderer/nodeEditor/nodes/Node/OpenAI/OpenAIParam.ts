@@ -11,10 +11,12 @@ import {
   type TypedSocket,
   type Schemes,
   SerializableInputsNode,
+  type TooltipInput,
 } from "renderer/nodeEditor/types";
-import { type } from "arktype";
+import { type, type Type } from "arktype";
 import { SelectControl } from "../../Controls/input/Select";
 import type { ResponseCreateParamsBase } from "openai/resources/responses/responses.mjs";
+import { createParamsSchemas } from "renderer/nodeEditor/types/Schemas/createParams";
 
 type OpenAIParamKeys = keyof ResponseCreateParamsBase;
 
@@ -25,9 +27,9 @@ export class OpenAIParamNode extends SerializableInputsNode<
   object
 > {
   constructor(
-    history: HistoryPlugin<Schemes>,
-    area: AreaPlugin<Schemes, AreaExtra>,
-    dataflow: DataflowEngine<Schemes>
+    private history: HistoryPlugin<Schemes>,
+    private area: AreaPlugin<Schemes, AreaExtra>,
+    private dataflow: DataflowEngine<Schemes>
   ) {
     super("OpenAIParam");
 
@@ -41,9 +43,10 @@ export class OpenAIParamNode extends SerializableInputsNode<
     this.addInputPort([
       {
         key: "input",
-        schemaSpec: ["string", "chatContext"],
+        schemaSpec: createParamsSchemas.Input,
         label: "input (required)",
         showControl: true,
+        require: true,
         tooltip:
           "OpenAI APIに送るメッセージや、チャットコンテキスト、コンテンツ",
         control: new InputValueControl<string>({
@@ -55,9 +58,10 @@ export class OpenAIParamNode extends SerializableInputsNode<
       },
       {
         key: "model",
-        schemaSpec: "string",
+        schemaSpec: createParamsSchemas.Model,
         label: "model (required)",
         showControl: true,
+        require: true,
         tooltip:
           "使用するモデルID。詳しくは[モデルガイド](https://platform.openai.com/docs/models)参照。",
         control: new InputValueControl<string>({
@@ -69,7 +73,7 @@ export class OpenAIParamNode extends SerializableInputsNode<
       },
       {
         key: "stream",
-        schemaSpec: "boolean",
+        schemaSpec: createParamsSchemas.Stream,
         label: "stream",
         tooltip: "応答を**ストリーム**形式で受け取るか。",
         control: new CheckBoxControl({
@@ -80,7 +84,7 @@ export class OpenAIParamNode extends SerializableInputsNode<
       },
       {
         key: "store",
-        schemaSpec: "boolean",
+        schemaSpec: createParamsSchemas.Store,
         label: "store",
         tooltip: "会話履歴をOpenAIに**保存**して運用するか。",
         control: new CheckBoxControl({
@@ -91,7 +95,7 @@ export class OpenAIParamNode extends SerializableInputsNode<
       },
       {
         key: "instructions",
-        schemaSpec: "string",
+        schemaSpec: createParamsSchemas.Instructions,
         label: "instructions",
         tooltip: "最初に挿入する**システムメッセージ**。",
         control: new InputValueControl<string>({
@@ -103,7 +107,7 @@ export class OpenAIParamNode extends SerializableInputsNode<
       },
       {
         key: "service_tier",
-        schemaSpec: type("'auto' | 'default' | 'flex'"),
+        schemaSpec: createParamsSchemas.ServiceTier,
         label: "service_tier",
         tooltip: "処理レイテンシの**ティア** (auto/default/flex)。",
         control: new SelectControl<"auto" | "default" | "flex">({
@@ -119,7 +123,7 @@ export class OpenAIParamNode extends SerializableInputsNode<
       },
       {
         key: "truncation",
-        schemaSpec: type("'auto' | 'disabled' | null"),
+        schemaSpec: createParamsSchemas.Truncation,
         label: "truncation",
         tooltip: "コンテキスト過剰時の**コンテキスト切り詰め戦略**。",
         control: new SelectControl<"auto" | "disabled">({
@@ -135,80 +139,80 @@ export class OpenAIParamNode extends SerializableInputsNode<
       // 追加のOpenAIパラメータ
       {
         key: "background",
-        schemaSpec: ["boolean", "null"],
+        schemaSpec: createParamsSchemas.Background,
         label: "background",
         tooltip: "モデルの応答を**バックグラウンド**で実行するかどうか。",
       },
       {
         key: "include",
-        schemaSpec: ["string[]", "null"],
+        schemaSpec: createParamsSchemas.Include,
         label: "include",
         tooltip:
           "応答に含める追加データを指定する**キー配列**。詳細：[ドキュメント](https://platform.openai.com/docs/api-reference/responses/create#responses/create-include)",
       },
       {
         key: "max_output_tokens",
-        schemaSpec: ["number", "null"],
+        schemaSpec: createParamsSchemas.MaxOutputTokens,
         label: "max_output_tokens",
         tooltip: "生成する**トークン数の上限**。",
       },
       {
         key: "metadata",
-        schemaSpec: ["object", "null"],
+        schemaSpec: createParamsSchemas.Metadata,
         label: "metadata",
         tooltip: "**キー:文字列、値:文字列**のメタデータ（最大16組）。",
       },
       {
         key: "parallel_tool_calls",
-        schemaSpec: ["boolean", "null"],
+        schemaSpec: createParamsSchemas.ParallelToolCalls,
         label: "parallel_tool_calls",
         tooltip: "ツール実行を**並列**で行うかどうか。",
       },
       {
         key: "previous_response_id",
-        schemaSpec: ["string", "null"],
+        schemaSpec: createParamsSchemas.PreviousResponseId,
         label: "previous_response_id",
         tooltip: "前回の応答ID。**マルチターン会話**用。",
       },
       {
         key: "reasoning",
-        schemaSpec: ["object", "null"],
+        schemaSpec: createParamsSchemas.Reasoning,
         label: "reasoning",
         tooltip: "**oシリーズモデル**の推論オプション。",
       },
       {
         key: "temperature",
-        schemaSpec: ["number", "null"],
+        schemaSpec: createParamsSchemas.Temperature,
         label: "temperature",
         tooltip: "出力の**ランダム性**を制御する温度パラメータ（0〜2）。",
       },
       {
         key: "text",
-        schemaSpec: ["object", "null"],
+        schemaSpec: createParamsSchemas.ResponseTextConfig,
         label: "text",
         tooltip: "テキスト応答の書式を設定する**オブジェクト**。",
       },
       {
         key: "tool_choice",
-        schemaSpec: ["object", "null"],
+        schemaSpec: createParamsSchemas.ToolChoice,
         label: "tool_choice",
         tooltip: "使用するツールを**指定**。",
       },
       {
         key: "tools",
-        schemaSpec: ["unknown[]", "null"],
+        schemaSpec: createParamsSchemas.ToolsList,
         label: "tools",
         tooltip: "実行可能な**ツールの配列**。",
       },
       {
         key: "top_p",
-        schemaSpec: ["number", "null"],
+        schemaSpec: createParamsSchemas.TopP,
         label: "top_p",
         tooltip: "核サンプリングの**確率質量上位閾値**（0〜1）。",
       },
       {
         key: "user",
-        schemaSpec: "string",
+        schemaSpec: createParamsSchemas.User,
         label: "user",
         tooltip: "エンドユーザーの**一意識別子**。",
       },
@@ -218,6 +222,52 @@ export class OpenAIParamNode extends SerializableInputsNode<
       key: "param",
       schemaSpec: "ResponseCreateParamsBase",
     });
+    // 初期スキーマ設定
+    this.updateParamSchema();
+  }
+
+  /**
+   * 入力ポートの接続状況および表示コントロールから動的にパラメータ型スキーマを構築し、出力ソケットに設定する
+   */
+  public updateParamSchema(
+    area: AreaPlugin<Schemes, AreaExtra> | null = null
+  ): void {
+    const schemas: Type[] = [];
+    // 各入力ポートをチェック
+    for (const [key, input] of Object.entries(this.inputs) as [
+      string,
+      TooltipInput<TypedSocket>
+    ][]) {
+      const socket = input.socket;
+      // 接続済みまたはコントロール表示中の入力を対象
+      if (socket.isConnected || (input.control && input.showControl)) {
+        // 各キーごとにオブジェクト型スキーマを作成して収集
+        if (input.require) {
+          schemas.push(type({ [key]: socket.getSchema() }));
+        } else {
+          schemas.push(type({ [`${key}?`]: socket.getSchema() }));
+        }
+      }
+    }
+    // スキーマをマージ
+    const combined = schemas.length
+      ? schemas.reduce((a, b) => a.and(b))
+      : type({});
+    // combined.and({ "[string]": "never" });
+    // 出力ソケットに設定
+    this.outputs.param?.socket.setSchema(combined);
+
+    if (area) area.update("node", this.id);
+  }
+
+  connected(): void {
+    console.log("OpenAIParamNode connected");
+    this.updateParamSchema(this.area);
+  }
+
+  disconnected(): void {
+    console.log("OpenAIParamNode disconnected");
+    this.updateParamSchema(this.area);
   }
 
   data(inputs: Partial<Record<OpenAIParamKeys, unknown[]>>): {
