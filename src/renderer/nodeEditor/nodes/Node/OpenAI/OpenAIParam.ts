@@ -216,7 +216,7 @@ export class OpenAIParamNode extends SerializableInputsNode<
 
     this.addOutputPort({
       key: "param",
-      schemaSpec: "OpenAIParam",
+      schemaSpec: "ResponseCreateParamsBase",
     });
   }
 
