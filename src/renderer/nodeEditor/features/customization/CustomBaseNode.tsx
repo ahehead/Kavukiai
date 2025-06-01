@@ -11,6 +11,7 @@ import type { HistoryPlugin } from 'rete-history-plugin'
 import { ControlLabel } from 'renderer/nodeEditor/component/nodeParts/NodeControlParts'
 import Markdown from 'react-markdown';
 import { Tooltip, TooltipTrigger, TooltipContent } from 'renderer/components/ui/tooltip';
+import remarkGfm from 'remark-gfm'
 
 type Props<S extends Schemes> = {
   data: NodeInterface
@@ -35,6 +36,23 @@ export function createCustomNode(
     const outputs = Object.entries(data.outputs)
     const controls = Object.entries(data.controls)
     const { id, label, width, height, selected = false } = data
+
+    // Tooltip表示を共通化するヘルパー
+    const withTooltip = (
+      show: boolean,
+      trigger: React.ReactNode,
+      tooltipText?: string
+    ) =>
+      show && tooltipText ? (
+        <Tooltip>
+          <TooltipTrigger asChild>{trigger}</TooltipTrigger>
+          <TooltipContent className="prose prose-sm">
+            <Markdown remarkPlugins={[remarkGfm]}>{tooltipText}</Markdown>
+          </TooltipContent>
+        </Tooltip>
+      ) : (
+        trigger
+      );
 
     function sortByIndex<T extends [string, undefined | { index?: number }][]>(entries: T) {
       entries.sort((a, b) => (a[1]?.index || 0) - (b[1]?.index || 0))
@@ -73,11 +91,12 @@ export function createCustomNode(
                 <NodeSocketName isExec={output.socket.isExec} data-testid="output-title">
                   {output.label}
                 </NodeSocketName>
-                {!output.socket.isExec && (
-                  <NodeSocketTypeLabel data-testid="output-type">
-                    {output.socket.name}
-                  </NodeSocketTypeLabel>
-                )}
+                {!output.socket.isExec &&
+                  withTooltip(
+                    !!output.socket.tooltipType,
+                    <NodeSocketTypeLabel data-testid="output-type">{output.socket.name}</NodeSocketTypeLabel>,
+                    output.socket.tooltipType
+                  )}
                 <Presets.classic.RefSocket
                   name="output-socket"
                   side="output"
@@ -114,26 +133,16 @@ export function createCustomNode(
                       payload={input.socket}
                       data-testid="input-socket"
                     />
-                    {!input.socket.isExec && (
-                      <NodeSocketTypeLabel data-testid="input-type">
-                        {input.socket.name}
-                      </NodeSocketTypeLabel>
-                    )}
-                    {input.tooltip ? (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <NodeSocketName isExec={input.socket.isExec} data-testid="input-title">
-                            {input.label}
-                          </NodeSocketName>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <Markdown>{input.tooltip}</Markdown>
-                        </TooltipContent>
-                      </Tooltip>
-                    ) : (
-                      <NodeSocketName isExec={input.socket.isExec} data-testid="input-title">
-                        {input.label}
-                      </NodeSocketName>
+                    {!input.socket.isExec &&
+                      withTooltip(
+                        !!input.socket.tooltipType,
+                        <NodeSocketTypeLabel data-testid="input-type">{input.socket.name}</NodeSocketTypeLabel>,
+                        input.socket.tooltipType
+                      )}
+                    {withTooltip(
+                      !!input.tooltip,
+                      <NodeSocketName isExec={input.socket.isExec} data-testid="input-title">{input.label}</NodeSocketName>,
+                      input.tooltip
                     )}
                   </>
                 )
@@ -145,17 +154,10 @@ export function createCustomNode(
                         cols={input.control.opts.cols}
                         htmlFor={input.control.id}
                       >
-                        {input.tooltip ? (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className='inline-block'>{input.control.opts.label}</div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <Markdown>{input.tooltip}</Markdown>
-                            </TooltipContent>
-                          </Tooltip>
-                        ) : (
-                          <div>{input.control.opts.label}</div>
+                        {withTooltip(
+                          !!input.tooltip,
+                          <div className='inline-block'>{input.control.opts.label}</div>,
+                          input.tooltip
                         )}
                       </ControlLabel>
                     )
