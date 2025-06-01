@@ -55,7 +55,7 @@ export class OpenAINode extends SerializableInputsNode<
       },
       {
         key: "param",
-        schemaSpec: "OpenAIParam",
+        schemaSpec: "ResponseCreateParamsBase",
         tooltip: "OpenAI用パラメータ",
       },
     ]);
