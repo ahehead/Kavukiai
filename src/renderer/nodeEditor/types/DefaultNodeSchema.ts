@@ -1,26 +1,13 @@
-import { type } from "arktype";
+// DefaultNodeSchema now delegates to separated schema modules
+import { basicSchemas } from "./Schemas/basic";
+import { createParamsSchemas } from "./Schemas/createParams";
 
 /* ---------- ノードで使うデフォルトのスキーマ一覧 ---------- */
 
+// merge basic and OpenAI createParams schemas
 export const defaultNodeSchemas = {
-  null: type("null"),
-  string: type("string"),
-  number: type("number"),
-  boolean: type("boolean"),
-  array: type("unknown[]"),
-  object: type("object"),
-  "string[]": type("string[]"),
-  "number[]": type("number[]"),
-  "boolean[]": type("boolean[]"),
-  "object[]": type("object[]"),
-  "unknown[]": type("unknown[]"),
-  image: type({ data: "unknown" }).or("string"),
-  OpenAIParam: type({ model: "string" }),
-  chatContext: type([{ role: "string", content: "string" }]),
-  date: type("Date"),
-  jsonSchema: type("string"),
-  unknown: type("unknown"),
-  exec: type.unit(Symbol("exec")), // 制御フロー用ダミー
+  ...basicSchemas,
+  ...createParamsSchemas,
 } as const;
 
 export type DefaultSchemaKey = keyof typeof defaultNodeSchemas;
