@@ -3,8 +3,8 @@ mode: 'agent'
 tools: ['githubRepo', 'codebase', 'fetch']
 description: 'arkTypeのスキーマを作成する。'
 ---
-ノードエディタでopenai response apiを利用するために、responses.tsからarkTypeの型を作ってsrc/renderer/nodeEditor/types/DefaultNodeSchema.tsに書いてほしい。
-・全ては作らなくて良い。指定した型から始めてほしい。今回はResponseCreateParamsBaseのtoolsから始めてほしい。
+ノードエディタでopenai response apiを利用するために、responses.tsからarkTypeの型を作ってsrc/renderer/nodeEditor/types/Schemasフォルダに書いてほしい。
+・指定した型から初めてほしい。ResponseCreateParamsBaseは(createParams.ts)にできたので、次はOutput系から始めて新しいファイルに書いてほしい。
 ・ネストは掘っていって小さい単位から作ってほしい。例:const ReasoningEffort = type("low | ...") そして小さい単位を組み合わせてarkTypeを作ってほしい。
 ・定義されている型は、ショートハンドキーで呼び出せるようにオブジェクトに登録してほしい 例:{Reasoning : type({"effort?": ReasoningEffort.or("null")})}。
 
