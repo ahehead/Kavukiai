@@ -50,6 +50,11 @@ export async function loadGraphFromJson(
       (node as any).setFromInputsJson(inputs as Record<string, InputPortJson>);
     }
 
+    // ノードが、OpenAIParamNode の場合、updateParamSchema を呼び出す
+    if (type === "OpenAIParam") {
+      (node as any).updateParamSchema();
+    }
+
     node.id = id;
     await editor.addNode(node);
     if (size.width && size.height) {
