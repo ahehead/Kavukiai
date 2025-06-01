@@ -8,7 +8,7 @@ import {
 } from "../socket_type_restriction/canCreateConnection";
 import type { DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "renderer/nodeEditor/nodes/util/resetCacheDataflow";
-import { InspectorNode } from "renderer/nodeEditor/nodes/Node";
+import { InspectorNode, OpenAIParamNode } from "renderer/nodeEditor/nodes/Node";
 import type { Connection } from "renderer/nodeEditor/types";
 
 /**
@@ -47,6 +47,7 @@ export function setupSocketConnectionState(
       syncSocketState(editor, area, context.data, true, dataflow);
 
       notifyInspectorNode(editor, context.data, true);
+      notifyOpenAIParamNode(editor, context.data, true);
     }
     if (
       context.type === "connectionremove" ||
@@ -55,6 +56,7 @@ export function setupSocketConnectionState(
       resetCacheDataflow(dataflow, context.data.target);
       syncSocketState(editor, area, context.data, false, dataflow);
       notifyInspectorNode(editor, context.data, false);
+      notifyOpenAIParamNode(editor, context.data, false);
     }
     return context;
   });
@@ -94,6 +96,25 @@ function notifyInspectorNode(
     const { source, target } = getConnectionSockets(editor, data);
     if (!source || !target) return;
     targetNode.connected(source.getSchema());
+  } else {
+    targetNode.disconnected();
+  }
+}
+
+// openaiParamNode の接続状態を更新
+export function notifyOpenAIParamNode(
+  editor: NodeEditor<Schemes>,
+  data: Connection<NodeInterface, NodeInterface>,
+  connected: boolean
+): void {
+  const targetNode = editor.getNode(data.target);
+  if (!(targetNode instanceof OpenAIParamNode)) return;
+  if (data.targetInput === "exec") return;
+
+  if (connected) {
+    const { source, target } = getConnectionSockets(editor, data);
+    if (!source || !target) return;
+    targetNode.connected();
   } else {
     targetNode.disconnected();
   }
