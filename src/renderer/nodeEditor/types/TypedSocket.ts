@@ -12,7 +12,15 @@ export class TypedSocket extends ClassicPreset.Socket {
     super(schemaToLabel(normalizeSchema(schemaSpec))); // 省略型情報
     this.schema = normalizeSchema(schemaSpec);
     this.isExec = typeof schemaSpec === "string" && schemaSpec === "exec"; // exec 判定
-    this.tooltipType = this.schema.toString(); // 型情報そのまま
+    this.setTooltipType(this.schema); // ツールチップの型情報を設定
+  }
+
+  setTooltipType(schema: Type) {
+    this.tooltipType = `
+\`\`\`json
+${schema.toString()}
+\`\`\`
+`; // 型情報そのまま
   }
 
   setConnected(connected: boolean) {
@@ -32,7 +40,7 @@ export class TypedSocket extends ClassicPreset.Socket {
   setSchema(schema: Type): void {
     this.schema = schema;
     this.name = schemaToLabel(schema); // ラベル更新
-    this.tooltipType = schema.toString(); // ツールチップ更新
+    this.setTooltipType(schema); // ツールチップの型情報を更新
   }
   getSchema(): Type {
     return this.schema;
