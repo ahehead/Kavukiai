@@ -99,18 +99,22 @@ const ToolChoice = type([
 
 const ResponseTextConfig = type({ format: type("object") }).or("null");
 
+const Input = type("string").or(
+  type([
+    EasyInputMessage,
+    FileSearchTool,
+    ComputerTool,
+    ResponseInputAudio,
+    ResponseInputFile,
+    ResponseInputImage,
+  ])
+);
+
+const Stream = type("boolean").or("null");
+
 // Response create params
 const ResponseCreateParamsBase = type({
-  input: type("string").or(
-    type([
-      EasyInputMessage,
-      FileSearchTool,
-      ComputerTool,
-      ResponseInputAudio,
-      ResponseInputFile,
-      ResponseInputImage,
-    ])
-  ),
+  input: Input,
   model: Model,
   "background?": Background,
   "include?": Include,
@@ -122,6 +126,7 @@ const ResponseCreateParamsBase = type({
   "reasoning?": Reasoning,
   "service_tier?": ServiceTier,
   "store?": Store,
+  "stream?": Stream,
   "tools?": ToolsList,
   "temperature?": Temperature,
   "text?": ResponseTextConfig,
@@ -129,18 +134,19 @@ const ResponseCreateParamsBase = type({
   "top_p?": TopP,
   "truncation?": Truncation,
   "user?": User,
-}).or("null");
-const StreamFalse = type("false").or("null");
+});
+const StreamFalse = type("false");
 const StreamTrue = type("true");
-const ResponseCreateParamsNonStreaming = type({ "stream?": StreamFalse })
-  .and(ResponseCreateParamsBase)
-  .or("null");
-const ResponseCreateParamsStreaming = type({ stream: StreamTrue })
-  .and(ResponseCreateParamsBase)
-  .or("null");
+const ResponseCreateParamsNonStreaming = type({ "stream?": StreamFalse }).and(
+  ResponseCreateParamsBase
+);
+const ResponseCreateParamsStreaming = type({ stream: StreamTrue }).and(
+  ResponseCreateParamsBase
+);
 
 // Export all schemas
 export const createParamsSchemas = {
+  Input,
   Model,
   ReasoningEffort,
   Reasoning,
@@ -154,6 +160,7 @@ export const createParamsSchemas = {
   PreviousResponseId,
   ServiceTier,
   Store,
+  // newly added schemas
   ResponseInputAudio,
   ResponseInputFile,
   ResponseInputImage,
@@ -175,6 +182,7 @@ export const createParamsSchemas = {
   ToolChoice,
   ResponseTextConfig,
   ResponseCreateParamsBase,
+  Stream,
   StreamFalse,
   StreamTrue,
   ResponseCreateParamsNonStreaming,
