@@ -1,12 +1,12 @@
 
-import type { DataflowEngine } from 'rete-engine';
+import type { ControlFlowEngine, DataflowEngine } from 'rete-engine';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type { AreaPlugin } from 'rete-area-plugin';
 import { MultiLineControl } from '../Controls/input/TextArea';
 import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
 import { formatValue } from '../util/formatValue';
-import { type, type Type } from 'arktype';
 import type { NodeEditor } from 'rete';
+import { type TSchema, Type } from '@sinclair/typebox';
 
 // View String ノード
 export class InspectorNode extends BaseNode<
@@ -23,26 +23,31 @@ export class InspectorNode extends BaseNode<
   constructor(
     private editor: NodeEditor<Schemes>,
     private dataflow: DataflowEngine<Schemes>,
-    private area: AreaPlugin<Schemes, AreaExtra>
+    private area: AreaPlugin<Schemes, AreaExtra>,
+    public controlflow: ControlFlowEngine<Schemes>
   ) {
     super('Inspector');
+    this.addInputPortPattern({
+      type: "RunButton",
+      controlflow: this.controlflow,
+    })
 
-    this.addInputPort([{
-      key: "exec",
-      schemaSpec: "exec",
-      tooltip: "実行トリガー",
-    }, {
-      key: "inputAny",
-      schemaSpec: "unknown",
-      tooltip: "表示するデータ",
-    }]);
+    this.addInputPort([
+      {
+        key: "inputAny",
+        name: "unknown",
+        schema: Type.Unknown(),
+        tooltip: "表示するデータ",
+      }]);
 
     this.addOutputPort([{
       key: "exec",
-      schemaSpec: "exec",
+      name: "exec",
+      schema: Type.Literal("exec"),
     }, {
       key: "outputAny",
-      schemaSpec: "unknown",
+      name: "unknown",
+      schema: Type.Unknown(),
     }]);
 
     this.addControlByKey({
@@ -70,10 +75,10 @@ export class InspectorNode extends BaseNode<
     forward('exec');
   }
 
-  connected(inputSchema: Type): void {
+  connected(name: string, inputSchema: TSchema): void {
     //console.log("InspectorNode connected");
-    this.inputs.inputAny?.socket.setSchema(inputSchema);
-    this.outputs.outputAny?.socket.setSchema(inputSchema);
+    this.inputs.inputAny?.socket.setSchema(name, inputSchema);
+    this.outputs.outputAny?.socket.setSchema(name, inputSchema);
     this.area.update("node", this.id);
     // 自身の出力からつながっているInspectorNodeのsocketを更新
     // 処理的に世界にコネクションが多いと重くなる可能性がある
@@ -81,7 +86,7 @@ export class InspectorNode extends BaseNode<
     for (const conn of myConnection) {
       const targetNode = this.editor.getNode(conn.target);
       if (targetNode instanceof InspectorNode) {
-        targetNode.connected(inputSchema);
+        targetNode.connected(name, inputSchema);
       }
     }
 
@@ -90,8 +95,8 @@ export class InspectorNode extends BaseNode<
   disconnected(): void {
     //console.log("InspectorNode disconnected");
     // デフォルトの型に戻す
-    this.inputs.inputAny?.socket.setSchema(type("unknown"));
-    this.outputs.outputAny?.socket.setSchema(type("unknown"));
+    this.inputs.inputAny?.socket.setSchema("unknown", Type.Unknown());
+    this.outputs.outputAny?.socket.setSchema("unknown", Type.Unknown());
     this.area.update("node", this.id);
     const myConnection = this.editor.getConnections().filter(c => c.source === this.id && c.sourceOutput === "outputAny");
     for (const conn of myConnection) {
