@@ -12,7 +12,8 @@
   --node-fg: var(--card-foreground);
   --node-outline: hsl(210 15% 87%);
 
-  --node-header: var(--color-sidebar);
+  --node-header: var(--sidebar);
+  --node-header-light: var(--sidebar-light);
   --node-header-fg: var(--foreground);
   --hdr-default: hsl(220 13% 95%);
   --hdr-string: hsl(190 70% 93%);
@@ -45,6 +46,7 @@
   --color-node-border: var(--node-border);
 
   --color-node-header: var(--node-header);
+  --color-node-header-light: var(--node-header-light);
   --color-node-header-fg: var(--node-header-fg);
   --color-node-label: var(--node-label);
 
