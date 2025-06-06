@@ -1,12 +1,11 @@
-import { ClassicPreset } from 'rete';
 import { MultiLineControl } from '../../Controls/input/TextArea';
 import type { HistoryPlugin } from 'rete-history-plugin';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
-import { type AreaExtra, createSocket, type TypedSocket, type Schemes } from 'renderer/nodeEditor/types';
-const { Output } = ClassicPreset;
+import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
+import { Type } from '@sinclair/typebox';
 
 // 長文文字列入力ノード
 export class MultiLineStringNode extends BaseNode<
@@ -22,9 +21,11 @@ export class MultiLineStringNode extends BaseNode<
     dataflow: DataflowEngine<Schemes>,
   ) {
     super('MultiLineString');
-    this.addOutput(
-      'out',
-      new Output(createSocket("string"), undefined));
+    this.addOutputPort({
+      key: 'out',
+      name: "string",
+      schema: Type.String(),
+    });
     this.addControl(
       'textArea',
       new MultiLineControl({
@@ -38,9 +39,7 @@ export class MultiLineStringNode extends BaseNode<
     );
   }
 
-  // dataflowで流す
   data(): { out: string } {
-    //console.log('data', this.controls.textArea.getValue());
     return { out: this.controls.textArea.getValue() || '' };
   }
 
@@ -54,7 +53,6 @@ export class MultiLineStringNode extends BaseNode<
     };
   }
 
-  // JSONから復元
   fromJSON(data: { value: string }): void {
     this.controls.textArea.setValue(data.value);
   }
