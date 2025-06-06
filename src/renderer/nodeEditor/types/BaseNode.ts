@@ -55,9 +55,9 @@ export class BaseNode<
     this.height = undefined;
   }
 
-  setStatus(area: AreaPlugin<Schemes, AreaExtra>, status: NodeStatus) {
+  async setStatus(area: AreaPlugin<Schemes, AreaExtra>, status: NodeStatus) {
     this.status = status;
-    area.update("node", this.id);
+    await area.update("node", this.id);
   }
 
   getStatus(): NodeStatus {
@@ -104,7 +104,7 @@ export interface ConnectNode {
 }
 
 export interface ObjectNode {
-  updateOutputSchema: () => void;
+  updateOutputSchema: () => Promise<void>;
 }
 
 export function isObjectNode(node: any): node is ObjectNode {
