@@ -1,9 +1,8 @@
-import { ClassicPreset } from 'rete';
 import type { ControlFlowEngine } from 'rete-engine';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import { RunButtonControl } from '../../Controls/RunButton';
-import { createSocket, type TypedSocket, type Schemes } from 'renderer/nodeEditor/types';
-const { Output } = ClassicPreset;
+import type { TypedSocket, Schemes } from 'renderer/nodeEditor/types';
+import { Type } from '@sinclair/typebox';
 
 // Run ノード
 export class RunNode extends BaseNode<
@@ -15,7 +14,13 @@ export class RunNode extends BaseNode<
     private engine: ControlFlowEngine<Schemes>
   ) {
     super('Run');
-    this.addOutput('exec', new Output(createSocket("exec"), undefined, true));
+    this.addOutputPort(
+      {
+        key: 'exec',
+        name: 'exec',
+        schema: Type.Literal('exec'),
+      })
+
     this.addControl(
       'btn',
       new RunButtonControl({
