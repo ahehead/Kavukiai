@@ -13,6 +13,8 @@ import {
   SerializableInputsNode,
 } from "renderer/nodeEditor/types";
 import { ButtonControl } from "../../Controls/Button";
+import { Type } from "@sinclair/typebox";
+import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/RequestSchemas";
 
 // Run ノード
 export class OpenAINode extends SerializableInputsNode<
@@ -28,22 +30,15 @@ export class OpenAINode extends SerializableInputsNode<
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("OpenAI");
+    this.addInputPortPattern({
+      type: "RunButton",
+      controlflow: this.controlflow,
+    });
     this.addInputPort([
       {
-        key: "exec",
-        schemaSpec: "exec",
-        label: "Run",
-        control: new ButtonControl({
-          label: "Run",
-          onClick: async (e) => {
-            e.stopPropagation();
-            this.controlflow.execute(this.id, "exec");
-          },
-        }),
-      },
-      {
         key: "exec2",
-        schemaSpec: "exec",
+        name: "exec",
+        schema: Type.Literal("exec"),
         label: "Stop",
         control: new ButtonControl({
           label: "Stop",
@@ -55,19 +50,22 @@ export class OpenAINode extends SerializableInputsNode<
       },
       {
         key: "param",
-        schemaSpec: "ResponseCreateParamsBase",
+        name: "ResponseCreateParamsBase",
+        schema: ResponseCreateParamsBase,
         tooltip: "OpenAI用パラメータ",
       },
     ]);
     this.addOutputPort([
       {
         key: "exec",
-        schemaSpec: "exec",
+        name: "exec",
+        schema: Type.Literal("exec"),
         label: "stream",
       },
       {
         key: "message",
-        schemaSpec: "string",
+        name: "event",
+        schema: Type.String(),
       },
     ]);
     this.addControl("console", new ConsoleControl({ area }));
