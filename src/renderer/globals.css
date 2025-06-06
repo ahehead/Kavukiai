@@ -15,6 +15,7 @@
   --foreground: rgb(21 21 31);
 
   --sidebar: rgb(220, 225, 243);
+  --sidebar-light: hsl(220, 66%, 97%);
   --sidebar-foreground: oklch(0.145 0 0);
 
   --primary: rgb(60, 191, 125);
@@ -98,6 +99,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --color-sidebar: var(--sidebar);
+  --color-sidebar-light: var(--sidebar-light);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
