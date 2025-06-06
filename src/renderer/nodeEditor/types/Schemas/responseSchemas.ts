@@ -1,218 +1,463 @@
-import { type } from "arktype";
+import { Type, type Static } from "@sinclair/typebox";
+import * as Base from "./BaseSchemas";
 
-// Small units
-const ResponseOutputTextAnnotations = type([type("object")]);
-const ResponseOutputText = type({
-  annotations: ResponseOutputTextAnnotations,
-  text: type("string"),
-  type: type('"output_text"'),
-});
-const ResponseOutputRefusal = type({
-  refusal: type("string"),
-  type: type('"refusal"'),
-});
+// Enum-like unions
+export const ResponseStatus = Type.Union(
+  [
+    Type.Literal("completed"),
+    Type.Literal("failed"),
+    Type.Literal("in_progress"),
+    Type.Literal("cancelled"),
+    Type.Literal("queued"),
+    Type.Literal("incomplete"),
+  ],
+  { description: "Status of the response generation" }
+);
+export type ResponseStatus = Static<typeof ResponseStatus>;
 
-// Combined message
-const ResponseOutputMessage = type({
-  id: type("string"),
-  content: type([ResponseOutputText, ResponseOutputRefusal]),
-  role: type('"assistant"'),
-  status: type('"in_progress" | "completed" | "incomplete"'),
-  type: type('"message"'),
-});
+export const ServiceTier = Type.Union(
+  [
+    Type.Literal("auto"),
+    Type.Literal("default"),
+    Type.Literal("flex"),
+    Type.Null(),
+  ],
+  { description: "Service tier" }
+);
+export type ServiceTier = Static<typeof ServiceTier>;
 
-// Response output variants
-const ResponseFileSearchToolCall = type({
-  id: type("string"),
-  queries: type([type("string")]),
-  status: type(
-    '"in_progress" | "searching" | "completed" | "incomplete" | "failed"'
-  ),
-  type: type('"file_search_call"'),
-  "results?": type([
-    type({
-      "attributes?": type("object").or("null"),
-      file_id: type("string").or("null"),
-      filename: type("string").or("null"),
-      score: type("number").or("null"),
-      text: type("string").or("null"),
-    }),
-  ]).or("null"),
-});
+// Error
+export const ResponseError = Type.Object(
+  {
+    code: Type.String(), // specific codes omitted for brevity
+    message: Type.String(),
+  },
+  { description: "Error object returned when model fails" }
+);
+export type ResponseError = Static<typeof ResponseError>;
 
-const ResponseFunctionToolCall = type({
-  arguments: type("string"),
-  call_id: type("string"),
-  name: type("string"),
-  type: type('"function_call"'),
-  "id?": type("string"),
-  "status?": type('"in_progress" | "completed" | "incomplete"').or("null"),
-});
+// Incomplete details
+export const IncompleteDetails = Type.Object(
+  {
+    reason: Type.Optional(
+      Type.Union([
+        Type.Literal("max_output_tokens"),
+        Type.Literal("content_filter"),
+      ])
+    ),
+  },
+  { description: "Details why response is incomplete" }
+);
+export type IncompleteDetails = Static<typeof IncompleteDetails>;
 
-const ResponseFunctionWebSearch = type({
-  id: type("string"),
-  status: type('"in_progress" | "searching" | "completed" | "failed"'),
-  type: type('"web_search_call"'),
+// Annotations for ResponseOutputText
+export const FileCitation = Type.Object({
+  file_id: Base.ID,
+  index: Type.Number(),
+  type: Type.Literal("file_citation"),
 });
+export type FileCitation = Static<typeof FileCitation>;
 
-const ResponseReasoningSummary = type({
-  text: type("string"),
-  type: type('"summary_text"'),
+export const URLCitation = Type.Object({
+  start_index: Type.Number(),
+  end_index: Type.Number(),
+  title: Type.String(),
+  url: Type.String(),
+  type: Type.Literal("url_citation"),
 });
+export type URLCitation = Static<typeof URLCitation>;
 
-const ResponseReasoningItem = type({
-  id: type("string"),
-  summary: type([ResponseReasoningSummary]),
-  type: type('"reasoning"'),
-  "encrypted_content?": type("string").or("null"),
-  "status?": type('"in_progress" | "completed" | "incomplete"').or("null"),
+export const FilePath = Type.Object({
+  file_id: Base.ID,
+  index: Type.Number(),
+  type: Type.Literal("file_path"),
 });
+export type FilePath = Static<typeof FilePath>;
 
-const ResponseImageGenerationCall = type({
-  id: type("string"),
-  result: type("string").or("null"),
-  status: type('"in_progress" | "completed" | "generating" | "failed"'),
-  type: type('"image_generation_call"'),
+export const Annotation = Type.Union([FileCitation, URLCitation, FilePath], {
+  description: "Annotation in output text",
 });
+export type Annotation = Static<typeof Annotation>;
 
-const ResponseCodeInterpreterLogs = type({
-  logs: type("string"),
-  type: type('"logs"'),
+// Logprob details
+export const TopLogprob = Type.Object({
+  token: Type.String(),
+  bytes: Type.Array(Type.Number()),
+  logprob: Type.Number(),
 });
-const ResponseCodeInterpreterFiles = type({
-  files: type([type({ file_id: type("string"), mime_type: type("string") })]),
-  type: type('"files"'),
-});
-const ResponseCodeInterpreterToolCall = type({
-  id: type("string"),
-  code: type("string"),
-  results: type([ResponseCodeInterpreterLogs, ResponseCodeInterpreterFiles]),
-  status: type('"in_progress" | "interpreting" | "completed"'),
-  type: type('"code_interpreter_call"'),
-  "container_id?": type("string").or("null"),
-});
+export type TopLogprob = Static<typeof TopLogprob>;
 
-const ResponseLocalShellCallAction = type({
-  command: type([type("string")]),
-  env: type("object"),
-  type: type('"exec"'),
-  "timeout_ms?": type("number").or("null"),
-  "user?": type("string").or("null"),
-  "working_directory?": type("string").or("null"),
+export const Logprob = Type.Object({
+  token: Type.String(),
+  bytes: Type.Array(Type.Number()),
+  logprob: Type.Number(),
+  top_logprobs: Type.Array(TopLogprob),
 });
-const ResponseLocalShellCall = type({
-  id: type("string"),
-  action: ResponseLocalShellCallAction,
-  call_id: type("string"),
-  status: type('"in_progress" | "completed" | "incomplete"'),
-  type: type('"local_shell_call"'),
-});
+export type Logprob = Static<typeof Logprob>;
 
-const ResponseMcpCall = type({
-  id: type("string"),
-  arguments: type("string"),
-  name: type("string"),
-  server_label: type("string"),
-  type: type('"mcp_call"'),
-  "error?": type("string").or("null"),
-  "output?": type("string").or("null"),
-});
+// Output Text
+export const ResponseOutputText = Type.Object(
+  {
+    annotations: Type.Array(Annotation),
+    text: Type.String(),
+    type: Type.Literal("output_text"),
+    logprobs: Type.Optional(Type.Array(Logprob)),
+  },
+  { description: "A text output from the model" }
+);
+export type ResponseOutputText = Static<typeof ResponseOutputText>;
 
-const ResponseMcpListToolsTool = type({
-  input_schema: type("object"),
-  name: type("string"),
-  "annotations?": type("object").or("null"),
-  "description?": type("string").or("null"),
-});
-const ResponseMcpListTools = type({
-  id: type("string"),
-  server_label: type("string"),
-  tools: type([ResponseMcpListToolsTool]),
-  type: type('"mcp_list_tools"'),
-  "error?": type("string").or("null"),
-});
+// Output Refusal
+export const ResponseOutputRefusal = Type.Object(
+  {
+    refusal: Type.String(),
+    type: Type.Literal("refusal"),
+  },
+  { description: "A refusal from the model" }
+);
+export type ResponseOutputRefusal = Static<typeof ResponseOutputRefusal>;
 
-const ResponseMcpApprovalRequest = type({
-  id: type("string"),
-  arguments: type("string"),
-  name: type("string"),
-  server_label: type("string"),
-  type: type('"mcp_approval_request"'),
-});
+// Output Message
+export const ResponseOutputMessage = Type.Object(
+  {
+    id: Base.ID,
+    content: Type.Array(
+      Type.Union([ResponseOutputText, ResponseOutputRefusal])
+    ),
+    role: Type.Literal("assistant"),
+    status: Type.Union([
+      Type.Literal("in_progress"),
+      Type.Literal("completed"),
+      Type.Literal("incomplete"),
+    ]),
+    type: Type.Literal("message"),
+  },
+  { description: "An output message from the model" }
+);
+export type ResponseOutputMessage = Static<typeof ResponseOutputMessage>;
 
-// Computer tool call output
-const ResponseComputerToolCall = type({
-  id: type("string"),
-  action: type("object"),
-  call_id: type("string"),
-  pending_safety_checks: type([type("object")]),
-  status: type('"in_progress" | "completed" | "incomplete"'),
-  type: type('"computer_call"'),
-});
+export const ResponseFileSearchToolCallResult = Type.Object(
+  {
+    file_id: Type.Optional(Base.ID),
+    filename: Type.Optional(Type.String()),
+    text: Type.Optional(Type.String()),
+    score: Type.Optional(Type.Number()),
+    attributes: Type.Optional(
+      Type.Union([
+        Type.Record(
+          Type.String(),
+          Type.Union([Type.String(), Type.Number(), Type.Boolean()])
+        ),
+        Type.Null(),
+      ])
+    ),
+  },
+  { description: "Single file search result" }
+);
+export type ResponseFileSearchToolCallResult = Static<
+  typeof ResponseFileSearchToolCallResult
+>;
 
-// Update output item union (remove Req.ComputerTool)
-const ResponseOutputItem = type([
-  ResponseOutputMessage,
-  ResponseFileSearchToolCall,
-  ResponseFunctionToolCall,
-  ResponseFunctionWebSearch,
-  ResponseComputerToolCall,
-  ResponseReasoningItem,
-  ResponseImageGenerationCall,
-  ResponseCodeInterpreterToolCall,
-  ResponseLocalShellCall,
-  ResponseMcpCall,
-  ResponseMcpListTools,
-  ResponseMcpApprovalRequest,
-]);
+// File Search Tool Call
+export const ResponseFileSearchToolCall = Type.Object(
+  {
+    id: Base.ID,
+    queries: Type.Array(Type.String()),
+    status: Type.Union([
+      Type.Literal("in_progress"),
+      Type.Literal("searching"),
+      Type.Literal("completed"),
+      Type.Literal("incomplete"),
+      Type.Literal("failed"),
+    ]),
+    type: Type.Literal("file_search_call"),
+    results: Type.Optional(Type.Array(ResponseFileSearchToolCallResult)),
+  },
+  { description: "Results of a file search tool call" }
+);
+export type ResponseFileSearchToolCall = Static<
+  typeof ResponseFileSearchToolCall
+>;
 
-// Top-level Response object schema
-const Response = type({
-  id: type("string"),
-  created_at: type("number"),
-  output_text: type("string"),
-  error: type("object").or("null"),
-  incomplete_details: type("object").or("null"),
-  instructions: type("string").or("null"),
-  metadata: type("object").or("null"),
-  model: type("string"),
-  object: type('"response"'),
-  output: type([ResponseOutputItem]),
-  parallel_tool_calls: type("boolean"),
-  temperature: type("number").or("null"),
-  tool_choice: type("string").or(type("object")),
-  tools: type([type("object")]),
-  top_p: type("number").or("null"),
-  background: type("boolean").or("null"),
-  max_output_tokens: type("number").or("null"),
-  previous_response_id: type("string").or("null"),
-  reasoning: type("object").or("null"),
-  service_tier: type('"auto" | "default" | "flex"').or("null"),
-  status: type(
-    '"completed" | "failed" | "in_progress" | "cancelled" | "queued" | "incomplete"'
-  ),
-  text: type("object").or("null"),
-  truncation: type('"auto" | "disabled"').or("null"),
-  usage: type("object").or("null"),
-  user: type("string").or("null"),
-});
+// Function Tool Call
+export const ResponseFunctionToolCall = Type.Object(
+  {
+    arguments: Type.String(),
+    call_id: Base.ID,
+    name: Type.String(),
+    type: Type.Literal("function_call"),
+    id: Base.ID,
+    status: Type.Optional(
+      Type.Union([
+        Type.Literal("in_progress"),
+        Type.Literal("completed"),
+        Type.Literal("incomplete"),
+      ])
+    ),
+  },
+  { description: "A tool call to run a function" }
+);
+export type ResponseFunctionToolCall = Static<typeof ResponseFunctionToolCall>;
 
-export const responseSchemas = {
-  ResponseOutputTextAnnotations,
-  ResponseOutputText,
-  ResponseOutputRefusal,
-  ResponseOutputMessage,
-  ResponseFileSearchToolCall,
-  ResponseFunctionToolCall,
-  ResponseFunctionWebSearch,
-  ResponseComputerToolCall,
-  ResponseReasoningItem,
-  ResponseImageGenerationCall,
-  ResponseCodeInterpreterToolCall,
-  ResponseLocalShellCall,
-  ResponseMcpCall,
-  ResponseMcpListTools,
-  ResponseMcpApprovalRequest,
-  ResponseOutputItem,
-  Response,
-} as const;
+// Computer Tool Call
+export const ResponseComputerToolCall = Type.Object(
+  {
+    id: Base.ID,
+    action: Type.Unknown(),
+    call_id: Base.ID,
+    pending_safety_checks: Type.Array(Type.Unknown()),
+    status: Type.Union([
+      Type.Literal("in_progress"),
+      Type.Literal("completed"),
+      Type.Literal("incomplete"),
+    ]),
+    type: Type.Literal("computer_call"),
+  },
+  { description: "A tool call to a computer use tool" }
+);
+export type ResponseComputerToolCall = Static<typeof ResponseComputerToolCall>;
+
+// Code Interpreter Tool Call
+export const ResponseCodeInterpreterToolCall = Type.Object(
+  {
+    id: Base.ID,
+    code: Type.String(),
+    results: Type.Array(Type.Unknown()),
+    status: Type.Union([
+      Type.Literal("in_progress"),
+      Type.Literal("interpreting"),
+      Type.Literal("completed"),
+    ]),
+    type: Type.Literal("code_interpreter_call"),
+  },
+  { description: "A tool call to run code via the code interpreter" }
+);
+export type ResponseCodeInterpreterToolCall = Static<
+  typeof ResponseCodeInterpreterToolCall
+>;
+
+// Image Generation Call
+export const ResponseImageGenCall = Type.Object(
+  {
+    id: Base.ID,
+    result: Type.Union([Type.String(), Type.Null()]),
+    status: Type.Union([
+      Type.Literal("in_progress"),
+      Type.Literal("generating"),
+      Type.Literal("completed"),
+      Type.Literal("failed"),
+    ]),
+    type: Type.Literal("image_generation_call"),
+  },
+  { description: "A tool call to generate an image" }
+);
+export type ResponseImageGenCall = Static<typeof ResponseImageGenCall>;
+
+// Local Shell Call
+export const ResponseLocalShellCall = Type.Object(
+  {
+    id: Base.ID,
+    action: Type.Unknown(),
+    call_id: Base.ID,
+    status: Type.Union([
+      Type.Literal("in_progress"),
+      Type.Literal("completed"),
+      Type.Literal("incomplete"),
+    ]),
+    type: Type.Literal("local_shell_call"),
+  },
+  { description: "A tool call to run a command on the local shell" }
+);
+export type ResponseLocalShellCall = Static<typeof ResponseLocalShellCall>;
+
+// MCP List Tools
+export const ResponseMcpListTools = Type.Object(
+  {
+    id: Base.ID,
+    server_label: Type.String(),
+    tools: Type.Array(Type.Unknown()),
+    type: Type.Literal("mcp_list_tools"),
+    error: Type.Optional(Type.String()),
+  },
+  { description: "A list of tools available on an MCP server" }
+);
+export type ResponseMcpListTools = Static<typeof ResponseMcpListTools>;
+
+// MCP Approval Request
+export const ResponseMcpApprovalRequest = Type.Object(
+  {
+    id: Base.ID,
+    arguments: Type.String(),
+    name: Type.String(),
+    server_label: Type.String(),
+    type: Type.Literal("mcp_approval_request"),
+  },
+  { description: "A request for human approval of an MCP tool invocation" }
+);
+export type ResponseMcpApprovalRequest = Static<
+  typeof ResponseMcpApprovalRequest
+>;
+
+// MCP Approval Response
+export const ResponseMcpApprovalResponse = Type.Object(
+  {
+    approval_request_id: Type.String(),
+    approve: Type.Boolean(),
+    type: Type.Literal("mcp_approval_response"),
+    id: Type.Optional(Base.ID),
+    reason: Type.Optional(Type.String()),
+  },
+  { description: "A response to an MCP approval request" }
+);
+export type ResponseMcpApprovalResponse = Static<
+  typeof ResponseMcpApprovalResponse
+>;
+
+// MCP Call
+export const ResponseMcpCall = Type.Object(
+  {
+    id: Base.ID,
+    arguments: Type.String(),
+    name: Type.String(),
+    server_label: Type.String(),
+    type: Type.Literal("mcp_call"),
+    error: Type.Optional(Type.String()),
+    output: Type.Optional(Type.String()),
+  },
+  { description: "An invocation of a tool on an MCP server" }
+);
+export type ResponseMcpCall = Static<typeof ResponseMcpCall>;
+
+// Item Reference
+export const ResponseItemReference = Type.Object(
+  {
+    id: Base.ID,
+    type: Type.Literal("item_reference"),
+  },
+  { description: "An internal identifier for an item to reference" }
+);
+export type ResponseItemReference = Static<typeof ResponseItemReference>;
+
+// Output Item union (partial)
+export const ResponseOutputItem = Type.Union(
+  [
+    ResponseOutputMessage,
+    ResponseFileSearchToolCall,
+    ResponseFunctionToolCall,
+    ResponseComputerToolCall,
+    ResponseCodeInterpreterToolCall,
+    ResponseImageGenCall,
+    ResponseLocalShellCall,
+    ResponseMcpListTools,
+    ResponseMcpApprovalRequest,
+    ResponseMcpApprovalResponse,
+    ResponseMcpCall,
+    ResponseItemReference,
+  ],
+  { description: "Output items generated by the model" }
+);
+export type ResponseOutputItem = Static<typeof ResponseOutputItem>;
+
+// Main Response object
+export const Response = Type.Object(
+  {
+    id: Base.ID,
+    created_at: Base.Timestamp,
+    output_text: Type.String(),
+    error: Type.Union([ResponseError, Type.Null()]),
+    incomplete_details: Type.Union([IncompleteDetails, Type.Null()]),
+    instructions: Type.Union([Type.String(), Type.Null()]),
+    metadata: Type.Union([Type.Unknown(), Type.Null()]),
+    model: Type.String(), // Shared.ResponsesModel omitted
+    object: Type.Literal("response"),
+    output: Type.Array(ResponseOutputItem),
+    parallel_tool_calls: Type.Boolean(),
+    temperature: Type.Union([Type.Number(), Type.Null()]),
+    tool_choice: Type.Unknown(),
+    tools: Type.Array(Type.Unknown()),
+    top_p: Type.Union([Type.Number(), Type.Null()]),
+    background: Type.Union([Type.Boolean(), Type.Null()]),
+    max_output_tokens: Type.Union([Type.Number(), Type.Null()]),
+    previous_response_id: Type.Union([Type.String(), Type.Null()]),
+    service_tier: ServiceTier,
+    status: ResponseStatus,
+    text: Type.Optional(Type.Unknown()),
+    truncation: Type.Union([
+      Type.Literal("auto"),
+      Type.Literal("disabled"),
+      Type.Null(),
+    ]),
+    usage: Type.Optional(Type.Unknown()),
+    user: Type.Optional(Type.String()),
+  },
+  { description: "Response object" }
+);
+export type Response = Static<typeof Response>;
+
+// Streaming Events
+export const ResponseAudioDeltaEvent = Type.Object(
+  {
+    delta: Type.String(),
+    sequence_number: Type.Number(),
+    type: Type.Literal("response.audio.delta"),
+  },
+  { description: "Partial audio response chunk" }
+);
+export type ResponseAudioDeltaEvent = Static<typeof ResponseAudioDeltaEvent>;
+
+export const ResponseAudioDoneEvent = Type.Object(
+  {
+    sequence_number: Type.Number(),
+    type: Type.Literal("response.audio.done"),
+  },
+  { description: "Audio response complete" }
+);
+export type ResponseAudioDoneEvent = Static<typeof ResponseAudioDoneEvent>;
+
+export const ResponseTextDeltaEvent = Type.Object(
+  {
+    content_index: Type.Number(),
+    delta: Type.String(),
+    item_id: Type.String(),
+    output_index: Type.Number(),
+    sequence_number: Type.Number(),
+    type: Type.Literal("response.output_text.delta"),
+  },
+  { description: "Partial text output delta" }
+);
+export type ResponseTextDeltaEvent = Static<typeof ResponseTextDeltaEvent>;
+
+export const ResponseTextDoneEvent = Type.Object(
+  {
+    content_index: Type.Number(),
+    item_id: Type.String(),
+    output_index: Type.Number(),
+    sequence_number: Type.Number(),
+    text: Type.String(),
+    type: Type.Literal("response.output_text.done"),
+  },
+  { description: "Text output complete" }
+);
+export type ResponseTextDoneEvent = Static<typeof ResponseTextDoneEvent>;
+
+export const ResponseCompletedEvent = Type.Object(
+  {
+    response: Response,
+    sequence_number: Type.Number(),
+    type: Type.Literal("response.completed"),
+  },
+  { description: "Model response complete event" }
+);
+export type ResponseCompletedEvent = Static<typeof ResponseCompletedEvent>;
+
+export const ResponseStreamEvent = Type.Union(
+  [
+    ResponseAudioDeltaEvent,
+    ResponseAudioDoneEvent,
+    ResponseTextDeltaEvent,
+    ResponseTextDoneEvent,
+    ResponseCompletedEvent,
+  ],
+  { description: "Union of all streaming response events" }
+);
+export type ResponseStreamEvent = Static<typeof ResponseStreamEvent>;
