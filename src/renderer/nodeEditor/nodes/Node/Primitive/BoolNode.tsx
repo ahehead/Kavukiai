@@ -1,12 +1,11 @@
-import { ClassicPreset } from 'rete';
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
 import { BaseNode } from 'renderer/nodeEditor/types/BaseNode';
-import { createSocket, type TypedSocket, type Schemes, type AreaExtra } from 'renderer/nodeEditor/types';
+import type { TypedSocket, Schemes, AreaExtra } from 'renderer/nodeEditor/types';
 import { SwitchControl } from '../../Controls/input/Switch';
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
-const { Output } = ClassicPreset;
+import { Type } from '@sinclair/typebox';
 
 // Boolean入力ノード
 export class BoolNode extends BaseNode<
@@ -26,10 +25,11 @@ export class BoolNode extends BaseNode<
       editable: true,
       onChange: () => resetCacheDataflow(dataflow, this.id),
     };
-    this.addOutput(
-      'out',
-      new Output(createSocket('boolean'), undefined)
-    );
+    this.addOutputPort({
+      key: 'out',
+      name: 'boolean',
+      schema: Type.Boolean(),
+    });
     this.addControl(
       'switch',
       new SwitchControl({
