@@ -1,19 +1,19 @@
 import { ClassicPreset } from 'rete';
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
-import { createSocket, normalizeSchema, type TypedSocket } from 'renderer/nodeEditor/types';
 import { CheckBoxControl } from '../Controls/input/CheckBox';
 import { ButtonControl } from '../Controls/Button';
 import { SelectControl } from '../Controls/input/Select';
 import { ListControl } from '../Controls/input/List';
 import { SwitchControl } from '../Controls/input/Switch';
 import { PropertyInputControl } from '../Controls/input/PropertyInput';
+import { Type } from '@sinclair/typebox';
 const { Output } = ClassicPreset;
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
 // コントロール等の確認と、型チェック回避用のNode。
 export class TestNode extends BaseNode<
   object,
-  { exec: TypedSocket },
+  object,
   {
     check: CheckBoxControl,
     button: ButtonControl,
@@ -26,7 +26,6 @@ export class TestNode extends BaseNode<
 > {
   constructor() {
     super('Test');
-    this.addOutput('exec', new Output(createSocket("exec"), undefined, true));
     this.addControl(
       'check',
       new CheckBoxControl({ value: true, label: 'CheckBox' })
@@ -61,7 +60,7 @@ export class TestNode extends BaseNode<
     this.addControl(
       'propertyInput',
       new PropertyInputControl({
-        value: { key: 'example', typeStr: 'string', type: normalizeSchema('string') },
+        value: { key: 'example', typeStr: 'string', type: Type.String() },
       })
     );
 
