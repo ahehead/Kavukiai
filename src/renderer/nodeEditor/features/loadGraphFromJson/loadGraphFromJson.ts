@@ -14,7 +14,7 @@ export async function loadGraphFromJson(
   editor: NodeEditor<Schemes>,
   dataflow: DataflowEngine<Schemes>,
   controlflow: ControlFlowEngine<Schemes>,
-  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
+  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>,
 ): Promise<void> {
   // ノードの登録
   for (const {
@@ -53,7 +53,7 @@ export async function loadGraphFromJson(
 
     // ノードのスキーマを更新
     if (isObjectNode(node)) {
-      node.updateOutputSchema();
+      await node.updateOutputSchema();
     }
 
     node.id = id;
@@ -81,7 +81,7 @@ export async function loadGraphFromJson(
         sourceNode,
         sourcePort as never,
         targetNode,
-        targetPort as never
+        targetPort as never,
       );
       conn.id = id;
       await editor.addConnection(conn);
