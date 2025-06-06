@@ -95,7 +95,7 @@ function notifyInspectorNode(
   if (connected) {
     const { source, target } = getConnectionSockets(editor, data);
     if (!source || !target) return;
-    targetNode.connected(source.getSchema());
+    targetNode.connected(source.getName(), source.getSchema());
   } else {
     targetNode.disconnected();
   }
@@ -111,11 +111,5 @@ export function notifyOpenAIParamNode(
   if (!(targetNode instanceof OpenAIParamNode)) return;
   if (data.targetInput === "exec") return;
 
-  if (connected) {
-    const { source, target } = getConnectionSockets(editor, data);
-    if (!source || !target) return;
-    targetNode.connected();
-  } else {
-    targetNode.disconnected();
-  }
+  targetNode.updateOutputSchema();
 }
