@@ -13,10 +13,10 @@ export class ValueHistoryAction<C extends BaseControl<T, any>, T>
   ) {}
   async undo() {
     this.control.setValue(this.prev);
-    this.area.update("control", this.control.id);
+    await this.area.update("control", this.control.id);
   }
   async redo() {
     this.control.setValue(this.next);
-    this.area.update("control", this.control.id);
+    await this.area.update("control", this.control.id);
   }
 }
