@@ -2,6 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "renderer/lib/utils";
 import TriangleIcon from 'src/resources/public/triangleIcon/triangle.svg?react'
 import { Circle } from 'lucide-react';
+import { withTooltip } from "renderer/nodeEditor/features/customization/util";
 
 // ソケット全体のラッパー
 export function NodeSocketsWrapper({ ...props }: React.ComponentProps<"div">) {
@@ -69,7 +70,7 @@ const socketNameStyles = cva(
   }
 );
 
-export function NodeSocketName({ isExec, className, ...props }: React.ComponentProps<"div"> & VariantProps<typeof socketNameStyles>) {
+export function NodeSocketLabel({ isExec, className, ...props }: React.ComponentProps<"div"> & VariantProps<typeof socketNameStyles>) {
   return <div {...props} className={cn(socketNameStyles({ isExec }), className)} />;
 }
 // ソケットの型表示
@@ -124,14 +125,17 @@ const dataIconStyles = cva(
   })
 
 
-export function NodeDataSocket({ isConnected, title }: { title: string } & VariantProps<typeof dataIconStyles>) {
+export function NodeDataSocket({ isConnected, title, tooltip }: { title: string, tooltip?: string } & VariantProps<typeof dataIconStyles>) {
   return (
     <div className={socketIconWrapperStyles()}>
       <div
-        className=" transform transition-all duration-100 group-hover:scale-115"
+        className="transform transition-all duration-100 group-hover:scale-115"
         title={title}
       >
-        <Circle className={dataIconStyles({ isConnected })} />
+        {withTooltip(
+          <Circle className={dataIconStyles({ isConnected })} />,
+          tooltip
+        )}
       </div>
     </div>
   )
