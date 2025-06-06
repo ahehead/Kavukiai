@@ -13,7 +13,7 @@ export class ButtonControl extends BaseControl<any, ButtonControlParams> {
   constructor(
     public params: ButtonControlParams
   ) {
-    super(params);
+    super({ cols: 0, ...params }); // cols:0でラベルを非表示にする
     this.onClick = params.onClick;
   }
   setValue(value: string): void { }
