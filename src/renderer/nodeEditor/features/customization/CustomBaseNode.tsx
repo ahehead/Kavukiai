@@ -1,7 +1,7 @@
-import { Presets, type RenderEmit } from 'rete-react-plugin'
+import { Drag, Presets, type RenderEmit } from 'rete-react-plugin'
 import type { AreaExtra, NodeInterface, Schemes } from '../../types/Schemes'
 import { NodeContainer, NodeHeader, NodeTitle, NodeControlsWrapper, } from 'renderer/nodeEditor/component/nodeParts/NodePanel'
-import { NodeOutputPort, NodeSocketName, NodeSocketTypeLabel } from "renderer/nodeEditor/component/nodeParts/NodeSocketParts"
+import { NodeOutputPort, NodeSocketLabel, NodeSocketTypeLabel } from "renderer/nodeEditor/component/nodeParts/NodeSocketParts"
 import { NodeInputPort } from "renderer/nodeEditor/component/nodeParts/NodeSocketParts"
 import { NodeSocketsWrapper } from "renderer/nodeEditor/component/nodeParts/NodeSocketParts"
 import type { AreaPlugin } from 'rete-area-plugin'
@@ -9,9 +9,7 @@ import { useRef } from 'react'
 import { useNodeResize } from '../../hooks/useNodeResize'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { ControlLabel } from 'renderer/nodeEditor/component/nodeParts/NodeControlParts'
-import Markdown from 'react-markdown';
-import { Tooltip, TooltipTrigger, TooltipContent } from 'renderer/components/ui/tooltip';
-import remarkGfm from 'remark-gfm'
+import { withTooltip } from './util'
 
 type Props<S extends Schemes> = {
   data: NodeInterface
@@ -37,22 +35,6 @@ export function createCustomNode(
     const controls = Object.entries(data.controls)
     const { id, label, width, height, selected = false } = data
 
-    // Tooltip表示を共通化するヘルパー
-    const withTooltip = (
-      show: boolean,
-      trigger: React.ReactNode,
-      tooltipText?: string
-    ) =>
-      show && tooltipText ? (
-        <Tooltip>
-          <TooltipTrigger asChild>{trigger}</TooltipTrigger>
-          <TooltipContent className="prose prose-sm">
-            <Markdown remarkPlugins={[remarkGfm]}>{tooltipText}</Markdown>
-          </TooltipContent>
-        </Tooltip>
-      ) : (
-        trigger
-      );
 
     function sortByIndex<T extends [string, undefined | { index?: number }][]>(entries: T) {
       entries.sort((a, b) => (a[1]?.index || 0) - (b[1]?.index || 0))
@@ -88,15 +70,18 @@ export function createCustomNode(
                 key={key}
                 data-testid={`output-${key}`}
               >
-                <NodeSocketName isExec={output.socket.isExec} data-testid="output-title">
-                  {output.label}
-                </NodeSocketName>
-                {!output.socket.isExec &&
+                {output.label &&
+                  <NodeSocketLabel isExec={output.socket.isExec} data-testid="output-title">
+                    {output.label}
+                  </NodeSocketLabel>}
+
+                {!output.socket.isExec && (
                   withTooltip(
-                    !!output.socket.tooltipType,
                     <NodeSocketTypeLabel data-testid="output-type">{output.socket.name}</NodeSocketTypeLabel>,
-                    output.socket.tooltipType
-                  )}
+                    output.socket.tooltip
+                  )
+                )}
+
                 <Presets.classic.RefSocket
                   name="output-socket"
                   side="output"
@@ -106,6 +91,7 @@ export function createCustomNode(
                   payload={output.socket}
                   data-testid="output-socket"
                 />
+
               </NodeOutputPort>
             )
           )}
@@ -115,6 +101,8 @@ export function createCustomNode(
             if (!input) return null;
 
             return (
+              // NodeのInputは二種類、ソケットとコントロールモードがある。
+              // 更にコントロールモードは、ラベルとコントロールを一行にするか二行にするかある。
               <NodeInputPort
                 showControl={Boolean(input.control && input.showControl)}
                 cols={input.control?.opts.cols || 0}
@@ -133,20 +121,16 @@ export function createCustomNode(
                       payload={input.socket}
                       data-testid="input-socket"
                     />
-                    {!input.socket.isExec &&
-                      withTooltip(
-                        !!input.socket.tooltipType,
-                        <NodeSocketTypeLabel data-testid="input-type">{input.socket.name}</NodeSocketTypeLabel>,
-                        input.socket.tooltipType
-                      )}
-                    {withTooltip(
-                      !!input.tooltip,
-                      <NodeSocketName isExec={input.socket.isExec} data-testid="input-title">{input.label}</NodeSocketName>,
+
+                    {!input.socket.isExec && (
+                      <NodeSocketTypeLabel data-testid="input-type">{input.socket.name}</NodeSocketTypeLabel>
+                    )}
+                    {input.label && withTooltip(
+                      <NodeSocketLabel isExec={input.socket.isExec} data-testid="input-title">{input.label}</NodeSocketLabel>,
                       input.tooltip
                     )}
                   </>
-                )
-                }
+                )}
                 {input.control && input.showControl && (
                   <>
                     {input.control.opts.label && (
@@ -155,7 +139,6 @@ export function createCustomNode(
                         htmlFor={input.control.id}
                       >
                         {withTooltip(
-                          !!input.tooltip,
                           <div className='inline-block'>{input.control.opts.label}</div>,
                           input.tooltip
                         )}
