@@ -97,3 +97,16 @@ export class SerializableInputsNode<
     }
   }
 }
+
+export interface ConnectNode {
+  connected: () => void;
+  disconnected: () => void;
+}
+
+export interface ObjectNode {
+  updateOutputSchema: () => void;
+}
+
+export function isObjectNode(node: any): node is ObjectNode {
+  return typeof node.updateOutputSchema === "function";
+}
