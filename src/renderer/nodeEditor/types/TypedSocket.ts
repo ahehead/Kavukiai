@@ -11,12 +11,12 @@ export class TypedSocket extends ClassicPreset.Socket {
     super(name); // 省略型情報
     this.schema = schema;
     this.isExec = name === "exec"; // exec 判定
-    this.setTooltip(this.schema); // ツールチップの型情報を設定
+    void this.setTooltip(name, this.schema); // ツールチップの型情報を設定
   }
 
-  setTooltip(schema: TSchema) {
+  async setTooltip(name: string, schema: TSchema) {
     this.tooltip = `
-\`\`\`json
+\`\`\`typescript
 ${JSON.stringify(schema, null, 2)}
 \`\`\`
 `; // 型情報そのまま
@@ -46,11 +46,12 @@ ${JSON.stringify(schema, null, 2)}
     return this.name;
   }
 
-  setSchema(name: string, schema: TSchema): void {
+  async setSchema(name: string, schema: TSchema): Promise<void> {
     this.name = name;
     this.schema = schema;
-    this.setTooltip(schema);
+    await this.setTooltip(name, schema);
   }
+
   getSchema(): TSchema {
     return this.schema;
   }
