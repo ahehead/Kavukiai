@@ -78,6 +78,7 @@ export function createCustomNode(
                 {!output.socket.isExec && (
                   withTooltip(
                     <NodeSocketTypeLabel data-testid="output-type">{output.socket.name}</NodeSocketTypeLabel>,
+                    true,
                     output.socket.tooltip
                   )
                 )}
@@ -123,23 +124,31 @@ export function createCustomNode(
                     />
 
                     {!input.socket.isExec && (
-                      <NodeSocketTypeLabel data-testid="input-type">{input.socket.name}</NodeSocketTypeLabel>
+                      withTooltip(
+                        <NodeSocketTypeLabel data-testid="input-type">{input.socket.name}</NodeSocketTypeLabel>,
+                        true,
+                        input.socket.tooltip
+                      )
                     )}
-                    {input.label && withTooltip(
-                      <NodeSocketLabel isExec={input.socket.isExec} data-testid="input-title">{input.label}</NodeSocketLabel>,
-                      input.tooltip
+                    {input.label && (
+                      withTooltip(
+                        <NodeSocketLabel isExec={input.socket.isExec} data-testid="input-title">{input.label}</NodeSocketLabel>,
+                        false,
+                        input.tooltip
+                      )
                     )}
                   </>
                 )}
                 {input.control && input.showControl && (
                   <>
-                    {input.control.opts.label && (
+                    {input.control.opts.label && input.control.opts.cols !== 0 && (
                       <ControlLabel
                         cols={input.control.opts.cols}
                         htmlFor={input.control.id}
                       >
                         {withTooltip(
                           <div className='inline-block'>{input.control.opts.label}</div>,
+                          false,
                           input.tooltip
                         )}
                       </ControlLabel>
