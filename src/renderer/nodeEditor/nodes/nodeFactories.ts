@@ -32,8 +32,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   MultiLineString: ({ history, area, dataflow }) =>
     new MultiLineStringNode("", history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
-  Inspector: ({ editor, dataflow, area }) =>
-    new InspectorNode(editor, dataflow, area),
+  Inspector: ({ editor, dataflow, area, controlflow }) =>
+    new InspectorNode(editor, dataflow, area, controlflow),
   OpenAI: ({ area, dataflow, controlflow }) =>
     new OpenAINode(area, dataflow, controlflow),
   OpenAIParam: ({ history, area, dataflow }) =>
