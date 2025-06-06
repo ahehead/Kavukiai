@@ -5,6 +5,7 @@ import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
 import type { GraphJsonData, InputPortJson } from "shared/JsonType";
+import { isObjectNode } from "renderer/nodeEditor/types";
 
 // JSON からノードを生成してエディタに登録
 export async function loadGraphFromJson(
@@ -50,9 +51,9 @@ export async function loadGraphFromJson(
       (node as any).setFromInputsJson(inputs as Record<string, InputPortJson>);
     }
 
-    // ノードが、OpenAIParamNode の場合、updateParamSchema を呼び出す
-    if (type === "OpenAIParam") {
-      (node as any).updateParamSchema();
+    // ノードのスキーマを更新
+    if (isObjectNode(node)) {
+      node.updateOutputSchema();
     }
 
     node.id = id;
