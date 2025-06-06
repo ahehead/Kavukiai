@@ -94,15 +94,18 @@ export class OpenAINode extends SerializableInputsNode<
   }
 
   //errorとdoneのときの終了処理
-  logAndTerminate(type: "error" | "done", message: string): void {
+  async logAndTerminate(
+    type: "error" | "done",
+    message: string
+  ): Promise<void> {
     if (type === "error") {
       this.controls.console.addValue(`Error: ${message}`);
       console.error(`Error: ${message}`);
-      this.setStatus(this.area, NodeStatus.ERROR);
+      await this.setStatus(this.area, NodeStatus.ERROR);
     } else if (type === "done") {
       this.controls.console.addValue(`Done: ${message}`);
       console.log(`Done: ${message}`);
-      this.setStatus(this.area, NodeStatus.COMPLETED);
+      await this.setStatus(this.area, NodeStatus.COMPLETED);
     }
     this.closePort();
   }
@@ -142,7 +145,7 @@ export class OpenAINode extends SerializableInputsNode<
     };
     this.controls.console.addValue(`Param: ${JSON.stringify(param, null, 2)}`);
     if (!param) {
-      this.logAndTerminate("error", "No param");
+      await this.logAndTerminate("error", "No param");
       return;
     }
     this.controls.console.addValue("Start");
@@ -152,18 +155,18 @@ export class OpenAINode extends SerializableInputsNode<
       param: param[0],
     });
 
-    this.port.onmessage = (e: MessageEvent) => {
+    this.port.onmessage = async (e: MessageEvent) => {
       const result = e.data as PortEventType;
       //console.log("result", result);
       if (result.type === "error") {
-        this.logAndTerminate("error", result.message);
+        await this.logAndTerminate("error", result.message);
       }
       if (result.type === "delta") {
         this.addString(result.value);
       }
       if (result.type === "done") {
         this.setString(result.text);
-        this.logAndTerminate("done", result.text);
+        await this.logAndTerminate("done", result.text);
       }
       forward("exec");
     };
