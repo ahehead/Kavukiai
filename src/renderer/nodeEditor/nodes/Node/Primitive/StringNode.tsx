@@ -1,12 +1,12 @@
-import { ClassicPreset } from 'rete';
+
 import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
-import { type AreaExtra, createSocket, type TypedSocket, type Schemes } from 'renderer/nodeEditor/types';
+import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
 import { InputValueControl } from '../../Controls/input/InputValue';
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
-const { Node, Output } = ClassicPreset;
+import { Type } from '@sinclair/typebox';
 // 短い文字列入力ノード
 export class StringNode extends BaseNode<
   object,
@@ -20,9 +20,15 @@ export class StringNode extends BaseNode<
     dataflow: DataflowEngine<Schemes>
   ) {
     super('String');
-    this.addOutput(
-      'out',
-      new Output(createSocket("string"), undefined));
+
+    this.addOutputPort(
+      {
+        key: 'out',
+        name: "string",
+        schema: Type.String(),
+      }
+    );
+
     this.addControl(
       'textInput',
       new InputValueControl<string>({
