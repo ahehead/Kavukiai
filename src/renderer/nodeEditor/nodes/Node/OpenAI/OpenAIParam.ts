@@ -262,14 +262,6 @@ export class OpenAIParamNode
     area?.update("node", this.id);
   }
 
-  connected(): void {
-    this.updateOutputSchema(this.area);
-  }
-
-  disconnected(): void {
-    this.updateOutputSchema(this.area);
-  }
-
   data(inputs: Partial<Record<OpenAIParamKeys, unknown[]>>): {
     param: OpenAI.Responses.ResponseCreateParams;
   } {
