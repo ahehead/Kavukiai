@@ -31,7 +31,7 @@ export class OpenAIParamNode
   constructor(
     private history: HistoryPlugin<Schemes>,
     private area: AreaPlugin<Schemes, AreaExtra>,
-    private dataflow: DataflowEngine<Schemes>,
+    private dataflow: DataflowEngine<Schemes>
   ) {
     super("OpenAIParam");
 
@@ -228,7 +228,7 @@ export class OpenAIParamNode
 
     this.addOutputPort({
       key: "param",
-      name: "ResponseCreateParamsBase",
+      name: "object",
       schema: ResponseCreateParamsBase,
     });
     // 初期スキーマ設定
@@ -239,7 +239,7 @@ export class OpenAIParamNode
    * 入力ポートの接続状況および表示コントロールから動的にパラメータ型スキーマを構築し、出力ソケットに設定する
    */
   public async updateOutputSchema(
-    area: AreaPlugin<Schemes, AreaExtra> | null = null,
+    area: AreaPlugin<Schemes, AreaExtra> | null = null
   ): Promise<void> {
     // 接続中 or コントロール表示中の入力だけを抽出して
     // { key: schema } というオブジェクトを構築
@@ -247,16 +247,13 @@ export class OpenAIParamNode
       Object.entries(this.inputs)
         .filter(
           ([, input]) =>
-            input.socket.isConnected || (input.control && input.showControl),
+            input.socket.isConnected || (input.control && input.showControl)
         )
-        .map(([key, input]) => [key, input.socket.getSchema()]),
+        .map(([key, input]) => [key, input.socket.getSchema()])
     );
 
     // 出力スキーマを反映
-    await this.outputs.param?.socket.setSchema(
-      "ResponseCreateParamsBase",
-      Type.Object(schemas),
-    );
+    await this.outputs.param?.socket.setSchema("object", Type.Object(schemas));
 
     // ビュー更新
     area?.update("node", this.id);
