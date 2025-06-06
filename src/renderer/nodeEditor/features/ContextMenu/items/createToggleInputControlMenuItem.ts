@@ -6,6 +6,7 @@ import type { TypedSocket } from "renderer/nodeEditor/types/TypedSocket";
 import { removeLinkedSockets } from "../../../nodes/util/removeNode";
 import { resetCacheDataflow } from "renderer/nodeEditor/nodes/util/resetCacheDataflow";
 import type { Item } from "rete-context-menu-plugin/_types/types";
+import { isObjectNode } from "renderer/nodeEditor/types";
 
 export function createToggleInputControlMenuItem(
   context: NodeInterface,
@@ -22,7 +23,7 @@ export function createToggleInputControlMenuItem(
     key: "control-style",
     handler: () => void 0,
     subitems: inputlist.map(({ key, input }) => ({
-      label: `${key}`,
+      label: `${input.label ?? key}`,
       key: `${context.id}_${input.id}`,
       async handler() {
         input.showControl = !input.showControl;
@@ -30,10 +31,14 @@ export function createToggleInputControlMenuItem(
         await removeLinkedSockets(editor, context.id, key);
         // dataflowをリセット
         resetCacheDataflow(dataflow, context.id);
+
+        // objectNodeはoutpuのSchemaを更新
+        if (isObjectNode(context)) {
+          await context.updateOutputSchema();
+        }
         // sizeをリセット
         //context.clearHeight();
         await area.update("node", context.id);
-        console.log(`Toggled showControl for ${key} to ${input.showControl}`);
       },
     })),
   };
@@ -43,15 +48,14 @@ export function createToggleInputControlMenuItem(
 export function filterInputControls(
   inputs: NodeInterface["inputs"]
 ): Array<{ key: string; input: ClassicPreset.Input<TypedSocket> }> {
-  const entries = Object.entries(inputs) as [
-    string,
-    ClassicPreset.Input<TypedSocket> | undefined
-  ][];
-  const filtered = entries.filter(
-    (entry): entry is [string, ClassicPreset.Input<TypedSocket>] => {
-      const input = entry[1];
-      return input?.control != null;
-    }
+  const filtered = Object.entries(inputs).filter(
+    ([key, entry]) => entry && entry.control != null
   );
-  return filtered.map(([key, input]) => ({ key, input }));
+  return filtered.map(
+    ([key, input]) =>
+      ({ key, input } as {
+        key: string;
+        input: ClassicPreset.Input<TypedSocket>;
+      })
+  );
 }
