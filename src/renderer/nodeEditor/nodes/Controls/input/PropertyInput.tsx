@@ -2,9 +2,6 @@ import { useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
-import { defaultNodeSchemas, type DefaultSchemaKey } from "renderer/nodeEditor/types/DefaultNodeSchema";
-import { normalizeSchema } from "renderer/nodeEditor/types/TypedSocket";
-import type { Type } from "arktype";
 import {
   Select,
   SelectTrigger,
@@ -15,11 +12,13 @@ import {
   SelectValue
 } from "renderer/components/ui/select";
 import { Plus } from "lucide-react";
+import type { TSchema } from "@sinclair/typebox";
+import { defaultNodeSchemas, type DefaultSchemaKey } from "renderer/nodeEditor/types/Schemas/DefaultSchema";
 
 export interface PropertyInputValue {
   key: string;
   typeStr: DefaultSchemaKey;
-  type: Type;
+  type: TSchema;
 }
 
 export interface PropertyInputParams extends ControlOptions<PropertyInputValue> {
@@ -68,8 +67,7 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
   const [typeStr, setTypeStr] = useState<DefaultSchemaKey>(control.getValue().typeStr);
 
   const handleAdd = (): void => {
-    const schemaType = normalizeSchema(typeStr);
-    const newValue = { key: keyStr, typeStr, type: schemaType };
+    const newValue = { key: keyStr, typeStr, type: defaultNodeSchemas[typeStr] };
     control.addHistory(control.getValue(), newValue);
     control.setValue(newValue);
     setKeyStr("");
