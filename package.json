@@ -52,7 +52,7 @@
     "electron-router-dom": "^2.1.0",
     "fast-json-stable-stringify": "^2.1.0",
     "json-schema-to-typescript": "^15.0.4",
-    "lucide-react": "^0.477.0",
+    "lucide-react": "^0.513.0",
     "openai": "^5.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
