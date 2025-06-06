@@ -75,34 +75,33 @@ export class InspectorNode extends BaseNode<
     forward('exec');
   }
 
-  connected(name: string, inputSchema: TSchema): void {
+  async connected(name: string, inputSchema: TSchema): Promise<void> {
     //console.log("InspectorNode connected");
-    this.inputs.inputAny?.socket.setSchema(name, inputSchema);
-    this.outputs.outputAny?.socket.setSchema(name, inputSchema);
-    this.area.update("node", this.id);
+    await this.inputs.inputAny?.socket.setSchema(name, inputSchema);
+    await this.outputs.outputAny?.socket.setSchema(name, inputSchema);
+    await this.area.update("node", this.id);
     // 自身の出力からつながっているInspectorNodeのsocketを更新
-    // 処理的に世界にコネクションが多いと重くなる可能性がある
     const myConnection = this.editor.getConnections().filter(c => c.source === this.id && c.sourceOutput === "outputAny");
     for (const conn of myConnection) {
       const targetNode = this.editor.getNode(conn.target);
       if (targetNode instanceof InspectorNode) {
-        targetNode.connected(name, inputSchema);
+        await targetNode.connected(name, inputSchema);
       }
     }
 
   }
 
-  disconnected(): void {
+  async disconnected(): Promise<void> {
     //console.log("InspectorNode disconnected");
     // デフォルトの型に戻す
-    this.inputs.inputAny?.socket.setSchema("unknown", Type.Unknown());
-    this.outputs.outputAny?.socket.setSchema("unknown", Type.Unknown());
-    this.area.update("node", this.id);
+    await this.inputs.inputAny?.socket.setSchema("unknown", Type.Unknown());
+    await this.outputs.outputAny?.socket.setSchema("unknown", Type.Unknown());
+    await this.area.update("node", this.id);
     const myConnection = this.editor.getConnections().filter(c => c.source === this.id && c.sourceOutput === "outputAny");
     for (const conn of myConnection) {
       const targetNode = this.editor.getNode(conn.target);
       if (targetNode instanceof InspectorNode) {
-        targetNode.disconnected();
+        await targetNode.disconnected();
       }
     }
   }
