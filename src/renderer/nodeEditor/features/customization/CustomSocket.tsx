@@ -4,8 +4,8 @@ import type { TypedSocket } from "../../types/TypedSocket"
 export function CustomSocket<T extends TypedSocket>(
   props: { data: T }
 ): React.ReactElement {
-  const { name, isConnected, tooltip } = props.data
+  const { name, isConnected } = props.data
   return (
-    <NodeDataSocket isConnected={isConnected} title={name} tooltip={tooltip} />
+    <NodeDataSocket isConnected={isConnected} title={name} />
   )
 }
