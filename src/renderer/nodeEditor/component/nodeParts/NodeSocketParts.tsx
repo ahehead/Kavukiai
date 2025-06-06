@@ -125,17 +125,14 @@ const dataIconStyles = cva(
   })
 
 
-export function NodeDataSocket({ isConnected, title, tooltip }: { title: string, tooltip?: string } & VariantProps<typeof dataIconStyles>) {
+export function NodeDataSocket({ isConnected, title }: { title: string, tooltip?: string } & VariantProps<typeof dataIconStyles>) {
   return (
     <div className={socketIconWrapperStyles()}>
       <div
         className="transform transition-all duration-100 group-hover:scale-115"
         title={title}
       >
-        {withTooltip(
-          <Circle className={dataIconStyles({ isConnected })} />,
-          tooltip
-        )}
+        <Circle className={dataIconStyles({ isConnected })} />
       </div>
     </div>
   )
