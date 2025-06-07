@@ -194,7 +194,13 @@ export function selectableNodes<T>(
     } else if (context.type === "pointermove") {
       if (twitch !== null) twitch++;
     } else if (context.type === "pointerup") {
-      if (context.data.event.button !== 0) return;
+      // クリック以外は無視
+      if (context.data.event.button !== 0) return context;
+      // 右クリックメニューをクリックした場合は無視
+      const element = context.data.event.target as HTMLElement;
+      if (element.getAttribute("data-testid") === "context-menu-item")
+        return context;
+
       if (twitch !== null && twitch < 4) {
         core.unselectAll();
       }
