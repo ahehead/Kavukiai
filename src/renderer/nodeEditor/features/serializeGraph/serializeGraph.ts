@@ -1,7 +1,7 @@
 import type { NodeEditor } from "rete";
 import type { GraphJsonData, NodeJson } from "../../../../shared/JsonType";
-import type { AreaExtra, Schemes } from "../../types/Schemes";
-import type { AreaPlugin } from "rete-area-plugin";
+import type { AreaExtra, NodeTypes, Schemes } from "../../types/Schemes";
+import type { AreaPlugin, NodeView } from "rete-area-plugin";
 
 /**
  * editor の状態を GraphJsonData 形式にシリアライズして返す
@@ -14,27 +14,22 @@ export function serializeGraph(
   const nodes: NodeJson[] = [];
   for (const node of editor.getNodes()) {
     // positionを取得するために nodeViewからnodeを取得
-    const _node = area.nodeViews.get(node.id);
-    if (!_node) {
+    const nodeView = area.nodeViews.get(node.id);
+    if (!nodeView) {
       console.error(`Node with id ${node.id} not found in area.`);
       continue;
     }
 
-    const baseData = {
-      id: node.id,
-      type: node.label,
-      position: { x: _node.position.x, y: _node.position.y },
-      size: { width: node.width, height: node.height },
-    };
+    const baseData = createNodeBaseData(node, nodeView);
 
     let nodeData = {};
-    if (typeof (node as any).toJSON === "function") {
-      nodeData = (node as any).toJSON();
+    if ("toJSON" in node) {
+      nodeData = node.toJSON();
     }
 
     let inputsData = {};
-    if (typeof (node as any).toInputsJson === "function") {
-      inputsData = (node as any).toInputsJson();
+    if ("toInputsJson" in node) {
+      inputsData = node.toInputsJson();
     }
 
     nodes.push({
@@ -57,5 +52,14 @@ export function serializeGraph(
     version: "1.0", // バージョン情報
     nodes,
     connections,
+  };
+}
+
+function createNodeBaseData(node: NodeTypes, nodeView: NodeView) {
+  return {
+    id: node.id,
+    type: node.label,
+    position: { x: nodeView.position.x, y: nodeView.position.y },
+    size: { width: node.width, height: node.height },
   };
 }
