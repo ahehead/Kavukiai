@@ -50,7 +50,11 @@ export class RectSelectPlugin extends Scope<
       if (context.type === "pointerdown") {
         // マウス中ボタンと、右クリックとかを無視
         if (context.data.event.button !== 0) return context;
-
+        // 右クリックメニューをクリックした場合は無視
+        const target = context.data.event.target as HTMLElement;
+        if (target.getAttribute("data-testid") === "context-menu-item")
+          return context;
+        // console.debug("Pointer down, rect select start", context);
         this.isDragging = true;
         this.startPoint = {
           x: context.data.position.x,
