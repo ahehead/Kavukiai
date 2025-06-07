@@ -16,7 +16,7 @@ export function withTooltip(
       <TooltipTrigger asChild>{trigger}</TooltipTrigger>
       <TooltipContent className={isTypeLabel ? "" : "prose not-prose-p:py-0"} variant={isTypeLabel ? "header" : "default"}>
         <Drag.NoDrag>
-          <ScrollArea className="max-h-[90px] max-w-[300px]">
+          <ScrollArea className="max-h-[90px] max-w-[290px]">
             <Markdown
               remarkPlugins={[remarkGfm]}
               components={{
