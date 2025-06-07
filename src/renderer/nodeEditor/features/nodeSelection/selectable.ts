@@ -164,7 +164,7 @@ export function selectableNodes<T>(
     if (context.type === "nodepicked") {
       const pickedId = context.data.id;
       const accumulate = options.accumulating.active();
-      console.debug("Node picked", pickedId, accumulate);
+      // console.debug("Node picked", pickedId, accumulate);
       if (accumulate === "Add") {
         core.pick({ id: pickedId, label: "node" });
         add(pickedId, true);
