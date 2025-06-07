@@ -70,8 +70,13 @@ const socketNameStyles = cva(
   }
 );
 
-export function NodeSocketLabel({ isExec, className, ...props }: React.ComponentProps<"div"> & VariantProps<typeof socketNameStyles>) {
-  return <div {...props} className={cn(socketNameStyles({ isExec }), className)} />;
+export function NodeSocketLabel({ isExec, className, isRequired, children, ...props }: React.ComponentProps<"div"> & VariantProps<typeof socketNameStyles> & { isRequired?: boolean }) {
+  return (
+    <div {...props} className={cn(socketNameStyles({ isExec }), className)}>
+      {children}
+      {isRequired && requiredMark()}
+    </div>
+  );
 }
 // ソケットの型表示
 
@@ -135,5 +140,20 @@ export function NodeDataSocket({ isConnected, title }: { title: string, tooltip?
         <Circle className={dataIconStyles({ isConnected })} />
       </div>
     </div>
+  )
+}
+
+export function requiredMark() {
+  return (
+    <>
+      <span
+        aria-hidden="true"
+        className="text-red-600 ml-1"
+      >
+        *
+      </span>
+      {/* 視覚的には隠し、SR にだけ読ませる */}
+      <span className="sr-only">（必須）</span>
+    </>
   )
 }
