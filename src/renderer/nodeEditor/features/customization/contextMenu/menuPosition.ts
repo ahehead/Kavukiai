@@ -4,12 +4,15 @@ import type { Item } from "rete-context-menu-plugin/_types/types";
 export function computeMenuPlacement(
   element: HTMLElement,
   items: Item[],
-  menuWidth: number
+  menuWidth: number,
+  itemHeight = 30
 ): { x: number; y: number; side: "left" | "right" } {
+  // エディター画面のサイズを取得
   const editorWindowSize = getEditorWindowSize(element);
+  // メニューの高さを計算
   const menuSize = {
     width: menuWidth,
-    height: getMenuHeight(items),
+    height: getMenuHeight(items, itemHeight),
   };
   const rect = element.getBoundingClientRect();
   const { x, y } = calcMenuPosition(rect, menuSize, editorWindowSize);
@@ -29,8 +32,7 @@ export function getEditorWindowSize(element: HTMLElement) {
   return { width: rect.width, height: rect.height };
 }
 
-export function getMenuHeight(items: Item[]) {
-  const itemHeight = 30; // 各アイテムの高さ
+export function getMenuHeight(items: Item[], itemHeight = 30) {
   return itemHeight * items.length;
 }
 
