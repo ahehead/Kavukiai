@@ -132,7 +132,13 @@ export function createCustomNode(
                     )}
                     {input.label && (
                       withTooltip(
-                        <NodeSocketLabel isExec={input.socket.isExec} data-testid="input-title">{input.label}</NodeSocketLabel>,
+                        <NodeSocketLabel
+                          isExec={input.socket.isExec}
+                          data-testid="input-title"
+                          isRequired={input.require}
+                        >
+                          {input.label}
+                        </NodeSocketLabel>,
                         false,
                         input.tooltip
                       )
@@ -145,6 +151,7 @@ export function createCustomNode(
                       <ControlLabel
                         cols={input.control.opts.cols}
                         htmlFor={input.control.id}
+                        isRequired={input.require}
                       >
                         {withTooltip(
                           <div className='inline-block'>{input.control.opts.label}</div>,
