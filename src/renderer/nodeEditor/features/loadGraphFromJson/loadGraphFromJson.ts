@@ -14,7 +14,7 @@ export async function loadGraphFromJson(
   editor: NodeEditor<Schemes>,
   dataflow: DataflowEngine<Schemes>,
   controlflow: ControlFlowEngine<Schemes>,
-  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>,
+  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
 ): Promise<void> {
   // ノードの登録
   for (const {
@@ -42,13 +42,13 @@ export async function loadGraphFromJson(
     });
 
     // ノードにfromJsonがあり、データがある場合はデータをセット
-    if (typeof (node as any).fromJSON === "function" && data) {
-      (node as any).fromJSON(data as Record<string, unknown>);
+    if ("fromJSON" in node && data) {
+      node.fromJSON(data as any);
     }
 
     // ノードにsetFromInputsJsonがあり、inputsデータがある場合はデータをセット
-    if (typeof (node as any).setFromInputsJson === "function" && inputs) {
-      (node as any).setFromInputsJson(inputs as Record<string, InputPortJson>);
+    if ("setFromInputsJson" in node && inputs) {
+      node.setFromInputsJson(inputs as Record<string, InputPortJson>);
     }
 
     // ノードのスキーマを更新
@@ -58,8 +58,8 @@ export async function loadGraphFromJson(
 
     node.id = id;
     await editor.addNode(node);
+    node.setSize(size.width, size.height);
     if (size.width && size.height) {
-      node.setSize(size.width, size.height);
       await area.resize(id, size.width, size.height);
     }
     await area.translate(id, position);
@@ -73,20 +73,25 @@ export async function loadGraphFromJson(
     target,
     targetPort,
   } of graphJsonData.connections || []) {
-    // 接続元と接続先のノードを取得
-    const sourceNode = editor.getNode(source);
-    const targetNode = editor.getNode(target);
-    if (sourceNode && targetNode) {
+    try {
+      // 接続元と接続先のノードを取得
+      const sourceNode = editor.getNode(source);
+      const targetNode = editor.getNode(target);
+      if (!sourceNode || !targetNode) {
+        console.warn(`Node not found for connection: ${source} -> ${target}`);
+        continue;
+      }
+
       const conn = new ClassicPreset.Connection(
         sourceNode,
         sourcePort as never,
         targetNode,
-        targetPort as never,
+        targetPort as never
       );
       conn.id = id;
       await editor.addConnection(conn);
-    } else {
-      console.error(`Connection error: ${source} -> ${target}`);
+    } catch (error) {
+      console.error(`Failed to create connection ${id}:`, error);
     }
   }
 
