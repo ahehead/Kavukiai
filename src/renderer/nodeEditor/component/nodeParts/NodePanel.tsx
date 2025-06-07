@@ -5,12 +5,12 @@ import { Loader2 } from 'lucide-react';
 import React from "react";
 
 export const nodePanel = cva(
-  ["bg-node-bg text-node-fg flex flex-col rounded-md border border-node-outline shadow-sm hover:ring-2 hover:ring-accent/50"],
+  ["bg-node-bg text-node-fg flex flex-col rounded-md border border-node-outline shadow-sm"],
   {
     variants: {
       selected: {
-        true: ["ring-2 ring-node-selected"],
-        false: null,
+        true: ["ring-3 ring-node-primary/60"],
+        false: ["hover:ring-2 hover:ring-accent/70"],
       },
       status: {
         IDLE: "",
