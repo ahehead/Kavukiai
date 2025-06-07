@@ -33,7 +33,7 @@ export function createCustomNode(
     const inputs = Object.entries(data.inputs)
     const outputs = Object.entries(data.outputs)
     const controls = Object.entries(data.controls)
-    const { id, label, width, height, selected = false } = data
+    const { id, label, width, height, selected } = data
 
 
     function sortByIndex<T extends [string, undefined | { index?: number }][]>(entries: T) {
@@ -51,7 +51,7 @@ export function createCustomNode(
     return (
       <NodeContainer
         ref={panelRef}
-        selected={selected}
+        selected={selected || false}
         status={data.status}
         style={{
           width: `${Number.isFinite(width) ? width : nodeMinWidth}px`,
