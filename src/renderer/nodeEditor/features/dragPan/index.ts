@@ -1,29 +1,28 @@
 import { type AreaPlugin, Drag } from "rete-area-plugin";
-import type { AreaExtra } from "../../types/Schemes";
-import type { Schemes } from "../../types/Schemes";
+import type { AreaExtra, Schemes } from "../../types/Schemes";
 
-// キーボードの Space 押下状態を保持
-let spacePressed = false;
-window.addEventListener("keydown", (e) => {
-  if (e.code === "Space") spacePressed = true;
-});
-window.addEventListener("keyup", (e) => {
-  if (e.code === "Space") spacePressed = false;
-});
+// ドラッグするキーの設定
+// Spaceキーの押下状態管理＋クリーンアップを返す
+export function setupDragPan(area: AreaPlugin<Schemes, AreaExtra>): () => void {
+  let spacePressed = false;
 
-export function setupDragPan(area: AreaPlugin<Schemes, AreaExtra>) {
+  const keydownHandler = (e: KeyboardEvent) => {
+    if (e.code === "Space") spacePressed = true;
+  };
+  const keyupHandler = (e: KeyboardEvent) => {
+    if (e.code === "Space") spacePressed = false;
+  };
+
+  window.addEventListener("keydown", keydownHandler);
+  window.addEventListener("keyup", keyupHandler);
+
   area.area.setDragHandler(
     new Drag({
       down: (e) => {
-        // マウス以外は無効
         if (e.pointerType !== "mouse") return false;
-
-        // 下記いずれかでパンを許可
-        // ・中クリック（button===1）／右クリック（button===2）
-        // ・左クリック（button===0）＆ Space 押下中
+        // マウスのボタンが中ボタン、右クリック、または左クリックでスペースキーが押されている場合のみドラッグを許可
         const ok =
           e.button === 1 || e.button === 2 || (e.button === 0 && spacePressed);
-
         if (!ok) return false;
         e.preventDefault();
         return true;
@@ -31,4 +30,10 @@ export function setupDragPan(area: AreaPlugin<Schemes, AreaExtra>) {
       move: () => true,
     })
   );
+
+  // destroy 時にリスナーを外す
+  return () => {
+    window.removeEventListener("keydown", keydownHandler);
+    window.removeEventListener("keyup", keyupHandler);
+  };
 }
