@@ -27,6 +27,8 @@
   --node-state-error: var(--destructive);
 
   --node-selected: var(--accent);
+  --node-accent: var(--accent);
+  --node-primary: var(--primary);
 
   --node-success: hsl(214, 100%, 76%);
   --node-error: hsl(0, 100%, 93%);
@@ -52,6 +54,8 @@
 
   --color-node-outline: var(--node-outline);
   --color-node-selected: var(--node-selected);
+  --color-node-accent: var(--node-accent);
+  --color-node-primary: var(--node-primary);
 
   --color-node-success: var(--node-success);
   --color-node-error: var(--node-error);
