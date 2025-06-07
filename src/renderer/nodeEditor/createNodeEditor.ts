@@ -30,6 +30,9 @@ import { setupContextMenu } from "./features/contextMenu/setupContextMenu";
 import { customReactPresets } from "./features/customReactPresets/customReactPresets";
 import type { AreaExtra, Schemes } from "./types";
 import { customContextMenuPreset } from "./features/contextMenu/customContextMenuPreset";
+import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
+import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
+import { selectableNodes, selector } from "./features/nodeSelection/selectable";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -69,7 +72,7 @@ export async function createNodeEditor(container: HTMLElement) {
     history,
   });
 
-  const gridLine = new GridLineSnapPlugin<Schemes>({ baseSize: 20 });
+  const gridLine = new GridLineSnapPlugin<Schemes>({ container, baseSize: 20 });
 
   // エディタにプラグインを接続
   editor.use(dataflow);
@@ -106,14 +109,32 @@ export async function createNodeEditor(container: HTMLElement) {
   history.addPreset(HistoryPresets.classic.setup());
   HistoryExtensions.keyboard(history);
 
-  // マウスクリックと、マウス中ボタンで領域パンするようにする
-  setupDragPan(area);
+  // 領域パンのキー設定
+  const cleanupDragPan = setupDragPan(area);
   // ダブルクリックでズームするのを無効化
   disableDoubleClickZoom(area);
 
+  // ノードの選択、追加
+  const sn = selectableNodes(area, selector(), {
+    accumulating: accumulateOnShift(),
+  });
+
+  // 矩形選択
+  area.use(
+    new RectSelectPlugin({
+      editor,
+      container,
+      getZoom,
+      selectableNodes: sn,
+    })
+  );
+
   // 外部に公開するAPI
   return {
-    destroy: () => area.destroy(),
+    destroy: () => {
+      area.destroy();
+      cleanupDragPan();
+    },
 
     // 現在のnode editorの状態を取得
     getCurrentEditorState: () => getCurrentEditorState(editor, area, history),
