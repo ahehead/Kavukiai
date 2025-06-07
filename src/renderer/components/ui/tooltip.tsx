@@ -53,7 +53,7 @@ const tooltipArrowVariants = cva(
     variants: {
       variant: {
         default: "bg-node-bg fill-node-bg",
-        header: "bg-node-header-light fill-node-header",
+        header: "bg-node-header-light fill-node-header-light",
       },
     },
     defaultVariants: {
