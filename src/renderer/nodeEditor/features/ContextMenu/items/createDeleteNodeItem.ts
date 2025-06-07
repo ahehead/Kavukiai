@@ -12,6 +12,13 @@ export function createDeleteNodeItem(
     key: "delete-node",
     async handler() {
       await removeNodeWithConnections(editor, context.id);
+      const nodes = editor.getNodes().filter((node) => node.selected);
+      // console.log("Selected nodes to delete:", nodes);
+      if (nodes.length > 0) {
+        await Promise.all(
+          nodes.map((node) => removeNodeWithConnections(editor, node.id))
+        );
+      }
     },
   };
 }
