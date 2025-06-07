@@ -13,14 +13,17 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
   private backgroundElem!: HTMLDivElement;
   private lastZoom = 1;
   private gridOpacity: number;
+  private container: HTMLElement;
 
-  constructor(options?: {
+  constructor(options: {
+    container: HTMLElement;
     baseSize?: number;
     snap?: boolean;
     gridColor?: string;
     gridOpacity?: number;
   }) {
     super("gridline-snap-plugin");
+    this.container = options.container;
     this.baseSize = options?.baseSize ?? 10;
     this.snapEnabled = options?.snap ?? true;
     this.gridColor = options?.gridColor ?? "#e5e7eb";
@@ -35,9 +38,7 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
         BaseAreaPlugin
       );
 
-    const container: HTMLElement = (this.area as any).container;
-
-    if (!container || !(container instanceof HTMLElement))
+    if (!this.container || !(this.container instanceof HTMLElement))
       throw new Error("container expected");
 
     const background = document.createElement("div");
@@ -49,7 +50,7 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
     background.className = bgStyles();
 
     this.backgroundElem = background;
-    container.childNodes[0].appendChild(background);
+    this.container.childNodes[0].appendChild(background);
     this.applyStyle();
 
     this.addPipe((context) => {
@@ -129,5 +130,8 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
   public setGridOpacity(alpha: number) {
     this.gridOpacity = Math.min(1, Math.max(0, alpha)); // 0-1 clamp
     this.applyStyle();
+  }
+  public destroy() {
+    this.backgroundElem.remove();
   }
 }
