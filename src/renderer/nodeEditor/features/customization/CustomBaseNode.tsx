@@ -1,4 +1,4 @@
-import { Drag, Presets, type RenderEmit } from 'rete-react-plugin'
+import { Presets, type RenderEmit } from 'rete-react-plugin'
 import type { AreaExtra, NodeInterface, Schemes } from '../../types/Schemes'
 import { NodeContainer, NodeHeader, NodeTitle, NodeControlsWrapper, } from 'renderer/nodeEditor/component/nodeParts/NodePanel'
 import { NodeOutputPort, NodeSocketLabel, NodeSocketTypeLabel } from "renderer/nodeEditor/component/nodeParts/NodeSocketParts"

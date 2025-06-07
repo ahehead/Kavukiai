@@ -2,7 +2,6 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "renderer/lib/utils";
 import TriangleIcon from 'src/resources/public/triangleIcon/triangle.svg?react'
 import { Circle } from 'lucide-react';
-import { withTooltip } from "renderer/nodeEditor/features/customization/util";
 
 // ソケット全体のラッパー
 export function NodeSocketsWrapper({ ...props }: React.ComponentProps<"div">) {
