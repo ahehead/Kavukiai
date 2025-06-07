@@ -37,7 +37,7 @@ export class BaseNode<
     this.addControl(key, control);
   }
 
-  setSize(width: number, height: number) {
+  setSize(width?: number, height?: number) {
     this.width = width;
     this.height = height;
   }
