@@ -109,7 +109,7 @@ export class RectSelectPlugin extends Scope<
       }
 
       if (context.type === "pointerup" && this.isDragging) {
-        console.debug("Pointer up, rect select end");
+        // console.debug("Pointer up, rect select end");
         this.isDragging = false;
         const endPoint: Point = {
           x: context.data.position.x,
