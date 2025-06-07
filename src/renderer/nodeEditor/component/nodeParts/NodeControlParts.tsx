@@ -3,6 +3,7 @@ import type { VariantProps } from "class-variance-authority";
 import { useRef } from "react";
 import { cn } from "renderer/lib/utils"
 import { Drag } from "rete-react-plugin";
+import { requiredMark } from "./NodeSocketParts";
 
 export const textAreaStyles = cva(
   ["w-full h-full py-2 px-2.5 resize-none border-none rounded-md"],
@@ -45,8 +46,8 @@ const labelStyles = cva("cursor-pointer min-w-0 truncate", {
   defaultVariants: { cols: 1 }
 });
 
-export type ControlLabelProps = VariantProps<typeof labelStyles> & React.ComponentProps<"label">;
-export function ControlLabel({ cols, htmlFor, className, children, ...props }: ControlLabelProps) {
+export type ControlLabelProps = VariantProps<typeof labelStyles> & React.ComponentProps<"label"> & { isRequired?: boolean; };
+export function ControlLabel({ cols, htmlFor, className, isRequired, children, ...props }: ControlLabelProps) {
   const ref = useRef<HTMLLabelElement | null>(null);
   Drag.useNoDrag(ref); // areaのdragを無効化
   return (
@@ -56,6 +57,7 @@ export function ControlLabel({ cols, htmlFor, className, children, ...props }: C
       className={cn(labelStyles({ cols }), className)}
       {...props}>
       {children}
+      {isRequired && requiredMark()}
     </label>
   );
 }
