@@ -9,8 +9,9 @@ import { ChevronRight } from 'lucide-react';
 export function CustomContextMenu({ element, type, items, searchBar, onHide }: ContextMenuRender["data"]) {
 
   const menuWidth = 230; // メニューの幅を固定値で設定
+  const itemHeight = 30; // アイテムの高さを固定値で設定
   // メニューの配置を計算
-  const { x, y, side } = computeMenuPlacement(element, items, menuWidth)
+  const { x, y, side } = computeMenuPlacement(element, items, menuWidth, itemHeight);
 
   return (
     <div
@@ -61,7 +62,7 @@ export function Menu({
           // item
           <MenuItemContainer
             key={item.key}
-            onClick={() => { item.handler(); onHide(); }}
+            onClick={() => { item.handler(); if (!item.subitems) onHide(); }}
             onPointerEnter={() => handleEnterMenuItem(item)}
             onPointerLeave={handleLeaveMenuItem}
           >
