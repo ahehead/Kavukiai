@@ -47,7 +47,7 @@ export class OpenAIParamNode
         key: "input",
         name: "input",
         schema: Type.Index(ResponseCreateParamsBase, ["input"]),
-        label: "input (required)",
+        label: "input",
         showControl: true,
         require: true,
         tooltip:
@@ -55,7 +55,7 @@ export class OpenAIParamNode
         control: new InputValueControl<string>({
           value: "hello!",
           type: "string",
-          label: "input (required)",
+          label: "input",
           ...opts,
         }),
       },
@@ -63,7 +63,7 @@ export class OpenAIParamNode
         key: "model",
         name: "model",
         schema: Type.Index(ResponseCreateParamsBase, ["model"]),
-        label: "model (required)",
+        label: "model",
         showControl: true,
         require: true,
         tooltip:
@@ -71,7 +71,7 @@ export class OpenAIParamNode
         control: new InputValueControl<string>({
           value: "gpt-4.1",
           type: "string",
-          label: "model (required)",
+          label: "model",
           ...opts,
         }),
       },
