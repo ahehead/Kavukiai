@@ -5,6 +5,7 @@ import type { ContextMenuExtra } from "rete-context-menu-plugin";
 import type {
   ChatContextNode,
   MultiLineStringNode,
+  NumberNode,
   OpenAINode,
   OpenAIParamNode,
   RunNode,
@@ -30,6 +31,7 @@ export type NodeTypes =
   | UnknownNode
   | TestNode
   | StringNode
+  | NumberNode
   | RunNode
   | MultiLineStringNode
   | InspectorNode
