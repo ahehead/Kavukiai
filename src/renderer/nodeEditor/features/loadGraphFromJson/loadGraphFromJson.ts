@@ -41,14 +41,14 @@ export async function loadGraphFromJson(
       history,
     });
 
-    // ノードにfromJsonがあり、データがある場合はデータをセット
-    if ("fromJSON" in node && data) {
-      node.fromJSON(data as any);
+    // ノードにdeserializeControlValueがあり、データがある場合はデータをセット
+    if ("deserializeControlValue" in node && data) {
+      node.deserializeControlValue(data as any);
     }
 
-    // ノードにsetFromInputsJsonがあり、inputsデータがある場合はデータをセット
-    if ("setFromInputsJson" in node && inputs) {
-      node.setFromInputsJson(inputs as Record<string, InputPortJson>);
+    // ノードにdeserializeInputsがあり、inputsデータがある場合はデータをセット
+    if ("deserializeInputs" in node && inputs) {
+      node.deserializeInputs(inputs as Record<string, InputPortJson>);
     }
 
     // ノードのスキーマを更新
