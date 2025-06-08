@@ -26,7 +26,7 @@ import {
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
 import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
 
-import { setupContextMenu } from "./features/contextMenu/setupContextMenu";
+import { setupContextMenu } from "./features/contextMenu/SetupContextMenu";
 import { customReactPresets } from "./features/customReactPresets/customReactPresets";
 import type { AreaExtra, Schemes } from "./types";
 
