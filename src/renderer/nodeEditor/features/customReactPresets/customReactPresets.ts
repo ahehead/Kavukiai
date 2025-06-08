@@ -45,6 +45,10 @@ import {
   SwitchControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Switch";
 import {
+  SliderControl,
+  SliderControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/Slider";
+import {
   PropertyInputControl,
   PropertyInputControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/PropertyInput";
@@ -97,6 +101,9 @@ export function customReactPresets(
         }
         if (data.payload instanceof SwitchControl) {
           return SwitchControlView;
+        }
+        if (data.payload instanceof SliderControl) {
+          return SliderControlView;
         }
         if (data.payload instanceof PropertyInputControl) {
           return PropertyInputControlView;
