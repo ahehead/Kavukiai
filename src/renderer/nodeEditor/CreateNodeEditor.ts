@@ -26,7 +26,6 @@ import {
 import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
 import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
 
-import { setupContextMenu } from "./features/contextMenu/SetupContextMenu";
 import { customReactPresets } from "./features/customReactPresets/customReactPresets";
 import type { AreaExtra, Schemes } from "./types";
 
@@ -34,6 +33,7 @@ import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
 import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
 import { selectableNodes, selector } from "./features/nodeSelection/selectable";
 import { customContextMenuPreset } from "./features/contextMenu/CustomContextMenuPreset";
+import { setupContextMenu } from "./features/contextMenu/SetupContextMenu";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
