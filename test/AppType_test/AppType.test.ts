@@ -3,7 +3,7 @@ import {
   createApiKeysFlags,
   createApiKeysSecrets,
   providers,
-} from "@shared/ApiKeysType";
+} from "shared/ApiKeysType";
 
 test("createApiKeysFlags returns flags for all providers set to false", () => {
   const keys = createApiKeysFlags();
