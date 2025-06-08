@@ -50,13 +50,13 @@ export class StringNode extends BaseNode<
 
   async execute(): Promise<void> { }
 
-  toJSON(): { data: { value: string } } {
+  serializeControlValue(): { data: { value: string } } {
     return {
       data: { value: this.controls.textInput.value || "" }
     };
   }
 
-  fromJSON(data: { value: string }): void {
+  deserializeControlValue(data: { value: string }): void {
     this.controls.textInput.setValue(data.value);
   }
 }
