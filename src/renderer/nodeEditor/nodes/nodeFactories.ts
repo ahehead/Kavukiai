@@ -1,5 +1,6 @@
 import {
   MultiLineStringNode,
+  NumberNode,
   OpenAINode,
   OpenAIParamNode,
   RunNode,
@@ -28,6 +29,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   UnknownNode: () => new UnknownNode(),
   String: ({ history, area, dataflow }) =>
     new StringNode("", history, area, dataflow),
+  Number: ({ history, area, dataflow }) =>
+    new NumberNode(0, history, area, dataflow),
   Bool: ({ history, area, dataflow }) => new BoolNode(history, area, dataflow),
   MultiLineString: ({ history, area, dataflow }) =>
     new MultiLineStringNode("", history, area, dataflow),
@@ -65,6 +68,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "String",
         key: "string-node",
         factoryKey: "String",
+      },
+      {
+        label: "Number",
+        key: "number-node",
+        factoryKey: "Number",
       },
       {
         label: "Multi Line String",
