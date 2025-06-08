@@ -44,4 +44,16 @@ export class BoolNode extends BaseNode<
   }
 
   async execute(): Promise<void> { }
+
+  serializeControlValue(): { data: { value: boolean } } {
+    return {
+      data: {
+        value: this.controls.switch.getValue(),
+      },
+    };
+  }
+
+  deserializeControlValue(data: { value: boolean }): void {
+    this.controls.switch.setValue(data.value);
+  }
 }
