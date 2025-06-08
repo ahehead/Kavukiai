@@ -1,5 +1,5 @@
 import { useRete } from "rete-react-plugin";
-import { createNodeEditor } from "renderer/nodeEditor/createNodeEditor";
+import { createNodeEditor } from "renderer/nodeEditor/CreateNodeEditor";
 import { useCallback, useEffect } from "react";
 import {
   initializeHistoryState,

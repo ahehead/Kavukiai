@@ -33,7 +33,7 @@ src/
 
 ### nodeEditorフォルダ
 Rete.js + React で実装したノードベースUI
-- createNodeEditor.ts   : エディタとプラグイン設定  
+- CreateNodeEditor.ts   : エディタとプラグイン設定  
 - types.ts              : `Schemes`, `AreaExtra` 型定義  
 - nodes/                : 各ノード実装  
 - Controls/             : カスタムコントロール  
