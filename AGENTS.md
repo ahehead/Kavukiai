@@ -10,3 +10,5 @@
 - After moving files or changing imports, run pnpm lint .
 - Add or update tests for the code you change, even if nobody asked.
 
+## PR
+PRする前に、最新版をpullして、pnpm test pnpm lintでチェックして。
