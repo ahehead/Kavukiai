@@ -1,8 +1,8 @@
 import { ContextMenuPlugin } from "rete-context-menu-plugin";
 import type { NodeEditor } from "rete";
-import type { Schemes, AreaExtra, NodeInterface } from "../../types/Schemes";
+import type { Schemes, AreaExtra, NodeInterface } from "../../../types/Schemes";
 
-import { contextMenuStructure, type NodeDeps } from "../../nodes/nodeFactories";
+import { contextMenuStructure, type NodeDeps } from "../../../nodes/nodeFactories";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";

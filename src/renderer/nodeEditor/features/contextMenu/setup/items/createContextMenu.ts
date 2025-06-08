@@ -3,8 +3,8 @@ import {
   type MenuItemDefinition,
   type NodeDeps,
   nodeFactories,
-} from "../../../nodes/nodeFactories";
-import type { Schemes } from "../../../types/Schemes";
+} from "../../../../nodes/nodeFactories";
+import type { Schemes } from "../../../../types/Schemes";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 
 // Helper function to generate context menu items

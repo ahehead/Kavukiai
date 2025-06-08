@@ -1,9 +1,13 @@
 import type { NodeEditor, ClassicPreset } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
-import type { Schemes, AreaExtra, NodeInterface } from "../../../types/Schemes";
+import type {
+  Schemes,
+  AreaExtra,
+  NodeInterface,
+} from "../../../../types/Schemes";
 import type { TypedSocket } from "renderer/nodeEditor/types/TypedSocket";
-import { removeLinkedSockets } from "../../../nodes/util/removeNode";
+import { removeLinkedSockets } from "../../../../nodes/util/removeNode";
 import { resetCacheDataflow } from "renderer/nodeEditor/nodes/util/resetCacheDataflow";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 import { isObjectNode } from "renderer/nodeEditor/types";

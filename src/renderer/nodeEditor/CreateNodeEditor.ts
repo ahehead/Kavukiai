@@ -32,8 +32,8 @@ import type { AreaExtra, Schemes } from "./types";
 import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
 import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
 import { selectableNodes, selector } from "./features/nodeSelection/selectable";
-import { customContextMenuPreset } from "./features/contextMenu/CustomContextMenuPreset";
-import { setupContextMenu } from "./features/contextMenu/SetupContextMenu";
+import { customContextMenuPreset } from "./features/contextMenu/setup/CustomContextMenuPreset";
+import { setupContextMenu } from "./features/contextMenu/setup/SetupContextMenu";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();

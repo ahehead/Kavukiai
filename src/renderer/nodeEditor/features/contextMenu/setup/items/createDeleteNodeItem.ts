@@ -1,6 +1,6 @@
 import type { NodeEditor } from "rete";
-import type { Schemes } from "../../../types/Schemes";
-import { removeNodeWithConnections } from "../../../nodes/util/removeNode";
+import type { Schemes } from "../../../../types/Schemes";
+import { removeNodeWithConnections } from "../../../../nodes/util/removeNode";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 
 export function createDeleteNodeItem(
