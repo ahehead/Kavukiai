@@ -9,6 +9,7 @@ import type { SelectControl } from "../nodes/Controls/input/Select";
 import type { ListControl } from "../nodes/Controls/input/List";
 import type { SwitchControl } from "../nodes/Controls/input/Switch";
 import type { PropertyInputControl } from "../nodes/Controls/input/PropertyInput";
+import type { SliderControl } from "../nodes/Controls/input/Slider";
 
 export type NodeControl =
   | RunButtonControl
@@ -22,4 +23,5 @@ export type NodeControl =
   | SelectControl<any>
   | ListControl<any>
   | SwitchControl
+  | SliderControl
   | PropertyInputControl;

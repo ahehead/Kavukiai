@@ -6,6 +6,7 @@ import { SelectControl } from '../Controls/input/Select';
 import { ListControl } from '../Controls/input/List';
 import { SwitchControl } from '../Controls/input/Switch';
 import { PropertyInputControl } from '../Controls/input/PropertyInput';
+import { SliderControl } from '../Controls/input/Slider';
 import { Type } from '@sinclair/typebox';
 const { Output } = ClassicPreset;
 
@@ -20,6 +21,7 @@ export class TestNode extends BaseNode<
     select: SelectControl<string>,
     list: ListControl<string>,
     switch: SwitchControl,
+    slider: SliderControl,
     propertyInput: PropertyInputControl
     // コントロールを作った場合まずここに追加
   }
@@ -56,6 +58,10 @@ export class TestNode extends BaseNode<
     this.addControl(
       'switch',
       new SwitchControl({ value: true, label: 'Switch' })
+    );
+    this.addControl(
+      'slider',
+      new SliderControl({ value: 50, label: 'Slider', min: 0, max: 100, step: 1 })
     );
     this.addControl(
       'propertyInput',
