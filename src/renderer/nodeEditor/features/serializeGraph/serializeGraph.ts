@@ -23,13 +23,13 @@ export function serializeGraph(
     const baseData = createNodeBaseData(node, nodeView);
 
     let nodeData = {};
-    if ("toJSON" in node) {
-      nodeData = node.toJSON();
+    if ("serializeControlValue" in node) {
+      nodeData = node.serializeControlValue();
     }
 
     let inputsData = {};
-    if ("toInputsJson" in node) {
-      inputsData = node.toInputsJson();
+    if ("serializeInputs" in node) {
+      inputsData = node.serializeInputs();
     }
 
     nodes.push({
