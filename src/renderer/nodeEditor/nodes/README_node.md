@@ -1,12 +1,11 @@
 ## フォルダ構成
 
-- nodes/Controls -- カスタムコントロール
-
-- nodes/Node  -- オリジナルノード
-
-- nodes/nodeFactory.ts -- ノードの生成関数
-
-- nodes/README.node.md -- この文章
+- nodes/components/   -- ノード共通UIやソケット定義
+- nodes/Controls/     -- カスタムコントロール
+- nodes/Node/         -- オリジナルノード
+- nodes/nodeFactories.ts -- ノードの生成関数
+- nodes/util/         -- ノード用ユーティリティ
+- nodes/README_node.md -- この文章
 
 ## Controlの追加後
 - [NodeControl.ts](../types/NodeControl.ts)に追加
