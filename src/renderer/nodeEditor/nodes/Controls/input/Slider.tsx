@@ -82,7 +82,7 @@ export function SliderControlView(props: { data: SliderControl }): JSX.Element {
   };
 
   const commitInput = () => {
-    const val = parseFloat(inputStr);
+    const val = Number.parseFloat(inputStr);
     if (!Number.isNaN(val)) {
       const clamped = Math.min(control.max, Math.max(control.min, val));
       control.addHistory(uiValue, clamped);
