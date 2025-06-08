@@ -1,7 +1,7 @@
 import { useEffect, useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
 
-import { checkBoxStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
+import { checkBoxStyles } from "renderer/nodeEditor/nodes/components/common/NodeControlParts";
 import { BaseControl, type ControlOptions, } from "renderer/nodeEditor/types";
 import type { ControlJson } from "shared/JsonType";
 

@@ -5,6 +5,7 @@ import { cn } from "renderer/lib/utils"
 import { Drag } from "rete-react-plugin";
 import { requiredMark } from "./NodeSocketParts";
 
+
 export const textAreaStyles = cva(
   ["w-full h-full py-2 px-2.5 resize-none border-none rounded-md"],
   {

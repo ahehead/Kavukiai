@@ -35,11 +35,7 @@ import {
   SelectControl,
   SelectControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Select";
-import {
-  CustomExecSocket,
-  CustomSocket,
-  createCustomNode,
-} from "../customization";
+
 import {
   ListControl,
   ListControlView,
@@ -52,6 +48,11 @@ import {
   PropertyInputControl,
   PropertyInputControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/PropertyInput";
+import {
+  CustomExecSocket,
+  CustomSocket,
+  createCustomNode,
+} from "renderer/nodeEditor/nodes/components";
 
 export function customReactPresets(
   area: AreaPlugin<Schemes, AreaExtra>,

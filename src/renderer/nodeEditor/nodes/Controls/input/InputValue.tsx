@@ -1,6 +1,6 @@
 import { useEffect, useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
-import { inputValueStyles } from "renderer/nodeEditor/component/nodeParts/NodeControlParts";
+import { inputValueStyles } from "renderer/nodeEditor/nodes/components/common/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 
