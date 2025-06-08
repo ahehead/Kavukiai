@@ -71,7 +71,7 @@ export class SerializableInputsNode<
   Outputs extends { [key in string]?: TypedSocket },
   Controls extends { [key in string]?: NodeControl }
 > extends BaseNode<Inputs, Outputs, Controls> {
-  toInputsJson(): { inputs: Record<string, InputPortJson> } {
+  serializeInputs(): { inputs: Record<string, InputPortJson> } {
     const inputsJson: Record<string, InputPortJson> = {};
     for (const [key, input] of Object.entries(this.inputs)) {
       if (!input) continue;
@@ -84,7 +84,7 @@ export class SerializableInputsNode<
     return { inputs: inputsJson };
   }
 
-  setFromInputsJson(inputsJson: Record<string, InputPortJson>): void {
+  deserializeInputs(inputsJson: Record<string, InputPortJson>): void {
     for (const [key, inputJson] of Object.entries(inputsJson)) {
       const input = this.inputs[key as keyof Inputs];
       if (!input) continue;
