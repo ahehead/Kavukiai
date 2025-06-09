@@ -10,11 +10,11 @@ import {
   type TypedSocket,
   NodeStatus,
   type Schemes,
-  SerializableInputsNode,
 } from "renderer/nodeEditor/types";
 import { ButtonControl } from "../../Controls/Button";
 import { Type } from "@sinclair/typebox";
 import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/RequestSchemas";
+import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 
 // Run ノード
 export class OpenAINode extends SerializableInputsNode<
