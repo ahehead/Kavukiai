@@ -1,5 +1,5 @@
 export * from "./TypedSocket";
-export * from "./BaseNode";
+export { BaseNode, NodeStatus, SerializableInputsNode, ConnectNode, ObjectNode, isObjectNode } from "../nodes/Node";
 export * from "./NodeControl";
 export * from "./Schemes";
 export * from "./Connection";

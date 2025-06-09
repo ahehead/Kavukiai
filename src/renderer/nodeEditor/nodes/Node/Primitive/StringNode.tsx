@@ -1,5 +1,5 @@
 
-import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
+import { BaseNode } from "renderer/nodeEditor/nodes/Node/BaseNode";
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';

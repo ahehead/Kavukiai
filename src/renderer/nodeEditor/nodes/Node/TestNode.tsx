@@ -1,5 +1,5 @@
 import { ClassicPreset } from 'rete';
-import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
+import { BaseNode } from "renderer/nodeEditor/nodes/Node/BaseNode";
 import { CheckBoxControl } from '../Controls/input/CheckBox';
 import { ButtonControl } from '../Controls/Button';
 import { SelectControl } from '../Controls/input/Select';

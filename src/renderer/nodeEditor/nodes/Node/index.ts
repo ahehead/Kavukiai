@@ -10,3 +10,5 @@ export { OpenAIParamNode } from "./OpenAI/OpenAIParam";
 export { ChatContextNode } from "./OpenAI/ChatContextNode";
 export { BoolNode } from "./Primitive/BoolNode";
 export { UnknownNode } from "./UnknownNode";
+export { BaseNode, NodeStatus, ConnectNode, ObjectNode, isObjectNode } from "./BaseNode";
+export { SerializableInputsNode } from "./SerializableInputsNode";

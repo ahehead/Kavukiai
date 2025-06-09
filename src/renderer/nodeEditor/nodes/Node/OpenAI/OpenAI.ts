@@ -5,13 +5,13 @@ import type { OpenAIRequestArgs, PortEventType } from "shared/ApiType";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
-import {
-  type AreaExtra,
-  type TypedSocket,
-  NodeStatus,
-  type Schemes,
-  SerializableInputsNode,
+import type {
+  AreaExtra,
+  TypedSocket,
+  Schemes,
 } from "renderer/nodeEditor/types";
+import { NodeStatus } from "renderer/nodeEditor/nodes/Node/BaseNode";
+import { SerializableInputsNode } from "renderer/nodeEditor/nodes/Node/SerializableInputsNode";
 import { ButtonControl } from "../../Controls/Button";
 import { Type } from "@sinclair/typebox";
 import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/RequestSchemas";

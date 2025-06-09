@@ -1,4 +1,4 @@
-import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
+import { BaseNode } from "renderer/nodeEditor/nodes/Node/BaseNode";
 
 // 名称がわからないノードのときのノード
 export class UnknownNode extends BaseNode<object, object, object> {

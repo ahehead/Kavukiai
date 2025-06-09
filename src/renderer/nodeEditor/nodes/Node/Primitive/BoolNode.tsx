@@ -1,7 +1,7 @@
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
-import { BaseNode } from 'renderer/nodeEditor/types/BaseNode';
+import { BaseNode } from 'renderer/nodeEditor/nodes/Node/BaseNode';
 import type { TypedSocket, Schemes, AreaExtra } from 'renderer/nodeEditor/types';
 import { SwitchControl } from '../../Controls/input/Switch';
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
