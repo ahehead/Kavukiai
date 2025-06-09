@@ -4,7 +4,7 @@ import { isFileDirty } from "../features/dirty-check/useIsFileDirty";
 import { hashGraph } from "../features/dirty-check/hash";
 import { notify } from "../features/toast-notice/notify";
 import { CloseFileDialogResponse, type FileData } from "shared/ApiType";
-import { getNewActiveFileId } from "renderer/features/tab/getNewFileId";
+import { getNewActiveFileId } from "renderer/features/tab/getNewActiveFileId";
 import { createFile, type File } from "shared/AppType";
 import type { GraphJsonData } from "shared/JsonType";
 
