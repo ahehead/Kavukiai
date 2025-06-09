@@ -1,5 +1,4 @@
-import { ClassicPreset } from 'rete';
-import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
+import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import { CheckBoxControl } from '../Controls/input/CheckBox';
 import { ButtonControl } from '../Controls/Button';
 import { SelectControl } from '../Controls/input/Select';
@@ -8,7 +7,6 @@ import { SwitchControl } from '../Controls/input/Switch';
 import { PropertyInputControl } from '../Controls/input/PropertyInput';
 import { SliderControl } from '../Controls/input/Slider';
 import { Type } from '@sinclair/typebox';
-const { Output } = ClassicPreset;
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
 // コントロール等の確認と、型チェック回避用のNode。

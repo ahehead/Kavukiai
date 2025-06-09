@@ -1,4 +1,4 @@
-import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
+import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
@@ -46,7 +46,7 @@ export class NumberNode extends BaseNode<
     return { out: this.controls.numInput.value ?? 0 };
   }
 
-  async execute(): Promise<void> {}
+  async execute(): Promise<void> { }
 
   serializeControlValue(): { data: { value: number } } {
     return {

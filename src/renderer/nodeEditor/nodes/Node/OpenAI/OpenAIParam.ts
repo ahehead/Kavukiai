@@ -6,16 +6,16 @@ import { InputValueControl } from "../../Controls/input/InputValue";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import { CheckBoxControl } from "../../Controls/input/CheckBox";
 import { getInputValue } from "../../util/getInput";
-import {
-  type AreaExtra,
-  type TypedSocket,
-  type Schemes,
-  SerializableInputsNode,
-  type ObjectNode,
+import type {
+  AreaExtra,
+  TypedSocket,
+  Schemes,
+  ObjectNode,
 } from "renderer/nodeEditor/types";
 import { SelectControl } from "../../Controls/input/Select";
 import { type TSchema, Type } from "@sinclair/typebox";
 import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/RequestSchemas";
+import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 
 type OpenAIParamKeys = keyof ResponseCreateParamsBase;
 

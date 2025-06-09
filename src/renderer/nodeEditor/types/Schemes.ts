@@ -16,7 +16,7 @@ import type {
   InspectorNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
-import type { BaseNode } from "./BaseNode";
+import type { BaseNode } from "./Node/BaseNode";
 import type { TypedSocket } from "./TypedSocket";
 import type { NodeControl } from "./NodeControl";
 

@@ -1,6 +1,6 @@
 
 import type { ControlFlowEngine, DataflowEngine } from 'rete-engine';
-import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
+import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from 'rete-area-plugin';
 import { MultiLineControl } from '../Controls/input/TextArea';
 import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
