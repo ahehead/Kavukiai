@@ -39,7 +39,7 @@ src/
 1. **Rete.js と React の連携**
    - `src/renderer/nodeEditor` 以下のコードを読むことで、ノードエディタのカスタムノード実装やプラグイン設定の方法を学べます。
 2. **IPC 通信の追加方法**
-   - `src/preload/READEME_ipc.md` に手順が簡潔にまとめられています。新しい通信チャンネルを追加する際は `shared/ApiType.ts` と `src/main/ipc` を中心に変更します。
+   - `src/preload/README_ipc.md` に手順が簡潔にまとめられています。新しい通信チャンネルを追加する際は `shared/ApiType.ts` と `src/main/ipc` を中心に変更します。
 3. **アプリ設定と状態管理**
    - `src/main/features/file/conf.ts` では `electron-conf` を利用した設定ファイル管理の実装例を見ることができます。レンダラー側では zustand を用いた状態管理 (`src/renderer/features/dirty-check` 等) を確認してください。
 4. **ビルド・リリースフロー**
