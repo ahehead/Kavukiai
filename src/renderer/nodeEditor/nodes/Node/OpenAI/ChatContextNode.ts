@@ -3,10 +3,7 @@ import { BaseNode } from "renderer/nodeEditor/types/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
-import {
-  type ChatContext,
-  ChatContextControl,
-} from "../../Controls/ChatContext/ChatContext";
+import { ResponseInputControl } from "../../Controls/ChatContext/ResponseInput";
 import type {
   AreaExtra,
   TypedSocket,
@@ -18,10 +15,10 @@ import { ResponseInput } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 export class ChatContextNode extends BaseNode<
   object,
   { out: TypedSocket },
-  { chatContext: ChatContextControl }
+  { chatContext: ResponseInputControl }
 > {
   constructor(
-    initial: ChatContext,
+    initial: ResponseInput,
     history: HistoryPlugin<Schemes>,
     area: AreaPlugin<Schemes, AreaExtra>,
     dataflow: DataflowEngine<Schemes>
@@ -34,12 +31,12 @@ export class ChatContextNode extends BaseNode<
     });
     this.addControl(
       "chatContext",
-      new ChatContextControl({
+      new ResponseInputControl({
         value: initial,
         editable: true,
         history: history,
         area: area,
-        onChange: (v: ChatContext) => {
+        onChange: (v: ResponseInput) => {
           resetCacheDataflow(dataflow, this.id);
         },
       })
@@ -47,9 +44,9 @@ export class ChatContextNode extends BaseNode<
   }
 
   // dataflowで流す
-  data(): { out: ChatContext } {
-    console.log("data", this.controls.chatContext.getContext());
-    return { out: this.controls.chatContext.getContext() || [] };
+  data(): { out: ResponseInput } {
+    console.log("data", this.controls.chatContext.getValue());
+    return { out: this.controls.chatContext.getValue() || [] };
   }
 
   async execute(): Promise<void> {}

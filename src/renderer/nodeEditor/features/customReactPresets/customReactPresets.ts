@@ -18,9 +18,9 @@ import {
   InputValueControlView,
 } from "../../nodes/Controls/input/InputValue";
 import {
-  ChatContextControl,
-  ChatContextControlView,
-} from "../../nodes/Controls/ChatContext/ChatContext";
+  ResponseInputControl,
+  ResponseInputView,
+} from "../../nodes/Controls/ChatContext/ResponseInput";
 import {
   CheckBoxControl,
   CheckBoxControlView,
@@ -84,8 +84,8 @@ export function customReactPresets(
         if (data.payload instanceof InputValueControl) {
           return InputValueControlView;
         }
-        if (data.payload instanceof ChatContextControl) {
-          return ChatContextControlView;
+        if (data.payload instanceof ResponseInputControl) {
+          return ResponseInputView;
         }
         if (data.payload instanceof CheckBoxControl) {
           return CheckBoxControlView;

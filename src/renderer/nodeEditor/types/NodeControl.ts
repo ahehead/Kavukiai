@@ -1,4 +1,4 @@
-import type { ChatContextControl } from "../nodes/Controls/ChatContext/ChatContext";
+import type { ResponseInputControl } from "../nodes/Controls/ChatContext/ResponseInput";
 import type { CheckBoxControl } from "../nodes/Controls/input/CheckBox";
 import type { ConsoleControl } from "../nodes/Controls/Console";
 import type { InputValueControl } from "../nodes/Controls/input/InputValue";
@@ -17,7 +17,7 @@ export type NodeControl =
   | ConsoleControl
   | InputValueControl<string>
   | InputValueControl<number>
-  | ChatContextControl
+  | ResponseInputControl
   | CheckBoxControl
   | ButtonControl
   | SelectControl<any>
