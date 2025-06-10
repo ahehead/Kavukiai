@@ -6,10 +6,9 @@ export type Input = ClassicPreset.Input<TypedSocket>;
 export type Output = ClassicPreset.Output<TypedSocket>;
 
 export function canCreateConnection(
-  editor: NodeEditor<Schemes>,
-  connection: Schemes["Connection"]
+  source: TypedSocket | undefined,
+  target: TypedSocket | undefined
 ): boolean {
-  const { source, target } = getConnectionSockets(editor, connection);
   // 両方のソケットが存在し、互換性チェックをパスすれば true
   return !!(source && target && source.isCompatibleWith(target));
 }
