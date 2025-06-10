@@ -1,5 +1,5 @@
 import { test, expect, vi } from 'vitest';
-import { NumberNode } from './NumberNode';
+import { NumberNode } from 'renderer/nodeEditor/nodes/Node/Primitive/NumberNode';
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
