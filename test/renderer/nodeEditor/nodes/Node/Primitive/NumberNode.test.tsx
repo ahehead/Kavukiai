@@ -1,5 +1,5 @@
 import { test, expect, vi } from 'vitest';
-import { StringNode } from './StringNode';
+import { NumberNode } from 'renderer/nodeEditor/nodes/Node/Primitive/NumberNode';
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
@@ -13,29 +13,26 @@ const area = {} as AreaPlugin<Schemes, any>;
 const clearCacheSpy = vi.fn();
 const dataflow = ({ reset: clearCacheSpy } as unknown) as DataflowEngine<Schemes>;
 
-test('hello world', () => {
-  expect('Hello, Vitest!').toBe('Hello, Vitest!');
-});
 
-test('StringNode.data() returns the initial string', () => {
-  const node = new StringNode('initial-value', history, area, dataflow);
-  expect(node.data().out).toBe('initial-value');
+test('NumberNode.data() returns the initial number', () => {
+  const node = new NumberNode(42, history, area, dataflow);
+  expect(node.data().out).toBe(42);
 });
 
 test('serializeControlValue and deserializeControlValue round-trip', () => {
-  const node = new StringNode('foo', history, area, dataflow);
-  node.controls.textInput.setValue('bar');
+  const node = new NumberNode(1, history, area, dataflow);
+  node.controls.numInput.setValue(3);
   const serialized = node.serializeControlValue().data;
-  expect(serialized.value).toBe('bar');
+  expect(serialized.value).toBe(3);
 
   // reset and then restore
-  node.controls.textInput.setValue('');
+  node.controls.numInput.setValue(0);
   node.deserializeControlValue(serialized);
-  expect(node.controls.textInput.value).toBe('bar');
+  expect(node.controls.numInput.value).toBe(3);
 });
 
-test('updating textInput triggers dataflow.clearCache', () => {
-  const node = new StringNode('x', history, area, dataflow);
-  node.controls.textInput.setValue('y');
+test('updating numInput triggers dataflow.clearCache', () => {
+  const node = new NumberNode(5, history, area, dataflow);
+  node.controls.numInput.setValue(6);
   expect(clearCacheSpy).toHaveBeenCalledWith(node.id);
 });

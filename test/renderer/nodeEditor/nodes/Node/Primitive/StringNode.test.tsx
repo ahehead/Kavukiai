@@ -1,5 +1,5 @@
 import { test, expect, vi } from 'vitest';
-import { NumberNode } from './NumberNode';
+import { StringNode } from 'renderer/nodeEditor/nodes/Node/Primitive/StringNode';
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
@@ -17,25 +17,25 @@ test('hello world', () => {
   expect('Hello, Vitest!').toBe('Hello, Vitest!');
 });
 
-test('NumberNode.data() returns the initial number', () => {
-  const node = new NumberNode(42, history, area, dataflow);
-  expect(node.data().out).toBe(42);
+test('StringNode.data() returns the initial string', () => {
+  const node = new StringNode('initial-value', history, area, dataflow);
+  expect(node.data().out).toBe('initial-value');
 });
 
 test('serializeControlValue and deserializeControlValue round-trip', () => {
-  const node = new NumberNode(1, history, area, dataflow);
-  node.controls.numInput.setValue(3);
+  const node = new StringNode('foo', history, area, dataflow);
+  node.controls.textInput.setValue('bar');
   const serialized = node.serializeControlValue().data;
-  expect(serialized.value).toBe(3);
+  expect(serialized.value).toBe('bar');
 
   // reset and then restore
-  node.controls.numInput.setValue(0);
+  node.controls.textInput.setValue('');
   node.deserializeControlValue(serialized);
-  expect(node.controls.numInput.value).toBe(3);
+  expect(node.controls.textInput.value).toBe('bar');
 });
 
-test('updating numInput triggers dataflow.clearCache', () => {
-  const node = new NumberNode(5, history, area, dataflow);
-  node.controls.numInput.setValue(6);
+test('updating textInput triggers dataflow.clearCache', () => {
+  const node = new StringNode('x', history, area, dataflow);
+  node.controls.textInput.setValue('y');
   expect(clearCacheSpy).toHaveBeenCalledWith(node.id);
 });
