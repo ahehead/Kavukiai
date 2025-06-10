@@ -393,6 +393,3 @@ export const Response = Type.Object(
   { description: "Response object" }
 );
 export type Response = Static<typeof Response>;
-
-// Event schemas moved to separate file
-export * from "./EventsSchemas";

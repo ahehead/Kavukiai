@@ -16,6 +16,7 @@ import { SelectControl } from "../../Controls/input/Select";
 import { type TSchema, Type } from "@sinclair/typebox";
 import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/RequestSchemas";
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
+import type { DynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 
 type OpenAIParamKeys = keyof ResponseCreateParamsBase;
 
@@ -26,7 +27,7 @@ export class OpenAIParamNode
     { param: TypedSocket },
     object
   >
-  implements ObjectNode
+  implements ObjectNode, DynamicSchemaNode
 {
   constructor(
     private history: HistoryPlugin<Schemes>,
@@ -235,6 +236,13 @@ export class OpenAIParamNode
     void this.updateOutputSchema();
   }
 
+  public async onConnectionChangedSchema(param: {
+    isConnected: boolean;
+    source: TypedSocket;
+    target: TypedSocket;
+  }): Promise<void> {
+    await this.updateOutputSchema(this.area);
+  }
   /**
    * 入力ポートの接続状況および表示コントロールから動的にパラメータ型スキーマを構築し、出力ソケットに設定する
    */

@@ -3,13 +3,12 @@ import type { AreaPlugin } from "rete-area-plugin";
 import type { Schemes, AreaExtra, NodeInterface } from "../../types/Schemes";
 import {
   canCreateConnection,
-  getConnectionPorts,
   getConnectionSockets,
 } from "../socket_type_restriction/canCreateConnection";
 import type { DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "renderer/nodeEditor/nodes/util/resetCacheDataflow";
-import { InspectorNode, OpenAIParamNode } from "renderer/nodeEditor/nodes/Node";
-import type { Connection } from "renderer/nodeEditor/types";
+import { InspectorNode } from "renderer/nodeEditor/nodes/Node";
+import type { Connection, TypedSocket } from "renderer/nodeEditor/types";
 
 /**
  * ソケットの接続／切断イベントに応じて
@@ -21,43 +20,42 @@ import type { Connection } from "renderer/nodeEditor/types";
 export function setupSocketConnectionState(
   editor: NodeEditor<Schemes>,
   area: AreaPlugin<Schemes, AreaExtra>,
-  dataflow: DataflowEngine<Schemes>,
+  dataflow: DataflowEngine<Schemes>
 ): void {
-  // 1. connectioncreate 前のバリデーション
-  editor.addPipe((context) => {
-    if (
-      context.type === "connectioncreate" &&
-      !canCreateConnection(editor, context.data)
-    ) {
-      // バリデーション NG → パイプラインを停止
-      return;
-    }
-    return context;
-  });
-
-  // 2. ソケットを「接続済み」に更新
   editor.addPipe(async (context) => {
-    if (
-      context.type === "connectioncreate" ||
-      context.type === "connectioncreated"
-    ) {
+    if (context.type === "connectioncreate") {
+      const { source, target } = getConnectionSockets(editor, context.data);
+      if (!canCreateConnection(source, target)) {
+        // バリデーション NG → パイプラインを停止
+        return;
+      }
+    }
+
+    if (context.type === "connectioncreated") {
+      const { source, target } = getConnectionSockets(editor, context.data);
+      if (!source || !target) return;
       // データキャッシュの廃棄処理
       resetCacheDataflow(dataflow, context.data.target);
       // ソケット状態の更新
-      await syncSocketState(editor, area, context.data, true, dataflow);
+      await syncSocketState(area, context.data, true, source, target);
       // inspectorNode だけ状態の更新
-      await notifyInspectorNode(editor, context.data, true);
+      await notifyInspectorNode(editor, context.data, true, source, target);
       // openaiParamNode だけ状態の更新
-      await notifyOpenAIParamNode(editor, context.data);
+      await notifyDynamicSchemaNode(editor, context.data, true, source, target);
     }
-    if (
-      context.type === "connectionremove" ||
-      context.type === "connectionremoved"
-    ) {
+    if (context.type === "connectionremoved") {
+      const { source, target } = getConnectionSockets(editor, context.data);
+      if (!source || !target) return;
       resetCacheDataflow(dataflow, context.data.target);
-      await syncSocketState(editor, area, context.data, false, dataflow);
-      await notifyInspectorNode(editor, context.data, false);
-      await notifyOpenAIParamNode(editor, context.data);
+      await syncSocketState(area, context.data, false, source, target);
+      await notifyInspectorNode(editor, context.data, false, source, target);
+      await notifyDynamicSchemaNode(
+        editor,
+        context.data,
+        false,
+        source,
+        target
+      );
     }
     return context;
   });
@@ -68,18 +66,15 @@ export function setupSocketConnectionState(
  * 対応ノードを再描画する。
  */
 async function syncSocketState(
-  editor: NodeEditor<Schemes>,
   area: AreaPlugin<Schemes, AreaExtra>,
-  data: any,
+  data: Schemes["Connection"],
   connected: boolean,
-  dataflow: DataflowEngine<Schemes>,
+  source: TypedSocket,
+  target: TypedSocket
 ): Promise<void> {
-  const { output, input } = getConnectionPorts(editor, data);
-  if (!output || !input) return;
-
-  output.socket.setConnected(connected);
+  source.setConnected(connected);
   await area.update("node", data.source);
-  input.socket.setConnected(connected);
+  target.setConnected(connected);
   await area.update("node", data.target);
 }
 
@@ -88,14 +83,14 @@ async function notifyInspectorNode(
   editor: NodeEditor<Schemes>,
   data: Connection<NodeInterface, NodeInterface>,
   connected: boolean,
+  source: TypedSocket,
+  target: TypedSocket
 ): Promise<void> {
   const targetNode = editor.getNode(data.target);
   if (!(targetNode instanceof InspectorNode)) return;
   if (data.targetInput === "exec") return;
 
   if (connected) {
-    const { source, target } = getConnectionSockets(editor, data);
-    if (!source || !target) return;
     await targetNode.connected(source.getName(), source.getSchema());
   } else {
     await targetNode.disconnected();
@@ -103,13 +98,16 @@ async function notifyInspectorNode(
 }
 
 // openaiParamNode の接続状態を更新
-async function notifyOpenAIParamNode(
+async function notifyDynamicSchemaNode(
   editor: NodeEditor<Schemes>,
   data: Connection<NodeInterface, NodeInterface>,
+  isConnected: boolean,
+  source: TypedSocket,
+  target: TypedSocket
 ): Promise<void> {
   const targetNode = editor.getNode(data.target);
-  if (!(targetNode instanceof OpenAIParamNode)) return;
+  if (!targetNode) return;
+  if (!("onConnectionChangedSchema" in targetNode)) return;
   if (data.targetInput === "exec") return;
-
-  await targetNode.updateOutputSchema();
+  await targetNode.onConnectionChangedSchema({ isConnected, source, target });
 }
