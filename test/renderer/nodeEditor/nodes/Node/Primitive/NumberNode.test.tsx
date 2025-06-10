@@ -13,9 +13,6 @@ const area = {} as AreaPlugin<Schemes, any>;
 const clearCacheSpy = vi.fn();
 const dataflow = ({ reset: clearCacheSpy } as unknown) as DataflowEngine<Schemes>;
 
-test('hello world', () => {
-  expect('Hello, Vitest!').toBe('Hello, Vitest!');
-});
 
 test('NumberNode.data() returns the initial number', () => {
   const node = new NumberNode(42, history, area, dataflow);
