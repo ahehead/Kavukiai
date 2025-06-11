@@ -36,9 +36,9 @@ export function createToggleInputControlMenuItem(
         // dataflowをリセット
         resetCacheDataflow(dataflow, context.id);
 
-        // objectNodeはoutpuのSchemaを更新
+        // objectNodeはoutputのSchemaを更新
         if (isObjectNode(context)) {
-          await context.updateOutputSchema();
+          await context.setupSchema();
         }
         // sizeをリセット
         //context.clearHeight();
