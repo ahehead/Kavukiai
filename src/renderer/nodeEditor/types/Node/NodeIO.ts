@@ -8,7 +8,7 @@ const { Output } = ClassicPreset;
 
 export type InputPortConfig<K> = {
   key: K;
-  name: string;
+  name: string; // TypedSocketのname. schemaName
   schema: TSchema;
   label?: string;
   tooltip?: string;
