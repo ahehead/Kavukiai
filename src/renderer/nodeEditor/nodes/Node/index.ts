@@ -9,4 +9,6 @@ export { OpenAINode } from "./OpenAI/OpenAI";
 export { OpenAIParamNode } from "./OpenAI/OpenAIParam";
 export { ChatContextNode } from "./OpenAI/ChatContextNode";
 export { BoolNode } from "./Primitive/BoolNode";
+export { ListNode } from "./Primitive/ListNode";
+export { IFNode } from "./Flow/IFNode";
 export { UnknownNode } from "./UnknownNode";
