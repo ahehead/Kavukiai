@@ -52,7 +52,7 @@ export async function createNodeEditor(container: HTMLElement) {
   const controlflow = new ControlFlowEngine<Schemes>(() => {
     return {
       inputs: (): ["exec", "exec2"] => ["exec", "exec2"],
-      outputs: (): ["exec"] => ["exec"],
+      outputs: (): ["exec", "exec2"] => ["exec", "exec2"],
     };
   });
 
