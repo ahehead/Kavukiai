@@ -40,7 +40,7 @@ export function setupSocketConnectionState(
       await syncSocketState(area, context.data, true, source, target);
       // inspectorNode だけ状態の更新
       await notifyInspectorNode(editor, context.data, true, source, target);
-      // openaiParamNode だけ状態の更新
+      // 接続状況でSchemaが変わるノードの更新
       await notifyDynamicSchemaNode(editor, context.data, true, source, target);
     }
     if (context.type === "connectionremoved") {
