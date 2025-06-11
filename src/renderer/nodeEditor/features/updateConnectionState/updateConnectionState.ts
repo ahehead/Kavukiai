@@ -97,7 +97,9 @@ async function notifyInspectorNode(
   }
 }
 
-// openaiParamNode の接続状態を更新
+/**
+ * 通知: 接続状態に応じて Schema を更新するノードのメソッドを呼び出す。
+ */
 async function notifyDynamicSchemaNode(
   editor: NodeEditor<Schemes>,
   data: Connection<NodeInterface, NodeInterface>,
