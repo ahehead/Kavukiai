@@ -9,6 +9,7 @@ import {
   UnknownNode,
   BoolNode,
   InspectorNode,
+  ObjectPickNode,
 } from "./Node";
 import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
@@ -47,6 +48,7 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
     new ChatContextNode([], history, area, dataflow),
   Test: () => new TestNode(),
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
+  ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
   IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
 };
 
@@ -92,6 +94,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "List",
         key: "list-node",
         factoryKey: "List",
+      },
+      {
+        label: "Object Pick",
+        key: "object-pick-node",
+        factoryKey: "ObjectPick",
       },
     ],
   },

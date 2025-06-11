@@ -16,6 +16,7 @@ import type {
   InspectorNode,
   IFNode,
   ListNode,
+  ObjectPickNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./Node/BaseNode";
@@ -42,7 +43,8 @@ export type NodeTypes =
   | ChatContextNode
   | BoolNode
   | IFNode
-  | ListNode;
+  | ListNode
+  | ObjectPickNode;
 
 // BaseNodeを埋めたもの
 export interface NodeInterface
