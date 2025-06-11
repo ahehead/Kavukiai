@@ -53,7 +53,7 @@ export async function loadGraphFromJson(
 
     // ノードのスキーマを更新
     if (isObjectNode(node)) {
-      await node.updateOutputSchema();
+      await node.setupSchema();
     }
 
     node.id = id;
