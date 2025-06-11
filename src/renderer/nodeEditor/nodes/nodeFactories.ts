@@ -14,8 +14,10 @@ import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
-import { ChatContextNode } from "./Node/OpenAI/ChatContextNode";
 import type { NodeEditor } from "rete";
+import { ChatContextNode } from "./Node/OpenAI/ChatContextNode";
+import { IFNode } from "./Node/Flow/IFNode";
+import { ListNode } from "./Node/Primitive/ListNode";
 
 export type NodeDeps = {
   editor: NodeEditor<Schemes>;
@@ -44,6 +46,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   ChatContext: ({ history, area, dataflow }) =>
     new ChatContextNode([], history, area, dataflow),
   Test: () => new TestNode(),
+  List: ({ area, dataflow }) => new ListNode(area, dataflow),
+  IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
 };
 
 export interface MenuItemDefinition {
@@ -83,6 +87,22 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "Bool",
         key: "bool-node",
         factoryKey: "Bool",
+      },
+      {
+        label: "List",
+        key: "list-node",
+        factoryKey: "List",
+      },
+    ],
+  },
+  {
+    label: "Flow",
+    key: "flow-category",
+    subitems: [
+      {
+        label: "IF",
+        key: "if-node",
+        factoryKey: "IF",
       },
     ],
   },
