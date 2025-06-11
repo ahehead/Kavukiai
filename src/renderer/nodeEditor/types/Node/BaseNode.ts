@@ -64,9 +64,9 @@ export class BaseNode<
 }
 
 export interface ObjectNode {
-  updateOutputSchema: () => Promise<void>;
+  setupSchema: () => Promise<void>;
 }
 
 export function isObjectNode(node: any): node is ObjectNode {
-  return typeof node.updateOutputSchema === "function";
+  return typeof node.setupSchema === "function";
 }
