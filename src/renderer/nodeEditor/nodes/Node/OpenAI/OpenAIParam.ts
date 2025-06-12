@@ -10,7 +10,6 @@ import type {
   AreaExtra,
   TypedSocket,
   Schemes,
-  ObjectNode,
 } from "renderer/nodeEditor/types";
 import { SelectControl } from "../../Controls/input/Select";
 import { type TSchema, Type } from "@sinclair/typebox";
@@ -27,7 +26,7 @@ export class OpenAIParamNode
     { param: TypedSocket },
     object
   >
-  implements ObjectNode, DynamicSchemaNode
+  implements DynamicSchemaNode
 {
   constructor(
     private history: HistoryPlugin<Schemes>,
