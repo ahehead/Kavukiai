@@ -53,3 +53,5 @@ export interface NodeInterface
     { [key in string]?: TypedSocket },
     { [key in string]?: NodeControl }
   > {}
+
+export const ExecList = ["exec", "exec2"];
