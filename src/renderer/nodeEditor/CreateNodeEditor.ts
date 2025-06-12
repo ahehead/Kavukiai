@@ -23,11 +23,11 @@ import {
   patchHistoryAdd,
   resetEditorState,
 } from "./features/editor_state/historyState";
-import { setupSocketConnectionState } from "./features/updateConnectionState/updateConnectionState";
+import { registerConnectionPipeline } from "./features/updateConnectionState/updateConnectionState";
 import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
 
 import { customReactPresets } from "./features/customReactPresets/customReactPresets";
-import type { AreaExtra, Schemes } from "./types";
+import { type AreaExtra, ExecList, type Schemes } from "./types";
 
 import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
 import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
@@ -51,8 +51,8 @@ export async function createNodeEditor(container: HTMLElement) {
   });
   const controlflow = new ControlFlowEngine<Schemes>(() => {
     return {
-      inputs: (): ["exec", "exec2"] => ["exec", "exec2"],
-      outputs: (): ["exec", "exec2"] => ["exec", "exec2"],
+      inputs: (): typeof ExecList => ExecList,
+      outputs: (): typeof ExecList => ExecList,
     };
   });
 
@@ -97,7 +97,7 @@ export async function createNodeEditor(container: HTMLElement) {
   const getZoom = () => currentZoom;
 
   // コネクションの作成時と削除時に、ソケットの接続状態とデータフローを更新
-  setupSocketConnectionState(editor, area, dataflow);
+  registerConnectionPipeline(editor, area, dataflow);
 
   // context menuのカスタマイズ
   render.addPreset(customContextMenuPreset());
