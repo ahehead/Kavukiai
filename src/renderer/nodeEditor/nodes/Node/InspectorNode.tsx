@@ -7,6 +7,7 @@ import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types'
 import { formatValue } from '../util/formatValue';
 import type { NodeEditor } from 'rete';
 import { type TSchema, Type } from '@sinclair/typebox';
+import type { ConnectionParams, DynamicSchemaNode } from 'renderer/nodeEditor/types/Node/DynamicSchemaNode';
 
 // View String ノード
 export class InspectorNode extends BaseNode<
@@ -19,7 +20,7 @@ export class InspectorNode extends BaseNode<
     outputAny: TypedSocket
   },
   { view: MultiLineControl }
-> {
+> implements DynamicSchemaNode {
   constructor(
     private editor: NodeEditor<Schemes>,
     private dataflow: DataflowEngine<Schemes>,
@@ -75,36 +76,26 @@ export class InspectorNode extends BaseNode<
     forward('exec');
   }
 
-  async connected(name: string, inputSchema: TSchema): Promise<void> {
-    //console.log("InspectorNode connected");
-    await this.inputs.inputAny?.socket.setSchema(name, inputSchema);
-    await this.outputs.outputAny?.socket.setSchema(name, inputSchema);
-    await this.area.update("node", this.id);
-    // 自身の出力からつながっているInspectorNodeのsocketを更新
-    const myConnection = this.editor.getConnections().filter(c => c.source === this.id && c.sourceOutput === "outputAny");
-    for (const conn of myConnection) {
-      const targetNode = this.editor.getNode(conn.target);
-      if (targetNode instanceof InspectorNode) {
-        await targetNode.connected(name, inputSchema);
-      }
+  async onConnectionChangedSchema({
+    isConnected,
+    source,
+    target
+  }: ConnectionParams): Promise<void> {
+    if (isConnected) {
+      await this.updateSchema(source.getName(), source.getSchema());
+    } else {
+      await this.updateSchema("unknown", Type.Unknown());
     }
-
+    await this.area.update("node", this.id);
   }
 
-  async disconnected(): Promise<void> {
-    //console.log("InspectorNode disconnected");
-    // デフォルトの型に戻す
-    await this.inputs.inputAny?.socket.setSchema("unknown", Type.Unknown());
-    await this.outputs.outputAny?.socket.setSchema("unknown", Type.Unknown());
-    await this.area.update("node", this.id);
-    const myConnection = this.editor.getConnections().filter(c => c.source === this.id && c.sourceOutput === "outputAny");
-    for (const conn of myConnection) {
-      const targetNode = this.editor.getNode(conn.target);
-      if (targetNode instanceof InspectorNode) {
-        await targetNode.disconnected();
-      }
-    }
+  async setupSchema(): Promise<void> {
+    // 特に何もしない
   }
 
+  public async updateSchema(schemaName: string, schema: TSchema): Promise<void> {
+    await this.inputs.inputAny?.socket.setSchema(schemaName, schema);
+    await this.outputs.outputAny?.socket.setSchema(schemaName, schema);
+  }
 }
 
