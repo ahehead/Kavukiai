@@ -2,13 +2,18 @@ import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { Schemes, AreaExtra, NodeInterface } from "../../types/Schemes";
 import {
-  canCreateConnection,
+  canConnect,
   getConnectionSockets,
 } from "../socket_type_restriction/canCreateConnection";
 import type { DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "renderer/nodeEditor/nodes/util/resetCacheDataflow";
-import type { Connection, TypedSocket } from "renderer/nodeEditor/types";
+import {
+  ExecList,
+  type Connection,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
+import { getConnectionsByOutputPortKey } from "renderer/nodeEditor/nodes/util/removeNode";
 
 /**
  * ソケットの接続／切断イベントに応じて
@@ -17,44 +22,36 @@ import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchem
  * - 接続状態に応じて Schema を更新するノードのメソッドを呼び出す
  * を行うパイプラインをエディタに登録する。
  */
-export function setupSocketConnectionState(
+export function registerConnectionPipeline(
   editor: NodeEditor<Schemes>,
   area: AreaPlugin<Schemes, AreaExtra>,
   dataflow: DataflowEngine<Schemes>
 ): void {
-  editor.addPipe(async (context) => {
-    if (context.type === "connectioncreate") {
-      const { source, target } = getConnectionSockets(editor, context.data);
-      if (!canCreateConnection(source, target)) {
-        // バリデーション NG → パイプラインを停止
-        return;
+  editor.addPipe(async (ctx) => {
+    switch (ctx.type) {
+      case "connectioncreate":
+        if (!canConnect(editor, ctx.data)) return; // NG ならパイプ停止
+        break;
+
+      case "connectioncreated":
+      case "connectionremoved": {
+        const isConnected = ctx.type === "connectioncreated";
+        const { source, target } = getConnectionSockets(editor, ctx.data);
+        if (!source || !target) return ctx;
+
+        resetCacheDataflow(dataflow, ctx.data.target);
+        await syncSocketState(area, ctx.data, isConnected, source, target);
+        await updateDynamicSchemaNode(
+          editor,
+          ctx.data,
+          isConnected,
+          source,
+          target
+        );
+        break;
       }
     }
-
-    if (context.type === "connectioncreated") {
-      const { source, target } = getConnectionSockets(editor, context.data);
-      if (!source || !target) return;
-      // データキャッシュの廃棄処理
-      resetCacheDataflow(dataflow, context.data.target);
-      // ソケット状態の更新
-      await syncSocketState(area, context.data, true, source, target);
-      // 接続状況でSchemaが変わるノードの更新
-      await notifyDynamicSchemaNode(editor, context.data, true, source, target);
-    }
-    if (context.type === "connectionremoved") {
-      const { source, target } = getConnectionSockets(editor, context.data);
-      if (!source || !target) return;
-      resetCacheDataflow(dataflow, context.data.target);
-      await syncSocketState(area, context.data, false, source, target);
-      await notifyDynamicSchemaNode(
-        editor,
-        context.data,
-        false,
-        source,
-        target
-      );
-    }
-    return context;
+    return ctx;
   });
 }
 
@@ -76,9 +73,74 @@ async function syncSocketState(
 }
 
 /**
- * 通知: 接続状態に応じて Schema を更新するノードのメソッドを呼び出す。
+ * 動的スキーマノードを再帰的にたどり、
+ * onConnectionChangedSchema を呼び、無効な接続は削除する
  */
-async function notifyDynamicSchemaNode(
+async function traverseDynamicSchemaNodes(
+  editor: NodeEditor<Schemes>,
+  node: NodeInterface,
+  isConnected: boolean,
+  source: TypedSocket,
+  target: TypedSocket,
+  visited = new Set<string>()
+): Promise<void> {
+  if (visited.has(node.id)) return;
+  visited.add(node.id);
+  if (!isDynamicSchemaNode(node)) return;
+
+  try {
+    // スキーマ更新メソッド呼び出し
+    const keys = await node.onConnectionChangedSchema({
+      isConnected,
+      source,
+      target,
+    });
+
+    for (const key of keys) {
+      const connections = getConnectionsByOutputPortKey(editor, node.id, key);
+      for (const conn of connections) {
+        // 接続先ノードを取得
+        const nextNode = editor.getNode(conn.target);
+        if (!nextNode) continue;
+
+        let isNextConnected = true;
+        // 接続がバリデーションNGなら削除
+        if (!canConnect(editor, conn)) {
+          await editor.removeConnection(conn.id);
+          isNextConnected = false;
+        }
+        const { source: nextSource, target: nextTarget } = getConnectionSockets(
+          editor,
+          conn
+        );
+        if (!nextSource || !nextTarget) continue;
+
+        // 再帰的にたどる
+        await traverseDynamicSchemaNodes(
+          editor,
+          nextNode,
+          isNextConnected,
+          nextSource,
+          nextTarget,
+          visited
+        );
+      }
+    }
+  } catch (error) {
+    console.error(
+      `Error in onConnectionChangedSchema for node ${node.id}:`,
+      error
+    );
+  } finally {
+    visited.delete(node.id);
+  }
+}
+
+/**
+ * 通知: 接続状態に応じて Schema を更新するノードのメソッドを呼び出し、
+ * 以降の動的ノードも再帰的に処理する
+ */
+async function updateDynamicSchemaNode(
   editor: NodeEditor<Schemes>,
   data: Connection<NodeInterface, NodeInterface>,
   isConnected: boolean,
@@ -88,10 +150,12 @@ async function notifyDynamicSchemaNode(
   const targetNode = editor.getNode(data.target);
   if (!targetNode) return;
   if (!isDynamicSchemaNode(targetNode)) return;
-  if (data.targetInput === "exec") return;
-  const keys = await targetNode.onConnectionChangedSchema({
+  if (ExecList.includes(data.targetInput)) return;
+  await traverseDynamicSchemaNodes(
+    editor,
+    targetNode,
     isConnected,
     source,
-    target,
-  });
+    target
+  );
 }
