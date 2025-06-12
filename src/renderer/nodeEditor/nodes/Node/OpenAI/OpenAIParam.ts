@@ -194,12 +194,13 @@ export class OpenAIParamNode
       //   label: "temperature",
       //   tooltip: "出力の**ランダム性**を制御する温度パラメータ（0〜2）。",
       // },
-      // {
-      //   key: "text",
-      //   schema: createParamsSchemas.ResponseTextConfig,
-      //   label: "text",
-      //   tooltip: "テキスト応答の書式を設定する**オブジェクト**。",
-      // },
+      {
+        key: "text",
+        name: "object",
+        schema: Type.Index(ResponseCreateParamsBase, ["text"]),
+        label: "text",
+        tooltip: "テキスト応答の書式を設定する**オブジェクト**。",
+      },
       // {
       //   key: "tool_choice",
       //   schema: createParamsSchemas.ToolChoice,
