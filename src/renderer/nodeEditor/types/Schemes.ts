@@ -17,6 +17,7 @@ import type {
   IFNode,
   ListNode,
   ObjectPickNode,
+  TSchemaNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./Node/BaseNode";
@@ -44,7 +45,8 @@ export type NodeTypes =
   | BoolNode
   | IFNode
   | ListNode
-  | ObjectPickNode;
+  | ObjectPickNode
+  | TSchemaNode;
 
 // BaseNodeを埋めたもの
 export interface NodeInterface

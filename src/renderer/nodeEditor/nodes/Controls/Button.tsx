@@ -1,5 +1,5 @@
 import type React from "react"
-import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
+import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types/BaseControl";
 import { Drag } from "rete-react-plugin";
 import type { ControlJson } from "shared/JsonType";
 

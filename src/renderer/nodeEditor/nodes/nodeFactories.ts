@@ -10,6 +10,7 @@ import {
   BoolNode,
   InspectorNode,
   ObjectPickNode,
+  TSchemaNode,
 } from "./Node";
 import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
@@ -49,6 +50,7 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   Test: () => new TestNode(),
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
   ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
+  TSchema: ({ history, area, dataflow }) => new TSchemaNode(history, area, dataflow),
   IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
 };
 
@@ -99,6 +101,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "Object Pick",
         key: "object-pick-node",
         factoryKey: "ObjectPick",
+      },
+      {
+        label: "TSchema",
+        key: "tschema-node",
+        factoryKey: "TSchema",
       },
     ],
   },
