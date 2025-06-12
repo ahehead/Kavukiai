@@ -6,7 +6,6 @@ import { ListControl } from '../Controls/input/List';
 import { SwitchControl } from '../Controls/input/Switch';
 import { PropertyInputControl } from '../Controls/input/PropertyInput';
 import { SliderControl } from '../Controls/input/Slider';
-import { Type } from '@sinclair/typebox';
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
 // コントロール等の確認と、型チェック回避用のNode。
@@ -64,7 +63,7 @@ export class TestNode extends BaseNode<
     this.addControl(
       'propertyInput',
       new PropertyInputControl({
-        value: { key: 'example', typeStr: 'string', type: Type.String() },
+        value: [{ key: 'example', typeStr: 'string' }],
       })
     );
 
