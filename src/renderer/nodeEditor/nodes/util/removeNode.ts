@@ -25,3 +25,15 @@ export async function removeLinkedSockets(
     }
   }
 }
+
+export function getConnectionsByOutputPortKey(
+  editor: NodeEditor<Schemes>,
+  nodeId: string,
+  portKey: string
+) {
+  const connections = editor.getConnections();
+  return connections.filter(
+    (connection) =>
+      connection.source === nodeId && connection.sourceOutput === portKey
+  );
+}
