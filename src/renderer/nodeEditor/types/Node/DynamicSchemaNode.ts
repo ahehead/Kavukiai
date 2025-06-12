@@ -8,7 +8,7 @@ export type ConnectionParams = {
 
 export interface DynamicSchemaNode {
   // connection時に呼ばれる
-  onConnectionChangedSchema: (params: ConnectionParams) => Promise<void>;
+  onConnectionChangedSchema: (params: ConnectionParams) => Promise<string[]>;
   // load時や入力切り替え時に呼ばれる
   setupSchema: () => Promise<void>;
 }

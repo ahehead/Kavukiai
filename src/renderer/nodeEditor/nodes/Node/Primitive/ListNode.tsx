@@ -44,7 +44,7 @@ export class ListNode extends SerializableInputsNode<
    * @param params 接続パラメータ
    * @return Promise<void>
    */
-  public async onConnectionChangedSchema({ isConnected, source, target }: ConnectionParams): Promise<void> {
+  public async onConnectionChangedSchema({ isConnected, source, target }: ConnectionParams): Promise<string[]> {
     resetCacheDataflow(this.dataflow, this.id);
     // console.log('ListNode onConnectionChangedSchema', isConnected, source, target);
     if (isConnected) {
@@ -59,6 +59,7 @@ export class ListNode extends SerializableInputsNode<
       }
     }
     await this.area.update('node', this.id);
+    return ["out"];
   }
 
   /**

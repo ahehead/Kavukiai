@@ -80,13 +80,14 @@ export class InspectorNode extends BaseNode<
     isConnected,
     source,
     target
-  }: ConnectionParams): Promise<void> {
+  }: ConnectionParams): Promise<string[]> {
     if (isConnected) {
       await this.updateSchema(source.getName(), source.getSchema());
     } else {
       await this.updateSchema("unknown", Type.Unknown());
     }
     await this.area.update("node", this.id);
+    return ["outputAny"];
   }
 
   async setupSchema(): Promise<void> {

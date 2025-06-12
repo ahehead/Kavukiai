@@ -239,9 +239,10 @@ export class OpenAIParamNode
     isConnected: boolean;
     source: TypedSocket;
     target: TypedSocket;
-  }): Promise<void> {
+  }): Promise<string[]> {
     await this.setupSchema();
     await this.area.update("node", this.id);
+    return ["param"];
   }
   /**
    * 入力ポートの接続状況および表示コントロールから動的にパラメータ型スキーマを構築し、出力ソケットに設定する

@@ -14,7 +14,7 @@ import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchem
  * ソケットの接続／切断イベントに応じて
  * - バリデーション
  * - ソケット状態の更新
- * - ノードの再描画
+ * - 接続状態に応じて Schema を更新するノードのメソッドを呼び出す
  * を行うパイプラインをエディタに登録する。
  */
 export function setupSocketConnectionState(
@@ -89,5 +89,9 @@ async function notifyDynamicSchemaNode(
   if (!targetNode) return;
   if (!isDynamicSchemaNode(targetNode)) return;
   if (data.targetInput === "exec") return;
-  await targetNode.onConnectionChangedSchema({ isConnected, source, target });
+  const keys = await targetNode.onConnectionChangedSchema({
+    isConnected,
+    source,
+    target,
+  });
 }

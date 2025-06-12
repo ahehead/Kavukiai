@@ -27,7 +27,7 @@ export class ObjectPickNode extends BaseNode<
     });
   }
 
-  async onConnectionChangedSchema({ isConnected, source }: ConnectionParams): Promise<void> {
+  async onConnectionChangedSchema({ isConnected, source }: ConnectionParams): Promise<string[]> {
     resetCacheDataflow(this.dataflow, this.id);
     if (isConnected) {
       await this.inputs.obj?.socket.setSchema(source.getName(), source.getSchema());
@@ -36,6 +36,8 @@ export class ObjectPickNode extends BaseNode<
     }
     await this.setupSchema();
     await this.area.update("node", this.id);
+
+    return [];
   }
 
   async setupSchema(): Promise<void> {
