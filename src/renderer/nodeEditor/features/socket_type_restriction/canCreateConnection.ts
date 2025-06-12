@@ -5,10 +5,19 @@ import type { ClassicPreset, NodeEditor } from "rete";
 export type Input = ClassicPreset.Input<TypedSocket>;
 export type Output = ClassicPreset.Output<TypedSocket>;
 
-export function canCreateConnection(
-  source: TypedSocket | undefined,
-  target: TypedSocket | undefined
+export type SocketPair = {
+  source?: TypedSocket;
+  target?: TypedSocket;
+};
+
+export function canConnect(
+  editor: NodeEditor<Schemes>,
+  connection: Schemes["Connection"]
 ): boolean {
+  return isCompatible(getConnectionSockets(editor, connection));
+}
+
+export function isCompatible({ source, target }: SocketPair): boolean {
   // 両方のソケットが存在し、互換性チェックをパスすれば true
   return !!(source && target && source.isCompatibleWith(target));
 }
@@ -17,17 +26,21 @@ export function getConnectionPorts(
   editor: NodeEditor<Schemes>,
   connection: Schemes["Connection"]
 ): {
-  input: Input | undefined;
-  output: Output | undefined;
+  input?: Input;
+  output?: Output;
 } {
-  const source = editor.getNode(connection.source);
-  const target = editor.getNode(connection.target);
+  const sourceNode = editor.getNode(connection.source);
+  const targetNode = editor.getNode(connection.target);
+  if (!sourceNode || !targetNode) {
+    return {};
+  }
 
-  const output =
-    source &&
-    (source.outputs as Record<string, Output>)[connection.sourceOutput];
-  const input =
-    target && (target.inputs as Record<string, Input>)[connection.targetInput];
+  const output = (sourceNode.outputs as Record<string, Output>)[
+    connection.sourceOutput
+  ];
+  const input = (targetNode.inputs as Record<string, Input>)[
+    connection.targetInput
+  ];
 
   return {
     output,
@@ -38,16 +51,10 @@ export function getConnectionPorts(
 export function getConnectionSockets(
   editor: NodeEditor<Schemes>,
   connection: Schemes["Connection"]
-): {
-  source: TypedSocket | undefined;
-  target: TypedSocket | undefined;
-} {
+): SocketPair {
   const { output, input } = getConnectionPorts(editor, connection);
-  const source = output?.socket as TypedSocket;
-  const target = input?.socket as TypedSocket;
-
   return {
-    source,
-    target,
+    source: output?.socket,
+    target: input?.socket,
   };
 }
