@@ -12,7 +12,6 @@ import {
   SelectValue
 } from "renderer/components/ui/select";
 import { Plus } from "lucide-react";
-import { defaultNodeSchemas } from "renderer/nodeEditor/types/Schemas/DefaultSchema";
 
 export type PropertyItem = {
   key: string;
@@ -81,7 +80,19 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
   return (
     <Drag.NoDrag>
       <div className="flex flex-col gap-1">
-        <div className="grid grid-cols-[minmax(7rem,max-content)_1fr_auto] gap-0.5">
+        <div className="grid grid-cols-[1fr_minmax(7rem,max-content)_auto] gap-0.5 place-items-stretch">
+          {/* キー入力 */}
+          <div className="grid grid-cols-[1fr_auto] place-items-center">
+            <input
+              type="text"
+              value={keyStr}
+              placeholder="key*"
+              onChange={(e) => setKeyStr(e.target.value)}
+              className="w-full px-3 py-2 border border-input rounded text-sm"
+              disabled={!editable}
+            />
+            :
+          </div>
           {/* 型選択 */}
           <Select
             value={typeStr}
@@ -91,7 +102,7 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
             <SelectTrigger>
               <SelectValue placeholder="Type" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-0">
               <SelectGroup>
                 <SelectLabel>Type</SelectLabel>
                 {(["string", "number", "boolean"] as PropertyItem["typeStr"][]).map((key) => (
@@ -102,15 +113,6 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
               </SelectGroup>
             </SelectContent>
           </Select>
-          {/* キー入力 */}
-          <input
-            type="text"
-            value={keyStr}
-            placeholder="key"
-            onChange={(e) => setKeyStr(e.target.value)}
-            className="w-full px-3 py-2 border border-input rounded text-sm"
-            disabled={!editable}
-          />
 
           {/* 追加ボタン */}
           <button
