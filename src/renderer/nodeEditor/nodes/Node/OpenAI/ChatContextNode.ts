@@ -3,7 +3,7 @@ import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
-import { ResponseInputControl } from "../../Controls/ChatContext/ResponseInput";
+import { ResponseInputMessageControl } from "../../Controls/ChatContext/ResponseInput";
 import type {
   AreaExtra,
   TypedSocket,
@@ -15,7 +15,7 @@ import { ResponseInput } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 export class ChatContextNode extends BaseNode<
   object,
   { out: TypedSocket },
-  { chatContext: ResponseInputControl }
+  { chatContext: ResponseInputMessageControl }
 > {
   constructor(
     initial: ResponseInput,
@@ -31,7 +31,7 @@ export class ChatContextNode extends BaseNode<
     });
     this.addControl(
       "chatContext",
-      new ResponseInputControl({
+      new ResponseInputMessageControl({
         value: initial,
         editable: true,
         history: history,

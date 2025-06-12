@@ -2,17 +2,17 @@ import { useState, type JSX } from "react";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
 import type { ResponseInput, ResponseInputContent, ResponseInputItem, ResponseInputMessageItem, ResponseInputText, ResponseInputImage, ResponseInputFile, ResponseInputAudio } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 
-export interface ResponseInputControlParams extends ControlOptions<ResponseInput> {
+export interface ResponseInputMessageControlParams extends ControlOptions<ResponseInput> {
   value: ResponseInput;
 }
 
 // チャット入力用コントロール
-export class ResponseInputControl extends BaseControl<ResponseInput, ResponseInputControlParams> {
+export class ResponseInputMessageControl extends BaseControl<ResponseInput, ResponseInputMessageControlParams> {
   responseInput: ResponseInput;
   totalTokens = 0;
 
   constructor(
-    options: ResponseInputControlParams,
+    options: ResponseInputMessageControlParams,
   ) {
     super();
     this.responseInput = options.value ?? [];
@@ -32,8 +32,8 @@ export class ResponseInputControl extends BaseControl<ResponseInput, ResponseInp
 
 
 // カスタムコンポーネント
-export function ResponseInputView(props: {
-  data: ResponseInputControl;
+export function ResponseInputMessageView(props: {
+  data: ResponseInputMessageControl;
 }): JSX.Element {
   const control = props.data;
   const [value, setValue] = useState(control.getValue());
