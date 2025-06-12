@@ -62,11 +62,3 @@ export class BaseNode<
     return this.status;
   }
 }
-
-export interface ObjectNode {
-  setupSchema: () => Promise<void>;
-}
-
-export function isObjectNode(node: any): node is ObjectNode {
-  return typeof node.setupSchema === "function";
-}
