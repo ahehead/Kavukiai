@@ -10,7 +10,7 @@ import type { TypedSocket } from "renderer/nodeEditor/types/TypedSocket";
 import { removeLinkedSockets } from "../../../../nodes/util/removeNode";
 import { resetCacheDataflow } from "renderer/nodeEditor/nodes/util/resetCacheDataflow";
 import type { Item } from "rete-context-menu-plugin/_types/types";
-import { isObjectNode } from "renderer/nodeEditor/types";
+import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 
 export function createToggleInputControlMenuItem(
   context: NodeInterface,
@@ -37,7 +37,7 @@ export function createToggleInputControlMenuItem(
         resetCacheDataflow(dataflow, context.id);
 
         // objectNodeはoutputのSchemaを更新
-        if (isObjectNode(context)) {
+        if (isDynamicSchemaNode(context)) {
           await context.setupSchema();
         }
         // sizeをリセット
