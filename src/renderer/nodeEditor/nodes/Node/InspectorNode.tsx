@@ -36,8 +36,8 @@ export class InspectorNode extends BaseNode<
     this.addInputPort([
       {
         key: "inputAny",
-        name: "unknown",
-        schema: Type.Unknown(),
+        name: "any",
+        schema: Type.Any(),
         tooltip: "表示するデータ",
       }]);
 
@@ -47,8 +47,8 @@ export class InspectorNode extends BaseNode<
       schema: Type.Literal("exec"),
     }, {
       key: "outputAny",
-      name: "unknown",
-      schema: Type.Unknown(),
+      name: "any",
+      schema: Type.Any(),
     }]);
 
     this.addControlByKey({
@@ -84,7 +84,7 @@ export class InspectorNode extends BaseNode<
     if (isConnected) {
       await this.updateSchema(source.getName(), source.getSchema());
     } else {
-      await this.updateSchema("unknown", Type.Unknown());
+      await this.updateSchema("any", Type.Any());
     }
     await this.area.update("node", this.id);
     return ["outputAny"];
