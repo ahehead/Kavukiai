@@ -7,8 +7,8 @@ import {
 } from "../socket_type_restriction/canCreateConnection";
 import type { DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "renderer/nodeEditor/nodes/util/resetCacheDataflow";
-import { InspectorNode } from "renderer/nodeEditor/nodes/Node";
 import type { Connection, TypedSocket } from "renderer/nodeEditor/types";
+import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 
 /**
  * ソケットの接続／切断イベントに応じて
@@ -38,8 +38,6 @@ export function setupSocketConnectionState(
       resetCacheDataflow(dataflow, context.data.target);
       // ソケット状態の更新
       await syncSocketState(area, context.data, true, source, target);
-      // inspectorNode だけ状態の更新
-      await notifyInspectorNode(editor, context.data, true, source, target);
       // 接続状況でSchemaが変わるノードの更新
       await notifyDynamicSchemaNode(editor, context.data, true, source, target);
     }
@@ -48,7 +46,6 @@ export function setupSocketConnectionState(
       if (!source || !target) return;
       resetCacheDataflow(dataflow, context.data.target);
       await syncSocketState(area, context.data, false, source, target);
-      await notifyInspectorNode(editor, context.data, false, source, target);
       await notifyDynamicSchemaNode(
         editor,
         context.data,
@@ -78,25 +75,6 @@ async function syncSocketState(
   await area.update("node", data.target);
 }
 
-// 通知: InspectorNode の接続状態を更新
-async function notifyInspectorNode(
-  editor: NodeEditor<Schemes>,
-  data: Connection<NodeInterface, NodeInterface>,
-  connected: boolean,
-  source: TypedSocket,
-  target: TypedSocket
-): Promise<void> {
-  const targetNode = editor.getNode(data.target);
-  if (!(targetNode instanceof InspectorNode)) return;
-  if (data.targetInput === "exec") return;
-
-  if (connected) {
-    await targetNode.connected(source.getName(), source.getSchema());
-  } else {
-    await targetNode.disconnected();
-  }
-}
-
 /**
  * 通知: 接続状態に応じて Schema を更新するノードのメソッドを呼び出す。
  */
@@ -109,7 +87,7 @@ async function notifyDynamicSchemaNode(
 ): Promise<void> {
   const targetNode = editor.getNode(data.target);
   if (!targetNode) return;
-  if (!("onConnectionChangedSchema" in targetNode)) return;
+  if (!isDynamicSchemaNode(targetNode)) return;
   if (data.targetInput === "exec") return;
   await targetNode.onConnectionChangedSchema({ isConnected, source, target });
 }
