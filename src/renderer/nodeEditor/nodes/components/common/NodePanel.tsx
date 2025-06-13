@@ -102,7 +102,7 @@ export function NodeTitle({ status, children, ...props }: React.ComponentProps<"
 
 export function NodeControlsWrapper({ ...props }: React.ComponentProps<"div">) {
   return (
-    <div className='p-2 empty:p-0 empty:hidden' {...props} />
+    <div className='grid grid-cols-1 place-items-stretch p-2 empty:p-0 empty:hidden' {...props} />
   )
 }
 
