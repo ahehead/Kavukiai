@@ -95,9 +95,9 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
             </div>
           ))}
         </div>
-        <div className="items-end shrink-0 grid grid-cols-[1fr_minmax(7rem,max-content)_auto] gap-0.5 place-items-stretch">
+        <div className="shrink-0 grid grid-cols-[1fr_minmax(7rem,max-content)_auto] gap-0.5 place-items-center">
           {/* key入力 */}
-          <div className="grid grid-cols-[1fr_auto] place-items-center">
+          <div className="grid grid-cols-[1fr_auto] place-items-center w-full">
             <input
               type="text"
               value={keyStr}
@@ -133,7 +133,7 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
           <button
             onClick={handleAdd}
             disabled={!editable}
-            className="items-center justify-center p-1 rounded border border-input text-sm hover:bg-accent/50 disabled:opacity-50"
+            className="ml-1 w-8 h-8 flex justify-center items-center p-1 rounded border border-input text-sm bg-accent/40 hover:bg-accent/70 disabled:opacity-50"
           >
             <Plus className="w-4 h-4" />
           </button>
