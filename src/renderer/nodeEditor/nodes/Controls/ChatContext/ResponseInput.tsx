@@ -13,6 +13,7 @@ import type {
   ResponseInputItem,
 } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 
+
 export interface ResponseInputMessageControlParams
   extends ControlOptions<ChatMessageItem[]> {
   value: ChatMessageItem[];
@@ -56,7 +57,7 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
     this.opts.onChange?.(this.messages);
   }
 
-  addNewMessage(msg: ChatMessageItem): void {
+  addMessage(msg: ChatMessageItem): void {
     const prev = [...this.messages];
     this.messages.push(msg);
     this.addHistory(prev, this.messages);
