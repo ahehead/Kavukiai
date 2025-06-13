@@ -1,6 +1,5 @@
 
 import type { ControlFlowEngine, DataflowEngine } from 'rete-engine';
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from 'rete-area-plugin';
 import { MultiLineControl } from '../Controls/input/TextArea';
 import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
@@ -8,9 +7,10 @@ import { formatValue } from '../util/formatValue';
 import type { NodeEditor } from 'rete';
 import { type TSchema, Type } from '@sinclair/typebox';
 import type { ConnectionParams, DynamicSchemaNode } from 'renderer/nodeEditor/types/Node/DynamicSchemaNode';
+import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode';
 
 // View String ノード
-export class InspectorNode extends BaseNode<
+export class InspectorNode extends SerializableInputsNode<
   {
     exec: TypedSocket;
     inputAny: TypedSocket
