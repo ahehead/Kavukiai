@@ -90,6 +90,27 @@ export const ResponseInputMessageItem = Type.Object(
 );
 export type ResponseInputMessageItem = Static<typeof ResponseInputMessageItem>;
 
+// Extended chat message with metadata
+export const ChatMessageItem = Type.Intersect(
+  [
+    ResponseInputMessageItem,
+    Type.Object({
+      model: Type.Optional(Type.String()),
+      created_at: Type.Optional(Base.Timestamp),
+      tokens: Type.Optional(Type.Number()),
+      token_speed: Type.Optional(Type.Number()),
+    }),
+  ],
+  { description: "A chat message item with extra metadata" }
+);
+export type ChatMessageItem = Static<typeof ChatMessageItem>;
+
+export function chatMessagesToResponseInput(
+  messages: ChatMessageItem[],
+): ResponseInputMessageItem[] {
+  return messages.map(({ model, created_at, tokens, token_speed, ...rest }) => rest);
+}
+
 // Input item union
 export const ResponseInputItem = Type.Union(
   [
