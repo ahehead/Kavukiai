@@ -12,6 +12,7 @@ import type {
   ResponseInputAudio,
   ResponseInputItem,
 } from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import { Drag } from "rete-react-plugin";
 
 
 export interface ResponseInputMessageControlParams
@@ -127,55 +128,57 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
   };
 
   return (
-    <div className="space-y-2">
-      {messages.map((msg, index) => (
-        <div key={msg.id} className="relative border rounded p-2">
-          {editIndex === index ? (
-            <div>
-              <textarea
-                className="w-full border mb-1"
-                value={editText}
-                onChange={(e) => setEditText(e.target.value)}
-              />
-              <div className="flex justify-end gap-1">
-                <Check size={14} className="cursor-pointer" onClick={saveEdit} />
-                <X size={14} className="cursor-pointer" onClick={cancelEdit} />
-              </div>
-            </div>
-          ) : (
-            <>
-              <strong className="block mb-1">{msg.role}</strong>
+    <Drag.NoDrag>
+      <div className="space-y-2 border border-input">
+        {messages.map((msg, index) => (
+          <div key={msg.id} className="relative border rounded p-2">
+            {editIndex === index ? (
               <div>
-                {msg.content.map((contentItem, idx) => {
-                  return (
-                    <div key={`${contentItem.type}-${idx}`} className="mb-1">
-                      {isContentText(contentItem) && (
-                        <Markdown remarkPlugins={[remarkGfm]}>{contentItem.text}</Markdown>
-                      )}
-                      {isContentImage(contentItem) && contentItem.image_url && (
-                        <img src={contentItem.image_url} alt="message-image" />
-                      )}
-                      {isContentFile(contentItem) && contentItem.filename && (
-                        <a
-                          href={`data:application/octet-stream;base64,${contentItem.file_data}`}
-                          download={contentItem.filename}
-                        >
-                          {contentItem.filename}
-                        </a>
-                      )}
-                    </div>
-                  );
-                })}
+                <textarea
+                  className="w-full border mb-1"
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                />
+                <div className="flex justify-end gap-1">
+                  <Check size={14} className="cursor-pointer" onClick={saveEdit} />
+                  <X size={14} className="cursor-pointer" onClick={cancelEdit} />
+                </div>
               </div>
-            </>
-          )}
-          <div className="absolute right-1 bottom-1 flex gap-1 text-xs">
-            <Pencil size={14} className="cursor-pointer" onClick={() => startEdit(index)} />
-            <Trash2 size={14} className="cursor-pointer" onClick={() => deleteMsg(index)} />
+            ) : (
+              <>
+                <strong className="block mb-1">{msg.role}</strong>
+                <div>
+                  {msg.content.map((contentItem, idx) => {
+                    return (
+                      <div key={`${contentItem.type}-${idx}`} className="mb-1">
+                        {isContentText(contentItem) && (
+                          <Markdown remarkPlugins={[remarkGfm]}>{contentItem.text}</Markdown>
+                        )}
+                        {isContentImage(contentItem) && contentItem.image_url && (
+                          <img src={contentItem.image_url} alt="message-image" />
+                        )}
+                        {isContentFile(contentItem) && contentItem.filename && (
+                          <a
+                            href={`data:application/octet-stream;base64,${contentItem.file_data}`}
+                            download={contentItem.filename}
+                          >
+                            {contentItem.filename}
+                          </a>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+            <div className="absolute right-1 bottom-1 flex gap-1 text-xs">
+              <Pencil size={14} className="cursor-pointer" onClick={() => startEdit(index)} />
+              <Trash2 size={14} className="cursor-pointer" onClick={() => deleteMsg(index)} />
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </Drag.NoDrag>
   );
 }
 
