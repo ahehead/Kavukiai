@@ -62,137 +62,139 @@ export function createCustomNode(
           <NodeTitle status={data.status}>{label}</NodeTitle>
         </NodeHeader>
 
-        <NodeSocketsWrapper>
-          {/* Outputs */}
-          {outputs.map(([key, output]) =>
-            output && (
-              <NodeOutputPort
-                key={key}
-                data-testid={`output-${key}`}
-              >
-                {output.label &&
-                  <NodeSocketLabel isExec={output.socket.isExec} data-testid="output-title">
-                    {output.label}
-                  </NodeSocketLabel>}
+        <div className='grid grid-rows-[auto_minmax(0,1fr)] '>
+          <NodeSocketsWrapper>
+            {/* Outputs */}
+            {outputs.map(([key, output]) =>
+              output && (
+                <NodeOutputPort
+                  key={key}
+                  data-testid={`output-${key}`}
+                >
+                  {output.label &&
+                    <NodeSocketLabel isExec={output.socket.isExec} data-testid="output-title">
+                      {output.label}
+                    </NodeSocketLabel>}
 
-                {!output.socket.isExec && (
-                  withTooltip(
-                    <NodeSocketTypeLabel data-testid="output-type">{output.socket.name}</NodeSocketTypeLabel>,
-                    true,
-                    output.socket.tooltip
-                  )
-                )}
+                  {!output.socket.isExec && (
+                    withTooltip(
+                      <NodeSocketTypeLabel data-testid="output-type">{output.socket.name}</NodeSocketTypeLabel>,
+                      true,
+                      output.socket.tooltip
+                    )
+                  )}
 
-                <Presets.classic.RefSocket
-                  name="output-socket"
-                  side="output"
-                  socketKey={key}
-                  nodeId={id}
-                  emit={emit}
-                  payload={output.socket}
-                  data-testid="output-socket"
-                />
+                  <Presets.classic.RefSocket
+                    name="output-socket"
+                    side="output"
+                    socketKey={key}
+                    nodeId={id}
+                    emit={emit}
+                    payload={output.socket}
+                    data-testid="output-socket"
+                  />
 
-              </NodeOutputPort>
-            )
-          )}
+                </NodeOutputPort>
+              )
+            )}
 
-          {/* Inputs */}
-          {inputs.map(([key, input]) => {
-            if (!input) return null;
+            {/* Inputs */}
+            {inputs.map(([key, input]) => {
+              if (!input) return null;
 
-            return (
-              // NodeのInputは二種類、ソケットとコントロールモードがある。
-              // 更にコントロールモードは、ラベルとコントロールを一行にするか二行にするかある。
-              <NodeInputPort
-                showControl={Boolean(input.control && input.showControl)}
-                cols={input.control?.opts.cols || 0}
-                key={key}
-                data-testid={`input-${key}`}
-              >
-                {/* !showControl */}
-                {!(input.control && input.showControl) && (
-                  <>
-                    <Presets.classic.RefSocket
-                      name="input-socket"
-                      side="input"
-                      socketKey={key}
-                      nodeId={id}
-                      emit={emit}
-                      payload={input.socket}
-                      data-testid="input-socket"
-                    />
+              return (
+                // NodeのInputは二種類、ソケットとコントロールモードがある。
+                // 更にコントロールモードは、ラベルとコントロールを一行にするか二行にするかある。
+                <NodeInputPort
+                  showControl={Boolean(input.control && input.showControl)}
+                  cols={input.control?.opts.cols || 0}
+                  key={key}
+                  data-testid={`input-${key}`}
+                >
+                  {/* !showControl */}
+                  {!(input.control && input.showControl) && (
+                    <>
+                      <Presets.classic.RefSocket
+                        name="input-socket"
+                        side="input"
+                        socketKey={key}
+                        nodeId={id}
+                        emit={emit}
+                        payload={input.socket}
+                        data-testid="input-socket"
+                      />
 
-                    {!input.socket.isExec && (
-                      withTooltip(
-                        <NodeSocketTypeLabel data-testid="input-type">{input.socket.name}</NodeSocketTypeLabel>,
-                        true,
-                        input.socket.tooltip
-                      )
-                    )}
-                    {input.label && (
-                      withTooltip(
-                        <NodeSocketLabel
-                          isExec={input.socket.isExec}
-                          data-testid="input-title"
-                          isRequired={input.require}
-                        >
-                          {input.label}
-                        </NodeSocketLabel>,
-                        false,
-                        input.tooltip
-                      )
-                    )}
-                  </>
-                )}
-                {input.control && input.showControl && (
-                  <>
-                    {input.control.opts.label && input.control.opts.cols !== 0 && (
-                      <ControlLabel
-                        cols={input.control.opts.cols}
-                        htmlFor={input.control.id}
-                        isRequired={input.require}
-                      >
-                        {withTooltip(
-                          <div className='inline-block'>{input.control.opts.label}</div>,
+                      {!input.socket.isExec && (
+                        withTooltip(
+                          <NodeSocketTypeLabel data-testid="input-type">{input.socket.name}</NodeSocketTypeLabel>,
+                          true,
+                          input.socket.tooltip
+                        )
+                      )}
+                      {input.label && (
+                        withTooltip(
+                          <NodeSocketLabel
+                            isExec={input.socket.isExec}
+                            data-testid="input-title"
+                            isRequired={input.require}
+                          >
+                            {input.label}
+                          </NodeSocketLabel>,
                           false,
                           input.tooltip
-                        )}
-                      </ControlLabel>
-                    )
-                    }
-                    <Presets.classic.RefControl
-                      key={key}
-                      name="input-control"
-                      emit={emit}
-                      payload={input.control}
-                      data-testid="input-control"
-                    />
-                  </>
-                )}
-              </NodeInputPort>
-            )
-          }
+                        )
+                      )}
+                    </>
+                  )}
+                  {input.control && input.showControl && (
+                    <>
+                      {input.control.opts.label && input.control.opts.cols !== 0 && (
+                        <ControlLabel
+                          cols={input.control.opts.cols}
+                          htmlFor={input.control.id}
+                          isRequired={input.require}
+                        >
+                          {withTooltip(
+                            <div className='inline-block'>{input.control.opts.label}</div>,
+                            false,
+                            input.tooltip
+                          )}
+                        </ControlLabel>
+                      )
+                      }
+                      <Presets.classic.RefControl
+                        key={key}
+                        name="input-control"
+                        emit={emit}
+                        payload={input.control}
+                        data-testid="input-control"
+                      />
+                    </>
+                  )}
+                </NodeInputPort>
+              )
+            }
 
 
-          )}
+            )}
 
-        </NodeSocketsWrapper>
-        {/* Controls */}
-        <NodeControlsWrapper>
-          {controls.map(([key, control]) =>
-            control ? (
-              <Presets.classic.RefControl
-                key={key}
-                name="control"
-                emit={emit}
-                payload={control}
-                data-testid={`control-${key}`}
-              />
-            ) : null
-          )}
-        </NodeControlsWrapper>
+          </NodeSocketsWrapper>
+          {/* Controls */}
+          <NodeControlsWrapper>
+            {controls.map(([key, control]) =>
+              control ? (
+                <Presets.classic.RefControl
+                  key={key}
+                  name="control"
+                  emit={emit}
+                  payload={control}
+                  data-testid={`control-${key}`}
+                />
+              ) : null
+            )}
+          </NodeControlsWrapper>
 
+        </div>
         <div
           className="absolute right-0 bottom-0 w-4 h-4 cursor-se-resize bg-transparent"
           onPointerDown={startResize}

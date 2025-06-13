@@ -5,7 +5,7 @@ import { Loader2 } from 'lucide-react';
 import React from "react";
 
 export const nodePanel = cva(
-  ["bg-node-bg text-node-fg flex flex-col rounded-md border border-node-outline shadow-sm"],
+  ["bg-node-bg text-node-fg grid grid-cols-1 grid-rows-[auto_1fr] rounded-md border border-node-outline shadow-sm"],
   {
     variants: {
       selected: {
@@ -102,7 +102,7 @@ export function NodeTitle({ status, children, ...props }: React.ComponentProps<"
 
 export function NodeControlsWrapper({ ...props }: React.ComponentProps<"div">) {
   return (
-    <div className='w-full h-full p-2 empty:p-0' {...props} />
+    <div className='p-2 empty:p-0 empty:hidden' {...props} />
   )
 }
 
