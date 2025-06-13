@@ -41,7 +41,6 @@ export class TSchemaNode extends BaseNode<
   }
 
   data(): { out: TSchema } {
-    // console.log('TSchemaNode data called');
     const items = this.controls.props.getValue();
     const props: Record<string, TSchema> = {};
     for (const item of items) {
@@ -53,12 +52,10 @@ export class TSchemaNode extends BaseNode<
   async execute(): Promise<void> { }
 
   serializeControlValue(): { data: { items: PropertyItem[] } } {
-    // console.log('Serializing TSchemaNode control value', this.controls.props.getValue());
-    return { data: { items: this.controls.props.getValue() || [] } };
+    return { data: { items: this.controls.props.getValue() } };
   }
 
   deserializeControlValue(data: { items: PropertyItem[] }): void {
-    // console.log('Deserializing TSchemaNode control value', data);
     this.controls.props.setValue(data.items);
   }
 }
