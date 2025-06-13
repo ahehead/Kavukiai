@@ -11,7 +11,7 @@ import {
   SelectItem,
   SelectValue
 } from "renderer/components/ui/select";
-import { Plus } from "lucide-react";
+import { Plus, ArrowUp, ArrowDown, Trash2 } from "lucide-react";
 import { useStopWheel } from "../../util/useStopWheel";
 
 export type PropertyItem = {
@@ -70,6 +70,21 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
   const [keyStr, setKeyStr] = useState("");
   const [typeStr, setTypeStr] = useState<PropertyItem["typeStr"]>("string");
   const items = useMemo(() => control.getValue(), [control]);
+  // Handlers for item manipulation
+  const handleMove = (from: number, to: number) => {
+    if (to < 0 || to >= items.length) return;
+    const newItems = [...items];
+    [newItems[from], newItems[to]] = [newItems[to], newItems[from]];
+    control.addHistory(items, newItems);
+    control.setValue(newItems);
+  };
+  const handleMoveUp = (index: number) => { handleMove(index, index - 1); };
+  const handleMoveDown = (index: number) => { handleMove(index, index + 1); };
+  const handleDelete = (index: number) => {
+    const newItems = items.filter((_, i) => i !== index);
+    control.addHistory(items, newItems);
+    control.setValue(newItems);
+  };
   const listRef = useRef<HTMLDivElement | null>(null);
   useStopWheel(listRef);
 
@@ -85,13 +100,30 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
   return (
     <Drag.NoDrag>
       <div className="flex flex-col gap-1 h-full">
+        {/* リスト */}
         <div
           ref={listRef}
           className="flex-1 min-h-0 overflow-auto border rounded p-2 bg-node-bg"
         >
           {items.map((item, idx) => (
-            <div key={idx} className="text-sm py-0.5">
-              {item.key}: {item.typeStr}
+            <div key={idx} className="flex justify-between items-center text-sm py-0.5">
+              <span>{item.key}: {item.typeStr}</span>
+              {editable && (
+                <div className="flex space-x-1">
+                  <button onClick={() => handleMoveUp(idx)} disabled={idx === 0}
+                    className="p-1 hover:bg-gray-200 disabled:opacity-50">
+                    <ArrowUp className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => handleMoveDown(idx)} disabled={idx === items.length - 1}
+                    className="p-1 hover:bg-gray-200 disabled:opacity-50">
+                    <ArrowDown className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => handleDelete(idx)}
+                    className="p-1 hover:bg-gray-200">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
