@@ -9,7 +9,7 @@ description: 'typeboxのスキーマを作成する。'
 ・そして小さな単位の型は、ショートハンドキーで呼び出せるようにオブジェクトに登録してほしい。
 
 参考ファイル1。response.ts
-node_modules/.pnpm/openai@5.0.1_zod@3.25.23/node_modules/openai/src/resources/responses/responses.ts
+node_modules/openai/src/resources/responses/responses.ts
 同じファイルのgithubのリンク。
 https://github.com/openai/openai-node/blob/eebb832c8433696976375e7f1446070f2dc4d91a/src/resources/responses/responses.ts
 
