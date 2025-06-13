@@ -13,12 +13,11 @@ import type {
 } from "renderer/nodeEditor/types";
 import { SelectControl } from "../../Controls/input/Select";
 import { type TSchema, Type } from "@sinclair/typebox";
-import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/RequestSchemas";
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import type { DynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
+import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/RequestSchemas";
 
 type OpenAIParamKeys = keyof ResponseCreateParamsBase;
-
 // Run ノード
 export class OpenAIParamNode
   extends SerializableInputsNode<
@@ -129,71 +128,103 @@ export class OpenAIParamNode
           ...opts,
         }),
       },
-      // {
-      //   key: "truncation",
-      //   schema: createParamsSchemas.Truncation,
-      //   label: "truncation",
-      //   tooltip: "コンテキスト過剰時の**コンテキスト切り詰め戦略**。",
-      //   control: new SelectControl<"auto" | "disabled">({
-      //     value: "auto",
-      //     optionsList: [
-      //       { label: "auto", value: "auto" },
-      //       { label: "disabled", value: "disabled" },
-      //     ],
-      //     label: "truncation",
-      //     ...opts,
-      //   }),
-      // },
-      // // 追加のOpenAIパラメータ
-      // {
-      //   key: "background",
-      //   schema: createParamsSchemas.Background,
-      //   label: "background",
-      //   tooltip: "モデルの応答を**バックグラウンド**で実行するかどうか。",
-      // },
-      // {
-      //   key: "include",
-      //   schema: createParamsSchemas.Include,
-      //   label: "include",
-      //   tooltip:
-      //     "応答に含める追加データを指定する**キー配列**。詳細：[ドキュメント](https://platform.openai.com/docs/api-reference/responses/create#responses/create-include)",
-      // },
-      // {
-      //   key: "max_output_tokens",
-      //   schema: createParamsSchemas.MaxOutputTokens,
-      //   label: "max_output_tokens",
-      //   tooltip: "生成する**トークン数の上限**。",
-      // },
-      // {
-      //   key: "metadata",
-      //   schema: createParamsSchemas.Metadata,
-      //   label: "metadata",
-      //   tooltip: "**キー:文字列、値:文字列**のメタデータ（最大16組）。",
-      // },
-      // {
-      //   key: "parallel_tool_calls",
-      //   schema: createParamsSchemas.ParallelToolCalls,
-      //   label: "parallel_tool_calls",
-      //   tooltip: "ツール実行を**並列**で行うかどうか。",
-      // },
-      // {
-      //   key: "previous_response_id",
-      //   schema: createParamsSchemas.PreviousResponseId,
-      //   label: "previous_response_id",
-      //   tooltip: "前回の応答ID。**マルチターン会話**用。",
-      // },
-      // {
-      //   key: "reasoning",
-      //   schema: createParamsSchemas.Reasoning,
-      //   label: "reasoning",
-      //   tooltip: "**oシリーズモデル**の推論オプション。",
-      // },
-      // {
-      //   key: "temperature",
-      //   schema: createParamsSchemas.Temperature,
-      //   label: "temperature",
-      //   tooltip: "出力の**ランダム性**を制御する温度パラメータ（0〜2）。",
-      // },
+      {
+        key: "truncation",
+        name: "truncation",
+        schema: Type.Index(ResponseCreateParamsBase, ["truncation"]),
+        label: "truncation",
+        tooltip: "コンテキスト過剰時の**コンテキスト切り詰め戦略**。",
+        control: new SelectControl<"auto" | "disabled">({
+          value: "auto",
+          optionsList: [
+            { label: "auto", value: "auto" },
+            { label: "disabled", value: "disabled" },
+          ],
+          label: "truncation",
+          ...opts,
+        }),
+      },
+      {
+        key: "background",
+        name: "background",
+        schema: Type.Index(ResponseCreateParamsBase, ["background"]),
+        label: "background",
+        tooltip: "モデルの応答を**バックグラウンド**で実行するかどうか。",
+        control: new CheckBoxControl({
+          value: false,
+          label: "background",
+          ...opts,
+        }),
+      },
+      {
+        key: "include",
+        name: "include",
+        schema: Type.Index(ResponseCreateParamsBase, ["include"]),
+        label: "include",
+        tooltip:
+          "応答に含める追加データを指定する**キー配列**。詳細：[ドキュメント](https://platform.openai.com/docs/api-reference/responses/create#responses/create-include)",
+      },
+      {
+        key: "max_output_tokens",
+        name: "max_output_tokens",
+        schema: Type.Index(ResponseCreateParamsBase, ["max_output_tokens"]),
+        label: "max_output_tokens",
+        tooltip: "生成する**トークン数の上限**。",
+        control: new InputValueControl<number>({
+          value: 1024,
+          type: "number",
+          label: "max_output_tokens",
+          ...opts,
+        }),
+      },
+      {
+        key: "metadata",
+        name: "metadata",
+        schema: Type.Index(ResponseCreateParamsBase, ["metadata"]),
+        label: "metadata",
+        tooltip: "**キー:文字列、値:文字列**のメタデータ（最大16組）。",
+      },
+      {
+        key: "parallel_tool_calls",
+        name: "parallel_tool_calls",
+        schema: Type.Index(ResponseCreateParamsBase, ["parallel_tool_calls"]),
+        label: "parallel_tool_calls",
+        tooltip: "ツール実行を**並列**で行うかどうか。",
+        control: new CheckBoxControl({
+          value: false,
+          label: "parallel_tool_calls",
+          ...opts,
+        }),
+      },
+      {
+        key: "previous_response_id",
+        name: "previous_response_id",
+        schema: Type.Index(ResponseCreateParamsBase, ["previous_response_id"]),
+        label: "previous_response_id",
+        tooltip: "前回の応答ID。**マルチターン会話**用。",
+      },
+      {
+        key: "reasoning",
+        name: "reasoning",
+        schema: Type.Index(ResponseCreateParamsBase, ["reasoning"]),
+        label: "reasoning",
+        tooltip: "**oシリーズモデル**の推論オプション。",
+      },
+      {
+        key: "temperature",
+        name: "temperature",
+        schema: Type.Index(ResponseCreateParamsBase, ["temperature"]),
+        label: "temperature",
+        tooltip:
+          "出力の**ランダム性**を制御する温度パラメータ（0〜2）。top_pと併用不可。",
+        control: new InputValueControl<number>({
+          value: 1,
+          step: 0.01,
+          type: "number",
+          label: "temperature",
+          ...opts,
+        }),
+      },
       {
         key: "text",
         name: "object",
@@ -201,30 +232,42 @@ export class OpenAIParamNode
         label: "text",
         tooltip: "テキスト応答の書式を設定する**オブジェクト**。",
       },
-      // {
-      //   key: "tool_choice",
-      //   schema: createParamsSchemas.ToolChoice,
-      //   label: "tool_choice",
-      //   tooltip: "使用するツールを**指定**。",
-      // },
-      // {
-      //   key: "tools",
-      //   schema: createParamsSchemas.ToolsList,
-      //   label: "tools",
-      //   tooltip: "実行可能な**ツールの配列**。",
-      // },
-      // {
-      //   key: "top_p",
-      //   schema: createParamsSchemas.TopP,
-      //   label: "top_p",
-      //   tooltip: "核サンプリングの**確率質量上位閾値**（0〜1）。",
-      // },
-      // {
-      //   key: "user",
-      //   schema: createParamsSchemas.User,
-      //   label: "user",
-      //   tooltip: "エンドユーザーの**一意識別子**。",
-      // },
+      {
+        key: "tool_choice",
+        name: "tool_choice",
+        schema: Type.Index(ResponseCreateParamsBase, ["tool_choice"]),
+        label: "tool_choice",
+        tooltip: "使用するツールを**指定**。",
+      },
+      {
+        key: "tools",
+        name: "tools",
+        schema: Type.Index(ResponseCreateParamsBase, ["tools"]),
+        label: "tools",
+        tooltip: "実行可能な**ツールの配列**。",
+      },
+      {
+        key: "top_p",
+        name: "top_p",
+        schema: Type.Index(ResponseCreateParamsBase, ["top_p"]),
+        label: "top_p",
+        tooltip:
+          "核サンプリングの**確率質量上位閾値**（0〜1）。temperatureと併用不可。",
+        control: new InputValueControl<number>({
+          value: 1,
+          step: 0.01,
+          type: "number",
+          label: "top_p",
+          ...opts,
+        }),
+      },
+      {
+        key: "user",
+        name: "user",
+        schema: Type.Index(ResponseCreateParamsBase, ["user"]),
+        label: "user",
+        tooltip: "エンドユーザーの**一意識別子**。",
+      },
     ]);
 
     this.addOutputPort({

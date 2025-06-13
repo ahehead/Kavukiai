@@ -7,7 +7,7 @@ export { RunNode } from "./Primitive/RunNode";
 export { InspectorNode } from "./InspectorNode";
 export { OpenAINode } from "./OpenAI/OpenAI";
 export { OpenAIParamNode } from "./OpenAI/OpenAIParam";
-export { ChatContextNode } from "./OpenAI/ChatContextNode";
+export { ResponseInputMessageItemListNode as ChatContextNode } from "./OpenAI/ChatContextNode";
 export { JsonSchemaFormatNode } from "./OpenAI/JsonSchemaFormatNode";
 export { ResponseTextConfigNode } from "./OpenAI/ResponseTextConfigNode";
 export { BoolNode } from "./Primitive/BoolNode";

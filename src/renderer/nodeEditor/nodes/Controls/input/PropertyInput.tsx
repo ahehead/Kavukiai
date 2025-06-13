@@ -1,4 +1,4 @@
-import { useState, type JSX } from "react";
+import { useMemo, useRef, useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
@@ -12,6 +12,7 @@ import {
   SelectValue
 } from "renderer/components/ui/select";
 import { Plus } from "lucide-react";
+import { useStopWheel } from "../../util/useStopWheel";
 
 export type PropertyItem = {
   key: string;
@@ -68,10 +69,14 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
   const { editable } = control.opts;
   const [keyStr, setKeyStr] = useState("");
   const [typeStr, setTypeStr] = useState<PropertyItem["typeStr"]>("string");
-  const items = control.getValue();
+  const items = useMemo(() => control.getValue(), [control]);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  useStopWheel(listRef);
 
   const handleAdd = (): void => {
     if (!keyStr) return;
+    // 重複するキーがあれば追加をキャンセル
+    if (items.some(item => item.key === keyStr)) return;
     const item: PropertyItem = { key: keyStr, typeStr };
     control.addItem(item);
     setKeyStr("");
@@ -79,10 +84,20 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
 
   return (
     <Drag.NoDrag>
-      <div className="flex flex-col gap-1">
-        <div className="grid grid-cols-[1fr_minmax(7rem,max-content)_auto] gap-0.5 place-items-stretch">
-          {/* キー入力 */}
-          <div className="grid grid-cols-[1fr_auto] place-items-center">
+      <div className="flex flex-col gap-1 h-full">
+        <div
+          ref={listRef}
+          className="flex-1 min-h-0 overflow-auto border rounded p-2 bg-node-bg"
+        >
+          {items.map((item, idx) => (
+            <div key={idx} className="text-sm py-0.5">
+              {item.key}: {item.typeStr}
+            </div>
+          ))}
+        </div>
+        <div className="shrink-0 grid grid-cols-[1fr_minmax(7rem,max-content)_auto] gap-0.5 place-items-center">
+          {/* key入力 */}
+          <div className="grid grid-cols-[1fr_auto] place-items-center w-full">
             <input
               type="text"
               value={keyStr}
@@ -118,18 +133,12 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
           <button
             onClick={handleAdd}
             disabled={!editable}
-            className="items-center justify-center p-1 rounded border border-input text-sm hover:bg-accent/50 disabled:opacity-50"
+            className="ml-1 w-8 h-8 flex justify-center items-center p-1 rounded border border-input text-sm bg-accent/40 hover:bg-accent/70 disabled:opacity-50"
           >
             <Plus className="w-4 h-4" />
           </button>
         </div>
-        <div className="w-full max-h-32 overflow-auto border border-input rounded-md bg-node-bg p-2">
-          {items.map((item, idx) => (
-            <div key={idx} className="text-sm py-0.5 border-b last:border-b-0">
-              {item.key}: {item.typeStr}
-            </div>
-          ))}
-        </div>
+
       </div>
     </Drag.NoDrag>
   );

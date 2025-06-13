@@ -7,13 +7,14 @@ import { PropertyInputControl, type PropertyItem } from '../../Controls/input/Pr
 import { Type, type TSchema } from '@sinclair/typebox';
 import { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema';
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
+import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode';
 
 // Node to build TSchema objects from property list
 export class TSchemaNode extends BaseNode<
   object,
   { out: TypedSocket },
   { props: PropertyInputControl }
-> {
+> implements SerializableDataNode {
   constructor(
     history: HistoryPlugin<Schemes>,
     area: AreaPlugin<Schemes, AreaExtra>,
@@ -48,10 +49,10 @@ export class TSchemaNode extends BaseNode<
     return { out: Type.Object(props) };
   }
 
-  async execute(): Promise<void> {}
+  async execute(): Promise<void> { }
 
-  serializeControlValue(): { items: PropertyItem[] } {
-    return { items: this.controls.props.getValue() };
+  serializeControlValue(): { data: { items: PropertyItem[] } } {
+    return { data: { items: this.controls.props.getValue() } };
   }
 
   deserializeControlValue(data: { items: PropertyItem[] }): void {

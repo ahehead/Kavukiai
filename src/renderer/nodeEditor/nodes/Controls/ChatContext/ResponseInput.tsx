@@ -1,90 +1,187 @@
 import { useState, type JSX } from "react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Pencil, Trash2, Check, X } from "lucide-react";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
-import type { ResponseInput, ResponseInputContent, ResponseInputItem, ResponseInputMessageItem, ResponseInputText, ResponseInputImage, ResponseInputFile, ResponseInputAudio } from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import type {
+  ChatMessageItem,
+  ResponseInputContent,
+  ResponseInputText,
+  ResponseInputImage,
+  ResponseInputFile,
+  ResponseInputAudio,
+  ResponseInputItem,
+} from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import { Drag } from "rete-react-plugin";
 
-export interface ResponseInputMessageControlParams extends ControlOptions<ResponseInput> {
-  value: ResponseInput;
+
+export interface ResponseInputMessageControlParams
+  extends ControlOptions<ChatMessageItem[]> {
+  value: ChatMessageItem[];
 }
 
-// チャット入力用コントロール
-export class ResponseInputMessageControl extends BaseControl<ResponseInput, ResponseInputMessageControlParams> {
-  responseInput: ResponseInput;
+export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], ResponseInputMessageControlParams> {
+  messages: ChatMessageItem[];
   totalTokens = 0;
 
-  constructor(
-    options: ResponseInputMessageControlParams,
-  ) {
-    super();
-    this.responseInput = options.value ?? [];
+  constructor(options: ResponseInputMessageControlParams) {
+    super(options);
+    this.messages = options.value ?? [];
   }
-  setValue(value: ResponseInput): void {
-    this.responseInput = value;
+
+  setValue(value: ChatMessageItem[]): void {
+    this.messages = value;
     this.opts.onChange?.(value);
   }
 
-  getValue(): ResponseInput {
-    return this.responseInput;
+  getValue(): ChatMessageItem[] {
+    return this.messages;
   }
 
+  setSystemPrompt(text: string): void {
+    const prev = [...this.messages];
+    const idx = this.messages.findIndex((m) => m.role === "system");
+    if (idx >= 0) {
+      this.messages[idx] = {
+        ...this.messages[idx],
+        content: [{ type: "input_text", text }],
+      };
+    } else {
+      this.messages.unshift({
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+        role: "system",
+        type: "message",
+        content: [{ type: "input_text", text }],
+      });
+    }
+    this.addHistory(prev, this.messages);
+    this.opts.onChange?.(this.messages);
+  }
+
+  addMessage(msg: ChatMessageItem): void {
+    const prev = [...this.messages];
+    this.messages.push(msg);
+    this.addHistory(prev, this.messages);
+    this.opts.onChange?.(this.messages);
+  }
+
+  setState(index: number, msg: ChatMessageItem): void {
+    const prev = [...this.messages];
+    this.messages[index] = msg;
+    this.addHistory(prev, this.messages);
+    this.opts.onChange?.(this.messages);
+  }
+
+  clear(): void {
+    const prev = [...this.messages];
+    this.messages = [];
+    this.addHistory(prev, this.messages);
+    this.opts.onChange?.(this.messages);
+  }
+
+  getLastMessage(): ChatMessageItem | undefined {
+    return this.messages[this.messages.length - 1];
+  }
+
+  removeMessage(index: number): void {
+    const prev = [...this.messages];
+    this.messages.splice(index, 1);
+    this.addHistory(prev, this.messages);
+    this.opts.onChange?.(this.messages);
+  }
 }
 
-
-
-
-// カスタムコンポーネント
-export function ResponseInputMessageView(props: {
-  data: ResponseInputMessageControl;
-}): JSX.Element {
+export function ResponseInputMessageView(props: { data: ResponseInputMessageControl }): JSX.Element {
   const control = props.data;
-  const [value, setValue] = useState(control.getValue());
+  const [messages, setMessages] = useState(control.getValue());
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editText, setEditText] = useState("");
+
+  const refresh = () => setMessages([...control.getValue()]);
+
+  const startEdit = (index: number) => {
+    const msg = control.getValue()[index];
+    const text = msg.content
+      .map((c) => (isContentText(c) ? c.text : ""))
+      .join("\n");
+    setEditText(text);
+    setEditIndex(index);
+  };
+
+  const saveEdit = () => {
+    if (editIndex === null) return;
+    const msg = control.getValue()[editIndex];
+    const updated: ChatMessageItem = {
+      ...msg,
+      content: [{ type: "input_text", text: editText }],
+    };
+    control.setState(editIndex, updated);
+    setEditIndex(null);
+    refresh();
+  };
+
+  const cancelEdit = () => setEditIndex(null);
+
+  const deleteMsg = (index: number) => {
+    control.removeMessage(index);
+    refresh();
+  };
+
   return (
-    <div>
-      {value.map((inputItem, index) => (
-        <div key={index}>
-          {/* メッセージ入力 */}
-          {isMessageItem(inputItem) ? (
-            <>
-              <strong>{inputItem.role}</strong>
-              {inputItem.content.map((contentItem, contentIndex) => (
-                <div key={contentIndex}>
-                  {isContentText(contentItem) && <span>{contentItem.text}</span>}
-                  {isContentImage(contentItem) && contentItem.image_url && (
-                    <img src={contentItem.image_url} alt="message-image" />
-                  )}
-                  {isContentFile(contentItem) && contentItem.filename && (
-                    <a href={`data:application/octet-stream;base64,${contentItem.file_data}`} download={contentItem.filename}>
-                      {contentItem.filename}
-                    </a>
-                  )}
+    <Drag.NoDrag>
+      <div className="space-y-2 border border-input">
+        {messages.map((msg, index) => (
+          <div key={msg.id} className="relative border rounded p-2">
+            {editIndex === index ? (
+              <div>
+                <textarea
+                  className="w-full border mb-1"
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                />
+                <div className="flex justify-end gap-1">
+                  <Check size={14} className="cursor-pointer" onClick={saveEdit} />
+                  <X size={14} className="cursor-pointer" onClick={cancelEdit} />
                 </div>
-              ))}
-            </>
-          ) : isItemText(inputItem) ? (
-            <div>テキスト入力: {inputItem.text}</div>
-          ) : isItemImage(inputItem) ? (
-            inputItem.image_url ? <img src={inputItem.image_url} alt="input-image" /> : null
-          ) : isItemFile(inputItem) ? (
-            <a href={`data:application/octet-stream;base64,${inputItem.file_data}`} download={inputItem.filename}>
-              {inputItem.filename}
-            </a>
-          ) : isItemAudio(inputItem) ? (
-            <audio controls>
-              <source src={`data:audio/${inputItem.format};base64,${inputItem.data}`} />
-              <track kind="captions" label="" />
-            </audio>
-          ) : null}
-        </div>
-      ))}
-    </div>
+              </div>
+            ) : (
+              <>
+                <strong className="block mb-1">{msg.role}</strong>
+                <div>
+                  {msg.content.map((contentItem, idx) => {
+                    return (
+                      <div key={`${contentItem.type}-${idx}`} className="mb-1">
+                        {isContentText(contentItem) && (
+                          <Markdown remarkPlugins={[remarkGfm]}>{contentItem.text}</Markdown>
+                        )}
+                        {isContentImage(contentItem) && contentItem.image_url && (
+                          <img src={contentItem.image_url} alt="message-image" />
+                        )}
+                        {isContentFile(contentItem) && contentItem.filename && (
+                          <a
+                            href={`data:application/octet-stream;base64,${contentItem.file_data}`}
+                            download={contentItem.filename}
+                          >
+                            {contentItem.filename}
+                          </a>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+            <div className="absolute right-1 bottom-1 flex gap-1 text-xs">
+              <Pencil size={14} className="cursor-pointer" onClick={() => startEdit(index)} />
+              <Trash2 size={14} className="cursor-pointer" onClick={() => deleteMsg(index)} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </Drag.NoDrag>
   );
 }
 
-// メッセージ判別
-function isMessageItem(inputItem: ResponseInputItem): inputItem is ResponseInputMessageItem {
-  return inputItem.type === "message";
-}
-
-// メッセージ内コンテンツ判別
 function isContentText(item: ResponseInputContent): item is ResponseInputText {
   return item.type === "input_text";
 }
@@ -92,17 +189,6 @@ function isContentImage(item: ResponseInputContent): item is ResponseInputImage 
   return item.type === "input_image";
 }
 function isContentFile(item: ResponseInputContent): item is ResponseInputFile {
-  return item.type === "input_file";
-}
-
-// トップレベル入力アイテム判別
-function isItemText(item: ResponseInputItem): item is ResponseInputText {
-  return item.type === "input_text";
-}
-function isItemImage(item: ResponseInputItem): item is ResponseInputImage {
-  return item.type === "input_image";
-}
-function isItemFile(item: ResponseInputItem): item is ResponseInputFile {
   return item.type === "input_file";
 }
 function isItemAudio(item: ResponseInputItem): item is ResponseInputAudio {
