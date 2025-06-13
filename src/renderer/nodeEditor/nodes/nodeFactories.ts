@@ -45,7 +45,7 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
     new InspectorNode(editor, dataflow, area, controlflow),
   OpenAI: ({ area, dataflow, controlflow }) =>
     new OpenAINode(area, dataflow, controlflow),
-  ResponseCreateParamsBaseNode: ({ history, area, dataflow }) =>
+  ResponseCreateParamsBase: ({ history, area, dataflow }) =>
     new ResponseCreateParamsBaseNode(history, area, dataflow),
   ResponseInputMessageItemList: ({ history, area, dataflow }) =>
     new ResponseInputMessageItemListNode([], history, area, dataflow),
@@ -55,8 +55,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   TSchema: ({ history, area, dataflow }) =>
     new TSchemaNode(history, area, dataflow),
   IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
-  JsonSchemaFormat: ({ area, dataflow }) =>
-    new JsonSchemaFormatNode(area, dataflow),
+  JsonSchemaFormat: ({ history, area, dataflow }) =>
+    new JsonSchemaFormatNode(history, area, dataflow),
   ResponseTextConfig: ({ area, dataflow }) =>
     new ResponseTextConfigNode(area, dataflow),
 };
@@ -148,9 +148,9 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         factoryKey: "OpenAI",
       },
       {
-        label: "ResponseCreateParamsBaseNode",
+        label: "ResponseCreateParamsBase",
         key: "response-create-params-base-node",
-        factoryKey: "ResponseCreateParamsBaseNode",
+        factoryKey: "ResponseCreateParamsBase",
       },
       {
         label: "ResponseInputMessageItemList",
