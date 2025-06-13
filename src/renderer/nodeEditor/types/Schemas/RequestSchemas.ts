@@ -169,12 +169,3 @@ export const ResponseRetrieveParams = Type.Union(
   { description: "Parameters for retrieving a response" }
 );
 export type ResponseRetrieveParams = Static<typeof ResponseRetrieveParams>;
-
-export const ResponseSmallSchemas = {
-  TextFormat,
-  JsonObjectFormat,
-  JsonSchemaFormat,
-  ResponseFormatTextConfig,
-  ResponseTextConfig,
-} as const;
-export type ResponseSmallSchemaKey = keyof typeof ResponseSmallSchemas;
