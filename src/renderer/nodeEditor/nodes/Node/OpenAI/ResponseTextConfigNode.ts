@@ -1,7 +1,11 @@
 import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
-import type { AreaExtra, Schemes, TypedSocket } from "renderer/nodeEditor/types";
+import type {
+  AreaExtra,
+  Schemes,
+  TypedSocket,
+} from "renderer/nodeEditor/types";
 import {
   ResponseTextConfig,
   ResponseFormatTextConfig,
@@ -12,18 +16,27 @@ export class ResponseTextConfigNode extends BaseNode<
   { out: TypedSocket },
   object
 > {
-  constructor(area: AreaPlugin<Schemes, AreaExtra>, dataflow: DataflowEngine<Schemes>) {
+  constructor(
+    area: AreaPlugin<Schemes, AreaExtra>,
+    dataflow: DataflowEngine<Schemes>
+  ) {
     super("ResponseTextConfig");
     this.addInputPort({
       key: "format",
-      name: "object",
+      name: "ResponseFormatTextConfig",
       schema: ResponseFormatTextConfig,
       label: "format",
     });
-    this.addOutputPort({ key: "out", name: "object", schema: ResponseTextConfig });
+    this.addOutputPort({
+      key: "out",
+      name: "ResponseTextConfig",
+      schema: ResponseTextConfig,
+    });
   }
 
-  data(inputs: { format?: ResponseFormatTextConfig[] }): { out: ResponseTextConfig } {
+  data(inputs: { format?: ResponseFormatTextConfig[] }): {
+    out: ResponseTextConfig;
+  } {
     const format = inputs.format?.[0];
     return { out: format ? { format } : {} } as { out: ResponseTextConfig };
   }
