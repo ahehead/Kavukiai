@@ -17,7 +17,7 @@ export class TSchemaNode extends BaseNode<
 > implements SerializableDataNode {
   constructor(
     history: HistoryPlugin<Schemes>,
-    area: AreaPlugin<Schemes, AreaExtra>,
+    private area: AreaPlugin<Schemes, AreaExtra>,
     dataflow: DataflowEngine<Schemes>
   ) {
     super('TSchema');
@@ -35,7 +35,10 @@ export class TSchemaNode extends BaseNode<
         editable: true,
         history,
         area,
-        onChange: () => resetCacheDataflow(dataflow, this.id),
+        onChange: () => {
+          resetCacheDataflow(dataflow, this.id);
+          this.area.update("node", this.id);
+        },
       })
     );
   }
