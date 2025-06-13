@@ -3,7 +3,7 @@ import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
-import { ResponseInputMessageControl } from "../../Controls/ChatContext/ResponseInput";
+import { ResponseInputMessageControl } from "../../Controls/OpenAI/ResponseInputMessage";
 import type {
   AreaExtra,
   TypedSocket,

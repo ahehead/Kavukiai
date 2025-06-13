@@ -3,11 +3,11 @@ import type { ReactArea2D } from "rete-react-plugin";
 import type { ContextMenuExtra } from "rete-context-menu-plugin";
 
 import type {
-  ChatContextNode,
+  ResponseInputMessageItemListNode,
   MultiLineStringNode,
   NumberNode,
   OpenAINode,
-  OpenAIParamNode,
+  ResponseCreateParamsBaseNode,
   RunNode,
   StringNode,
   TestNode,
@@ -42,8 +42,8 @@ export type NodeTypes =
   | MultiLineStringNode
   | InspectorNode
   | OpenAINode
-  | OpenAIParamNode
-  | ChatContextNode
+  | ResponseCreateParamsBaseNode
+  | ResponseInputMessageItemListNode
   | BoolNode
   | IFNode
   | ListNode

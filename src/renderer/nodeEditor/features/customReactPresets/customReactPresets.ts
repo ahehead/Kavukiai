@@ -20,7 +20,7 @@ import {
 import {
   ResponseInputMessageControl,
   ResponseInputMessageView,
-} from "../../nodes/Controls/ChatContext/ResponseInput";
+} from "../../nodes/Controls/OpenAI/ResponseInputMessage";
 import {
   CheckBoxControl,
   CheckBoxControlView,

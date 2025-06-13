@@ -1,4 +1,4 @@
-import type { ResponseInputMessageControl } from "../nodes/Controls/ChatContext/ResponseInput";
+import type { ResponseInputMessageControl } from "../nodes/Controls/OpenAI/ResponseInputMessage";
 import type { CheckBoxControl } from "../nodes/Controls/input/CheckBox";
 import type { ConsoleControl } from "../nodes/Controls/Console";
 import type { InputValueControl } from "../nodes/Controls/input/InputValue";

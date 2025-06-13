@@ -19,7 +19,7 @@ import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/Requ
 
 type OpenAIParamKeys = keyof ResponseCreateParamsBase;
 // Run ノード
-export class OpenAIParamNode
+export class ResponseCreateParamsBaseNode
   extends SerializableInputsNode<
     Record<OpenAIParamKeys, TypedSocket>,
     { param: TypedSocket },
@@ -32,7 +32,7 @@ export class OpenAIParamNode
     private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>
   ) {
-    super("OpenAIParam");
+    super("ResponseCreateParamsBase");
 
     const opts = {
       history,
