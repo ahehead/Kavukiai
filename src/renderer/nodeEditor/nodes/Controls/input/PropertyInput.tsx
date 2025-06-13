@@ -1,4 +1,4 @@
-import { useState, type JSX } from "react";
+import { useMemo, useRef, useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
@@ -12,6 +12,7 @@ import {
   SelectValue
 } from "renderer/components/ui/select";
 import { Plus } from "lucide-react";
+import { useStopWheel } from "../../util/useStopWheel";
 
 export type PropertyItem = {
   key: string;
@@ -31,10 +32,12 @@ export class PropertyInputControl extends BaseControl<PropertyItem[], PropertyIn
   }
 
   getValue(): PropertyItem[] {
+    console.log("PropertyInputControl getValue", this.items);
     return this.items;
   }
 
   setValue(items: PropertyItem[]): void {
+    console.log("PropertyInputControl setValue", items);
     this.items = items;
     this.opts.onChange?.(items);
   }
@@ -68,7 +71,9 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
   const { editable } = control.opts;
   const [keyStr, setKeyStr] = useState("");
   const [typeStr, setTypeStr] = useState<PropertyItem["typeStr"]>("string");
-  const items = control.getValue();
+  const items = useMemo(() => control.getValue(), [control]);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  useStopWheel(listRef);
 
   const handleAdd = (): void => {
     if (!keyStr) return;
@@ -79,7 +84,17 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
 
   return (
     <Drag.NoDrag>
-      <div className="flex flex-col gap-1">
+      <div className="grid grid-rows-[minmax(0,1fr)_max-content] gap-1 h-full overflow-hidden">
+        <div
+          ref={listRef}
+          className="w-full overflow-auto border border-input rounded-md bg-node-bg p-2 h-min-0"
+        >
+          {items.map((item, idx) => (
+            <div key={idx} className="text-sm py-0.5">
+              {item.key}: {item.typeStr}
+            </div>
+          ))}
+        </div>
         <div className="grid grid-cols-[1fr_minmax(7rem,max-content)_auto] gap-0.5 place-items-stretch">
           {/* キー入力 */}
           <div className="grid grid-cols-[1fr_auto] place-items-center">
@@ -123,13 +138,7 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
             <Plus className="w-4 h-4" />
           </button>
         </div>
-        <div className="w-full max-h-32 overflow-auto border border-input rounded-md bg-node-bg p-2">
-          {items.map((item, idx) => (
-            <div key={idx} className="text-sm py-0.5 border-b last:border-b-0">
-              {item.key}: {item.typeStr}
-            </div>
-          ))}
-        </div>
+
       </div>
     </Drag.NoDrag>
   );
