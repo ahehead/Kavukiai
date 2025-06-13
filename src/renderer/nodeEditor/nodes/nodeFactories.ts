@@ -11,6 +11,8 @@ import {
   InspectorNode,
   ObjectPickNode,
   TSchemaNode,
+  JsonSchemaFormatNode,
+  ResponseTextConfigNode,
 } from "./Node";
 import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
@@ -53,6 +55,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   TSchema: ({ history, area, dataflow }) =>
     new TSchemaNode(history, area, dataflow),
   IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
+  JsonSchemaFormat: ({ area, dataflow }) => new JsonSchemaFormatNode(area, dataflow),
+  ResponseTextConfig: ({ area, dataflow }) => new ResponseTextConfigNode(area, dataflow),
 };
 
 export interface MenuItemDefinition {
@@ -150,6 +154,16 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "ResponseInputMessageItemList",
         key: "response-input-message-item-list",
         factoryKey: "ResponseInputMessageItemList",
+      },
+      {
+        label: "JsonSchema Format",
+        key: "jsonschema-format-node",
+        factoryKey: "JsonSchemaFormat",
+      },
+      {
+        label: "Response Text Config",
+        key: "response-text-config-node",
+        factoryKey: "ResponseTextConfig",
       },
     ],
   },
