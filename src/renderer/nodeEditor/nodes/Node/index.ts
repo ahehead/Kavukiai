@@ -6,7 +6,7 @@ export { MultiLineStringNode } from "./Primitive/MultiLineStringNode";
 export { RunNode } from "./Primitive/RunNode";
 export { InspectorNode } from "./InspectorNode";
 export { OpenAINode } from "./OpenAI/OpenAI";
-export { ResponseCreateParamsBaseNode } from "./OpenAI/OpenAIParam";
+export { ResponseCreateParamsBaseNode } from "./OpenAI/ResponseCreateParamsBaseNode";
 export { ResponseInputMessageItemListNode } from "./OpenAI/ChatContextNode";
 export { JsonSchemaFormatNode } from "./OpenAI/JsonSchemaFormatNode";
 export { ResponseTextConfigNode } from "./OpenAI/ResponseTextConfigNode";
