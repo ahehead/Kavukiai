@@ -9,7 +9,11 @@ import type {
   TypedSocket,
   Schemes,
 } from "renderer/nodeEditor/types";
-import { ResponseInput } from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import {
+  chatMessagesToResponseInput,
+  ResponseInput,
+} from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 
 // 長文文字列入力ノード
 export class ChatContextNode extends BaseNode<
@@ -18,7 +22,7 @@ export class ChatContextNode extends BaseNode<
   { chatContext: ResponseInputMessageControl }
 > {
   constructor(
-    initial: ResponseInput,
+    initial: ChatMessageItem[],
     history: HistoryPlugin<Schemes>,
     area: AreaPlugin<Schemes, AreaExtra>,
     dataflow: DataflowEngine<Schemes>
@@ -36,7 +40,7 @@ export class ChatContextNode extends BaseNode<
         editable: true,
         history: history,
         area: area,
-        onChange: (v: ResponseInput) => {
+        onChange: () => {
           resetCacheDataflow(dataflow, this.id);
         },
       })
@@ -45,8 +49,9 @@ export class ChatContextNode extends BaseNode<
 
   // dataflowで流す
   data(): { out: ResponseInput } {
-    console.log("data", this.controls.chatContext.getValue());
-    return { out: this.controls.chatContext.getValue() || [] };
+    const messages = this.controls.chatContext.getValue();
+    console.log("data", messages);
+    return { out: chatMessagesToResponseInput(messages) };
   }
 
   async execute(): Promise<void> {}
