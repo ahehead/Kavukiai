@@ -18,6 +18,8 @@ import type {
   ListNode,
   ObjectPickNode,
   TSchemaNode,
+  JsonSchemaFormatNode,
+  ResponseTextConfigNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./Node/BaseNode";
@@ -46,7 +48,9 @@ export type NodeTypes =
   | IFNode
   | ListNode
   | ObjectPickNode
-  | TSchemaNode;
+  | TSchemaNode
+  | JsonSchemaFormatNode
+  | ResponseTextConfigNode;
 
 // BaseNodeを埋めたもの
 export interface NodeInterface

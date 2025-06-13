@@ -3,6 +3,58 @@ import * as Base from "./BaseSchemas";
 import { ResponseInputItem } from "./InputSchemas";
 import { ServiceTier } from "./ResponseSchemas";
 
+// Text response format schemas
+export const TextFormat = Type.Object(
+  { type: Type.Literal("text") },
+  { description: "The type of response format being defined. Always `text`." }
+);
+export type TextFormat = Static<typeof TextFormat>;
+
+export const JsonObjectFormat = Type.Object(
+  { type: Type.Literal("json_object") },
+  { description: "JSON object response format. Older JSON mode." }
+);
+export type JsonObjectFormat = Static<typeof JsonObjectFormat>;
+
+export const JsonSchemaFormat = Type.Object(
+  {
+    type: Type.Literal("json_schema"),
+    name: Type.String({
+      description:
+        "The name of the response format. Must be a-z, A-Z, 0-9, or contain underscores and dashes, with a maximum length of 64.",
+    }),
+    schema: Type.Record(Type.String(), Type.Unknown(), {
+      description:
+        "The schema for the response format, described as a JSON Schema object.",
+    }),
+    description: Type.Optional(Type.String()),
+    strict: Type.Optional(Type.Union([Type.Boolean(), Type.Null()])),
+  },
+  {
+    description:
+      "JSON Schema response format. Used to generate structured JSON responses. Learn more about Structured Outputs at https://platform.openai.com/docs/guides/structured-outputs.",
+  }
+);
+export type JsonSchemaFormat = Static<typeof JsonSchemaFormat>;
+
+export const ResponseFormatTextConfig = Type.Union(
+  [TextFormat, JsonObjectFormat, JsonSchemaFormat],
+  {
+    description:
+      "Configuration for text response format. Can be plain text or structured JSON.",
+  }
+);
+export type ResponseFormatTextConfig = Static<typeof ResponseFormatTextConfig>;
+
+export const ResponseTextConfig = Type.Object(
+  { format: Type.Optional(ResponseFormatTextConfig) },
+  {
+    description:
+      "Configuration options for a text response from the model. Can be plain text or structured JSON data.",
+  }
+);
+export type ResponseTextConfig = Static<typeof ResponseTextConfig>;
+
 // Includable fields for create/retrieve
 export const ResponseIncludable = Type.Union(
   [
@@ -32,7 +84,7 @@ export const ResponseCreateParamsBase = Type.Object(
     store: Type.Optional(Base.BooleanOrNull),
     stream: Type.Optional(Type.Boolean()),
     temperature: Type.Optional(Base.NullableNumber),
-    text: Type.Optional(Type.Unknown()),
+    text: Type.Optional(ResponseTextConfig),
     tool_choice: Type.Optional(Type.Unknown()),
     tools: Type.Optional(Type.Array(Type.Unknown())),
     top_p: Type.Optional(Base.NullableNumber),
@@ -117,3 +169,12 @@ export const ResponseRetrieveParams = Type.Union(
   { description: "Parameters for retrieving a response" }
 );
 export type ResponseRetrieveParams = Static<typeof ResponseRetrieveParams>;
+
+export const ResponseSmallSchemas = {
+  TextFormat,
+  JsonObjectFormat,
+  JsonSchemaFormat,
+  ResponseFormatTextConfig,
+  ResponseTextConfig,
+} as const;
+export type ResponseSmallSchemaKey = keyof typeof ResponseSmallSchemas;
