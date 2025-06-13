@@ -32,12 +32,10 @@ export class PropertyInputControl extends BaseControl<PropertyItem[], PropertyIn
   }
 
   getValue(): PropertyItem[] {
-    console.log("PropertyInputControl getValue", this.items);
     return this.items;
   }
 
   setValue(items: PropertyItem[]): void {
-    console.log("PropertyInputControl setValue", items);
     this.items = items;
     this.opts.onChange?.(items);
   }
@@ -77,6 +75,8 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
 
   const handleAdd = (): void => {
     if (!keyStr) return;
+    // 重複するキーがあれば追加をキャンセル
+    if (items.some(item => item.key === keyStr)) return;
     const item: PropertyItem = { key: keyStr, typeStr };
     control.addItem(item);
     setKeyStr("");
@@ -84,10 +84,10 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
 
   return (
     <Drag.NoDrag>
-      <div className="grid grid-rows-[minmax(0,1fr)_max-content] gap-1 h-full overflow-hidden">
+      <div className="flex flex-col gap-1 h-full">
         <div
           ref={listRef}
-          className="w-full overflow-auto border border-input rounded-md bg-node-bg p-2 h-min-0"
+          className="flex-1 min-h-0 overflow-auto border rounded p-2 bg-node-bg"
         >
           {items.map((item, idx) => (
             <div key={idx} className="text-sm py-0.5">
@@ -95,8 +95,8 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-[1fr_minmax(7rem,max-content)_auto] gap-0.5 place-items-stretch">
-          {/* キー入力 */}
+        <div className="items-end shrink-0 grid grid-cols-[1fr_minmax(7rem,max-content)_auto] gap-0.5 place-items-stretch">
+          {/* key入力 */}
           <div className="grid grid-cols-[1fr_auto] place-items-center">
             <input
               type="text"
