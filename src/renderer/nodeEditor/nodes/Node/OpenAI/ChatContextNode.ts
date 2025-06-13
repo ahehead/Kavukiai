@@ -16,8 +16,8 @@ import {
 import { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 import { Type } from "@sinclair/typebox";
 
-// 長文文字列入力ノード
-export class ChatContextNode extends BaseNode<
+// open ai用のchat message list Node
+export class ResponseInputMessageItemListNode extends BaseNode<
   {
     exec: TypedSocket;
     exec2: TypedSocket;
@@ -33,7 +33,7 @@ export class ChatContextNode extends BaseNode<
     area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>
   ) {
-    super("ChatContext");
+    super("ResponseInputMessageItemList");
     this.addInputPort([
       {
         key: "exec",

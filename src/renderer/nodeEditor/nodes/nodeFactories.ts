@@ -17,7 +17,7 @@ import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
 import type { NodeEditor } from "rete";
-import { ChatContextNode } from "./Node/OpenAI/ChatContextNode";
+import { ResponseInputMessageItemListNode } from "./Node/OpenAI/ChatContextNode";
 import { IFNode } from "./Node/Flow/IFNode";
 import { ListNode } from "./Node/Primitive/ListNode";
 
@@ -45,12 +45,13 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
     new OpenAINode(area, dataflow, controlflow),
   OpenAIParam: ({ history, area, dataflow }) =>
     new OpenAIParamNode(history, area, dataflow),
-  ChatContext: ({ history, area, dataflow }) =>
-    new ChatContextNode([], history, area, dataflow),
+  ResponseInputMessageItemList: ({ history, area, dataflow }) =>
+    new ResponseInputMessageItemListNode([], history, area, dataflow),
   Test: () => new TestNode(),
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
   ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
-  TSchema: ({ history, area, dataflow }) => new TSchemaNode(history, area, dataflow),
+  TSchema: ({ history, area, dataflow }) =>
+    new TSchemaNode(history, area, dataflow),
   IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
 };
 
@@ -146,9 +147,9 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         factoryKey: "OpenAIParam",
       },
       {
-        label: "Chat Context",
-        key: "chat-context-node",
-        factoryKey: "ChatContext",
+        label: "ResponseInputMessageItemList",
+        key: "response-input-message-item-list",
+        factoryKey: "ResponseInputMessageItemList",
       },
     ],
   },
