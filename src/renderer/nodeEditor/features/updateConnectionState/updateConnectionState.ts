@@ -73,11 +73,37 @@ async function syncSocketState(
 }
 
 /**
+ * 接続状態に応じて Schema を更新するノードのメソッドを呼び出し、
+ * 以降の動的ノードも再帰的に処理する
+ */
+async function updateDynamicSchemaNode(
+  editor: NodeEditor<Schemes>,
+  data: Connection<NodeInterface, NodeInterface>,
+  isConnected: boolean,
+  source: TypedSocket,
+  target: TypedSocket
+): Promise<void> {
+  const targetNode = editor.getNode(data.target);
+  if (!targetNode) return;
+  if (!isDynamicSchemaNode(targetNode)) return;
+  if (ExecList.includes(data.targetInput)) return;
+  await traverseDynamicSchemaNodes(
+    editor,
+    data,
+    targetNode,
+    isConnected,
+    source,
+    target
+  );
+}
+
+/**
  * 動的スキーマノードを再帰的にたどり、
  * onConnectionChangedSchema を呼び、無効な接続は削除する
  */
 async function traverseDynamicSchemaNodes(
   editor: NodeEditor<Schemes>,
+  data: Connection<NodeInterface, NodeInterface>,
   node: NodeInterface,
   isConnected: boolean,
   source: TypedSocket,
@@ -92,6 +118,7 @@ async function traverseDynamicSchemaNodes(
     // スキーマ更新メソッド呼び出し
     const keys = await node.onConnectionChangedSchema({
       isConnected,
+      data,
       source,
       target,
     });
@@ -118,6 +145,7 @@ async function traverseDynamicSchemaNodes(
         // 再帰的にたどる
         await traverseDynamicSchemaNodes(
           editor,
+          conn,
           nextNode,
           isNextConnected,
           nextSource,
@@ -134,28 +162,4 @@ async function traverseDynamicSchemaNodes(
   } finally {
     visited.delete(node.id);
   }
-}
-
-/**
- * 通知: 接続状態に応じて Schema を更新するノードのメソッドを呼び出し、
- * 以降の動的ノードも再帰的に処理する
- */
-async function updateDynamicSchemaNode(
-  editor: NodeEditor<Schemes>,
-  data: Connection<NodeInterface, NodeInterface>,
-  isConnected: boolean,
-  source: TypedSocket,
-  target: TypedSocket
-): Promise<void> {
-  const targetNode = editor.getNode(data.target);
-  if (!targetNode) return;
-  if (!isDynamicSchemaNode(targetNode)) return;
-  if (ExecList.includes(data.targetInput)) return;
-  await traverseDynamicSchemaNodes(
-    editor,
-    targetNode,
-    isConnected,
-    source,
-    target
-  );
 }
