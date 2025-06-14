@@ -1,6 +1,8 @@
+import type { Connection, NodeInterface } from "..";
 import type { TypedSocket } from "../TypedSocket";
 
 export type ConnectionParams = {
+  data: Connection<NodeInterface, NodeInterface>;
   isConnected: boolean; // 接続状態
   source: TypedSocket; // 接続元ソケット
   target: TypedSocket; // 接続先ソケット
