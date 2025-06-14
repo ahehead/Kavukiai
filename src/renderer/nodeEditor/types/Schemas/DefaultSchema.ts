@@ -6,6 +6,7 @@ export const defaultNodeSchemas = {
   boolean: Type.Boolean(),
   array: Type.Array(Type.Unknown()),
   object: Type.Object({}),
+  any: Type.Any(),
 } as const;
 
 export type DefaultSchemaKey = keyof typeof defaultNodeSchemas;
