@@ -57,6 +57,10 @@ import {
   CustomSocket,
   createCustomNode,
 } from "renderer/nodeEditor/nodes/components";
+import {
+  MessageInputControl,
+  MessageInputControlView,
+} from "renderer/nodeEditor/nodes/Controls/OpenAI/MessageInput";
 
 export function customReactPresets(
   area: AreaPlugin<Schemes, AreaExtra>,
@@ -107,6 +111,9 @@ export function customReactPresets(
         }
         if (data.payload instanceof PropertyInputControl) {
           return PropertyInputControlView;
+        }
+        if (data.payload instanceof MessageInputControl) {
+          return MessageInputControlView;
         }
         return null;
       },
