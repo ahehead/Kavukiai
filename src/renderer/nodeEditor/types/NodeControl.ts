@@ -10,6 +10,7 @@ import type { ListControl } from "../nodes/Controls/input/List";
 import type { SwitchControl } from "../nodes/Controls/input/Switch";
 import type { PropertyInputControl } from "../nodes/Controls/input/PropertyInput";
 import type { SliderControl } from "../nodes/Controls/input/Slider";
+import type { MessageInputControl } from "../nodes/Controls/OpenAI/MessageInput";
 
 export type NodeControl =
   | RunButtonControl
@@ -18,6 +19,7 @@ export type NodeControl =
   | InputValueControl<string>
   | InputValueControl<number>
   | ResponseInputMessageControl
+  | MessageInputControl
   | CheckBoxControl
   | ButtonControl
   | SelectControl<any>

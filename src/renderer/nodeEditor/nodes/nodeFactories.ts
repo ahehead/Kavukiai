@@ -20,6 +20,7 @@ import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
 import type { NodeEditor } from "rete";
 import { ResponseInputMessageItemListNode } from "./Node/OpenAI/ChatContextNode";
+import { ResponseInputMessageItemNode } from "./Node/OpenAI/ResponseInputMessageItemNode";
 import { IFNode } from "./Node/Flow/IFNode";
 import { ListNode } from "./Node/Primitive/ListNode";
 
@@ -49,6 +50,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
     new ResponseCreateParamsBaseNode(history, area, dataflow),
   ResponseInputMessageItemList: ({ history, area, dataflow }) =>
     new ResponseInputMessageItemListNode([], history, area, dataflow),
+  ResponseInputMessageItem: ({ area, dataflow, controlflow, history }) =>
+    new ResponseInputMessageItemNode(area, dataflow, controlflow, history),
   Test: () => new TestNode(),
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
   ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
@@ -156,6 +159,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "ResponseInputMessageItemList",
         key: "response-input-message-item-list",
         factoryKey: "ResponseInputMessageItemList",
+      },
+      {
+        label: "ResponseInputMessageItem",
+        key: "response-input-message-item",
+        factoryKey: "ResponseInputMessageItem",
       },
       {
         label: "JsonSchema Format",
