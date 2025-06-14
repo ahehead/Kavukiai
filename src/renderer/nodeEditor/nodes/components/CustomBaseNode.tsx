@@ -1,6 +1,6 @@
 import { Presets, type RenderEmit } from 'rete-react-plugin'
 import type { AreaExtra, NodeInterface, Schemes } from '../../types/Schemes'
-import { NodeContainer, NodeHeader, NodeTitle, NodeControlsWrapper, NodeBody, } from 'renderer/nodeEditor/nodes/components/common/NodePanel'
+import { NodeContainer, NodeHeader, NodeTitle, NodeControlsWrapper, NodeBody, } from 'renderer/nodeEditor/nodes/components/common/NodeParts'
 import { NodeOutputPort, NodeSocketLabel, NodeSocketTypeLabel } from "renderer/nodeEditor/nodes/components/common/NodeSocketParts"
 import { NodeInputPort } from "renderer/nodeEditor/nodes/components/common/NodeSocketParts"
 import { NodeSocketsWrapper } from "renderer/nodeEditor/nodes/components/common/NodeSocketParts"

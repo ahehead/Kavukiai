@@ -2,9 +2,11 @@ import { cn } from "renderer/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { Loader2 } from 'lucide-react';
-import React from "react";
+import React, { useRef } from "react";
+import { Drag } from "rete-react-plugin";
+import { useStopWheel } from "../../util/useStopWheel";
 
-export const nodePanel = cva(
+export const nodeContainer = cva(
   ["bg-node-bg text-node-fg grid grid-cols-1 grid-rows-[auto_1fr] rounded-md border border-node-outline shadow-sm"],
   {
     variants: {
@@ -29,13 +31,13 @@ export const nodePanel = cva(
 
 export const NodeContainer = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<"div"> & VariantProps<typeof nodePanel>
+  React.ComponentProps<"div"> & VariantProps<typeof nodeContainer>
 >(({ selected, status, ...props }, ref) => (
   <div
     ref={ref}
     data-testid="node"
     data-status={status}
-    className={cn(nodePanel({ selected, status }))}
+    className={cn(nodeContainer({ selected, status }))}
     {...props}
   />
 ))
@@ -101,13 +103,18 @@ export function NodeTitle({ status, children, ...props }: React.ComponentProps<"
 
 export function NodeBody({ ...props }: React.ComponentProps<"div">) {
   return (
-    <div className='grid grid-rows-[auto_minmax(0,1fr)] ' {...props} />
+    <div className='grid grid-rows-[auto_minmax(0,1fr)] overflow-hidden' {...props} />
   )
 }
 
 export function NodeControlsWrapper({ ...props }: React.ComponentProps<"div">) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  Drag.useNoDrag(ref);
+  useStopWheel(ref);
   return (
-    <div className='grid grid-cols-1 place-items-stretch p-2 empty:p-0 empty:hidden' {...props} />
+    <div
+      ref={ref}
+      className='grid grid-cols-1 place-items-stretch p-2 empty:p-0 empty:hidden overflow-y-auto' {...props} />
   )
 }
 
