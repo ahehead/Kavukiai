@@ -15,22 +15,26 @@ import {
 } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 import { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 import { Type } from "@sinclair/typebox";
+import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 
 // open ai用のchat message list Node
-export class ResponseInputMessageItemListNode extends BaseNode<
-  {
-    exec: TypedSocket;
-    exec2: TypedSocket;
-    systemPrompt: TypedSocket;
-    newMessage: TypedSocket;
-  },
-  { exec: TypedSocket; out: TypedSocket },
-  { chatContext: ResponseInputMessageControl }
-> {
+export class ResponseInputMessageItemListNode
+  extends BaseNode<
+    {
+      exec: TypedSocket;
+      exec2: TypedSocket;
+      systemPrompt: TypedSocket;
+      newMessage: TypedSocket;
+    },
+    { exec: TypedSocket; out: TypedSocket },
+    { chatContext: ResponseInputMessageControl }
+  >
+  implements SerializableDataNode
+{
   constructor(
     initial: ChatMessageItem[],
     history: HistoryPlugin<Schemes>,
-    area: AreaPlugin<Schemes, AreaExtra>,
+    private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>
   ) {
     super("ResponseInputMessageItemList");
@@ -111,5 +115,17 @@ export class ResponseInputMessageItemListNode extends BaseNode<
     }
     resetCacheDataflow(this.dataflow, this.id);
     forward("exec");
+  }
+
+  serializeControlValue(): { data: { list: ChatMessageItem[] } } {
+    return {
+      data: {
+        list: this.controls.chatContext.getValue(),
+      },
+    };
+  }
+
+  deserializeControlValue(data: { list: ChatMessageItem[] }): void {
+    this.controls.chatContext.setValue(data.list);
   }
 }
