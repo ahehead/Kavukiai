@@ -8,7 +8,7 @@ import {
 import {
   MultiLineControl,
   TextAreaControllView,
-} from "../../nodes/Controls/input/TextArea";
+} from "../../nodes/Controls/input/MultiLine";
 import {
   ConsoleControl,
   ConsoleControlView,

@@ -1,4 +1,4 @@
-import { MultiLineControl } from '../../Controls/input/TextArea';
+import { MultiLineControl } from '../../Controls/input/MultiLine';
 import type { HistoryPlugin } from 'rete-history-plugin';
 import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from 'rete-area-plugin';

@@ -1,7 +1,7 @@
 
 import type { ControlFlowEngine, DataflowEngine } from 'rete-engine';
 import type { AreaPlugin } from 'rete-area-plugin';
-import { MultiLineControl } from '../Controls/input/TextArea';
+import { MultiLineControl } from '../Controls/input/MultiLine';
 import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
 import { formatValue } from '../util/formatValue';
 import type { NodeEditor } from 'rete';

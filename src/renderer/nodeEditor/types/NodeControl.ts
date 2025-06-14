@@ -3,7 +3,7 @@ import type { CheckBoxControl } from "../nodes/Controls/input/CheckBox";
 import type { ConsoleControl } from "../nodes/Controls/Console";
 import type { InputValueControl } from "../nodes/Controls/input/InputValue";
 import type { RunButtonControl } from "../nodes/Controls/RunButton";
-import type { MultiLineControl } from "../nodes/Controls/input/TextArea";
+import type { MultiLineControl } from "../nodes/Controls/input/MultiLine";
 import type { ButtonControl } from "../nodes/Controls/Button";
 import type { SelectControl } from "../nodes/Controls/input/Select";
 import type { ListControl } from "../nodes/Controls/input/List";
