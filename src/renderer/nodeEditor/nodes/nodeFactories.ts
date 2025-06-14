@@ -53,8 +53,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   Test: () => new TestNode(),
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
   ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
-  ObjectInput: ({ history, area, dataflow }) =>
-    new ObjectInputNode(history, area, dataflow),
+  ObjectInput: ({ history, area, dataflow, controlflow }) =>
+    new ObjectInputNode(history, area, dataflow, controlflow),
   TSchema: ({ history, area, dataflow }) =>
     new TSchemaNode(history, area, dataflow),
   IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
