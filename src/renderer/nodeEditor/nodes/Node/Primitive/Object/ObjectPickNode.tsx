@@ -4,7 +4,7 @@ import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
 import { type TypedSocket, type Schemes, type AreaExtra, BaseNode } from "renderer/nodeEditor/types";
 import { Type, type TSchema } from "@sinclair/typebox";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
+import { resetCacheDataflow } from "../../../util/resetCacheDataflow";
 
 // ObjectPickNode: オブジェクトの各キーを個別の出力として返す
 export class ObjectPickNode extends BaseNode<

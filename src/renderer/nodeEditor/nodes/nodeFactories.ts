@@ -10,8 +10,8 @@ import {
   BoolNode,
   InspectorNode,
   ObjectPickNode,
-  ObjectInputNode,
-  TSchemaNode,
+  JsonSchemaToObjectNode,
+  JsonSchemaNode,
   JsonSchemaFormatNode,
   ResponseTextConfigNode,
 } from "./Node";
@@ -35,6 +35,10 @@ export type NodeDeps = {
 
 export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   UnknownNode: () => new UnknownNode(),
+  Test: () => new TestNode(),
+  Inspector: ({ editor, dataflow, area, controlflow }) =>
+    new InspectorNode(editor, dataflow, area, controlflow),
+
   String: ({ history, area, dataflow }) =>
     new StringNode("", history, area, dataflow),
   Number: ({ history, area, dataflow }) =>
@@ -43,8 +47,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   MultiLineString: ({ history, area, dataflow }) =>
     new MultiLineStringNode("", history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
-  Inspector: ({ editor, dataflow, area, controlflow }) =>
-    new InspectorNode(editor, dataflow, area, controlflow),
+  List: ({ area, dataflow }) => new ListNode(area, dataflow),
+
   OpenAI: ({ area, dataflow, controlflow }) =>
     new OpenAINode(area, dataflow, controlflow),
   ResponseCreateParamsBase: ({ history, area, dataflow }) =>
@@ -53,18 +57,18 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
     new ResponseInputMessageItemListNode([], history, area, dataflow),
   ResponseInputMessageItem: ({ area, dataflow, controlflow, history }) =>
     new ResponseInputMessageItemNode(area, dataflow, controlflow, history),
-  Test: () => new TestNode(),
-  List: ({ area, dataflow }) => new ListNode(area, dataflow),
-  ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
-  ObjectInput: ({ editor, history, area, dataflow, controlflow }) =>
-    new ObjectInputNode(editor, history, area, dataflow, controlflow),
-  TSchema: ({ history, area, dataflow }) =>
-    new TSchemaNode(history, area, dataflow),
-  IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
   JsonSchemaFormat: ({ history, area, dataflow }) =>
     new JsonSchemaFormatNode(history, area, dataflow),
   ResponseTextConfig: ({ area, dataflow }) =>
     new ResponseTextConfigNode(area, dataflow),
+
+  ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
+  JsonSchemaToObject: ({ editor, history, area, dataflow, controlflow }) =>
+    new JsonSchemaToObjectNode(editor, history, area, dataflow, controlflow),
+  JsonSchema: ({ history, area, dataflow }) =>
+    new JsonSchemaNode(history, area, dataflow),
+
+  IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
 };
 
 export interface MenuItemDefinition {
@@ -116,14 +120,14 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         factoryKey: "ObjectPick",
       },
       {
-        label: "Object Input",
-        key: "object-input-node",
-        factoryKey: "ObjectInput",
+        label: "JsonSchemaToObject",
+        key: "jsonschema-to-object-node",
+        factoryKey: "JsonSchemaToObject",
       },
       {
-        label: "TSchema",
-        key: "tschema-node",
-        factoryKey: "TSchema",
+        label: "JsonSchema",
+        key: "jsonschema-node",
+        factoryKey: "JsonSchema",
       },
     ],
   },

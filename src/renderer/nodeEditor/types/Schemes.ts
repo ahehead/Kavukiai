@@ -18,8 +18,8 @@ import type {
   IFNode,
   ListNode,
   ObjectPickNode,
-  ObjectInputNode,
-  TSchemaNode,
+  JsonSchemaToObjectNode,
+  JsonSchemaNode,
   JsonSchemaFormatNode,
   ResponseTextConfigNode,
 } from "../nodes/Node";
@@ -51,8 +51,8 @@ export type NodeTypes =
   | IFNode
   | ListNode
   | ObjectPickNode
-  | ObjectInputNode
-  | TSchemaNode
+  | JsonSchemaToObjectNode
+  | JsonSchemaNode
   | JsonSchemaFormatNode
   | ResponseTextConfigNode;
 

@@ -3,20 +3,20 @@ import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { ControlFlowEngine, DataflowEngine } from 'rete-engine';
 import type { TypedSocket, Schemes, AreaExtra } from 'renderer/nodeEditor/types';
-import { InputValueControl } from '../../Controls/input/InputValue';
-import { SwitchControl } from '../../Controls/input/Switch';
+import { InputValueControl } from '../../../Controls/input/InputValue';
+import { SwitchControl } from '../../../Controls/input/Switch';
 import { Type, type TSchema } from '@sinclair/typebox';
-import { resetCacheDataflow } from '../../util/resetCacheDataflow';
+import { resetCacheDataflow } from '../../../util/resetCacheDataflow';
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
-import { ButtonControl } from '../../Controls/Button';
+import { ButtonControl } from '../../../Controls/Button';
 import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode';
-import { getInputValue } from '../../util/getInput';
-import { removeLinkedSockets } from '../../util/removeNode';
+import { getInputValue } from '../../../util/getInput';
+import { removeLinkedSockets } from '../../../util/removeNode';
 import type { NodeEditor } from 'rete';
 import { Value } from '@sinclair/typebox/value';
 import { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema';
 
-export class ObjectInputNode extends SerializableInputsNode<
+export class JsonSchemaToObjectNode extends SerializableInputsNode<
   { exec: TypedSocket; schema: TypedSocket } & Record<string, TypedSocket>,
   { out: TypedSocket },
   object
@@ -29,7 +29,7 @@ export class ObjectInputNode extends SerializableInputsNode<
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
-    super('ObjectInput');
+    super('JsonSchemaToObject');
 
     this.addInputPort([{
       key: "exec",

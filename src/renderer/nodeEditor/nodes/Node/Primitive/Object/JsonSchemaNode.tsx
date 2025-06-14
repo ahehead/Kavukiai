@@ -3,29 +3,28 @@ import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode';
 import type { TypedSocket, Schemes, AreaExtra } from 'renderer/nodeEditor/types';
-import { PropertyInputControl, type PropertyItem } from '../../Controls/input/PropertyInput';
+import { PropertyInputControl, type PropertyItem } from '../../../Controls/input/PropertyInput';
 import { Type, type TSchema } from '@sinclair/typebox';
 import { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema';
-import { resetCacheDataflow } from '../../util/resetCacheDataflow';
+import { resetCacheDataflow } from '../../../util/resetCacheDataflow';
 import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode';
-import type { ConnectionParams, DynamicSchemaNode } from 'renderer/nodeEditor/types/Node/DynamicSchemaNode';
 
 // Node to build TSchema objects from property list
-export class TSchemaNode extends BaseNode<
+export class JsonSchemaNode extends BaseNode<
   object,
   { out: TypedSocket },
   { props: PropertyInputControl }
-> implements SerializableDataNode, DynamicSchemaNode {
+> implements SerializableDataNode {
   constructor(
     history: HistoryPlugin<Schemes>,
     private area: AreaPlugin<Schemes, AreaExtra>,
     dataflow: DataflowEngine<Schemes>
   ) {
-    super('TSchema');
+    super('JsonSchema');
 
     this.addOutputPort({
       key: 'out',
-      name: 'object',
+      name: 'JsonSchema',
       schema: Type.Object({}),
     });
 
@@ -38,18 +37,15 @@ export class TSchemaNode extends BaseNode<
         area,
         onChange: () => {
           resetCacheDataflow(dataflow, this.id);
+          this.setSchema(this.createSchema());
           this.area.update("node", this.id);
         },
       })
     );
   }
-  async onConnectionChangedSchema(params: ConnectionParams): Promise<string[]> {
-    // 接続状態に応じてスキーマを更新する処理を実装
-    return [];
-  }
 
-  async setupSchema(): Promise<void> {
-    this.outputs.out?.socket.setSchema("object", this.createSchema());
+  setSchema(schema: TSchema) {
+    this.outputs.out?.socket.setSchema("object", schema);
   }
 
   data(): { out: TSchema } {
@@ -73,5 +69,6 @@ export class TSchemaNode extends BaseNode<
 
   deserializeControlValue(data: { items: PropertyItem[] }): void {
     this.controls.props.setValue(data.items);
+    this.setSchema(this.createSchema());
   }
 }
