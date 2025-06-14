@@ -9,13 +9,21 @@ import { Type, type TSchema } from '@sinclair/typebox';
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import { ButtonControl } from '../../Controls/Button';
+import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode';
+import { getInputValue } from '../../util/getInput';
+import { removeLinkedSockets } from '../../util/removeNode';
+import type { NodeEditor } from 'rete';
+import { Value } from '@sinclair/typebox/value';
+import { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema';
 
 export class ObjectInputNode extends SerializableInputsNode<
   { exec: TypedSocket; schema: TypedSocket } & Record<string, TypedSocket>,
   { out: TypedSocket },
   object
-> {
+> implements SerializableDataNode {
+  schema: TSchema | null = null;
   constructor(
+    private editor: NodeEditor<Schemes>,
     private history: HistoryPlugin<Schemes>,
     private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
@@ -50,39 +58,49 @@ export class ObjectInputNode extends SerializableInputsNode<
     });
   }
 
+  setSchema(schema: TSchema | null) {
+    this.schema = schema;
+  }
+
   async execute(): Promise<void> {
     const { schema } = (await this.dataflow.fetchInputs(this.id)) as { schema?: TSchema[] }
+    resetCacheDataflow(this.dataflow, this.id);
+    await this.removeDynamicPorts();
     if (!schema?.[0]) {
-      this.clearInputs();
-      resetCacheDataflow(this.dataflow, this.id);
+      this.setSchema(null);
       return;
     }
-    resetCacheDataflow(this.dataflow, this.id);
-    const props = schema[0].properties as Record<string, TSchema> | undefined;
-    this.clearInputs();
+    this.setSchema(schema[0]);
+    await this.buildDynamicPorts(schema[0]);
+
+  }
+
+  async buildDynamicPorts(schema: TSchema) {
+    const props = schema.properties as Record<string, TSchema> | undefined;
     let outSchema: TSchema = Type.Object({});
     if (props) {
-      outSchema = Type.Object(props);
-      this.registerInputs(props);
+      outSchema = schema;
+      this.addDynamicInput(props);
     }
     await this.outputs.out?.socket.setSchema('object', outSchema);
     await this.area.update('node', this.id);
   }
 
 
-  clearInputs(): void {
+  async removeDynamicPorts(): Promise<void> {
     for (const key of Object.keys(this.inputs).filter(key => !["schema", "exec"].includes(key))) {
+      await removeLinkedSockets(this.editor, this.id, key);
       this.removeInput(key as never);
     }
   }
 
-  registerInputs(TSchemaProperties: Record<string, TSchema>) {
+  addDynamicInput(TSchemaProperties: Record<string, TSchema>) {
     for (const [key, schema] of Object.entries(TSchemaProperties)) {
       const typeName = this.getTypeName(schema);
       this.addInputPort({
         key,
         name: typeName,
-        schema,
+        schema: defaultNodeSchemas[typeName],
         label: key,
         showControl: true,
         control: this.createControl(key, typeName),
@@ -90,7 +108,7 @@ export class ObjectInputNode extends SerializableInputsNode<
     }
   }
 
-  private getTypeName(schema: TSchema): string {
+  private getTypeName(schema: TSchema): keyof typeof defaultNodeSchemas {
     const t = (schema as any).type;
     if (t === 'string') return 'string';
     if (t === 'number' || t === 'integer') return 'number';
@@ -115,15 +133,28 @@ export class ObjectInputNode extends SerializableInputsNode<
     return new InputValueControl<string>({ value: '', type: 'string', ...opts });
   }
 
-  data(): { out: Record<string, unknown> } {
+  data(inputs: Record<string, unknown>): { out: Record<string, unknown> } {
     const result: Record<string, unknown> = {};
     for (const [key, input] of Object.entries(this.inputs)) {
       if (key === 'schema' || key === 'exec') continue;
-      const value = input?.control && (input.control as any).getValue();
+      const value = getInputValue(this.inputs, key, inputs);
       result[key] = value;
     }
     return { out: result };
   }
 
+  serializeControlValue(): { data: { schema: TSchema | null } } {
+    return { data: { schema: this.schema } };
+  }
 
+  async deserializeControlValue(data: { schema: TSchema | null }): Promise<void> {
+    if (!data.schema || Value.Equal(this.schema, data.schema)) {
+      return;
+    }
+
+    this.setSchema(data.schema);
+    await this.removeDynamicPorts();
+    await this.buildDynamicPorts(data.schema);
+
+  }
 }
