@@ -26,6 +26,9 @@ export async function removeLinkedSockets(
   }
 }
 
+/**
+ * 指定したノードの出力ポートに接続されているコネクションを取得する
+ */
 export function getConnectionsByOutputPortKey(
   editor: NodeEditor<Schemes>,
   nodeId: string,
