@@ -1,29 +1,42 @@
 import { type JSX, useState } from 'react'
 import { BaseControl, type ControlOptions } from 'renderer/nodeEditor/types'
-import type { ChatMessageItem } from 'renderer/nodeEditor/types/Schemas/InputSchemas'
+import type { ChatMessageItem, ResponseInputMessageContentList } from 'renderer/nodeEditor/types/Schemas/InputSchemas'
 import { Drag } from 'rete-react-plugin'
 
 export interface MessageInputControlParams
-  extends ControlOptions<ChatMessageItem> {
-  onSend: () => void
+  extends ControlOptions<ResponseInputMessageContentList> {
+  value?: ResponseInputMessageContentList
+  onSend: (chatItem: ChatMessageItem) => void
   role?: 'user' | 'assistant'
   text?: string
 }
 
 export class MessageInputControl extends BaseControl<
-  ChatMessageItem,
+  ResponseInputMessageContentList,
   MessageInputControlParams
 > {
   role: 'user' | 'assistant'
   text: string
+  onSend: (chatItem: ChatMessageItem) => void
+  value: ResponseInputMessageContentList
 
   constructor(options: MessageInputControlParams) {
     super(options)
     this.role = options.role ?? 'user'
     this.text = options.text ?? ''
+    this.onSend = options.onSend
+    this.value = options.value ?? []
   }
 
-  getValue(): ChatMessageItem {
+  setValue(value: ResponseInputMessageContentList): void {
+    this.value = value
+  }
+
+  getValue(): ResponseInputMessageContentList {
+    return this.value
+  }
+
+  getChatMessageItem(): ChatMessageItem {
     return {
       id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
       role: this.role,
@@ -37,9 +50,17 @@ export class MessageInputControl extends BaseControl<
     this.opts.onChange?.(this.getValue())
   }
 
+  getText(): string {
+    return this.text
+  }
+
   setRole(role: 'user' | 'assistant') {
     this.role = role
     this.opts.onChange?.(this.getValue())
+  }
+
+  getRole(): 'user' | 'assistant' {
+    return this.role
   }
 
   clear() {
@@ -55,10 +76,9 @@ export function MessageInputControlView(props: {
   const [role, setRole] = useState<'user' | 'assistant'>(control.role)
 
   const send = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
     control.setText(text)
     control.setRole(role)
-    control.opts.onSend()
+    control.onSend(control.getChatMessageItem())
     control.clear()
     setText('')
   }
@@ -81,7 +101,7 @@ export function MessageInputControlView(props: {
           <button className="border px-2 rounded" onClick={toggleRole}>
             {role}
           </button>
-          <button className="flex-1 border px-2 rounded" onClick={send}>
+          <button className="flex-1 border px-2 rounded active:bg-accent/40" onClick={send}>
             Send
           </button>
         </div>
