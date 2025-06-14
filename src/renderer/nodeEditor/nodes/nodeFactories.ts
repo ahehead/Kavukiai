@@ -10,6 +10,7 @@ import {
   BoolNode,
   InspectorNode,
   ObjectPickNode,
+  ObjectInputNode,
   TSchemaNode,
   JsonSchemaFormatNode,
   ResponseTextConfigNode,
@@ -52,6 +53,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   Test: () => new TestNode(),
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
   ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
+  ObjectInput: ({ history, area, dataflow }) =>
+    new ObjectInputNode(history, area, dataflow),
   TSchema: ({ history, area, dataflow }) =>
     new TSchemaNode(history, area, dataflow),
   IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
@@ -108,6 +111,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "Object Pick",
         key: "object-pick-node",
         factoryKey: "ObjectPick",
+      },
+      {
+        label: "Object Input",
+        key: "object-input-node",
+        factoryKey: "ObjectInput",
       },
       {
         label: "TSchema",

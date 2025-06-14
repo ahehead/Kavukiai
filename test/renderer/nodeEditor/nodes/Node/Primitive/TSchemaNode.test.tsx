@@ -7,7 +7,7 @@ import type { Schemes } from 'renderer/nodeEditor/types';
 import { Type } from '@sinclair/typebox';
 
 const history = { add: vi.fn() } as unknown as HistoryPlugin<Schemes>;
-const area = {} as AreaPlugin<Schemes, any>;
+const area = { update: vi.fn() } as unknown as AreaPlugin<Schemes, any>;
 const clearCacheSpy = vi.fn();
 const dataflow = ({ reset: clearCacheSpy } as unknown) as DataflowEngine<Schemes>;
 
