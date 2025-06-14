@@ -99,6 +99,11 @@ export function NodeTitle({ status, children, ...props }: React.ComponentProps<"
   )
 }
 
+export function NodeBody({ ...props }: React.ComponentProps<"div">) {
+  return (
+    <div className='grid grid-rows-[auto_minmax(0,1fr)] ' {...props} />
+  )
+}
 
 export function NodeControlsWrapper({ ...props }: React.ComponentProps<"div">) {
   return (
