@@ -8,6 +8,7 @@ export { InspectorNode } from "./InspectorNode";
 export { OpenAINode } from "./OpenAI/OpenAI";
 export { ResponseCreateParamsBaseNode } from "./OpenAI/ResponseCreateParamsBaseNode";
 export { ResponseInputMessageItemListNode } from "./OpenAI/ChatContextNode";
+export { ResponseInputMessageItemNode } from "./OpenAI/ResponseInputMessageItemNode";
 export { JsonSchemaFormatNode } from "./OpenAI/JsonSchemaFormatNode";
 export { ResponseTextConfigNode } from "./OpenAI/ResponseTextConfigNode";
 export { BoolNode } from "./Primitive/BoolNode";

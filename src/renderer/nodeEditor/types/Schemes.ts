@@ -4,6 +4,7 @@ import type { ContextMenuExtra } from "rete-context-menu-plugin";
 
 import type {
   ResponseInputMessageItemListNode,
+  ResponseInputMessageItemNode,
   MultiLineStringNode,
   NumberNode,
   OpenAINode,
@@ -45,6 +46,7 @@ export type NodeTypes =
   | OpenAINode
   | ResponseCreateParamsBaseNode
   | ResponseInputMessageItemListNode
+  | ResponseInputMessageItemNode
   | BoolNode
   | IFNode
   | ListNode
