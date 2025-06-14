@@ -26,4 +26,5 @@ export type NodeControl =
   | ListControl<any>
   | SwitchControl
   | SliderControl
-  | PropertyInputControl;
+  | PropertyInputControl
+  | MessageInputControl;
