@@ -17,6 +17,7 @@ import type {
   IFNode,
   ListNode,
   ObjectPickNode,
+  ObjectInputNode,
   TSchemaNode,
   JsonSchemaFormatNode,
   ResponseTextConfigNode,
@@ -48,6 +49,7 @@ export type NodeTypes =
   | IFNode
   | ListNode
   | ObjectPickNode
+  | ObjectInputNode
   | TSchemaNode
   | JsonSchemaFormatNode
   | ResponseTextConfigNode;

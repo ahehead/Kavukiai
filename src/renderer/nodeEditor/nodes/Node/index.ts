@@ -13,6 +13,7 @@ export { ResponseTextConfigNode } from "./OpenAI/ResponseTextConfigNode";
 export { BoolNode } from "./Primitive/BoolNode";
 export { ListNode } from "./Primitive/ListNode";
 export { ObjectPickNode } from "./Primitive/ObjectPickNode";
+export { ObjectInputNode } from "./Primitive/ObjectInputNode";
 export { TSchemaNode } from "./Primitive/TSchemaNode";
 export { IFNode } from "./Flow/IFNode";
 export { UnknownNode } from "./UnknownNode";
