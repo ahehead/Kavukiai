@@ -39,6 +39,12 @@ ${JSON.stringify(schema, null, 2)}
       Type.Literal(true),
       Type.Literal(false)
     );
+    // console.log(
+    //   "Type compatibility check:",
+    //   this.schema,
+    //   other.schema,
+    //   t.const
+    // );
     return t.const === true;
   }
 
