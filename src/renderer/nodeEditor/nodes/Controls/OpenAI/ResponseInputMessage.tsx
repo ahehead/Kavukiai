@@ -32,6 +32,7 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
   setValue(value: ChatMessageItem[]): void {
     this.messages = value;
     this.opts.onChange?.(value);
+
   }
 
   getValue(): ChatMessageItem[] {
@@ -63,6 +64,7 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
     this.messages.push(msg);
     this.addHistory(prev, this.messages);
     this.opts.onChange?.(this.messages);
+    this.opts.area?.update("control", this.id);
   }
 
   setState(index: number, msg: ChatMessageItem): void {
