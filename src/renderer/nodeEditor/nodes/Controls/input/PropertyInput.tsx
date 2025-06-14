@@ -103,7 +103,7 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
         {/* リスト */}
         <div
           ref={listRef}
-          className="flex-1 min-h-0 overflow-auto border rounded p-2 bg-node-bg"
+          className="flex-1 min-h-0 overflow-y-auto border rounded p-2 bg-node-bg"
         >
           {items.map((item, idx) => (
             <div key={idx} className="flex justify-between items-center text-sm py-0.5">
@@ -127,6 +127,7 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
             </div>
           ))}
         </div>
+        {/* 新規追加入力 */}
         <div className="shrink-0 grid grid-cols-[1fr_minmax(7rem,max-content)_auto] gap-0.5 place-items-center">
           {/* key入力 */}
           <div className="grid grid-cols-[1fr_auto] place-items-center w-full">
