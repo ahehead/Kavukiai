@@ -36,12 +36,12 @@ export function ControlWrapper({ cols, className, ...props }: ControlWrapperProp
   return <div className={cn(wrapperStyles({ cols }), className)} {...props} />;
 }
 
-const labelStyles = cva("cursor-pointer min-w-0 truncate ml-2 mt-1", {
+const labelStyles = cva("cursor-pointer min-w-0 truncate ml-2", {
   variants: {
     cols: {
       0: "",
       1: "mb-1",
-      2: "",
+      2: ""
     }
   },
   defaultVariants: { cols: 1 }
