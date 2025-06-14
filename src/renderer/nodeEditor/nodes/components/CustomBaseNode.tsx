@@ -1,6 +1,6 @@
 import { Presets, type RenderEmit } from 'rete-react-plugin'
 import type { AreaExtra, NodeInterface, Schemes } from '../../types/Schemes'
-import { NodeContainer, NodeHeader, NodeTitle, NodeControlsWrapper, } from 'renderer/nodeEditor/nodes/components/common/NodePanel'
+import { NodeContainer, NodeHeader, NodeTitle, NodeControlsWrapper, NodeBody, } from 'renderer/nodeEditor/nodes/components/common/NodePanel'
 import { NodeOutputPort, NodeSocketLabel, NodeSocketTypeLabel } from "renderer/nodeEditor/nodes/components/common/NodeSocketParts"
 import { NodeInputPort } from "renderer/nodeEditor/nodes/components/common/NodeSocketParts"
 import { NodeSocketsWrapper } from "renderer/nodeEditor/nodes/components/common/NodeSocketParts"
@@ -62,7 +62,7 @@ export function createCustomNode(
           <NodeTitle status={data.status}>{label}</NodeTitle>
         </NodeHeader>
 
-        <div className='grid grid-rows-[auto_minmax(0,1fr)] '>
+        <NodeBody>
           <NodeSocketsWrapper>
             {/* Outputs */}
             {outputs.map(([key, output]) =>
@@ -194,7 +194,7 @@ export function createCustomNode(
             )}
           </NodeControlsWrapper>
 
-        </div>
+        </NodeBody>
         <div
           className="absolute right-0 bottom-0 w-4 h-4 cursor-se-resize bg-transparent"
           onPointerDown={startResize}
