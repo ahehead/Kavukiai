@@ -1,32 +1,47 @@
-import type { ConnectionParams, DynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
+
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
-import type { DataflowEngine } from 'rete-engine';
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
+import type { ControlFlowEngine, DataflowEngine } from 'rete-engine';
 import type { TypedSocket, Schemes, AreaExtra } from 'renderer/nodeEditor/types';
 import { InputValueControl } from '../../Controls/input/InputValue';
 import { SwitchControl } from '../../Controls/input/Switch';
 import { Type, type TSchema } from '@sinclair/typebox';
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
+import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
+import { ButtonControl } from '../../Controls/Button';
 
-export class ObjectInputNode extends BaseNode<
-  { schema: TypedSocket } & Record<string, TypedSocket>,
+export class ObjectInputNode extends SerializableInputsNode<
+  { exec: TypedSocket; schema: TypedSocket } & Record<string, TypedSocket>,
   { out: TypedSocket },
   object
-> implements DynamicSchemaNode {
+> {
   constructor(
     private history: HistoryPlugin<Schemes>,
     private area: AreaPlugin<Schemes, AreaExtra>,
-    private dataflow: DataflowEngine<Schemes>
+    private dataflow: DataflowEngine<Schemes>,
+    private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('ObjectInput');
 
-    this.addInputPort({
+    this.addInputPort([{
+      key: "exec",
+      name: "exec",
+      schema: Type.Literal("exec"),
+      label: 'create',
+      showControl: true,
+      control: new ButtonControl({
+        label: 'Create',
+        onClick: async (e) => {
+          e.stopPropagation();
+          this.controlflow.execute(this.id, "exec");
+        },
+      })
+    }, {
       key: 'schema',
-      name: 'object',
+      name: 'JsonSchema',
       schema: Type.Object({}),
       label: 'schema',
-    });
+    }]);
 
     this.addOutputPort({
       key: 'out',
@@ -35,40 +50,44 @@ export class ObjectInputNode extends BaseNode<
     });
   }
 
-  async onConnectionChangedSchema({ target }: ConnectionParams): Promise<string[]> {
-    if (target !== this.inputs.schema?.socket) return [];
-    resetCacheDataflow(this.dataflow, this.id);
-    await this.setupSchema();
-    await this.area.update('node', this.id);
-    return ['out'];
-  }
-
-  async setupSchema(): Promise<void> {
-    const schema = this.inputs.schema?.socket.getSchema();
-    const props = (schema as any)?.properties as Record<string, TSchema> | undefined;
-
-    for (const key of Object.keys(this.inputs)) {
-      if (key !== 'schema') {
-        this.removeInput(key as never);
-      }
+  async execute(): Promise<void> {
+    const { schema } = (await this.dataflow.fetchInputs(this.id)) as { schema?: TSchema[] }
+    if (!schema?.[0]) {
+      this.clearInputs();
+      resetCacheDataflow(this.dataflow, this.id);
+      return;
     }
-
+    resetCacheDataflow(this.dataflow, this.id);
+    const props = schema[0].properties as Record<string, TSchema> | undefined;
+    this.clearInputs();
     let outSchema: TSchema = Type.Object({});
     if (props) {
       outSchema = Type.Object(props);
-      for (const [key, propSchema] of Object.entries(props)) {
-        const typeName = this.getTypeName(propSchema);
-        this.addInputPort({
-          key: key as string,
-          name: typeName,
-          schema: propSchema,
-          label: key,
-          showControl: true,
-          control: this.createControl(typeName),
-        });
-      }
+      this.registerInputs(props);
     }
     await this.outputs.out?.socket.setSchema('object', outSchema);
+    await this.area.update('node', this.id);
+  }
+
+
+  clearInputs(): void {
+    for (const key of Object.keys(this.inputs).filter(key => !["schema", "exec"].includes(key))) {
+      this.removeInput(key as never);
+    }
+  }
+
+  registerInputs(TSchemaProperties: Record<string, TSchema>) {
+    for (const [key, schema] of Object.entries(TSchemaProperties)) {
+      const typeName = this.getTypeName(schema);
+      this.addInputPort({
+        key,
+        name: typeName,
+        schema,
+        label: key,
+        showControl: true,
+        control: this.createControl(key, typeName),
+      });
+    }
   }
 
   private getTypeName(schema: TSchema): string {
@@ -79,8 +98,9 @@ export class ObjectInputNode extends BaseNode<
     return 'any';
   }
 
-  private createControl(typeName: string) {
+  private createControl(label: string, typeName: string) {
     const opts = {
+      label,
       history: this.history,
       area: this.area,
       editable: true,
@@ -98,12 +118,12 @@ export class ObjectInputNode extends BaseNode<
   data(): { out: Record<string, unknown> } {
     const result: Record<string, unknown> = {};
     for (const [key, input] of Object.entries(this.inputs)) {
-      if (key === 'schema') continue;
+      if (key === 'schema' || key === 'exec') continue;
       const value = input?.control && (input.control as any).getValue();
       result[key] = value;
     }
     return { out: result };
   }
 
-  async execute(): Promise<void> {}
+
 }
