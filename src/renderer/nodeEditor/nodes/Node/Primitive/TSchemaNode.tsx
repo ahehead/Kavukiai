@@ -8,13 +8,14 @@ import { Type, type TSchema } from '@sinclair/typebox';
 import { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema';
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
 import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode';
+import type { ConnectionParams, DynamicSchemaNode } from 'renderer/nodeEditor/types/Node/DynamicSchemaNode';
 
 // Node to build TSchema objects from property list
 export class TSchemaNode extends BaseNode<
   object,
   { out: TypedSocket },
   { props: PropertyInputControl }
-> implements SerializableDataNode {
+> implements SerializableDataNode, DynamicSchemaNode {
   constructor(
     history: HistoryPlugin<Schemes>,
     private area: AreaPlugin<Schemes, AreaExtra>,
@@ -42,14 +43,26 @@ export class TSchemaNode extends BaseNode<
       })
     );
   }
+  async onConnectionChangedSchema(params: ConnectionParams): Promise<string[]> {
+    // 接続状態に応じてスキーマを更新する処理を実装
+    return [];
+  }
+
+  async setupSchema(): Promise<void> {
+    this.outputs.out?.socket.setSchema("object", this.createSchema());
+  }
 
   data(): { out: TSchema } {
+    return { out: this.createSchema() };
+  }
+
+  createSchema(): TSchema {
     const items = this.controls.props.getValue();
     const props: Record<string, TSchema> = {};
     for (const item of items) {
       props[item.key] = defaultNodeSchemas[item.typeStr];
     }
-    return { out: Type.Object(props) };
+    return Type.Object(props);
   }
 
   async execute(): Promise<void> { }
