@@ -43,7 +43,7 @@ export async function loadGraphFromJson(
 
     // ノードにdeserializeControlValueがあり、データがある場合はデータをセット
     if ("deserializeControlValue" in node && data) {
-      node.deserializeControlValue(data as any);
+      await node.deserializeControlValue(data as any);
     }
 
     // ノードにdeserializeInputsがあり、inputsデータがある場合はデータをセット
