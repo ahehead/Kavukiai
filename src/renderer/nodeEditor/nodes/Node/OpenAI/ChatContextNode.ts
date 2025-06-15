@@ -9,13 +9,11 @@ import type {
   TypedSocket,
   Schemes,
 } from "renderer/nodeEditor/types";
-import {
-  chatMessagesToResponseInput,
-  ResponseInput,
-} from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import { ResponseInput } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 import { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 import { Type } from "@sinclair/typebox";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
+import { chatMessagesToResponseInput } from "renderer/nodeEditor/types/Schemas";
 
 // open ai用のchat message list Node
 export class ResponseInputMessageItemListNode

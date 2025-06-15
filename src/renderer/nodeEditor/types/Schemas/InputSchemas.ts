@@ -105,12 +105,6 @@ export const ChatMessageItem = Type.Intersect(
 );
 export type ChatMessageItem = Static<typeof ChatMessageItem>;
 
-export function chatMessagesToResponseInput(
-  messages: ChatMessageItem[],
-): ResponseInputMessageItem[] {
-  return messages.map(({ model, created_at, tokens, token_speed, ...rest }) => rest);
-}
-
 // Input item union
 export const ResponseInputItem = Type.Union(
   [
