@@ -6,7 +6,6 @@ import type { DataflowEngine } from 'rete-engine';
 import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
 import { InputValueControl } from '../../Controls/input/InputValue';
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
-import { Type } from '@sinclair/typebox';
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 // 短い文字列入力ノード
 export class StringNode extends BaseNode<

@@ -11,7 +11,6 @@ import type {
 } from "renderer/nodeEditor/types";
 import type { ResponseInput } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/InputSchemas";
-import { Type } from "@sinclair/typebox";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 import { chatMessagesToResponseInput } from "renderer/nodeEditor/types/Schemas";
 

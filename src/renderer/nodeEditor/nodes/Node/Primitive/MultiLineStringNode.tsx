@@ -5,7 +5,6 @@ import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
 import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
-import { Type } from '@sinclair/typebox';
 
 // 長文文字列入力ノード
 export class MultiLineStringNode extends BaseNode<

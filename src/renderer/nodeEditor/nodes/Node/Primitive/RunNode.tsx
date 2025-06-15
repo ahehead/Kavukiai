@@ -2,7 +2,6 @@ import type { ControlFlowEngine } from 'rete-engine';
 import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import { RunButtonControl } from '../../Controls/RunButton';
 import type { TypedSocket, Schemes } from 'renderer/nodeEditor/types';
-import { Type } from '@sinclair/typebox';
 
 // Run ノード
 export class RunNode extends BaseNode<

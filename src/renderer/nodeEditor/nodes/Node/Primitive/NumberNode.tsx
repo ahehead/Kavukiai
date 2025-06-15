@@ -5,7 +5,6 @@ import type { DataflowEngine } from 'rete-engine';
 import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
 import { InputValueControl } from '../../Controls/input/InputValue';
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
-import { Type } from '@sinclair/typebox';
 
 // 数値入力ノード
 export class NumberNode extends BaseNode<

@@ -5,7 +5,6 @@ import type {
   Schemes,
   AreaExtra,
 } from "renderer/nodeEditor/types";
-import { Type } from "@sinclair/typebox";
 import { SwitchControl } from "../../Controls/input/Switch";
 import type { HistoryPlugin } from "rete-history-plugin";
 import type { AreaPlugin } from "rete-area-plugin";
