@@ -23,8 +23,7 @@ export class NumberNode extends BaseNode<
 
     this.addOutputPort({
       key: 'out',
-      name: 'number',
-      schema: Type.Number(),
+      typeName: 'number',
     });
 
     this.addControl(

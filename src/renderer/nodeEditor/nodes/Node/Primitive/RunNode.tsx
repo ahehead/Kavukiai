@@ -17,9 +17,8 @@ export class RunNode extends BaseNode<
     this.addOutputPort(
       {
         key: 'exec',
-        name: 'exec',
-        schema: Type.Literal('exec'),
-      })
+        typeName: 'exec',
+      });
 
     this.addControl(
       'btn',

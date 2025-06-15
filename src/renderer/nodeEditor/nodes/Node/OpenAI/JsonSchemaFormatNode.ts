@@ -6,7 +6,6 @@ import type {
   TypedSocket,
 } from "renderer/nodeEditor/types";
 import { JsonSchemaFormat } from "renderer/nodeEditor/types/Schemas/RequestSchemas";
-import { Type } from "@sinclair/typebox";
 import { InputValueControl } from "../../Controls/input/InputValue";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import type { HistoryPlugin } from "rete-history-plugin";
@@ -34,8 +33,7 @@ export class JsonSchemaFormatNode extends SerializableInputsNode<
     this.addInputPort([
       {
         key: "name",
-        name: "string",
-        schema: Type.String(),
+        typeName: "string",
         label: "name",
         showControl: true,
         control: new InputValueControl<string>({
@@ -47,14 +45,12 @@ export class JsonSchemaFormatNode extends SerializableInputsNode<
       },
       {
         key: "schema",
-        name: "object",
-        schema: Type.Object({}),
+        typeName: "object",
         label: "schema",
       },
       {
         key: "description",
-        name: "string",
-        schema: Type.String(),
+        typeName: "string",
         label: "description",
         showControl: true,
         control: new InputValueControl<string>({
@@ -66,8 +62,7 @@ export class JsonSchemaFormatNode extends SerializableInputsNode<
       },
       {
         key: "strict",
-        name: "boolean",
-        schema: Type.Boolean(),
+        typeName: "boolean",
         label: "strict",
         showControl: true,
         control: new CheckBoxControl({
@@ -79,7 +74,7 @@ export class JsonSchemaFormatNode extends SerializableInputsNode<
     ]);
     this.addOutputPort({
       key: "out",
-      name: "object",
+      typeName: "JsonSchemaFormat",
       schema: JsonSchemaFormat,
     });
   }

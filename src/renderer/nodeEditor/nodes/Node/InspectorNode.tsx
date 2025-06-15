@@ -36,19 +36,16 @@ export class InspectorNode extends SerializableInputsNode<
     this.addInputPort([
       {
         key: "inputAny",
-        name: "any",
-        schema: Type.Any(),
+        typeName: "any",
         tooltip: "表示するデータ",
       }]);
 
     this.addOutputPort([{
       key: "exec",
-      name: "exec",
-      schema: Type.Literal("exec"),
+      typeName: "exec",
     }, {
       key: "outputAny",
-      name: "any",
-      schema: Type.Any(),
+      typeName: "any",
     }]);
 
     this.addControlByKey({

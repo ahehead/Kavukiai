@@ -12,8 +12,6 @@ import {
   type Schemes,
 } from "renderer/nodeEditor/types";
 import { ButtonControl } from "../../Controls/Button";
-import { Type } from "@sinclair/typebox";
-import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/RequestSchemas";
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 
 // Run ノード
@@ -37,8 +35,7 @@ export class OpenAINode extends SerializableInputsNode<
     this.addInputPort([
       {
         key: "exec2",
-        name: "exec",
-        schema: Type.Literal("exec"),
+        typeName: "exec",
         label: "Stop",
         control: new ButtonControl({
           label: "Stop",
@@ -50,22 +47,19 @@ export class OpenAINode extends SerializableInputsNode<
       },
       {
         key: "param",
-        name: "ResponseCreateParamsBase",
-        schema: ResponseCreateParamsBase,
+        typeName: "ResponseCreateParamsBase",
         tooltip: "OpenAI用パラメータ",
       },
     ]);
     this.addOutputPort([
       {
         key: "exec",
-        name: "exec",
-        schema: Type.Literal("exec"),
+        typeName: "exec",
         label: "stream",
       },
       {
         key: "message",
-        name: "event",
-        schema: Type.String(),
+        typeName: "string",
       },
     ]);
     this.addControl("console", new ConsoleControl({ area }));

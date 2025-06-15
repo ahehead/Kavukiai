@@ -7,11 +7,11 @@ export class TypedSocket extends ClassicPreset.Socket {
   isConnected = false;
   tooltip?: string; // ツールチップの型情報
 
-  constructor(name: string, schema: TSchema) {
-    super(name); // 省略型情報
+  constructor(typeName: string, schema: TSchema) {
+    super(typeName); // 省略型情報
     this.schema = schema;
-    this.isExec = name === "exec"; // exec 判定
-    void this.setTooltip(name, this.schema); // ツールチップの型情報を設定
+    this.isExec = typeName === "exec"; // exec 判定
+    void this.setTooltip(typeName, this.schema); // ツールチップの型情報を設定
   }
 
   async setTooltip(name: string, schema: TSchema) {

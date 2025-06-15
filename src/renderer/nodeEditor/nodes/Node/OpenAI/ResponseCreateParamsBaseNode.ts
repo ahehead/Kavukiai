@@ -44,7 +44,7 @@ export class ResponseCreateParamsBaseNode
     this.addInputPort([
       {
         key: "input",
-        name: "input",
+        typeName: "input",
         schema: Type.Index(ResponseCreateParamsBase, ["input"]),
         label: "input",
         showControl: true,
@@ -60,7 +60,7 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "model",
-        name: "model",
+        typeName: "model",
         schema: Type.Index(ResponseCreateParamsBase, ["model"]),
         label: "model",
         showControl: true,
@@ -76,7 +76,7 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "stream",
-        name: "stream",
+        typeName: "stream",
         schema: Type.Index(ResponseCreateParamsBase, ["stream"]),
         label: "stream",
         tooltip: "応答を**ストリーム**形式で受け取るか。",
@@ -88,7 +88,7 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "store",
-        name: "store",
+        typeName: "store",
         schema: Type.Index(ResponseCreateParamsBase, ["store"]),
         label: "store",
         tooltip: "会話履歴をOpenAIに**保存**して運用するか。",
@@ -100,7 +100,7 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "instructions",
-        name: "instructions",
+        typeName: "instructions",
         schema: Type.Index(ResponseCreateParamsBase, ["instructions"]),
         label: "instructions",
         tooltip: "最初に挿入する**システムメッセージ**。",
@@ -113,7 +113,7 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "service_tier",
-        name: "service_tier",
+        typeName: "service_tier",
         schema: Type.Index(ResponseCreateParamsBase, ["service_tier"]),
         label: "service_tier",
         tooltip: "処理レイテンシの**ティア** (auto/default/flex)。",
@@ -130,7 +130,7 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "truncation",
-        name: "truncation",
+        typeName: "truncation",
         schema: Type.Index(ResponseCreateParamsBase, ["truncation"]),
         label: "truncation",
         tooltip: "コンテキスト過剰時の**コンテキスト切り詰め戦略**。",
@@ -146,7 +146,7 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "background",
-        name: "background",
+        typeName: "background",
         schema: Type.Index(ResponseCreateParamsBase, ["background"]),
         label: "background",
         tooltip: "モデルの応答を**バックグラウンド**で実行するかどうか。",
@@ -158,7 +158,7 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "include",
-        name: "include",
+        typeName: "include",
         schema: Type.Index(ResponseCreateParamsBase, ["include"]),
         label: "include",
         tooltip:
@@ -166,7 +166,7 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "max_output_tokens",
-        name: "max_output_tokens",
+        typeName: "max_output_tokens",
         schema: Type.Index(ResponseCreateParamsBase, ["max_output_tokens"]),
         label: "max_output_tokens",
         tooltip: "生成する**トークン数の上限**。",
@@ -179,14 +179,14 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "metadata",
-        name: "metadata",
+        typeName: "metadata",
         schema: Type.Index(ResponseCreateParamsBase, ["metadata"]),
         label: "metadata",
         tooltip: "**キー:文字列、値:文字列**のメタデータ（最大16組）。",
       },
       {
         key: "parallel_tool_calls",
-        name: "parallel_tool_calls",
+        typeName: "parallel_tool_calls",
         schema: Type.Index(ResponseCreateParamsBase, ["parallel_tool_calls"]),
         label: "parallel_tool_calls",
         tooltip: "ツール実行を**並列**で行うかどうか。",
@@ -198,21 +198,21 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "previous_response_id",
-        name: "previous_response_id",
+        typeName: "previous_response_id",
         schema: Type.Index(ResponseCreateParamsBase, ["previous_response_id"]),
         label: "previous_response_id",
         tooltip: "前回の応答ID。**マルチターン会話**用。",
       },
       {
         key: "reasoning",
-        name: "reasoning",
+        typeName: "reasoning",
         schema: Type.Index(ResponseCreateParamsBase, ["reasoning"]),
         label: "reasoning",
         tooltip: "**oシリーズモデル**の推論オプション。",
       },
       {
         key: "temperature",
-        name: "temperature",
+        typeName: "temperature",
         schema: Type.Index(ResponseCreateParamsBase, ["temperature"]),
         label: "temperature",
         tooltip:
@@ -227,28 +227,28 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "text",
-        name: "ResponseTextConfig",
+        typeName: "ResponseTextConfig",
         schema: Type.Index(ResponseCreateParamsBase, ["text"]),
         label: "text",
         tooltip: "テキスト応答の書式を設定する**オブジェクト**。",
       },
       {
         key: "tool_choice",
-        name: "tool_choice",
+        typeName: "tool_choice",
         schema: Type.Index(ResponseCreateParamsBase, ["tool_choice"]),
         label: "tool_choice",
         tooltip: "使用するツールを**指定**。",
       },
       {
         key: "tools",
-        name: "tools",
+        typeName: "tools",
         schema: Type.Index(ResponseCreateParamsBase, ["tools"]),
         label: "tools",
         tooltip: "実行可能な**ツールの配列**。",
       },
       {
         key: "top_p",
-        name: "top_p",
+        typeName: "top_p",
         schema: Type.Index(ResponseCreateParamsBase, ["top_p"]),
         label: "top_p",
         tooltip:
@@ -263,7 +263,7 @@ export class ResponseCreateParamsBaseNode
       },
       {
         key: "user",
-        name: "user",
+        typeName: "user",
         schema: Type.Index(ResponseCreateParamsBase, ["user"]),
         label: "user",
         tooltip: "エンドユーザーの**一意識別子**。",
@@ -272,7 +272,7 @@ export class ResponseCreateParamsBaseNode
 
     this.addOutputPort({
       key: "param",
-      name: "object",
+      typeName: "object",
       schema: ResponseCreateParamsBase,
     });
     // 初期スキーマ設定

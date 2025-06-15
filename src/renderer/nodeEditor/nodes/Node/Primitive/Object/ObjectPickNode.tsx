@@ -1,10 +1,9 @@
-
 import type { ConnectionParams, DynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { DataflowEngine } from "rete-engine";
 import { type TypedSocket, type Schemes, type AreaExtra, BaseNode } from "renderer/nodeEditor/types";
-import { Type, type TSchema } from "@sinclair/typebox";
 import { resetCacheDataflow } from "../../../util/resetCacheDataflow";
+import { type TSchema, Type } from "@sinclair/typebox";
 
 // ObjectPickNode: オブジェクトの各キーを個別の出力として返す
 export class ObjectPickNode extends BaseNode<
@@ -20,8 +19,7 @@ export class ObjectPickNode extends BaseNode<
 
     this.addInputPort({
       key: "obj",
-      name: "object",
-      schema: Type.Object({}),
+      typeName: "object",
       label: "object",
       tooltip: "対象オブジェクト",
     });
@@ -52,10 +50,10 @@ export class ObjectPickNode extends BaseNode<
       const props = (schema as any).properties as Record<string, TSchema>;
       for (const [key, propSchema] of Object.entries(props)) {
         this.addOutputPort({
-          key: key as string,
-          name: key,
-          label: key,
+          key: key,
+          typeName: key,
           schema: propSchema,
+          label: key,
         });
       }
     }

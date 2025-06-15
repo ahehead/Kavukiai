@@ -9,8 +9,8 @@ import type {
   TypedSocket,
   Schemes,
 } from "renderer/nodeEditor/types";
-import { ResponseInput } from "renderer/nodeEditor/types/Schemas/InputSchemas";
-import { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import type { ResponseInput } from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 import { Type } from "@sinclair/typebox";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 import { chatMessagesToResponseInput } from "renderer/nodeEditor/types/Schemas";
@@ -39,41 +39,35 @@ export class ResponseInputMessageItemListNode
     this.addInputPort([
       {
         key: "exec",
-        name: "exec",
+        typeName: "exec",
         label: "add",
-        schema: Type.Literal("exec"),
       },
       {
         key: "exec2",
-        name: "exec",
+        typeName: "exec",
         label: "add2",
-        schema: Type.Literal("exec"),
       },
       {
         key: "systemPrompt",
-        name: "string",
+        typeName: "string",
         label: "System Prompt",
-        schema: Type.String(),
       },
       {
         key: "newMessage",
-        name: "ResponseInputMessageItem",
+        typeName: "ChatMessageItem",
         label: "New Message",
-        schema: ChatMessageItem,
       },
     ]);
     this.addOutputPort([
       {
         key: "exec",
-        name: "exec",
+        typeName: "exec",
         label: "next",
-        schema: Type.Literal("exec"),
       },
 
       {
         key: "out",
-        name: "ResponseInput",
-        schema: ResponseInput,
+        typeName: "ResponseInput",
       },
     ]);
     this.addControl(

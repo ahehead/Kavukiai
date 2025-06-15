@@ -6,9 +6,9 @@ import type {
   Schemes,
   TypedSocket,
 } from "renderer/nodeEditor/types";
-import {
-  ResponseTextConfig,
+import type {
   ResponseFormatTextConfig,
+  ResponseTextConfig,
 } from "renderer/nodeEditor/types/Schemas/RequestSchemas";
 
 export class ResponseTextConfigNode extends BaseNode<
@@ -23,14 +23,12 @@ export class ResponseTextConfigNode extends BaseNode<
     super("ResponseTextConfig");
     this.addInputPort({
       key: "format",
-      name: "ResponseFormatTextConfig",
-      schema: ResponseFormatTextConfig,
+      typeName: "ResponseFormatTextConfig",
       label: "format",
     });
     this.addOutputPort({
       key: "out",
-      name: "ResponseTextConfig",
-      schema: ResponseTextConfig,
+      typeName: "ResponseTextConfig",
     });
   }
 

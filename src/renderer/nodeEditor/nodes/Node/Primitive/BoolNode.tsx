@@ -5,7 +5,6 @@ import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode';
 import type { TypedSocket, Schemes, AreaExtra } from 'renderer/nodeEditor/types';
 import { SwitchControl } from '../../Controls/input/Switch';
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
-import { Type } from '@sinclair/typebox';
 
 // Boolean入力ノード
 export class BoolNode extends BaseNode<
@@ -27,8 +26,7 @@ export class BoolNode extends BaseNode<
     };
     this.addOutputPort({
       key: 'out',
-      name: 'boolean',
-      schema: Type.Boolean(),
+      typeName: 'boolean',
     });
     this.addControl(
       'switch',

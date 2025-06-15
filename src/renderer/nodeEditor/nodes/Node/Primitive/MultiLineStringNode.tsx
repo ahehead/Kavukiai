@@ -23,8 +23,7 @@ export class MultiLineStringNode extends BaseNode<
     super('MultiLineString');
     this.addOutputPort({
       key: 'out',
-      name: "string",
-      schema: Type.String(),
+      typeName: "string",
     });
     this.addControl(
       'textArea',

@@ -1,21 +1,33 @@
-import { Type, type TSchema } from "@sinclair/typebox";
+import type { TSchema } from "@sinclair/typebox";
 import { ClassicPreset } from "rete";
 import type { BaseControl } from "../BaseControl";
 import type { ControlFlowEngine } from "rete-engine";
 import { type NodeControl, type Schemes, TooltipInput, TypedSocket } from "..";
+import { getSchema, type SchemaKey } from "../Schemas";
 import { ButtonControl } from "renderer/nodeEditor/nodes/Controls/Button";
 const { Output } = ClassicPreset;
 
-export type InputPortConfig<K> = {
-  key: K;
-  name: string; // TypedSocketのname. schemaName
-  schema: TSchema;
-  label?: string;
-  tooltip?: string;
-  control?: BaseControl<any, any>;
-  showControl?: boolean;
-  require?: boolean;
-};
+export type InputPortConfig<K> =
+  | {
+      key: K;
+      schema: TSchema;
+      typeName: string;
+      label?: string;
+      tooltip?: string;
+      control?: BaseControl<any, any>;
+      showControl?: boolean;
+      require?: boolean;
+    }
+  | {
+      key: K;
+      schema?: undefined;
+      typeName: SchemaKey;
+      label?: string;
+      tooltip?: string;
+      control?: BaseControl<any, any>;
+      showControl?: boolean;
+      require?: boolean;
+    };
 
 export type NodeInputType = {
   type: "RunButton";
@@ -24,12 +36,19 @@ export type NodeInputType = {
 
 export type InputSpec<K> = InputPortConfig<K> | InputPortConfig<K>[];
 
-export type OutputPortConfig<K> = {
-  key: K;
-  name: string;
-  schema: TSchema;
-  label?: string;
-};
+export type OutputPortConfig<K> =
+  | {
+      key: K;
+      schema: TSchema;
+      typeName: string;
+      label?: string;
+    }
+  | {
+      key: K;
+      schema?: undefined;
+      typeName: SchemaKey;
+      label?: string;
+    };
 export type OutputSpec<K> = OutputPortConfig<K> | OutputPortConfig<K>[];
 
 export abstract class NodeIO<
@@ -45,8 +64,7 @@ export abstract class NodeIO<
     if (param.type === "RunButton") {
       this.addInputPort({
         key: "exec",
-        name: "exec",
-        schema: Type.Literal("exec"),
+        typeName: "exec",
         label: "Run",
         control: new ButtonControl({
           label: "Run",
@@ -73,7 +91,7 @@ export abstract class NodeIO<
     S extends Exclude<Inputs[K], undefined>
   >({
     key,
-    name,
+    typeName,
     schema,
     label,
     tooltip,
@@ -82,7 +100,7 @@ export abstract class NodeIO<
     require,
   }: InputPortConfig<K>): void {
     const input = new TooltipInput<S>(
-      new TypedSocket(name, schema) as S,
+      new TypedSocket(typeName, schema ? schema : getSchema(typeName)) as S,
       label,
       false,
       tooltip,
@@ -107,10 +125,17 @@ export abstract class NodeIO<
   private _addOutputPort<
     K extends keyof Outputs,
     S extends Exclude<Outputs[K], undefined>
-  >({ key, name, schema, label }: OutputPortConfig<K>): void {
+  >({ key, typeName, schema, label }: OutputPortConfig<K>): void {
     this.addOutput(
       key,
-      new Output(new TypedSocket(name, schema) as S, label, true)
+      new Output(
+        new TypedSocket(
+          typeName,
+          schema ? schema : getSchema(typeName as SchemaKey)
+        ) as S,
+        label,
+        true
+      )
     );
   }
 }

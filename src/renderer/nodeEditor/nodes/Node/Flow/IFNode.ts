@@ -26,14 +26,12 @@ export class IFNode extends BaseNode<
     this.addInputPort([
       {
         key: "exec",
-        name: "exec",
+        typeName: "exec",
         label: "In",
-        schema: Type.Literal("exec"),
       },
       {
         key: "boolData",
-        name: "boolean",
-        schema: Type.Boolean(),
+        typeName: "boolean",
         label: "Condition",
         control: new SwitchControl({
           value: true,
@@ -46,15 +44,13 @@ export class IFNode extends BaseNode<
     this.addOutputPort([
       {
         key: "exec",
-        name: "exec",
+        typeName: "exec",
         label: "True",
-        schema: Type.Literal("exec"),
       },
       {
         key: "exec2",
-        name: "exec",
+        typeName: "exec",
         label: "False",
-        schema: Type.Literal("exec"),
       },
     ]);
   }

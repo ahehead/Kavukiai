@@ -10,14 +10,14 @@ import type {
   ResponseInputMessageItem,
 } from "../Schemas/InputSchemas";
 
-const registry: Record<string, TSchema> = {
+const registry = {
   ...BaseSchemas,
   ...DefaultSchema.defaultNodeSchemas,
   ...InputSchemas,
   ...RequestSchemas,
   ...ResponseSchemas,
   ...EventsSchemas,
-} as const;
+} satisfies Record<string, TSchema>;
 
 export type SchemaKey = keyof typeof registry;
 

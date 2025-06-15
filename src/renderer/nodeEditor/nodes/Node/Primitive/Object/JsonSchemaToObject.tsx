@@ -14,7 +14,7 @@ import { getInputValue } from '../../../util/getInput';
 import { removeLinkedSockets } from '../../../util/removeNode';
 import type { NodeEditor } from 'rete';
 import { Value } from '@sinclair/typebox/value';
-import { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema';
+import type { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema';
 
 export class JsonSchemaToObjectNode extends SerializableInputsNode<
   { exec: TypedSocket; schema: TypedSocket } & Record<string, TypedSocket>,
@@ -33,8 +33,7 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
 
     this.addInputPort([{
       key: "exec",
-      name: "exec",
-      schema: Type.Literal("exec"),
+      typeName: "exec",
       label: 'create',
       showControl: true,
       control: new ButtonControl({
@@ -46,15 +45,13 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
       })
     }, {
       key: 'schema',
-      name: 'JsonSchema',
-      schema: Type.Object({}),
+      typeName: 'JsonSchema',
       label: 'schema',
     }]);
 
     this.addOutputPort({
       key: 'out',
-      name: 'object',
-      schema: Type.Object({}),
+      typeName: 'object',
     });
   }
 
@@ -99,8 +96,7 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
       const typeName = this.getTypeName(schema);
       this.addInputPort({
         key,
-        name: typeName,
-        schema: defaultNodeSchemas[typeName],
+        typeName,
         label: key,
         showControl: true,
         control: this.createControl(key, typeName),

@@ -8,9 +8,8 @@ import type {
   Schemes,
   TypedSocket,
 } from "renderer/nodeEditor/types";
-import { Type } from "@sinclair/typebox";
 import { MessageInputControl } from "../../Controls/OpenAI/MessageInput";
-import { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 export class ResponseInputMessageItemNode extends BaseNode<
@@ -30,11 +29,10 @@ export class ResponseInputMessageItemNode extends BaseNode<
     this.addOutputPort([
       {
         key: "exec",
-        name: "exec",
-        schema: Type.Literal("exec"),
+        typeName: "exec",
         label: "send",
       },
-      { key: "outMessage", name: "ChatMessageItem", schema: ChatMessageItem },
+      { key: "outMessage", typeName: "ChatMessageItem" },
     ]);
     this.addControl(
       "input",

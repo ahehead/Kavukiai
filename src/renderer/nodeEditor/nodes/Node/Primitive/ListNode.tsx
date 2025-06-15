@@ -24,8 +24,7 @@ export class ListNode extends SerializableInputsNode<
     this.addInputPort(
       Array.from({ length: 6 }, (_, i) => ({
         key: `item${i}` as const,
-        name: 'any',
-        schema: Type.Any(),
+        typeName: 'any',
         label: 'item',
         tooltip: 'リストアイテム',
       }))
@@ -33,8 +32,7 @@ export class ListNode extends SerializableInputsNode<
 
     this.addOutputPort({
       key: 'out',
-      name: 'list',
-      schema: Type.Array(Type.Any()),
+      typeName: 'array',
     });
 
   }
@@ -82,7 +80,7 @@ export class ListNode extends SerializableInputsNode<
     schema: TSchema
   ): Promise<void> {
     await this.updateInputsSchema(inputs, schemaName, schema);
-    await this.updateOutSchema('out', "list", Type.Array(schema));
+    await this.updateOutSchema('out', `array<${schemaName}>`, Type.Array(schema));
     this.schemaName = schemaName;
     this.schema = schema;
   }

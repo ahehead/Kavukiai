@@ -24,8 +24,7 @@ export class JsonSchemaNode extends BaseNode<
 
     this.addOutputPort({
       key: 'out',
-      name: 'JsonSchema',
-      schema: Type.Object({}),
+      typeName: 'JsonSchema',
     });
 
     this.addControl(

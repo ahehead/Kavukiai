@@ -25,8 +25,7 @@ export class StringNode extends BaseNode<
     this.addOutputPort(
       {
         key: 'out',
-        name: "string",
-        schema: Type.String(),
+        typeName: "string",
       }
     );
 
