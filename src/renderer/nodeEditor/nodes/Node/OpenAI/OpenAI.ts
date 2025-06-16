@@ -108,31 +108,25 @@ export class OpenAINode extends SerializableInputsNode<
     return { message: this.value };
   }
 
-  async execute(
-    input: "exec" | "exec2",
-    forward: (output: "exec") => void
-  ): Promise<void> {
-    // exec2が実行された場合は、ポートを閉じて終了
-    if (input === "exec2") {
-      if (this.status === NodeStatus.RUNNING && this.port) {
-        const message: PortEventType = { type: "abort" };
-        this.port.postMessage(message);
-        this.closePort();
-        this.setStatus(this.area, NodeStatus.IDLE);
-        this.controls.console.addValue("Stop");
-      } else {
-        this.controls.console.addValue("Already stopped");
-      }
-      return;
+  private async stopExecution(): Promise<void> {
+    if (this.status === NodeStatus.RUNNING && this.port) {
+      const message: PortEventType = { type: "abort" };
+      this.port.postMessage(message);
+      this.closePort();
+      await this.setStatus(this.area, NodeStatus.IDLE);
+      this.controls.console.addValue("Stop");
+    } else {
+      this.controls.console.addValue("Already stopped");
     }
+  }
 
-    // running状態で実行された場合は何もしない
+  private async beginExecution(forward: (output: "exec") => void): Promise<void> {
     if (this.status === NodeStatus.RUNNING) {
       this.controls.console.addValue("Already running");
       return;
     }
 
-    this.setStatus(this.area, NodeStatus.RUNNING);
+    await this.setStatus(this.area, NodeStatus.RUNNING);
     this.resetString();
     const { param } = (await this.dataflow.fetchInputs(this.id)) as {
       param?: OpenAI.Responses.ResponseCreateParams[];
@@ -143,27 +137,41 @@ export class OpenAINode extends SerializableInputsNode<
       return;
     }
     this.controls.console.addValue("Start");
-    // ポートの作成とstart
     this.port = await createOpenAIMessagePort({
       id: this.id,
       param: param[0],
     });
+    this.port.onmessage = (e: MessageEvent) =>
+      this.handlePortMessage(e, forward);
+  }
 
-    this.port.onmessage = async (e: MessageEvent) => {
-      const result = e.data as PortEventType;
-      //console.log("result", result);
-      if (result.type === "error") {
-        await this.logAndTerminate("error", result.message);
-      }
-      if (result.type === "delta") {
-        this.addString(result.value);
-      }
-      if (result.type === "done") {
-        this.setString(result.text);
-        await this.logAndTerminate("done", result.text);
-      }
-      forward("exec");
-    };
+  private async handlePortMessage(
+    e: MessageEvent,
+    forward: (output: "exec") => void
+  ): Promise<void> {
+    const result = e.data as PortEventType;
+    if (result.type === "error") {
+      await this.logAndTerminate("error", result.message);
+    }
+    if (result.type === "delta") {
+      this.addString(result.value);
+    }
+    if (result.type === "done") {
+      this.setString(result.text);
+      await this.logAndTerminate("done", result.text);
+    }
+    forward("exec");
+  }
+
+  async execute(
+    input: "exec" | "exec2",
+    forward: (output: "exec") => void
+  ): Promise<void> {
+    if (input === "exec2") {
+      await this.stopExecution();
+    } else {
+      await this.beginExecution(forward);
+    }
   }
 }
 

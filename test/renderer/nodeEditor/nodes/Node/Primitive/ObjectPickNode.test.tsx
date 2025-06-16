@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest';
-import { ObjectPickNode } from 'renderer/nodeEditor/nodes/Node/Primitive/ObjectPickNode';
+import { ObjectPickNode } from 'renderer/nodeEditor/nodes/Node/Primitive/Object/ObjectPickNode';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
 import type { Schemes } from 'renderer/nodeEditor/types';
