@@ -100,11 +100,15 @@ export class ResponseInputMessageItemListNode
       systemPrompt?: string[];
       newMessage?: ChatMessageItem[];
     };
-    this.controls.chatContext.setSystemPrompt(systemPrompt?.[0] || "");
+    this.controls.chatContext.removeSystemPrompts();
+    if (systemPrompt?.length) {
+      this.controls.chatContext.setSystemPrompt(systemPrompt[0]);
+    }
     if (newMessage?.length) {
       this.controls.chatContext.addMessage(newMessage[0]);
     }
     resetCacheDataflow(this.dataflow, this.id);
+    this.area?.update("node", this.id);
     forward("exec");
   }
 
