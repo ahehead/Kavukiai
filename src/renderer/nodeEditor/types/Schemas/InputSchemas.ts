@@ -69,7 +69,7 @@ export type ResponseInputMessageContentList = Static<
 // Message item
 export const ResponseInputMessageItem = Type.Object(
   {
-    id: Base.ID,
+    id: Type.Optional(Base.ID),
     content: ResponseInputMessageContentList,
     role: Type.Union([
       Type.Literal("user"),
