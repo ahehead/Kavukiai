@@ -38,7 +38,6 @@ export class MessageInputControl extends BaseControl<
 
   getChatMessageItem(): ChatMessageItem {
     return {
-      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
       role: this.role,
       type: 'message',
       content: [{ type: 'input_text', text: this.text }],
