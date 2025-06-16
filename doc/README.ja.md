@@ -24,10 +24,17 @@ LLMとAI画像生成モデルをノードベースUIで組み合わせ実行す�
 src/
 ├─ lib/                # 共通設定・ユーティリティ
 ├─ main/               # メインプロセス
-├─ renderer/           # React レンダラー
-│  ├─ nodeEditor/      # ノードUI全体
-|  └─ screens/main.tsx # メインになる React Component    
+│  ├─ features/        # 設定ファイル管理など
+│  ├─ ipc/             # IPC ハンドラ
+│  ├─ menu/            # アプリメニュー
+│  └─ windows/         # ブラウザウィンドウ生成
 ├─ preload/            # IPC ブリッジ
+├─ renderer/           # React レンダラー
+│  ├─ components/      # 共有UIコンポーネント
+│  ├─ hooks/           # React フック
+│  ├─ lib/             # フロント共通ユーティリティ
+│  ├─ nodeEditor/      # ノードUI全体
+│  └─ screens/         # 画面コンポーネント
 ├─ resources/          # 画像・アイコン等
 └─ shared/             # mainプロセスとrenderプロセス共通要素。アプリ全体の型がここ。
 ```
