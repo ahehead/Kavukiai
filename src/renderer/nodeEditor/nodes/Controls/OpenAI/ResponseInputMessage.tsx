@@ -49,7 +49,6 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
       };
     } else {
       this.messages.unshift({
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
         role: "system",
         type: "message",
         content: [{ type: "input_text", text }],
@@ -64,7 +63,7 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
     this.messages.push(msg);
     this.addHistory(prev, this.messages);
     this.opts.onChange?.(this.messages);
-    this.opts.area?.update("control", this.id);
+
   }
 
   setState(index: number, msg: ChatMessageItem): void {
@@ -72,6 +71,7 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
     this.messages[index] = msg;
     this.addHistory(prev, this.messages);
     this.opts.onChange?.(this.messages);
+    this.opts.area?.update("control", this.id);
   }
 
   clear(): void {
@@ -79,6 +79,7 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
     this.messages = [];
     this.addHistory(prev, this.messages);
     this.opts.onChange?.(this.messages);
+    this.opts.area?.update("control", this.id);
   }
 
   getLastMessage(): ChatMessageItem | undefined {
@@ -88,6 +89,14 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
   removeMessage(index: number): void {
     const prev = [...this.messages];
     this.messages.splice(index, 1);
+    this.addHistory(prev, this.messages);
+    this.opts.onChange?.(this.messages);
+    this.opts.area?.update("control", this.id);
+  }
+
+  removeSystemPrompts(): void {
+    const prev = [...this.messages];
+    this.messages = excludeSystemPrompts(this.messages);
     this.addHistory(prev, this.messages);
     this.opts.onChange?.(this.messages);
   }
@@ -133,7 +142,7 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
     <Drag.NoDrag>
       <div className="space-y-2 border border-input">
         {messages.map((msg, index) => (
-          <div key={msg.id} className="relative border rounded p-2">
+          <div key={index} className="relative border rounded p-2">
             {editIndex === index ? (
               <div>
                 <textarea
@@ -195,4 +204,9 @@ function isContentFile(item: ResponseInputContent): item is ResponseInputFile {
 }
 function isItemAudio(item: ResponseInputItem): item is ResponseInputAudio {
   return item.type === "input_audio";
+}
+
+// Function to exclude system prompt messages from a list
+export function excludeSystemPrompts(messages: ChatMessageItem[]): ChatMessageItem[] {
+  return messages.filter((msg) => msg.role !== "system");
 }
