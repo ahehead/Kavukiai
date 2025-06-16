@@ -3,6 +3,7 @@
 - nodes/components/   -- ノード共通UIやソケット定義
 - nodes/Controls/     -- カスタムコントロール
 - nodes/Node/         -- オリジナルノード
+- nodes/Node/Primitive/Object/ -- オブジェクト操作系ノード
 - nodes/nodeFactories.ts -- ノードの生成関数
 - nodes/util/         -- ノード用ユーティリティ
 - nodes/README_node.md -- この文章

@@ -11,17 +11,24 @@
 ```
 src/
 ├─ lib/                # Electron アプリ共通処理
-├─ main/               # メインプロセス (ウィンドウ管理・IPC 等)
+├─ main/               # メインプロセス
+│  ├─ features/        # 設定やファイル関連処理
+│  ├─ ipc/             # IPC ハンドラ
+│  └─ windows/         # ウィンドウ管理
 ├─ preload/            # レンダラーとの橋渡しをするスクリプト
 ├─ renderer/           # React ベースの UI
+│  ├─ components/      # 汎用コンポーネント
+│  ├─ hooks/           # React フック
+│  ├─ nodeEditor/      # ノードエディタ
+│  └─ screens/         # 画面コンポーネント
 ├─ resources/          # アイコン等の静的リソース
 └─ shared/             # 型定義や共通ユーティリティ
 ```
 
 - `lib/` : Electron アプリ起動やウィンドウ作成のラッパーを提供します。
-- `main/` : `index.ts` がエントリーポイント。IPC ハンドラやメニュー設定など、メインプロセス側のロジックを配置します。
+- `main/` : `index.ts` がエントリーポイント。`ipc/` や `windows/` にウィンドウ生成や通信ハンドラを分割しています。
 - `preload/` : contextBridge を通じて `window.App` へ公開される API を実装します。
-- `renderer/` : React で構築されたフロントエンド。`nodeEditor/` 内に Rete.js を使ったノードエディタが置かれています。
+- `renderer/` : React で構築されたフロントエンド。`components/` や `nodeEditor/` に UI 部品やノードエディタを配置しています。
 - `shared/` : メイン・レンダラー両方で利用する型や定数をまとめています。
 
 ## 3. 主要スクリプト
