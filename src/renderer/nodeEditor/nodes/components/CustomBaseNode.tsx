@@ -53,12 +53,13 @@ export function createCustomNode(
         ref={panelRef}
         selected={selected || false}
         status={data.status}
+        nodeType={label}
         style={{
           width: `${Number.isFinite(width) ? width : nodeMinWidth}px`,
           height: Number.isFinite(height) ? `${height}px` : 'auto'
         }}
       >
-        <NodeHeader status={data.status}>
+        <NodeHeader status={data.status} nodeType={label}>
           <NodeTitle status={data.status}>{label}</NodeTitle>
         </NodeHeader>
 

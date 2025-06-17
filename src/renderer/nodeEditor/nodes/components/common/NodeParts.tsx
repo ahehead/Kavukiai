@@ -1,10 +1,11 @@
 import { cn } from "renderer/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { Loader2 } from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import React, { useRef } from "react";
 import { Drag } from "rete-react-plugin";
 import { useStopWheel } from "../../util/useStopWheel";
+import { NodeStatus } from "renderer/nodeEditor/types";
 
 export const nodeContainer = cva(
   ["bg-node-bg text-node-fg grid grid-cols-1 grid-rows-[auto_1fr] rounded-md border border-node-outline shadow-sm"],
@@ -31,12 +32,13 @@ export const nodeContainer = cva(
 
 export const NodeContainer = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<"div"> & VariantProps<typeof nodeContainer>
->(({ selected, status, ...props }, ref) => (
+  React.ComponentProps<"div"> & VariantProps<typeof nodeContainer> & { nodeType?: string }
+>(({ selected, status, nodeType, ...props }, ref) => (
   <div
     ref={ref}
     data-testid="node"
     data-status={status}
+    data-node-type={nodeType}
     className={cn(nodeContainer({ selected, status }))}
     {...props}
   />
@@ -61,9 +63,11 @@ const nodeHeaderStyles = cva(
   }
 )
 
-export function NodeHeader({ status, ...props }: React.ComponentProps<"div"> & VariantProps<typeof nodeHeaderStyles>) {
+export function NodeHeader({ status, nodeType, ...props }: React.ComponentProps<"div"> & VariantProps<typeof nodeHeaderStyles> & { nodeType?: string }) {
   return (
     <div
+      data-status={status}
+      data-node-type={nodeType}
       className={cn(nodeHeaderStyles({ status }))}
       {...props}
     />
@@ -89,13 +93,29 @@ const nodeTitleStyles = cva(
 )
 
 export function NodeTitle({ status, children, ...props }: React.ComponentProps<"div"> & VariantProps<typeof nodeTitleStyles>) {
+  const icon = (() => {
+    switch (status) {
+      case NodeStatus.RUNNING:
+        return <Loader2 className="inline animate-spin mr-1 h-4 w-4" />
+      case NodeStatus.COMPLETED:
+        return <CheckCircle className="inline mr-1 h-4 w-4" />
+      case NodeStatus.ERROR:
+        return <XCircle className="inline mr-1 h-4 w-4" />
+      case NodeStatus.WARNING:
+        return <AlertTriangle className="inline mr-1 h-4 w-4" />
+      default:
+        return null
+    }
+  })()
+
   return (
     <div
       data-testid="title"
+      data-status={status}
       className={cn(nodeTitleStyles({ status }))}
       {...props}
     >
-      {status === "RUNNING" && <Loader2 className="inline animate-spin mr-1 h-4 w-4" />}
+      {icon}
       {children}
     </div>
   )
