@@ -140,11 +140,12 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
 
   return (
     <Drag.NoDrag>
-      <div className="space-y-2 border border-input">
-        {messages.map((msg, index) => (
-          <div key={index} className="relative border rounded p-2">
-            {editIndex === index ? (
-              <div>
+      <div className="flex flex-col gap-2 h-full">
+        <div className="flex-1 min-h-0 space-y-2 overflow-y-auto border border-input">
+          {messages.map((msg, index) => (
+            <div key={index} className="relative border rounded p-2">
+              {editIndex === index ? (
+                <div>
                 <textarea
                   className="w-full border mb-1"
                   value={editText}
@@ -188,6 +189,7 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
             </div>
           </div>
         ))}
+        </div>
       </div>
     </Drag.NoDrag>
   );
