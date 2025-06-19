@@ -134,7 +134,9 @@ export function NodeControlsWrapper({ ...props }: React.ComponentProps<"div">) {
   return (
     <div
       ref={ref}
-      className='grid grid-cols-1 place-items-stretch p-2 empty:p-0 empty:hidden min-h-0 overflow-hidden' {...props} />
+      className='flex flex-col items-stretch gap-2 p-2 empty:p-0 empty:hidden min-h-0 overflow-hidden'
+      {...props}
+    />
   )
 }
 
