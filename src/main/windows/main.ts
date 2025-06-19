@@ -3,12 +3,12 @@ import { join } from "node:path";
 import { createWindow } from "lib/electron-app/factories/windows/create";
 import { ENVIRONMENT } from "shared/constants";
 import { displayName } from "~/package.json";
-import { createAppMenu } from "../menu/menu";
 import {
   type ApplicationSettings,
   createDefaultApplicationSettings,
 } from "main/types";
 import { Conf } from "electron-conf";
+import { createAppMenu } from "main/menu/menu";
 
 // windowの位置とサイズを保存するためのconf
 const conf = new Conf<ApplicationSettings>({
