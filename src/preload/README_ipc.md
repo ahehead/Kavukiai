@@ -1,6 +1,6 @@
 ## プロセス間通信を実装する
 - [ApiType.ts](../shared/ApiType.ts)にChannel名を登録する。
-- [ipc](../main/ipc)フォルダに追加する。
+- [ipc](../main/ipc)フォルダに新しいipcを作成する
 - [index.ts](../main/ipc/index.ts)に追加する
 - [index.ts](index.ts)に追加する
 
@@ -17,4 +17,4 @@ App = {
 }
 ```
 
-- [appService.ts](../renderer/features/services/appService.ts)の一覧に関数名を書く。
+
