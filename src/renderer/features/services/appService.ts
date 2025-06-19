@@ -1,19 +1,7 @@
 const { App } = window;
 
 // 対象メソッド名を列挙
-type ApiKeys =
-  | "showCloseConfirm"
-  | "showSaveDialog"
-  | "saveGraphJsonData"
-  | "loadAppStateSnapshot"
-  | "takeAppStateSnapshot"
-  | "onOpenSettings"
-  | "onSaveGraphInitiate"
-  | "onFileLoadedRequest"
-  | "loadFile"
-  | "saveApiKey"
-  | "loadApiKeys"
-  | "sendChatGptMessage";
+type ApiKeys = keyof typeof App;
 
 type ElectronService = Pick<typeof App, ApiKeys>;
 
