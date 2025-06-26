@@ -29,9 +29,6 @@
 ### services
 - `appService.ts` : `window.App` に公開された API を型安全に呼び出すラッパー。
 
-改善アイデア
-- 型定義を自動生成し、メイン側との整合性を保つ仕組みを追加する。
-
 ### tab
 - `TabBar.tsx` : 複数ファイルをタブ表示し、アクティブ切り替えや閉じる操作に対応。
 - `getNewActiveFileId.ts` : タブ閉鎖時に次にアクティブにする ID を計算。
