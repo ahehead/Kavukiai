@@ -13,6 +13,8 @@ import {
 } from "renderer/nodeEditor/types";
 import { ButtonControl } from "../../Controls/Button";
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
+import type { Response } from "renderer/nodeEditor/types/Schemas/ResponseSchemas";
+import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/EventsSchemas";
 
 // Run ノード
 export class OpenAINode extends SerializableInputsNode<
@@ -20,8 +22,10 @@ export class OpenAINode extends SerializableInputsNode<
   { exec: TypedSocket; message: TypedSocket },
   { console: ConsoleControl }
 > {
-  value = ""; // apiからの応答を保持する
   port: MessagePort | null = null;
+  // OpenAi Clientのレスポンスを保持する
+  response: Response | null = null;
+  event: ResponseStreamEvent | null = null;
   constructor(
     private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
@@ -65,20 +69,18 @@ export class OpenAINode extends SerializableInputsNode<
     this.addControl("console", new ConsoleControl({ area }));
   }
 
-  addString(value: string): void {
-    this.value += value;
+  setResponse(response: Response): void {
+    this.controls.console.addValue("response set");
+    this.response = response;
     resetCacheDataflow(this.dataflow, this.id);
   }
 
-  setString(value: string): void {
-    this.value = value;
+  setEvent(event: ResponseStreamEvent): void {
+    this.controls.console.addValue("event set");
+    this.event = event;
     resetCacheDataflow(this.dataflow, this.id);
   }
 
-  resetString(): void {
-    this.value = "";
-    resetCacheDataflow(this.dataflow, this.id);
-  }
   // portのclose処理
   closePort(): void {
     if (this.port) {
@@ -95,19 +97,32 @@ export class OpenAINode extends SerializableInputsNode<
     if (type === "error") {
       this.controls.console.addValue(`Error: ${message}`);
       console.error(`Error: ${message}`);
+      // nodeのステータスをERRORに設定
       await this.setStatus(this.area, NodeStatus.ERROR);
     } else if (type === "done") {
       this.controls.console.addValue(`Done: ${message}`);
       console.log(`Done: ${message}`);
+      // nodeのステータスをCOMPLETEDに設定
       await this.setStatus(this.area, NodeStatus.COMPLETED);
     }
     this.closePort();
   }
 
-  data(): object {
-    return { message: this.value };
+  data(): { message: string } {
+    if (this.event?.type === "response.output_text.done") {
+      return { message: this.event?.text || "" };
+    }
+    if (this.status === NodeStatus.COMPLETED) {
+      return { message: this.response?.output_text || "" };
+    }
+    if (this.event?.type === "response.output_text.delta") {
+      return { message: this.event?.delta || "" };
+    }
+
+    return { message: this.response?.output_text || "" };
   }
 
+  // 通信Stop処理
   private async stopExecution(): Promise<void> {
     if (this.status === NodeStatus.RUNNING && this.port) {
       const message: PortEventType = { type: "abort" };
@@ -120,27 +135,36 @@ export class OpenAINode extends SerializableInputsNode<
     }
   }
 
-  private async beginExecution(forward: (output: "exec") => void): Promise<void> {
+  private async beginExecution(
+    forward: (output: "exec") => void
+  ): Promise<void> {
     if (this.status === NodeStatus.RUNNING) {
       this.controls.console.addValue("Already running");
       return;
     }
-
+    // ステータスをRUNNINGに設定
     await this.setStatus(this.area, NodeStatus.RUNNING);
-    this.resetString();
+
+    // 入力からopen aiに渡すパラメータを取得
     const { param } = (await this.dataflow.fetchInputs(this.id)) as {
       param?: OpenAI.Responses.ResponseCreateParams[];
     };
+
     this.controls.console.addValue(`Param: ${JSON.stringify(param, null, 2)}`);
+    // パラメータがない場合は終了
     if (!param) {
       await this.logAndTerminate("error", "No param");
       return;
     }
     this.controls.console.addValue("Start");
+
+    // ポートを作成、通信開始
     this.port = await createOpenAIMessagePort({
       id: this.id,
       param: param[0],
     });
+
+    // portに登録
     this.port.onmessage = (e: MessageEvent) =>
       this.handlePortMessage(e, forward);
   }
@@ -153,12 +177,30 @@ export class OpenAINode extends SerializableInputsNode<
     if (result.type === "error") {
       await this.logAndTerminate("error", result.message);
     }
-    if (result.type === "delta") {
-      this.addString(result.value);
-    }
-    if (result.type === "done") {
-      this.setString(result.text);
-      await this.logAndTerminate("done", result.text);
+    if (result.type === "openai") {
+      const data = result.data;
+      if ("type" in data) {
+        // ストリーミングイベントの場合
+        this.setEvent(data);
+        this.controls.console.addValue(
+          `Event: ${JSON.stringify(data, null, 2)}`
+        );
+        if (data.type === "error") {
+          await this.logAndTerminate("error", data.message);
+        } else if (data.type === "response.output_text.done") {
+          this.setEvent(data);
+          await this.logAndTerminate("done", data.text);
+        } else if (data.type === "response.output_text.delta") {
+          this.setEvent(data);
+        }
+      } else {
+        // レスポンスの場合
+        this.setResponse(data);
+        this.controls.console.addValue(
+          `Response: ${JSON.stringify(data, null, 2)}`
+        );
+        await this.logAndTerminate("done", data.output_text);
+      }
     }
     forward("exec");
   }
