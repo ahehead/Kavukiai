@@ -1,5 +1,7 @@
 import type OpenAI from "openai";
 import type { GraphJsonData } from "./JsonType";
+import type { Response } from "renderer/nodeEditor/types/Schemas/ResponseSchemas";
+import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/EventsSchemas";
 
 export enum IpcChannel {
   LoadSnapshot = "load-snapshot",
@@ -66,7 +68,6 @@ export type IpcResultDialog<T> =
   | { status: "error"; message: string; code?: string };
 
 export type PortEventType =
-  | { type: "delta"; value: string }
   | { type: "error"; message: string }
   | { type: "abort" }
-  | { type: "done"; text: string };
+  | { type: "openai"; data: ResponseStreamEvent | Response };
