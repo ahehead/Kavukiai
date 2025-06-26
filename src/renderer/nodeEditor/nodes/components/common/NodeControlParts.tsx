@@ -7,7 +7,7 @@ import { requiredMark } from "./NodeSocketParts";
 
 
 export const textAreaStyles = cva(
-  ["w-full h-full py-2 px-2.5 resize-none border-none rounded-md"],
+  ["w-full h-full min-h-0 overflow-auto py-2 px-2.5 resize-none border-none rounded-md"],
   {
     variants: {
       editable: {
