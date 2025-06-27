@@ -23,7 +23,7 @@ export class SliderControl extends BaseControl<number, SliderControlParams> {
     this.value = params.value;
     this.min = params.min ?? 0;
     this.max = params.max ?? 100;
-    this.step = params.step;
+    this.step = params.step ?? 1;
   }
 
   setValue(value: number) {
@@ -61,8 +61,8 @@ export class SliderControl extends BaseControl<number, SliderControlParams> {
 
 export function SliderControlView(props: { data: SliderControl }): JSX.Element {
   const control = props.data;
-  const [uiValue, setUiValue] = useState<number>(control.getValue());
-  const [inputStr, setInputStr] = useState<string>(String(control.getValue()));
+  const [uiValue, setUiValue] = useState<number>(() => control.getValue());
+  const [inputStr, setInputStr] = useState<string>(() => String(control.getValue()));
 
   useEffect(() => {
     setUiValue(control.getValue());
@@ -96,7 +96,7 @@ export function SliderControlView(props: { data: SliderControl }): JSX.Element {
 
   return (
     <Drag.NoDrag>
-      <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+      <div className="grid grid-cols-[1fr_auto] gap-2 items-center w-full">
         <UISlider
           id={control.id}
           min={control.min}
