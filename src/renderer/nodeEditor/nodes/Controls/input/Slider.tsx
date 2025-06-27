@@ -2,7 +2,7 @@ import { useEffect, useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
 import { Slider as UISlider } from "renderer/components/ui/slider";
 import type { ControlJson } from "shared/JsonType";
-import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
+import { BaseControl, useControlValue, type ControlOptions } from "renderer/nodeEditor/types";
 import { inputValueStyles } from "renderer/nodeEditor/nodes/components/common/NodeControlParts";
 
 export interface SliderControlParams extends ControlOptions<number> {
@@ -29,6 +29,7 @@ export class SliderControl extends BaseControl<number, SliderControlParams> {
   setValue(value: number) {
     this.value = value;
     this.opts.onChange?.(value);
+    this.notify();
   }
 
   getValue(): number {
@@ -61,36 +62,30 @@ export class SliderControl extends BaseControl<number, SliderControlParams> {
 
 export function SliderControlView(props: { data: SliderControl }): JSX.Element {
   const control = props.data;
-  const [uiValue, setUiValue] = useState<number>(() => control.getValue());
-  const [inputStr, setInputStr] = useState<string>(() => String(control.getValue()));
+  const value = useControlValue(control);
+  const [inputStr, setInputStr] = useState(String(value));
 
-  useEffect(() => {
-    setUiValue(control.getValue());
-    setInputStr(String(control.getValue()));
-  }, [control.value]);
+  useEffect(() => setInputStr(String(value)), [value]);
 
   const handleSliderChange = (vals: number[]) => {
     const newValue = vals[0];
-    control.addHistory(uiValue, newValue);
-    setUiValue(newValue);
-    setInputStr(String(newValue));
+    control.addHistory(value, newValue);
     control.setValue(newValue);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputStr(e.target.value);
+    const rawValue = e.target.value;
+    const newValue = Number.parseFloat(rawValue);
+    control.addHistory(value, newValue);
+    control.setValue(newValue);
   };
 
   const commitInput = () => {
     const val = Number.parseFloat(inputStr);
     if (!Number.isNaN(val)) {
       const clamped = Math.min(control.max, Math.max(control.min, val));
-      control.addHistory(uiValue, clamped);
-      setUiValue(clamped);
-      setInputStr(String(clamped));
+      control.addHistory(value, clamped);
       control.setValue(clamped);
-    } else {
-      setInputStr(String(uiValue));
     }
   };
 
@@ -102,7 +97,7 @@ export function SliderControlView(props: { data: SliderControl }): JSX.Element {
           min={control.min}
           max={control.max}
           step={control.step}
-          value={[uiValue]}
+          value={[value]}
           onValueChange={control.opts.editable ? handleSliderChange : undefined}
           disabled={!control.opts.editable}
         />
@@ -113,11 +108,6 @@ export function SliderControlView(props: { data: SliderControl }): JSX.Element {
           step={control.step}
           onChange={control.opts.editable ? handleInputChange : undefined}
           onBlur={control.opts.editable ? commitInput : undefined}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.currentTarget.blur();
-            }
-          }}
           disabled={!control.opts.editable}
         />
       </div>
