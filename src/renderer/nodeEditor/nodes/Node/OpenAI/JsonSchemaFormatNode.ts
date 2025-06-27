@@ -37,7 +37,7 @@ export class JsonSchemaFormatNode extends SerializableInputsNode<
         label: "name",
         showControl: true,
         control: new InputValueControl<string>({
-          value: "test",
+          value: "",
           type: "string",
           label: "name",
           ...opts,
@@ -54,7 +54,7 @@ export class JsonSchemaFormatNode extends SerializableInputsNode<
         label: "description",
         showControl: true,
         control: new InputValueControl<string>({
-          value: "test",
+          value: "",
           type: "string",
           label: "description",
           ...opts,
