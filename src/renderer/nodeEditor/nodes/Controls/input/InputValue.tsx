@@ -89,7 +89,7 @@ export function InputValueControlView<T extends string | number>(props: {
         onFocus={handleFocus}
         onChange={control.opts.editable ? handleChange : undefined}
         className={inputValueStyles({ editable: control.opts.editable })}
-        placeholder="..."
+        placeholder=""
       />
     </Drag.NoDrag>
   );
