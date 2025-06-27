@@ -1,9 +1,9 @@
 import { useEffect, useState, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
-import { Slider as UISlider } from "renderer/components/ui/slider";
 import type { ControlJson } from "shared/JsonType";
 import { BaseControl, useControlValue, type ControlOptions } from "renderer/nodeEditor/types";
 import { inputValueStyles } from "renderer/nodeEditor/nodes/components/common/NodeControlParts";
+import { UISlider } from "renderer/components/ui/slider";
 
 export interface SliderControlParams extends ControlOptions<number> {
   value: number;
