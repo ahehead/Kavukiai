@@ -1,4 +1,4 @@
-import { useEffect, useState, type JSX } from "react";
+import { useSyncExternalStore, type JSX } from "react";
 import { Drag } from "rete-react-plugin";
 import { inputValueStyles } from "renderer/nodeEditor/nodes/components/common/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
@@ -26,6 +26,7 @@ export class InputValueControl<T extends string | number> extends BaseControl<T,
   setValue(value: T) {
     this.value = value;
     this.opts.onChange?.(value);
+    this.notify();
   }
 
   getValue(): T {
@@ -50,6 +51,7 @@ export class InputValueControl<T extends string | number> extends BaseControl<T,
     this.opts.label = label;
     this.opts.editable = editable;
     this.step = step;
+    this.notify();
   }
 }
 
@@ -58,24 +60,14 @@ export function InputValueControlView<T extends string | number>(props: {
   data: InputValueControl<T>;
 }): JSX.Element {
   const control = props.data;
-  const [uiValue, setUiValue] = useState<T>(control.getValue());
-  const [prevValue, setPrevValue] = useState<T>(control.getValue());
-
-  useEffect(() => {
-    setUiValue(control.getValue());
-  }, [control.value]);
+  const value = useControlValue(control);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const newValue = (control.type === "number" ? Number.parseFloat(rawValue) : rawValue) as T;
 
-    control.addHistory(prevValue, newValue)
-    setUiValue(newValue);
+    control.addHistory(value, newValue)
     control.setValue(newValue);
-  };
-
-  const handleFocus = () => {
-    setPrevValue(uiValue);
   };
 
   return (
@@ -84,13 +76,20 @@ export function InputValueControlView<T extends string | number>(props: {
         id={control.id}
         type={control.type === "number" ? "number" : "text"}
         step={control.type === "number" ? control.step : undefined}
-        value={uiValue}
+        value={value}
         readOnly={!control.opts.editable}
-        onFocus={handleFocus}
+        onFocus={() => control.addHistory(value, value)}
         onChange={control.opts.editable ? handleChange : undefined}
         className={inputValueStyles({ editable: control.opts.editable })}
         placeholder=""
       />
     </Drag.NoDrag>
+  );
+}
+
+function useControlValue<T extends string | number>(control: InputValueControl<T>) {
+  return useSyncExternalStore(
+    (cb) => control.subscribe(cb), // subscribe
+    () => control.getValue()     // getSnapshot (client)
   );
 }
