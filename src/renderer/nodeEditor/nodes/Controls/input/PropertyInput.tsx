@@ -99,11 +99,11 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
 
   return (
     <Drag.NoDrag>
-      <div className="flex flex-col gap-1 h-full">
+      <div className="flex flex-col gap-1 h-full w-full">
         {/* リスト */}
         <div
           ref={listRef}
-          className="flex-1 min-h-0 overflow-y-auto border rounded p-2 bg-node-bg"
+          className="flex-1 w-full min-h-0 overflow-y-auto border rounded p-2 bg-node-bg"
         >
           {items.map((item, idx) => (
             <div key={idx} className="flex justify-between items-center text-sm py-0.5">
