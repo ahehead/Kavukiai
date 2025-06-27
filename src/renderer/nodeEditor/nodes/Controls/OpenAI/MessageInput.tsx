@@ -90,11 +90,12 @@ export function MessageInputControlView(props: {
 
   return (
     <Drag.NoDrag>
-      <div className="space-y-1">
+      <div className="grid grid-rows-[1fr_auto] gap-1 w-full">
         <textarea
-          className="w-full border rounded p-1 text-sm"
+          className="w-full h-full border rounded p-1 text-sm  resize-none"
           value={text}
           onChange={e => setText(e.target.value)}
+          placeholder='...'
         />
         <div className="flex gap-1">
           <button className="border px-2 rounded" onClick={toggleRole}>
