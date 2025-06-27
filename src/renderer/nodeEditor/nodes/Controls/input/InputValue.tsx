@@ -1,8 +1,8 @@
-import { useSyncExternalStore, type JSX } from "react";
+import type { JSX } from "react";
 import { Drag } from "rete-react-plugin";
 import { inputValueStyles } from "renderer/nodeEditor/nodes/components/common/NodeControlParts";
 import type { ControlJson } from "shared/JsonType";
-import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
+import { BaseControl, useControlValue, type ControlOptions } from "renderer/nodeEditor/types";
 
 export interface InputValueActionParams<T> extends ControlOptions<T> {
   value: T;
@@ -87,9 +87,3 @@ export function InputValueControlView<T extends string | number>(props: {
   );
 }
 
-function useControlValue<T extends string | number>(control: InputValueControl<T>) {
-  return useSyncExternalStore(
-    (cb) => control.subscribe(cb), // subscribe
-    () => control.getValue()     // getSnapshot (client)
-  );
-}
