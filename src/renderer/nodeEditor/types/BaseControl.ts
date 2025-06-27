@@ -93,8 +93,8 @@ export abstract class BaseControl<T, O extends ControlOptions<T>>
   }
 }
 
-export function useControlValue(control: BaseControl<any, any>) {
-  return useSyncExternalStore(
+export function useControlValue<T>(control: BaseControl<T, any>): T {
+  return useSyncExternalStore<T>(
     (cb) => control.subscribe(cb), // subscribe
     () => control.getValue() // getSnapshot (client)
   );
