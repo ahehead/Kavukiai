@@ -3,7 +3,7 @@ import * as SliderPrimitive from "@radix-ui/react-slider"
 
 import { cn } from "renderer/lib/utils"
 
-function Slider({
+function UISlider({
   className,
   defaultValue,
   value,
@@ -58,4 +58,4 @@ function Slider({
   )
 }
 
-export { Slider }
+export { UISlider }
