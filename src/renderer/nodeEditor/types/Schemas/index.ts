@@ -1,4 +1,4 @@
-import type { TSchema } from "@sinclair/typebox";
+import { Type, type TSchema } from "@sinclair/typebox";
 import * as BaseSchemas from "../Schemas/BaseSchemas";
 import * as DefaultSchema from "../Schemas/DefaultSchema";
 import * as InputSchemas from "../Schemas/InputSchemas";
@@ -9,6 +9,12 @@ import type {
   ChatMessageItem,
   ResponseInputMessageItem,
 } from "../Schemas/InputSchemas";
+import { ResponseStreamEvent } from "../Schemas/EventsSchemas";
+
+const OpenAIClientResponse = Type.Union([
+  ResponseSchemas.Response,
+  ResponseStreamEvent,
+]);
 
 const registry = {
   ...BaseSchemas,
@@ -17,6 +23,7 @@ const registry = {
   ...RequestSchemas,
   ...ResponseSchemas,
   ...EventsSchemas,
+  OpenAIClientResponse,
 } satisfies Record<string, TSchema>;
 
 export type SchemaKey = keyof typeof registry;
