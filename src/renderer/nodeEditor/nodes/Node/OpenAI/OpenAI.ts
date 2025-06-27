@@ -59,7 +59,7 @@ export class OpenAINode extends SerializableInputsNode<
       {
         key: "exec",
         typeName: "exec",
-        label: "stream",
+        label: "StreamEvent|Response",
       },
       {
         key: "message",
