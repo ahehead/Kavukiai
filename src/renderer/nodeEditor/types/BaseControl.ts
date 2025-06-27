@@ -4,6 +4,7 @@ import type { ControlJson } from "shared/JsonType";
 import type { Schemes, AreaExtra } from ".";
 import { ValueHistoryAction } from "./ValueHistoryAction";
 import { ClassicPreset } from "rete";
+import { useSyncExternalStore } from "react";
 
 export interface SerializableControl {
   toJSON(): ControlJson | undefined;
@@ -19,11 +20,15 @@ export interface ControlOptions<T> {
   onChange?: (v: T) => void;
 }
 
+type Listener = () => void;
+
 export abstract class BaseControl<T, O extends ControlOptions<T>>
   extends ClassicPreset.Control
   implements SerializableControl
 {
   opts: ControlOptions<T> & { cols: 0 | 1 | 2; editable: boolean };
+
+  private listeners = new Set<Listener>();
 
   constructor(opts: O = {} as O) {
     super();
@@ -31,6 +36,7 @@ export abstract class BaseControl<T, O extends ControlOptions<T>>
   }
 
   abstract setValue(value: any): void;
+  abstract getValue(): T;
 
   setLabel(label: string) {
     this.opts.label = label;
@@ -75,4 +81,21 @@ export abstract class BaseControl<T, O extends ControlOptions<T>>
       );
     }
   }
+
+  protected notify() {
+    for (const listener of this.listeners) {
+      listener();
+    }
+  }
+  subscribe(l: Listener) {
+    this.listeners.add(l);
+    return () => this.listeners.delete(l); // unsubscribe
+  }
+}
+
+export function useControlValue(control: BaseControl<any, any>) {
+  return useSyncExternalStore(
+    (cb) => control.subscribe(cb), // subscribe
+    () => control.getValue() // getSnapshot (client)
+  );
 }
