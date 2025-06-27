@@ -211,5 +211,13 @@ dialog::backdrop {
 }
 
 .control {
-  @apply flex-1;
+  @apply flex-1 flex h-full;
+}
+
+.control > span {
+  @apply flex flex-1 h-full;
+}
+
+.control > span > span {
+  @apply flex flex-1 h-full;
 }
