@@ -1,16 +1,14 @@
-import { useState, useRef, useEffect, type JSX } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, type JSX } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Pencil, Trash2, Check, X } from "lucide-react";
-import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
+import { Pencil, Trash2, Check, X, GitBranch, Copy } from "lucide-react";
+import { BaseControl, useControlValue, type ControlOptions } from "renderer/nodeEditor/types";
 import type {
   ChatMessageItem,
   ResponseInputContent,
   ResponseInputText,
   ResponseInputImage,
   ResponseInputFile,
-  ResponseInputAudio,
-  ResponseInputItem,
 } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 import { Drag } from "rete-react-plugin";
 
@@ -33,7 +31,7 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
   setValue(value: ChatMessageItem[]): void {
     this.messages = value;
     this.opts.onChange?.(value);
-
+    this.notify();
   }
 
   getValue(): ChatMessageItem[] {
@@ -43,28 +41,31 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
   setSystemPrompt(text: string): void {
     const prev = [...this.messages];
     const idx = this.messages.findIndex((m) => m.role === "system");
+    const next = [...this.messages];
     if (idx >= 0) {
-      this.messages[idx] = {
-        ...this.messages[idx],
+      next[idx] = {
+        ...next[idx],
         content: [{ type: "input_text", text }],
       };
     } else {
-      this.messages.unshift({
+      next.unshift({
         role: "system",
         type: "message",
         content: [{ type: "input_text", text }],
       });
     }
+    this.messages = next;
     this.addHistory(prev, this.messages);
     this.opts.onChange?.(this.messages);
+    this.notify();
   }
 
   addMessage(msg: ChatMessageItem): void {
     const prev = [...this.messages];
-    this.messages.push(msg);
+    this.messages = [...this.messages, msg];
     this.addHistory(prev, this.messages);
     this.opts.onChange?.(this.messages);
-    this.opts.area?.update("control", this.id);
+    this.notify();
   }
 
   // 最後のメッセージの内容をdeltaで書き換えていく
@@ -73,15 +74,19 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
     const lastMessage = this.getLastMessage();
     if (lastMessage && lastMessage.content[0].type === "input_text") {
       lastMessage.content[0].text = this.messageTemp;
+      this.messages = [...this.messages];
     }
+    this.notify();
   }
 
   setState(index: number, msg: ChatMessageItem): void {
     const prev = [...this.messages];
-    this.messages[index] = msg;
-    this.addHistory(prev, this.messages);
-    this.opts.onChange?.(this.messages);
-    this.opts.area?.update("control", this.id);
+    const next = [...this.messages];
+    next[index] = msg;
+    this.messages = next;
+    this.addHistory(prev, next);
+    this.opts.onChange?.(next);
+    this.notify();
   }
 
   clear(): void {
@@ -89,7 +94,7 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
     this.messages = [];
     this.addHistory(prev, this.messages);
     this.opts.onChange?.(this.messages);
-    this.opts.area?.update("control", this.id);
+    this.notify();
   }
 
   getLastMessage(): ChatMessageItem | undefined {
@@ -98,10 +103,12 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
 
   removeMessage(index: number): void {
     const prev = [...this.messages];
-    this.messages.splice(index, 1);
-    this.addHistory(prev, this.messages);
-    this.opts.onChange?.(this.messages);
-    this.opts.area?.update("control", this.id);
+    const next = [...this.messages];
+    next.splice(index, 1);
+    this.messages = next;
+    this.addHistory(prev, next);
+    this.opts.onChange?.(next);
+    this.notify();
   }
 
   removeSystemPrompts(): void {
@@ -109,17 +116,26 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
     this.messages = excludeSystemPrompts(this.messages);
     this.addHistory(prev, this.messages);
     this.opts.onChange?.(this.messages);
+    this.notify();
   }
 }
 
 export function ResponseInputMessageView(props: { data: ResponseInputMessageControl }): JSX.Element {
   const control = props.data;
-  const [messages, setMessages] = useState(control.getValue());
+  const messages = useControlValue<ChatMessageItem[]>(control);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
+  // Ref for auto-resizing textarea in edit mode
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const refresh = () => setMessages([...control.getValue()]);
+  // Adjust textarea height to fit content on editIndex or editText change
+  useLayoutEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [editText, editIndex]);
 
   // メッセージが追加されたときに一番下までスクロール
   useEffect(() => {
@@ -129,7 +145,7 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
   }, [messages.length]);
 
   const startEdit = (index: number) => {
-    const msg = control.getValue()[index];
+    const msg = messages[index];
     const text = msg.content
       .map((c) => (isContentText(c) ? c.text : ""))
       .join("\n");
@@ -139,44 +155,49 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
 
   const saveEdit = () => {
     if (editIndex === null) return;
-    const msg = control.getValue()[editIndex];
+    const msg = messages[editIndex];
     const updated: ChatMessageItem = {
       ...msg,
       content: [{ type: "input_text", text: editText }],
     };
     control.setState(editIndex, updated);
     setEditIndex(null);
-    refresh();
   };
 
   const cancelEdit = () => setEditIndex(null);
 
   const deleteMsg = (index: number) => {
     control.removeMessage(index);
-    refresh();
   };
 
   return (
     <Drag.NoDrag>
       <div ref={scrollContainerRef} className="flex-1 w-full h-full min-h-0 overflow-y-auto">
         {messages.map((msg, index) => (
-          <div key={index} className="relative border rounded p-2">
-            {editIndex === index ? (
-              <div>
-                <textarea
-                  className="w-full border mb-1"
-                  value={editText}
-                  onChange={(e) => setEditText(e.target.value)}
-                />
-                <div className="flex justify-end gap-1">
-                  <Check size={14} className="cursor-pointer" onClick={saveEdit} />
-                  <X size={14} className="cursor-pointer" onClick={cancelEdit} />
-                </div>
-              </div>
-            ) : (
-              <>
-                <strong className="block mb-1">{msg.role}</strong>
+          // Message Item
+          <div key={index} className="rounded group">
+            {/* Message Content Wrapper */}
+            <div className="group-hover:bg-node-header/30 py-1.5 px-3">
+              {/* role */}
+              <strong className="block mb-1">{msg.role}</strong>
+              {/* Edit Mode */}
+              {editIndex === index ? (
                 <div>
+                  <textarea
+                    className="w-full border mb-1"
+                    ref={textareaRef}
+                    style={{ overflow: 'hidden' }}
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                  />
+                  <div className="flex justify-end gap-1">
+                    <Check size={14} className="cursor-pointer" onClick={saveEdit} />
+                    <X size={14} className="cursor-pointer" onClick={cancelEdit} />
+                  </div>
+                </div>
+              ) : (
+                // Normal View
+                <div className="break-all">
                   {msg.content.map((contentItem, idx) => {
                     return (
                       <div key={`${contentItem.type}-${idx}`} className="mb-1">
@@ -198,16 +219,31 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
                     );
                   })}
                 </div>
-              </>
-            )}
-            <div className="absolute right-1 bottom-1 flex gap-1 text-xs">
-              <Pencil size={14} className="cursor-pointer" onClick={() => startEdit(index)} />
-              <Trash2 size={14} className="cursor-pointer" onClick={() => deleteMsg(index)} />
+              )}
             </div>
+            {/* tool ボタン */}
+            {msg.role !== 'system' && editIndex !== index && (
+              <div className="flex justify-end items-center py-0.5">
+                <div className={`flex gap-1 text-xs ${index !== messages.length - 1 ? 'opacity-0 group-hover:opacity-100 transition-opacity duration-200' : ''}`}>
+                  <ToolButton icon={<GitBranch size={14} />} onClick={() => { }} />
+                  <ToolButton icon={<Copy size={14} />} onClick={() => { }} />
+                  <ToolButton icon={<Pencil size={14} />} onClick={() => startEdit(index)} />
+                  <ToolButton icon={<Trash2 size={14} />} onClick={() => deleteMsg(index)} />
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
     </Drag.NoDrag>
+  );
+}
+
+function ToolButton({ icon, onClick, ...props }: { icon: JSX.Element, onClick: () => void } & React.HTMLProps<HTMLDivElement>): JSX.Element {
+  return (
+    <div className="w-[16px] h-[16px] flex items-center justify-center hover:bg-accent/80 rounded-sm" onClick={onClick} {...props}>
+      {icon}
+    </div>
   );
 }
 
@@ -220,9 +256,7 @@ function isContentImage(item: ResponseInputContent): item is ResponseInputImage 
 function isContentFile(item: ResponseInputContent): item is ResponseInputFile {
   return item.type === "input_file";
 }
-function isItemAudio(item: ResponseInputItem): item is ResponseInputAudio {
-  return item.type === "input_audio";
-}
+
 
 // Function to exclude system prompt messages from a list
 export function excludeSystemPrompts(messages: ChatMessageItem[]): ChatMessageItem[] {
