@@ -4,9 +4,10 @@ import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
 import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
-import { InputValueControl } from '../../Controls/input/InputValue';
+
 import { resetCacheDataflow } from '../../util/resetCacheDataflow';
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
+import { InputValueControl } from "renderer/nodeEditor/nodes/Controls/input/InputValue";
 // 短い文字列入力ノード
 export class StringNode extends BaseNode<
   object,
