@@ -41,6 +41,7 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
         onClick: async (e) => {
           e.stopPropagation();
           this.controlflow.execute(this.id, "exec");
+          this.clearSize();
         },
       })
     }, {
