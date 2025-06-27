@@ -32,6 +32,7 @@ const wrapperStyles = cva("grid items-center w-full px-3 py-[0.2em]", {
 });
 
 export type ControlWrapperProps = VariantProps<typeof wrapperStyles> & React.ComponentProps<"div">;
+
 export function ControlWrapper({ cols, className, ...props }: ControlWrapperProps) {
   return <div className={cn(wrapperStyles({ cols }), className)} {...props} />;
 }
@@ -40,7 +41,7 @@ const labelStyles = cva("cursor-pointer min-w-0 truncate ml-2", {
   variants: {
     cols: {
       0: "",
-      1: "mb-1",
+      1: "mb-2",
       2: ""
     }
   },
@@ -48,6 +49,7 @@ const labelStyles = cva("cursor-pointer min-w-0 truncate ml-2", {
 });
 
 export type ControlLabelProps = VariantProps<typeof labelStyles> & React.ComponentProps<"label"> & { isRequired?: boolean; };
+
 export function ControlLabel({ cols, htmlFor, className, isRequired, children, ...props }: ControlLabelProps) {
   const ref = useRef<HTMLLabelElement | null>(null);
   Drag.useNoDrag(ref); // areaのdragを無効化
