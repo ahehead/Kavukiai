@@ -22,6 +22,7 @@ export class ResponseInputMessageItemListNode
       exec2: TypedSocket;
       systemPrompt: TypedSocket;
       newMessage: TypedSocket;
+      response: TypedSocket;
     },
     { exec: TypedSocket; out: TypedSocket },
     { chatContext: ResponseInputMessageControl }
@@ -44,7 +45,7 @@ export class ResponseInputMessageItemListNode
       {
         key: "exec2",
         typeName: "exec",
-        label: "add2",
+        label: "addResponse",
       },
       {
         key: "systemPrompt",
@@ -56,12 +57,17 @@ export class ResponseInputMessageItemListNode
         typeName: "ChatMessageItem",
         label: "New Message",
       },
+      {
+        key: "response",
+        typeName: "OpenAIClientResponse",
+        label: "Response",
+      },
     ]);
     this.addOutputPort([
       {
         key: "exec",
         typeName: "exec",
-        label: "next",
+        label: "added",
       },
 
       {
@@ -94,22 +100,28 @@ export class ResponseInputMessageItemListNode
     input: "exec" | "exec2",
     forward: (output: "exec") => void
   ): Promise<void> {
-    const { systemPrompt, newMessage } = (await this.dataflow.fetchInputs(
-      this.id
-    )) as {
-      systemPrompt?: string[];
-      newMessage?: ChatMessageItem[];
-    };
-    this.controls.chatContext.removeSystemPrompts();
-    if (systemPrompt?.length) {
-      this.controls.chatContext.setSystemPrompt(systemPrompt[0]);
+    if (input === "exec") {
+      // 入力からシステムプロンプトと新しいメッセージを取得
+      const { systemPrompt, newMessage } = (await this.dataflow.fetchInputs(
+        this.id
+      )) as {
+        systemPrompt?: string[];
+        newMessage?: ChatMessageItem[];
+      };
+      // システムプロンプトと新しいメッセージをチャットコンテキストに追加
+      this.controls.chatContext.removeSystemPrompts();
+      if (systemPrompt?.length) {
+        this.controls.chatContext.setSystemPrompt(systemPrompt[0]);
+      }
+      if (newMessage?.length) {
+        this.controls.chatContext.addMessage(newMessage[0]);
+      }
+      // キャッシュをリセットして、データフローを更新
+      resetCacheDataflow(this.dataflow, this.id);
+      // ノードの状態を更新
+      this.area?.update("node", this.id);
+      forward("exec");
     }
-    if (newMessage?.length) {
-      this.controls.chatContext.addMessage(newMessage[0]);
-    }
-    resetCacheDataflow(this.dataflow, this.id);
-    this.area?.update("node", this.id);
-    forward("exec");
   }
 
   serializeControlValue(): { data: { list: ChatMessageItem[] } } {
