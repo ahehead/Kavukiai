@@ -1,4 +1,4 @@
-import { useState, type JSX } from "react";
+import { useState, useRef, useEffect, type JSX } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Pencil, Trash2, Check, X } from "lucide-react";
@@ -23,6 +23,7 @@ export interface ResponseInputMessageControlParams
 export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], ResponseInputMessageControlParams> {
   messages: ChatMessageItem[];
   totalTokens = 0;
+  messageTemp = "";
 
   constructor(options: ResponseInputMessageControlParams) {
     super(options);
@@ -63,7 +64,16 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
     this.messages.push(msg);
     this.addHistory(prev, this.messages);
     this.opts.onChange?.(this.messages);
+    this.opts.area?.update("control", this.id);
+  }
 
+  // 最後のメッセージの内容をdeltaで書き換えていく
+  modifyLastMessageText(deltaString: string): void {
+    this.messageTemp += deltaString;
+    const lastMessage = this.getLastMessage();
+    if (lastMessage && lastMessage.content[0].type === "input_text") {
+      lastMessage.content[0].text = this.messageTemp;
+    }
   }
 
   setState(index: number, msg: ChatMessageItem): void {
@@ -107,8 +117,16 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
   const [messages, setMessages] = useState(control.getValue());
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const refresh = () => setMessages([...control.getValue()]);
+
+  // メッセージが追加されたときに一番下までスクロール
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    }
+  }, [messages.length]);
 
   const startEdit = (index: number) => {
     const msg = control.getValue()[index];
@@ -140,12 +158,11 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
 
   return (
     <Drag.NoDrag>
-      <div className="flex flex-col gap-2 h-full">
-        <div className="flex-1 min-h-0 space-y-2 overflow-y-auto border border-input">
-          {messages.map((msg, index) => (
-            <div key={index} className="relative border rounded p-2">
-              {editIndex === index ? (
-                <div>
+      <div ref={scrollContainerRef} className="flex-1 w-full h-full min-h-0 overflow-y-auto">
+        {messages.map((msg, index) => (
+          <div key={index} className="relative border rounded p-2">
+            {editIndex === index ? (
+              <div>
                 <textarea
                   className="w-full border mb-1"
                   value={editText}
@@ -189,7 +206,6 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
             </div>
           </div>
         ))}
-        </div>
       </div>
     </Drag.NoDrag>
   );
