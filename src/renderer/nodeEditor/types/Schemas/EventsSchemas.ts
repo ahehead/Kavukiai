@@ -155,13 +155,20 @@ export const ResponseErrorEvent = Type.Object(
 );
 export type ResponseErrorEvent = Static<typeof ResponseErrorEvent>;
 
+/**
+ * An event that is emitted when a response fails.
+ */
 export const ResponseFailedEvent = Type.Object(
   {
     response: Response,
-    sequence_number: Type.Number(),
-    type: Type.Literal("response.failed"),
+    sequence_number: Type.Number({
+      description: "The sequence number of this event.",
+    }),
+    type: Type.Literal("response.failed", {
+      description: "The type of the event. Always `response.failed`.",
+    }),
   },
-  { description: "Emitted when a response fails." }
+  { description: "An event that is emitted when a response fails." }
 );
 export type ResponseFailedEvent = Static<typeof ResponseFailedEvent>;
 
@@ -213,7 +220,13 @@ export const ResponseStreamEvent = Type.Union(
     ResponseWebSearchCallCompletedEvent,
     ResponseCreatedEvent,
     ResponseErrorEvent,
+    ResponseContentPartAddedEvent,
+    ResponseContentPartDoneEvent,
+    ResponseFailedEvent,
+    ResponseIncompleteEvent,
+    ResponseOutputItemAddedEvent,
+    ResponseOutputItemDoneEvent,
   ],
-  { description: "Union of all streaming response events" }
+  { description: "Union of all defined response events" }
 );
 export type ResponseStreamEvent = Static<typeof ResponseStreamEvent>;
