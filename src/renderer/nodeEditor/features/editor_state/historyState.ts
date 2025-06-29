@@ -70,6 +70,15 @@ export async function resetEditorState({
   controlflow,
   history,
 }: ResetEditorStateParams): Promise<void> {
+  // 先にconnectionsを削除すると editor.clear() でエラーが起きない
+  const connections = editor.getConnections();
+  for (const conn of connections) {
+    try {
+      await editor.removeConnection(conn.id);
+    } catch (error) {
+      console.warn(`Failed to remove connection ${conn.id}:`, error);
+    }
+  }
   await editor.clear();
   history.clear();
   dataflow.reset();
