@@ -13,7 +13,7 @@ import {
   type HistoryActions,
   HistoryPlugin,
 } from "rete-history-plugin";
-import { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import { ControlFlowEngine } from "rete-engine";
 
 import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
 import { setupDragPan } from "./features/dragPan";
@@ -34,12 +34,13 @@ import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
 import { selectableNodes, selector } from "./features/nodeSelection/selectable";
 import { customContextMenuPreset } from "./features/contextMenu/setup/CustomContextMenuPreset";
 import { setupContextMenu } from "./features/contextMenu/setup/SetupContextMenu";
+import { SafeDataflowEngine } from "./features/safe-dataflow/safeDataflow";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
 
   // エンジンのインスタンス化
-  const dataflow = new DataflowEngine<Schemes>(({ inputs, outputs }) => {
+  const dataflow = new SafeDataflowEngine<Schemes>(({ inputs, outputs }) => {
     return {
       inputs: (): string[] =>
         Object.keys(inputs).filter(
