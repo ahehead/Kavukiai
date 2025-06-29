@@ -82,6 +82,17 @@ export async function loadGraphFromJson(
         continue;
       }
 
+      // 接続元と接続先のノードに、portが存在するか確認
+      // allow dynamic string keys on outputs/inputs
+      const sourcePortExists = (sourceNode.outputs as any)[sourcePort];
+      const targetPortExists = (targetNode.inputs as any)[targetPort];
+      if (!sourcePortExists || !targetPortExists) {
+        console.warn(
+          `Port not found for connection: ${sourcePort} -> ${targetPort}`
+        );
+        continue;
+      }
+
       const conn = new ClassicPreset.Connection(
         sourceNode,
         sourcePort as never,
