@@ -4,12 +4,12 @@ import remarkGfm from "remark-gfm";
 import { Pencil, Trash2, Check, X, GitBranch, Copy } from "lucide-react";
 import { BaseControl, useControlValue, type ControlOptions } from "renderer/nodeEditor/types";
 import type {
-  ChatMessageItem,
   ResponseInputContent,
   ResponseInputText,
   ResponseInputImage,
   ResponseInputFile,
 } from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
 import { Drag } from "rete-react-plugin";
 
 
@@ -68,18 +68,49 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
     this.notify();
   }
 
-  // 最後のメッセージの内容をdeltaで書き換えていく
-  modifyLastMessageText(deltaString: string): void {
+  // 一時的にMessageを追加して、indexを返す
+  addTempMessage(msg: ChatMessageItem): number {
+    this.messages = [...this.messages, msg];
+    return this.messages.length - 1;
+  }
+
+  // 一時messageのroleとidを設定する
+  setTempMessageRoleAndId(index: number, role: ChatMessageItem["role"], id: string): void {
+    const message = this.messages[index];
+    if (message) {
+      message.role = role;
+      message.id = id;
+      this.messages = [...this.messages];
+      this.notify();
+    } else {
+      console.error(`Message at index ${index} not found.`);
+    }
+  }
+
+  // indexのメッセージの内容をdeltaで書き換えていく
+  modifyMessageTextDelta(index: number, deltaString: string): void {
     this.messageTemp += deltaString;
-    const lastMessage = this.getLastMessage();
-    if (lastMessage && lastMessage.content[0].type === "input_text") {
-      lastMessage.content[0].text = this.messageTemp;
+    const message = this.messages[index];
+    if (message && message.content[0].type === "input_text") {
+      message.content[0].text = this.messageTemp;
       this.messages = [...this.messages];
     }
     this.notify();
   }
+  // indexのメッセージの内容をtextで確定する
+  modifyMessageTextDone(index: number, text: string): void {
+    this.messageTemp = "";
+    const message = this.messages[index];
+    if (message && message.content[0].type === "input_text") {
+      message.content[0].text = text;
+      this.messages = [...this.messages];
+      this.addHistory(this.messages, this.messages);
+      this.opts.onChange?.(this.messages);
+      this.notify();
+    }
+  }
 
-  setState(index: number, msg: ChatMessageItem): void {
+  modifyChatMessage(index: number, msg: ChatMessageItem): void {
     const prev = [...this.messages];
     const next = [...this.messages];
     next[index] = msg;
@@ -99,6 +130,10 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
 
   getLastMessage(): ChatMessageItem | undefined {
     return this.messages[this.messages.length - 1];
+  }
+
+  getById(id: string): ChatMessageItem | undefined {
+    return this.messages.find((msg) => msg.id === id);
   }
 
   removeMessage(index: number): void {
@@ -160,7 +195,7 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
       ...msg,
       content: [{ type: "input_text", text: editText }],
     };
-    control.setState(editIndex, updated);
+    control.modifyChatMessage(editIndex, updated);
     setEditIndex(null);
   };
 
