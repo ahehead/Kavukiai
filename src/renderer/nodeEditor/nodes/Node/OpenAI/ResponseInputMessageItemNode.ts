@@ -9,7 +9,7 @@ import type {
   TypedSocket,
 } from "renderer/nodeEditor/types";
 import { MessageInputControl } from "../../Controls/OpenAI/MessageInput";
-import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 export class ResponseInputMessageItemNode extends BaseNode<
