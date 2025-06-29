@@ -1,7 +1,7 @@
 import type { HistoryPlugin } from "rete-history-plugin";
 import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import { ResponseInputMessageControl } from "../../Controls/OpenAI/ResponseInputMessage";
 import type {
@@ -9,10 +9,11 @@ import type {
   TypedSocket,
   Schemes,
 } from "renderer/nodeEditor/types";
-import type { ResponseInput } from "renderer/nodeEditor/types/Schemas/InputSchemas";
-import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
-import { chatMessagesToResponseInput } from "renderer/nodeEditor/types/Schemas";
+import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schemas";
+import { Type } from "@sinclair/typebox";
+import { ButtonControl } from "../../Controls/Button";
 
 // open ai用のchat message list Node
 export class ResponseInputMessageItemListNode
@@ -22,18 +23,22 @@ export class ResponseInputMessageItemListNode
       exec2: TypedSocket;
       systemPrompt: TypedSocket;
       newMessage: TypedSocket;
-      response: TypedSocket;
+      responseList: TypedSocket;
     },
     { exec: TypedSocket; out: TypedSocket },
     { chatContext: ResponseInputMessageControl }
   >
   implements SerializableDataNode
 {
+  // 処理中messageのindex
+  processingMessageIndex = 0;
+
   constructor(
     initial: ChatMessageItem[],
     history: HistoryPlugin<Schemes>,
     private area: AreaPlugin<Schemes, AreaExtra>,
-    private dataflow: DataflowEngine<Schemes>
+    private dataflow: DataflowEngine<Schemes>,
+    private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("ResponseInputMessageItemList");
     this.addInputPort([
@@ -45,7 +50,14 @@ export class ResponseInputMessageItemListNode
       {
         key: "exec2",
         typeName: "exec",
-        label: "addResponse",
+        label: "response",
+        control: new ButtonControl({
+          label: "Response",
+          onClick: async (e) => {
+            e.stopPropagation();
+            this.controlflow.execute(this.id, "exec2");
+          },
+        }),
       },
       {
         key: "systemPrompt",
@@ -58,8 +70,8 @@ export class ResponseInputMessageItemListNode
         label: "New Message",
       },
       {
-        key: "response",
-        typeName: "OpenAIClientResponse",
+        key: "responseList",
+        typeName: "OpenAIClientResponseOrNull",
         label: "Response",
       },
     ]);
@@ -72,7 +84,8 @@ export class ResponseInputMessageItemListNode
 
       {
         key: "out",
-        typeName: "ResponseInput",
+        typeName: "ChatMessageItem[]",
+        schema: Type.Array(ChatMessageItem),
       },
     ]);
     this.addControl(
@@ -90,10 +103,9 @@ export class ResponseInputMessageItemListNode
   }
 
   // dataflowで流す
-  data(): { out: ResponseInput } {
+  async data(): Promise<{ out: ChatMessageItem[] }> {
     const messages = this.controls.chatContext.getValue();
-    console.log("data", messages);
-    return { out: chatMessagesToResponseInput(messages) };
+    return { out: messages };
   }
 
   async execute(
@@ -101,26 +113,82 @@ export class ResponseInputMessageItemListNode
     forward: (output: "exec") => void
   ): Promise<void> {
     if (input === "exec") {
-      // 入力からシステムプロンプトと新しいメッセージを取得
-      const { systemPrompt, newMessage } = (await this.dataflow.fetchInputs(
-        this.id
-      )) as {
-        systemPrompt?: string[];
-        newMessage?: ChatMessageItem[];
-      };
-      // システムプロンプトと新しいメッセージをチャットコンテキストに追加
-      this.controls.chatContext.removeSystemPrompts();
-      if (systemPrompt?.length) {
-        this.controls.chatContext.setSystemPrompt(systemPrompt[0]);
+      await this.updateChatContext(forward);
+    } else if (input === "exec2") {
+      await this.executeChatResponseHandling();
+    }
+  }
+
+  // messageを追加する
+  // systemPromptがあればそれを設定する
+  private async updateChatContext(
+    forward: (output: "exec") => void
+  ): Promise<void> {
+    // データフローから入力を取得
+    const { systemPrompt, newMessage } = (await this.dataflow.fetchInputs(
+      this.id
+    )) as { systemPrompt?: string[]; newMessage?: ChatMessageItem[] };
+    this.controls.chatContext.removeSystemPrompts();
+    if (systemPrompt?.length) {
+      this.controls.chatContext.setSystemPrompt(systemPrompt[0]);
+    }
+    if (newMessage?.length) {
+      this.controls.chatContext.addMessage(newMessage[0]);
+    }
+    await this.area?.update("node", this.id);
+    forward("exec");
+  }
+
+  // openai clientのレスポンスを処理する
+  private async executeChatResponseHandling(): Promise<void> {
+    const inpu = (await this.dataflow.fetchInputs(this.id)) as {
+      responseList?: OpenAIClientResponseOrNull[];
+    };
+    console.log("input", inpu);
+    const responseList = inpu.responseList || [];
+    console.log("response", responseList);
+    if (!responseList || responseList.length === 0 || !responseList[0]) return;
+    const response = responseList[0];
+    // レスポンスがイベント形式の場合
+    if ("type" in response) {
+      if (response.type === "response.created") {
+        this.processingMessageIndex = this.controls.chatContext.addTempMessage({
+          content: [{ type: "input_text", text: "" }],
+          role: "assistant",
+          type: "message",
+          model: response.response.model,
+          created_at: response.response.created_at,
+        });
+      } else if (response.type === "response.output_item.added") {
+        if (response.item.type !== "message") return;
+        this.controls.chatContext.setTempMessageRoleAndId(
+          this.processingMessageIndex,
+          response.item.role,
+          response.item.id
+        );
+      } else if (response.type === "response.output_text.delta") {
+        this.controls.chatContext.modifyMessageTextDelta(
+          this.processingMessageIndex,
+          response.delta
+        );
+      } else if (response.type === "response.output_text.done") {
+        this.controls.chatContext.modifyMessageTextDone(
+          this.processingMessageIndex,
+          response.text
+        );
+        this.processingMessageIndex = 0; // 処理中のメッセージインデックスをリセット
       }
-      if (newMessage?.length) {
-        this.controls.chatContext.addMessage(newMessage[0]);
-      }
-      // キャッシュをリセットして、データフローを更新
-      resetCacheDataflow(this.dataflow, this.id);
-      // ノードの状態を更新
-      this.area?.update("node", this.id);
-      forward("exec");
+    } else {
+      // レスポンスが直接返ってきた場合
+      this.controls.chatContext.addMessage({
+        id: response.id,
+        content: [{ type: "input_text", text: response.output_text }],
+        role: "assistant",
+        type: "message",
+        model: response.model,
+        created_at: response.created_at,
+        tokens: response.usage?.output_tokens,
+      });
     }
   }
 
