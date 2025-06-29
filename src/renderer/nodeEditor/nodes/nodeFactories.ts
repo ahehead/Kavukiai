@@ -53,8 +53,14 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
     new OpenAINode(area, dataflow, controlflow),
   ResponseCreateParamsBase: ({ history, area, dataflow }) =>
     new ResponseCreateParamsBaseNode(history, area, dataflow),
-  ResponseInputMessageItemList: ({ history, area, dataflow }) =>
-    new ResponseInputMessageItemListNode([], history, area, dataflow),
+  ResponseInputMessageItemList: ({ history, area, dataflow, controlflow }) =>
+    new ResponseInputMessageItemListNode(
+      [],
+      history,
+      area,
+      dataflow,
+      controlflow
+    ),
   ResponseInputMessageItem: ({ area, dataflow, controlflow, history }) =>
     new ResponseInputMessageItemNode(area, dataflow, controlflow, history),
   JsonSchemaFormat: ({ history, area, dataflow }) =>
