@@ -12,7 +12,7 @@ export function withTooltip(
   tooltipText?: string
 ) {
   return tooltipText ? (
-    <Tooltip>
+    <Tooltip delayDuration={500}>
       <TooltipTrigger asChild>{trigger}</TooltipTrigger>
       <TooltipContent className={isTypeLabel ? "" : "prose not-prose-p:py-0"} variant={isTypeLabel ? "header" : "default"}>
         <Drag.NoDrag>
