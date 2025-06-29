@@ -133,7 +133,11 @@ async function traverseDynamicSchemaNodes(
         let isNextConnected = true;
         // 接続がバリデーションNGなら削除
         if (!canConnect(editor, conn)) {
-          await editor.removeConnection(conn.id);
+          try {
+            await editor.removeConnection(conn.id);
+          } catch (error) {
+            console.warn(`Failed to remove connection ${conn.id}:`, error);
+          }
           isNextConnected = false;
         }
         const { source: nextSource, target: nextTarget } = getConnectionSockets(
