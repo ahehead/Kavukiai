@@ -358,6 +358,49 @@ export const ResponseOutputItem = Type.Union(
 );
 export type ResponseOutputItem = Static<typeof ResponseOutputItem>;
 
+// ==============================
+// Response Usage schemas
+export const ResponseUsageInputTokensDetails = Type.Object(
+  {
+    cached_tokens: Type.Number({
+      description: "The number of tokens that were retrieved from the cache.",
+    }),
+  },
+  { description: "A detailed breakdown of the input tokens." }
+);
+export type ResponseUsageInputTokensDetails = Static<
+  typeof ResponseUsageInputTokensDetails
+>;
+
+export const ResponseUsageOutputTokensDetails = Type.Object(
+  {
+    reasoning_tokens: Type.Number({
+      description: "The number of reasoning tokens.",
+    }),
+  },
+  { description: "A detailed breakdown of the output tokens." }
+);
+export type ResponseUsageOutputTokensDetails = Static<
+  typeof ResponseUsageOutputTokensDetails
+>;
+
+export const ResponseUsage = Type.Object(
+  {
+    input_tokens: Type.Number({ description: "The number of input tokens." }),
+    input_tokens_details: ResponseUsageInputTokensDetails,
+    output_tokens: Type.Number({ description: "The number of output tokens." }),
+    output_tokens_details: ResponseUsageOutputTokensDetails,
+    total_tokens: Type.Number({
+      description: "The total number of tokens used.",
+    }),
+  },
+  {
+    description:
+      "Represents token usage details including input tokens, output tokens, a breakdown of output tokens, and the total tokens used.",
+  }
+);
+export type ResponseUsage = Static<typeof ResponseUsage>;
+
 // Main Response object
 export const Response = Type.Object(
   {
@@ -387,7 +430,7 @@ export const Response = Type.Object(
       Type.Literal("disabled"),
       Type.Null(),
     ]),
-    usage: Type.Optional(Type.Unknown()),
+    usage: Type.Optional(ResponseUsage),
     user: Type.Optional(Type.String()),
   },
   { description: "Response object" }
