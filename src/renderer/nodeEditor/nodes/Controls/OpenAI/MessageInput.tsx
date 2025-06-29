@@ -1,6 +1,7 @@
 import { type JSX, useState } from 'react'
 import { BaseControl, type ControlOptions } from 'renderer/nodeEditor/types'
-import type { ChatMessageItem, ResponseInputMessageContentList } from 'renderer/nodeEditor/types/Schemas/InputSchemas'
+import type { ResponseInputMessageContentList } from 'renderer/nodeEditor/types/Schemas/InputSchemas'
+import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas"
 import { Drag } from 'rete-react-plugin'
 
 export interface MessageInputControlParams
