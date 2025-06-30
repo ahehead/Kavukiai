@@ -99,9 +99,9 @@ async function updateDynamicSchemaNode(
 
 /**
  * 動的スキーマノードを再帰的にたどり、
- * onConnectionChangedSchema を呼び、無効な接続は削除する
+ * onConnectionChangedSchema を呼び、無効な接続は無視する。
  */
-async function traverseDynamicSchemaNodes(
+export async function traverseDynamicSchemaNodes(
   editor: NodeEditor<Schemes>,
   data: Connection<NodeInterface, NodeInterface>,
   node: NodeInterface,
@@ -130,15 +130,9 @@ async function traverseDynamicSchemaNodes(
         const nextNode = editor.getNode(conn.target);
         if (!nextNode) continue;
 
-        let isNextConnected = true;
-        // 接続がバリデーションNGなら削除
         if (!canConnect(editor, conn)) {
-          try {
-            await editor.removeConnection(conn.id);
-          } catch (error) {
-            console.warn(`Failed to remove connection ${conn.id}:`, error);
-          }
-          isNextConnected = false;
+          // TODO: 接続を赤表示
+          continue;
         }
         const { source: nextSource, target: nextTarget } = getConnectionSockets(
           editor,
@@ -151,7 +145,7 @@ async function traverseDynamicSchemaNodes(
           editor,
           conn,
           nextNode,
-          isNextConnected,
+          true,
           nextSource,
           nextTarget,
           visited
