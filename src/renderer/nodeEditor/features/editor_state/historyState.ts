@@ -76,7 +76,9 @@ export async function resetEditorState({
     try {
       await editor.removeConnection(conn.id);
     } catch (error) {
-      console.warn(`Failed to remove connection ${conn.id}:`, error);
+      // connectionの情報を全部出して
+      console.error(`Failed to remove connection ${conn.id}:`, error);
+      console.warn("Connection info:", conn);
     }
   }
   await editor.clear();
