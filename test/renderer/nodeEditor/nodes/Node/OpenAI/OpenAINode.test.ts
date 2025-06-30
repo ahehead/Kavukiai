@@ -37,10 +37,16 @@ test('handlePortMessage processes stream events', async () => {
   const close = vi.fn();
   node.port = { close } as unknown as MessagePort;
   const forward = vi.fn();
-  await (node as any).handlePortMessage({ data: { type: 'delta', value: 'a' } } as MessageEvent, forward);
-  expect(node.value).toBe('a');
-  await (node as any).handlePortMessage({ data: { type: 'done', text: 'end' } } as MessageEvent, forward);
-  expect(node.value).toBe('end');
+  await (node as any).handlePortMessage(
+    { data: { type: 'openai', data: { type: 'response.output_text.delta', delta: 'a', content_index: 0, item_id: 'id', output_index: 0, sequence_number: 0 } } } as MessageEvent,
+    forward
+  );
+  expect(node.response).toEqual({ type: 'response.output_text.delta', delta: 'a', content_index: 0, item_id: 'id', output_index: 0, sequence_number: 0 });
+  await (node as any).handlePortMessage(
+    { data: { type: 'openai', data: { type: 'response.output_text.done', text: 'end', content_index: 0, item_id: 'id', output_index: 0, sequence_number: 1 } } } as MessageEvent,
+    forward
+  );
+  expect(node.response).toEqual({ type: 'response.output_text.done', text: 'end', content_index: 0, item_id: 'id', output_index: 0, sequence_number: 1 });
   expect(node.status).toBe(NodeStatus.COMPLETED);
   expect(forward).toHaveBeenCalledTimes(2);
   expect(close).toHaveBeenCalled();
