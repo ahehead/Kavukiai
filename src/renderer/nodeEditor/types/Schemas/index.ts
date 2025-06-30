@@ -5,7 +5,10 @@ import * as InputSchemas from "../Schemas/InputSchemas";
 import * as RequestSchemas from "../Schemas/RequestSchemas";
 import * as ResponseSchemas from "../Schemas/ResponseSchemas";
 import * as EventsSchemas from "../Schemas/EventsSchemas";
-import { ResponseInputMessageItem } from "../Schemas/InputSchemas";
+import {
+  type ResponseInput,
+  ResponseInputMessageItem,
+} from "../Schemas/InputSchemas";
 import { ResponseStreamEvent } from "../Schemas/EventsSchemas";
 import * as Base from "../Schemas/BaseSchemas";
 
@@ -43,7 +46,7 @@ export type ChatMessageItem = Static<typeof ChatMessageItem>;
 
 export function chatMessagesToResponseInput(
   messages: ChatMessageItem[]
-): ResponseInputMessageItem[] {
+): ResponseInput {
   return messages.map(
     ({ model, created_at, tokens, token_speed, ...rest }) => rest
   );
