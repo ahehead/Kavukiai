@@ -9,10 +9,10 @@ import type {
   TypedSocket,
   Schemes,
 } from "renderer/nodeEditor/types";
-import { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
+import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
+import { chatMessagesToResponseInput } from "renderer/nodeEditor/types/Schemas";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schemas";
-import { Type } from "@sinclair/typebox";
 import { ButtonControl } from "../../Controls/Button";
 
 // open ai用のchat message list Node
@@ -84,8 +84,7 @@ export class ResponseInputMessageItemListNode
 
       {
         key: "out",
-        typeName: "ChatMessageItem[]",
-        schema: Type.Array(ChatMessageItem),
+        typeName: "ResponseInput",
       },
     ]);
     this.addControl(
@@ -102,10 +101,13 @@ export class ResponseInputMessageItemListNode
     );
   }
 
-  // dataflowで流す
-  async data(): Promise<{ out: ChatMessageItem[] }> {
+  // dataflowで流す (ChatMessageItem[] を ResponseInputMessageItem[] に変換)
+  async data(): Promise<{
+    out: ReturnType<typeof chatMessagesToResponseInput>;
+  }> {
     const messages = this.controls.chatContext.getValue();
-    return { out: messages };
+    const responseInputs = chatMessagesToResponseInput(messages);
+    return { out: responseInputs };
   }
 
   async execute(
