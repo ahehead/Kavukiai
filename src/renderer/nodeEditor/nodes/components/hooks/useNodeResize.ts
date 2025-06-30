@@ -24,39 +24,35 @@ class SizeChangeHistory implements HistoryAction {
   }
 }
 
-// 新しい HistoryAction クラスを追加
+// History action for clearing node size
 class ClearSizeHistoryAction implements HistoryAction {
-  private prevWidth: number | undefined;
-  private prevHeight: number | undefined;
+  private prev: Size;
+  private next: Size = { width: undefined, height: undefined };
 
   constructor(
     private node: NodeInterface,
     private area: AreaPlugin<Schemes, AreaExtra>
   ) {
-    // クリア前のサイズを保存
-    const size = this.node.getSize();
-    this.prevWidth = size.width;
-    this.prevHeight = size.height;
+    // 保存: クリア前のサイズ
+    this.prev = this.node.getSize();
   }
 
   async undo() {
-    if (this.prevWidth !== undefined && this.prevHeight !== undefined) {
-      this.node.setSize(this.prevWidth, this.prevHeight);
-      await this.area.resize(this.node.id, this.prevWidth, this.prevHeight);
+    const { width, height } = this.prev;
+    if (width !== undefined && height !== undefined) {
+      this.node.setSize(width, height);
+      await this.area.resize(this.node.id, width, height);
     }
   }
 
   async redo() {
-    // redo 時にも undo のためにクリア前のサイズを再度取得しておく
-    const size = this.node.getSize();
-    this.prevWidth = size.width;
-    this.prevHeight = size.height;
-
     this.node.clearSize();
-    // area.update を呼び出してノードの再レンダリングをトリガー
-    await this.area.update("node", this.node.id);
+    await this.area.update("node", this.node.id); // リサイズではなく再レンダリング
   }
 }
+
+// Utility type for node sizes
+type Size = { width?: number; height?: number };
 
 type UseNodeResizeProps = {
   node: NodeInterface;
@@ -88,6 +84,9 @@ export function useNodeResize({
   const startResize = useCallback(
     (e: React.PointerEvent) => {
       e.stopPropagation();
+      // pointer capture for robust resizing
+      const target = e.currentTarget as Element;
+      target.setPointerCapture(e.pointerId);
       const { width: startW, height: startH } = getPanelSize();
       const startX = e.clientX;
       const startY = e.clientY;
@@ -103,6 +102,8 @@ export function useNodeResize({
       }
 
       function up() {
+        // release pointer capture
+        target.releasePointerCapture(e.pointerId);
         window.removeEventListener("pointermove", move);
         window.removeEventListener("pointerup", up);
         const { width, height } = node.getSize();
