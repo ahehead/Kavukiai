@@ -116,13 +116,15 @@ Ctrlで選択個別解除、
 - **multi line stringノード**
   - 説明: 長文プロンプトを入力するテキストボックスをもつ  
   - 出力: string  
-- **テンプレートノード**
-  - 説明: テンプレート文字列内の特定文字を置換用文字列で置き換える  
-  - 入力:  
-    - template: string (置換対象含む)  
-    - targetString: string
-    - insertString: string 
-  - 出力: string  
+- **TemplateReplaceNode**
+  - 説明: template の `{{key}}` プレースホルダを obj の値で置き換える
+  - 入力:
+    - exec: トリガー
+    - template: string
+    - obj: object
+  - 出力:
+    - exec: トリガー
+    - string: string
 - **キャラクターノード**
   - 説明: キャラ設定項目を自由に追加できるフィールドをもつ  
   - 出力: string  
