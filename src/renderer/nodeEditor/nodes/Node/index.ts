@@ -13,6 +13,7 @@ export { JsonSchemaFormatNode } from "./OpenAI/JsonSchemaFormatNode";
 export { ResponseTextConfigNode } from "./OpenAI/ResponseTextConfigNode";
 export { BoolNode } from "./Primitive/BoolNode";
 export { ListNode } from "./Primitive/ListNode";
+export { TemplateReplaceNode } from "./Primitive/TemplateReplaceNode";
 export { ObjectPickNode } from "./Primitive/Object/ObjectPickNode";
 export { JsonSchemaToObjectNode } from "./Primitive/Object/JsonSchemaToObject";
 export { JsonSchemaNode } from "./Primitive/Object/JsonSchemaNode";
