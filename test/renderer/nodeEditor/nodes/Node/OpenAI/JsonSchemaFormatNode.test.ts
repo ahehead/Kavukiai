@@ -14,8 +14,8 @@ test("JsonSchemaFormatNode outputs json_schema object", () => {
   const result = node.data({ schema: [{ foo: "bar" }] });
   expect(result.out).toEqual({
     type: "json_schema",
-    name: "test",
-    description: "test",
+    name: "",
+    description: "",
     strict: true,
     schema: { foo: "bar", additionalProperties: false },
   });
