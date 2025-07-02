@@ -14,6 +14,7 @@ import {
   JsonSchemaNode,
   JsonSchemaFormatNode,
   ResponseTextConfigNode,
+  TemplateReplaceNode,
 } from "./Node";
 import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
@@ -41,11 +42,14 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
 
   String: ({ history, area, dataflow }) =>
     new StringNode("", history, area, dataflow),
+  MultiLineString: ({ history, area, dataflow }) =>
+    new MultiLineStringNode("", history, area, dataflow),
+  TemplateReplace: ({ area, dataflow }) =>
+    new TemplateReplaceNode(area, dataflow),
+
   Number: ({ history, area, dataflow }) =>
     new NumberNode(0, history, area, dataflow),
   Bool: ({ history, area, dataflow }) => new BoolNode(history, area, dataflow),
-  MultiLineString: ({ history, area, dataflow }) =>
-    new MultiLineStringNode("", history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
 
@@ -134,6 +138,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "JsonSchema",
         key: "jsonschema-node",
         factoryKey: "JsonSchema",
+      },
+      {
+        label: "TemplateReplace",
+        key: "template-replace",
+        factoryKey: "TemplateReplace",
       },
     ],
   },
