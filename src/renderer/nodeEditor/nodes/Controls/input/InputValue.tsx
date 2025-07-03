@@ -72,17 +72,19 @@ export function InputValueControlView<T extends string | number>(props: {
 
   return (
     <Drag.NoDrag>
-      <input
-        id={control.id}
-        type={control.type === "number" ? "number" : "text"}
-        step={control.type === "number" ? control.step : undefined}
-        value={value}
-        readOnly={!control.opts.editable}
-        onFocus={() => control.addHistory(value, value)}
-        onChange={control.opts.editable ? handleChange : undefined}
-        className={inputValueStyles({ editable: control.opts.editable })}
-        placeholder=""
-      />
+      <div className="w-full">
+        <input
+          id={control.id}
+          type={control.type === "number" ? "number" : "text"}
+          step={control.type === "number" ? control.step : undefined}
+          value={value}
+          readOnly={!control.opts.editable}
+          onFocus={() => control.addHistory(value, value)}
+          onChange={control.opts.editable ? handleChange : undefined}
+          className={inputValueStyles({ editable: control.opts.editable })}
+          placeholder=""
+        />
+      </div>
     </Drag.NoDrag>
   );
 }
