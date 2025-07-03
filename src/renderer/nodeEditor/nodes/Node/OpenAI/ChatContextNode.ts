@@ -181,6 +181,24 @@ export class ResponseInputMessageItemListNode
         this.processingMessageIndex = 0; // 処理中のメッセージインデックスをリセット
       }
     } else {
+      for (const item of response.output) {
+        if (item.type === "message") {
+          for (const content of item.content) {
+            if (content.type === "output_text") {
+              this.controls.chatContext.addMessage({
+                id: item.id,
+                content: [{ type: "input_text", text: content.text }],
+                role: item.role,
+                type: "message",
+                model: response.model,
+                created_at: response.created_at,
+                tokens: response.usage?.output_tokens,
+              });
+            }
+          }
+        }
+      }
+
       // レスポンスが直接返ってきた場合
       this.controls.chatContext.addMessage({
         id: response.id,
