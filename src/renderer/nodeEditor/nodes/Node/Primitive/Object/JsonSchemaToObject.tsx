@@ -2,7 +2,7 @@
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { ControlFlowEngine, DataflowEngine } from 'rete-engine';
-import type { TypedSocket, Schemes, AreaExtra } from 'renderer/nodeEditor/types';
+import type { TypedSocket, Schemes, AreaExtra, TooltipInput } from 'renderer/nodeEditor/types';
 import { InputValueControl } from '../../../Controls/input/InputValue';
 import { SwitchControl } from '../../../Controls/input/Switch';
 import { Type, type TSchema } from '@sinclair/typebox';
@@ -13,15 +13,17 @@ import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/Serial
 import { getInputValue } from '../../../util/getInput';
 import { removeLinkedSockets } from '../../../util/removeNode';
 import type { NodeEditor } from 'rete';
-import { Value } from '@sinclair/typebox/value';
 import type { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema';
+import { restoreKind } from 'renderer/nodeEditor/nodes/util/restoreKind';
 
 export class JsonSchemaToObjectNode extends SerializableInputsNode<
   { exec: TypedSocket; schema: TypedSocket } & Record<string, TypedSocket>,
   { out: TypedSocket },
   object
 > implements SerializableDataNode {
+
   schema: TSchema | null = null;
+
   constructor(
     private editor: NodeEditor<Schemes>,
     private history: HistoryPlugin<Schemes>,
@@ -60,11 +62,22 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
     this.schema = schema;
   }
 
+  getSchema(): TSchema | null {
+    return this.schema;
+  }
+
+  getDynamicInputs(): [string, TooltipInput<TypedSocket> | undefined][] {
+    return Object.entries(this.inputs)
+      .filter(([key]) => !["schema", "exec"].includes(key))
+  }
+
+  // トリガーで実行
   async execute(): Promise<void> {
+    // スキーマを取得
     const { schema } = (await this.dataflow.fetchInputs(this.id)) as { schema?: TSchema[] }
     resetCacheDataflow(this.dataflow, this.id);
     await this.removeDynamicPorts();
-    if (!schema?.[0]) {
+    if (!schema || schema.length === 0 || !schema?.[0]) {
       this.setSchema(null);
       return;
     }
@@ -73,6 +86,15 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
 
   }
 
+  // 動的なinputを削除
+  async removeDynamicPorts(): Promise<void> {
+    for (const [key, tooltip] of this.getDynamicInputs()) {
+      await removeLinkedSockets(this.editor, this.id, key);
+      this.removeInput(key);
+    }
+  }
+
+  // スキーマから動的なポートを作成
   async buildDynamicPorts(schema: TSchema) {
     const props = schema.properties as Record<string, TSchema> | undefined;
     let outSchema: TSchema = Type.Object({});
@@ -84,14 +106,7 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
     await this.area.update('node', this.id);
   }
 
-
-  async removeDynamicPorts(): Promise<void> {
-    for (const key of Object.keys(this.inputs).filter(key => !["schema", "exec"].includes(key))) {
-      await removeLinkedSockets(this.editor, this.id, key);
-      this.removeInput(key as never);
-    }
-  }
-
+  // スキーマのプロパティから動的なinputを作成
   addDynamicInput(TSchemaProperties: Record<string, TSchema>) {
     for (const [key, schema] of Object.entries(TSchemaProperties)) {
       const typeName = this.getTypeName(schema);
@@ -105,6 +120,7 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
     }
   }
 
+  // スキーマのtypeからコントロールのタイプを決定
   private getTypeName(schema: TSchema): keyof typeof defaultNodeSchemas {
     const t = (schema as any).type;
     if (t === 'string') return 'string';
@@ -113,6 +129,7 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
     return 'any';
   }
 
+  // コントロールを作成
   private createControl(label: string, typeName: string) {
     const opts = {
       label,
@@ -130,12 +147,11 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
     return new InputValueControl<string>({ value: '', type: 'string', ...opts });
   }
 
+  // 動的なinputからobjectを作り返す
   data(inputs: Record<string, unknown>): { out: Record<string, unknown> } {
     const result: Record<string, unknown> = {};
-    for (const [key, input] of Object.entries(this.inputs)) {
-      if (key === 'schema' || key === 'exec') continue;
-      const value = getInputValue(this.inputs, key, inputs);
-      result[key] = value;
+    for (const [key, tooltip] of this.getDynamicInputs()) {
+      result[key] = getInputValue(this.inputs, key, inputs);
     }
     return { out: result };
   }
@@ -145,13 +161,14 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
   }
 
   async deserializeControlValue(data: { schema: TSchema | null }): Promise<void> {
-    if (!data.schema || Value.Equal(this.schema, data.schema)) {
+    if (!data.schema) {
+      this.setSchema(null);
       return;
     }
-
-    this.setSchema(data.schema);
+    const typebox = restoreKind(data.schema);
+    // console.log('Deserializing schema:', typebox);
+    this.setSchema(typebox);
     await this.removeDynamicPorts();
-    await this.buildDynamicPorts(data.schema);
-
+    await this.buildDynamicPorts(typebox);
   }
 }
