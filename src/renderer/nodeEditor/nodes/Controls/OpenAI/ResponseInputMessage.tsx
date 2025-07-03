@@ -8,6 +8,8 @@ import type {
   ResponseInputText,
   ResponseInputImage,
   ResponseInputFile,
+  EasyInputMessage,
+  ResponseInputMessageContentList,
 } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
 import { Drag } from "rete-react-plugin";
@@ -60,10 +62,9 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
   }
 
   // 一時messageのroleとidを設定する
-  setTempMessageRoleAndId(index: number, role: ChatMessageItem["role"], id: string): void {
+  setTempMessageId(index: number, id: string): void {
     const message = this.messages[index];
     if (message) {
-      message.role = role;
       message.id = id;
       this.messages = [...this.messages];
       this.notify();
@@ -76,8 +77,8 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
   modifyMessageTextDelta(index: number, deltaString: string): void {
     this.messageTemp += deltaString;
     const message = this.messages[index];
-    if (message && message.content[0].type === "input_text") {
-      message.content[0].text = this.messageTemp;
+    if (message && message.role === "assistant") {
+      (message as EasyInputMessage).content = this.messageTemp;
       this.messages = [...this.messages];
     }
     this.notify();
@@ -86,8 +87,8 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
   modifyMessageTextDone(index: number, text: string): void {
     this.messageTemp = "";
     const message = this.messages[index];
-    if (message && message.content[0].type === "input_text") {
-      message.content[0].text = text;
+    if (message && message.role === "assistant") {
+      (message as EasyInputMessage).content = text;
       this.messages = [...this.messages];
       this.addHistory(this.messages, this.messages);
       this.opts.onChange?.(this.messages);
@@ -159,9 +160,16 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
 
   const startEdit = (index: number) => {
     const msg = messages[index];
-    const text = msg.content
-      .map((c) => (isContentText(c) ? c.text : ""))
-      .join("\n");
+    let text = "";
+    if (Array.isArray(msg.content) && msg.content.length > 0) {
+      // Join all text content in the message
+      text = msg.content
+        .filter(isContentText)
+        .map((c) => c.text)
+        .join("\n");
+    } else if (msg.role === "assistant" && typeof msg.content === "string") {
+      text = msg.content;
+    }
     setEditText(text);
     setEditIndex(index);
   };
@@ -169,13 +177,16 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
   const saveEdit = () => {
     if (editIndex === null) return;
     const msg = messages[editIndex];
-    const updated: ChatMessageItem = {
+    if (!msg) return;
+
+    const updated = {
       ...msg,
-      content: [{ type: "input_text", text: editText }],
-    };
+      content: isContentString(msg.content) ? editText : [{ type: "input_text", text: editText }]
+    } as EasyInputMessage as ChatMessageItem
+
     control.modifyChatMessage(editIndex, updated);
     setEditIndex(null);
-  };
+  }
 
   const cancelEdit = () => setEditIndex(null);
 
@@ -216,7 +227,10 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
               ) : (
                 // Normal View
                 <div className="break-all">
-                  {msg.content.map((contentItem, idx) => {
+                  {isContentString(msg.content) && (
+                    <Markdown remarkPlugins={[remarkGfm]}>{msg.content}</Markdown>
+                  )}
+                  {Array.isArray(msg.content) && msg.content.map((contentItem, idx) => {
                     return (
                       <div key={`${contentItem.type}-${idx}`} className="mb-1">
                         {isContentText(contentItem) && (
@@ -257,6 +271,7 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
   );
 }
 
+
 function ToolButton({ icon, onClick, ...props }: { icon: JSX.Element, onClick: () => void } & React.HTMLProps<HTMLDivElement>): JSX.Element {
   return (
     <div className="w-[16px] h-[16px] flex items-center justify-center hover:bg-accent/80 rounded-sm" onClick={onClick} {...props}>
@@ -275,5 +290,20 @@ function isContentFile(item: ResponseInputContent): item is ResponseInputFile {
   return item.type === "input_file";
 }
 
+function isEasyAssistantMessage(
+  item: EasyInputMessage
+): item is EasyInputMessage {
+  return "type" in item &&
+    item.type === "message" &&
+    item.role === "assistant" &&
+    "content" in item &&
+    typeof item.content === "string";
+}
 
+function isContentString(content: string | ResponseInputMessageContentList): content is string {
+  return typeof content === "string"
+}
 
+function isContentList(content: string | ResponseInputMessageContentList): content is ResponseInputMessageContentList {
+  return Array.isArray(content);
+}
