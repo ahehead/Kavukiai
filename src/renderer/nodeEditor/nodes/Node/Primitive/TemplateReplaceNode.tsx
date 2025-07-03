@@ -53,5 +53,16 @@ export class TemplateReplaceNode extends SerializableInputsNode<
     forward("exec");
   }
 
+  serializeControlValue(): { data: { result: string } } {
+    return {
+      data: {
+        result: this.result,
+      },
+    };
+  }
+
+  deserializeControlValue(data: { result: string }): void {
+    this.result = data.result;
+  }
 
 }
