@@ -208,6 +208,11 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
   return (
     <Drag.NoDrag>
       <div ref={scrollContainerRef} className="flex-1 w-full h-full min-h-0 overflow-y-auto">
+        {messages.length === 0 && (
+          <div className="w-full flex items-center justify-center ">
+            <div className="p-3 text-gray-600">No messages</div>
+          </div>
+        )}
         {messages.map((msg, index) => (
           // Message Item
           <div key={index} className="rounded group">
