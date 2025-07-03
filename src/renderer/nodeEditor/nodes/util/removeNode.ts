@@ -13,7 +13,9 @@ export async function removeNodeWithConnections(
   await editor.removeNode(nodeId);
 }
 
-// socket keyがtargetになっているコネクションを全て削除する
+/**
+ * socket keyがtargetになっているコネクションを全て削除する
+ */
 export async function removeLinkedSockets(
   editor: NodeEditor<Schemes>,
   nodeId: string,
