@@ -12,7 +12,6 @@ import type {
 import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
 import { Drag } from "rete-react-plugin";
 
-
 export interface ResponseInputMessageControlParams
   extends ControlOptions<ChatMessageItem[]> {
   value: ChatMessageItem[];
@@ -38,26 +37,12 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
     return this.messages;
   }
 
-  setSystemPrompt(text: string): void {
-    const prev = [...this.messages];
-    const idx = this.messages.findIndex((m) => m.role === "system");
-    const next = [...this.messages];
-    if (idx >= 0) {
-      next[idx] = {
-        ...next[idx],
-        content: [{ type: "input_text", text }],
-      };
-    } else {
-      next.unshift({
-        role: "system",
-        type: "message",
-        content: [{ type: "input_text", text }],
-      });
-    }
-    this.messages = next;
-    this.addHistory(prev, this.messages);
-    this.opts.onChange?.(this.messages);
-    this.notify();
+  createSystemPromptMessage(text: string): ChatMessageItem {
+    return {
+      type: "message",
+      role: "system",
+      content: [{ type: "input_text", text: text }],
+    };
   }
 
   addMessage(msg: ChatMessageItem): void {
@@ -146,13 +131,6 @@ export class ResponseInputMessageControl extends BaseControl<ChatMessageItem[], 
     this.notify();
   }
 
-  removeSystemPrompts(): void {
-    const prev = [...this.messages];
-    this.messages = excludeSystemPrompts(this.messages);
-    this.addHistory(prev, this.messages);
-    this.opts.onChange?.(this.messages);
-    this.notify();
-  }
 }
 
 export function ResponseInputMessageView(props: { data: ResponseInputMessageControl }): JSX.Element {
@@ -298,7 +276,4 @@ function isContentFile(item: ResponseInputContent): item is ResponseInputFile {
 }
 
 
-// Function to exclude system prompt messages from a list
-export function excludeSystemPrompts(messages: ChatMessageItem[]): ChatMessageItem[] {
-  return messages.filter((msg) => msg.role !== "system");
-}
+
