@@ -14,6 +14,7 @@ import { chatMessagesToResponseInput } from "renderer/nodeEditor/types/Schemas";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schemas";
 import { ButtonControl } from "../../Controls/Button";
+import type { EasyInputMessage } from "renderer/nodeEditor/types/Schemas/InputSchemas";
 
 // open ai用のchat message list Node
 export class ResponseInputMessageItemListNode
@@ -161,17 +162,16 @@ export class ResponseInputMessageItemListNode
     if ("type" in response) {
       if (response.type === "response.created") {
         this.processingMessageIndex = this.controls.chatContext.addTempMessage({
-          content: [{ type: "input_text", text: "" }],
+          content: "",
           role: "assistant",
           type: "message",
           model: response.response.model,
           created_at: response.response.created_at,
-        });
+        } as EasyInputMessage as ChatMessageItem);
       } else if (response.type === "response.output_item.added") {
         if (response.item.type !== "message") return;
-        this.controls.chatContext.setTempMessageRoleAndId(
+        this.controls.chatContext.setTempMessageId(
           this.processingMessageIndex,
-          response.item.role,
           response.item.id
         );
       } else if (response.type === "response.output_text.delta") {
@@ -193,13 +193,13 @@ export class ResponseInputMessageItemListNode
             if (content.type === "output_text") {
               this.controls.chatContext.addMessage({
                 id: item.id,
-                content: [{ type: "input_text", text: content.text }],
+                content: content.text,
                 role: item.role,
                 type: "message",
                 model: response.model,
                 created_at: response.created_at,
                 tokens: response.usage?.output_tokens,
-              });
+              } as EasyInputMessage as ChatMessageItem);
             }
           }
         }
