@@ -3,8 +3,8 @@ mode: 'agent'
 tools: ['githubRepo', 'codebase', 'fetch']
 description: 'typeboxのスキーマを作成する。'
 ---
-ノードエディタでopenai response apiを利用するために、responses.tsから@sinclair/typeboxの型を作ってsrc/renderer/nodeEditor/types/Schemasフォルダに書いてほしい。
-・次は ResponseCreateParamsBaseのtest?:ResponseTextConfigから。
+ノードエディタでopenai response apiを利用するために、responses.tsから@sinclair/typeboxを作ってsrc/renderer/nodeEditor/types/Schemasフォルダにtypeboxのスキーマを書いてほしい。
+・一部から始めてほしい。ResponseInputItemとResponseItemから始めてほしい。
 ・ネストは掘っていって小さい単位から作ってほしい。例:const Stream = Type.Union([Type.Boolean(),Type.Null()]) そして小さい単位を組み合わせてtypeboxを作ってほしい。例: const Response = Type.Object({stream: Stream, ...})
 ・そして小さな単位の型は、ショートハンドキーで呼び出せるようにオブジェクトに登録してほしい。
 
