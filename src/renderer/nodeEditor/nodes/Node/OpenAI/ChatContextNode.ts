@@ -30,6 +30,7 @@ export class ResponseInputMessageItemListNode
   >
   implements SerializableDataNode
 {
+  systemPrompt = ""; // システムプロンプト
   // 処理中messageのindex
   processingMessageIndex = 0;
 
@@ -105,8 +106,13 @@ export class ResponseInputMessageItemListNode
   async data(): Promise<{
     out: ReturnType<typeof chatMessagesToResponseInput>;
   }> {
+    const systemPromptMessage =
+      this.controls.chatContext.createSystemPromptMessage(this.systemPrompt);
     const messages = this.controls.chatContext.getValue();
-    const responseInputs = chatMessagesToResponseInput(messages);
+    const responseInputs = chatMessagesToResponseInput([
+      systemPromptMessage,
+      ...messages,
+    ]);
     return { out: responseInputs };
   }
 
@@ -130,11 +136,11 @@ export class ResponseInputMessageItemListNode
     const { systemPrompt, newMessage } = (await this.dataflow.fetchInputs(
       this.id
     )) as { systemPrompt?: string[]; newMessage?: ChatMessageItem[] };
-    this.controls.chatContext.removeSystemPrompts();
-    if (systemPrompt?.length) {
-      this.controls.chatContext.setSystemPrompt(systemPrompt[0]);
+
+    if (!!systemPrompt && systemPrompt.length > 0) {
+      this.systemPrompt = systemPrompt[0];
     }
-    if (newMessage?.length) {
+    if (!!newMessage && newMessage.length > 0) {
       this.controls.chatContext.addMessage(newMessage[0]);
     }
     await this.area?.update("node", this.id);
@@ -212,15 +218,22 @@ export class ResponseInputMessageItemListNode
     }
   }
 
-  serializeControlValue(): { data: { list: ChatMessageItem[] } } {
+  serializeControlValue(): {
+    data: { systemPrompt: string; list: ChatMessageItem[] };
+  } {
     return {
       data: {
+        systemPrompt: this.systemPrompt,
         list: this.controls.chatContext.getValue(),
       },
     };
   }
 
-  deserializeControlValue(data: { list: ChatMessageItem[] }): void {
+  deserializeControlValue(data: {
+    systemPrompt: string;
+    list: ChatMessageItem[];
+  }): void {
+    this.systemPrompt = data.systemPrompt;
     this.controls.chatContext.setValue(data.list);
   }
 }
