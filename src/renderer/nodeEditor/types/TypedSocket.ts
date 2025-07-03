@@ -33,6 +33,8 @@ ${JSON.stringify(schema, null, 2)}
       return this.isExec && other.isExec;
     }
 
+    // console.log("Checking type compatibility:", this.schema, other.schema);
+
     const t = Type.Extends(
       this.schema,
       other.schema,
