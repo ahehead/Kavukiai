@@ -22,6 +22,8 @@ LMstudioやComfyUIやOpenAI APIのようなAIを組み合わせて、検証で�
 | (その他) shadcn/ui, lucide-icons  | 補助コンポーネント      |
 | zustand 　　　　　　　　　　　　　　| storeライブラリ         |
 | typebox                           | json schema            |
+| lmstudio-js                      | LLM 実行ライブラリ LMStudio     |
+| comfyui-sdk                      | ComfyUI API ラッパー   |
 
 ## フォルダ構成
 ```
