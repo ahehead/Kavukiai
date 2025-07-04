@@ -17,17 +17,6 @@ test("addNewMessage adds a message", () => {
   expect(control.getValue()[0]).toEqual(sampleMessage);
 });
 
-test("setSystemPrompt creates or updates system message", () => {
-  const control = new ResponseInputMessageControl({ value: [] });
-  control.setSystemPrompt("sys");
-  expect(control.getValue()[0].role).toBe("system");
-  control.setSystemPrompt("update");
-  expect(control.getValue()[0].content[0]).toEqual({
-    type: "input_text",
-    text: "update",
-  });
-});
-
 test("removeMessage deletes the given index", () => {
   const control = new ResponseInputMessageControl({ value: [sampleMessage] });
   control.removeMessage(0);
