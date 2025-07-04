@@ -69,7 +69,6 @@ export class OpenAINode extends SerializableInputsNode<
   }
 
   setResponse(response: OpenAIClientResponse): void {
-    this.controls.console.addValue("response set");
     this.response = response;
     resetCacheDataflow(this.dataflow, this.id);
   }
@@ -130,7 +129,7 @@ export class OpenAINode extends SerializableInputsNode<
     this.controls.console.addValue(`Param: ${JSON.stringify(param, null, 2)}`);
     // パラメータがない場合は終了
     if (!param) {
-      await this.logAndTerminate("error", "No param");
+      await this.logAndTerminate("error", "No param", forward);
       return;
     }
     this.controls.console.addValue("Start");
@@ -152,7 +151,8 @@ export class OpenAINode extends SerializableInputsNode<
   ): Promise<void> {
     const result = e.data as PortEventType;
     if (result.type === "error") {
-      await this.logAndTerminate("error", result.message);
+      await this.logAndTerminate("error", result.message, forward);
+      return;
     }
     if (result.type === "openai") {
       const data = result.data;
@@ -166,14 +166,17 @@ export class OpenAINode extends SerializableInputsNode<
           );
         }
         if (data.type === "error") {
-          await this.logAndTerminate("error", data.message);
+          await this.logAndTerminate("error", data.message, forward);
+          return;
         } else if (data.type === "response.failed") {
           this.controls.console.addValue(
             `Failed: ${data.response.error?.code} - ${data.response.error?.message}`
           );
-          await this.logAndTerminate("error", "response.failed");
+          await this.logAndTerminate("error", "response.failed", forward);
+          return;
         } else if (data.type === "response.output_text.done") {
-          await this.logAndTerminate("done", data.text);
+          await this.logAndTerminate("done", data.text, forward);
+          return;
         }
       } else {
         // レスポンスの場合
@@ -181,7 +184,8 @@ export class OpenAINode extends SerializableInputsNode<
         this.controls.console.addValue(
           `Response: ${JSON.stringify(data, null, 2)}`
         );
-        await this.logAndTerminate("done", data.output_text);
+        await this.logAndTerminate("done", data.output_text, forward);
+        return;
       }
     }
     forward("exec");
@@ -190,7 +194,8 @@ export class OpenAINode extends SerializableInputsNode<
   //errorとdoneのときの終了処理
   async logAndTerminate(
     type: "error" | "done",
-    message: string
+    message: string,
+    forward: (output: "exec") => void
   ): Promise<void> {
     if (type === "error") {
       this.controls.console.addValue(`Error: ${message}`);
@@ -202,11 +207,13 @@ export class OpenAINode extends SerializableInputsNode<
       console.log(`Done: ${message}`);
       // nodeのステータスをCOMPLETEDに設定
       await this.setStatus(this.area, NodeStatus.COMPLETED);
+      forward("exec");
     }
     this.closePort();
   }
 }
 
+// message eventを使ってelectron MessagePortをやり取りする関数
 async function createOpenAIMessagePort({
   id,
   param,
