@@ -196,7 +196,7 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
 
   return (
     <Drag.NoDrag>
-      <div ref={scrollContainerRef} className="flex-1 w-full h-full min-h-0 overflow-y-auto">
+      <div ref={scrollContainerRef} className="flex-1 w-full h-full min-h-0 overflow-y-auto pb-2">
         {messages.length === 0 && (
           <div className="w-full flex items-center justify-center ">
             <div className="p-3 text-gray-600">No messages</div>
@@ -290,20 +290,6 @@ function isContentFile(item: ResponseInputContent): item is ResponseInputFile {
   return item.type === "input_file";
 }
 
-function isEasyAssistantMessage(
-  item: EasyInputMessage
-): item is EasyInputMessage {
-  return "type" in item &&
-    item.type === "message" &&
-    item.role === "assistant" &&
-    "content" in item &&
-    typeof item.content === "string";
-}
-
 function isContentString(content: string | ResponseInputMessageContentList): content is string {
   return typeof content === "string"
-}
-
-function isContentList(content: string | ResponseInputMessageContentList): content is ResponseInputMessageContentList {
-  return Array.isArray(content);
 }
