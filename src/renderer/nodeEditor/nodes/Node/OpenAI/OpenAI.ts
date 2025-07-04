@@ -14,6 +14,7 @@ import { ButtonControl } from "../../Controls/Button";
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import type { OpenAIClientResponse } from "renderer/nodeEditor/types/Schemas";
 import type OpenAI from "openai";
+import { ControlJson } from "shared/JsonType";
 
 // Run ノード
 export class OpenAINode extends SerializableInputsNode<
@@ -65,7 +66,7 @@ export class OpenAINode extends SerializableInputsNode<
         label: "Response",
       },
     ]);
-    this.addControl("console", new ConsoleControl({ area }));
+    this.addControl("console", new ConsoleControl({}));
   }
 
   setResponse(response: OpenAIClientResponse): void {
@@ -210,6 +211,14 @@ export class OpenAINode extends SerializableInputsNode<
       forward("exec");
     }
     this.closePort();
+  }
+
+  serializeControlValue(): ControlJson {
+    return this.controls.console.toJSON();
+  }
+
+  deserializeControlValue(data: ControlJson): void {
+    this.controls.console.setFromJSON({ data });
   }
 }
 
