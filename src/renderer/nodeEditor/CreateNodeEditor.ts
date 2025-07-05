@@ -32,6 +32,7 @@ import { type AreaExtra, ExecList, type Schemes } from "./types";
 import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
 import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
 import { selectableNodes, selector } from "./features/nodeSelection/selectable";
+import { setupDeleteSelectedNodes } from "./features/deleteSelectedNodes/deleteSelectedNodes";
 import { customContextMenuPreset } from "./features/contextMenu/setup/CustomContextMenuPreset";
 import { setupContextMenu } from "./features/contextMenu/setup/SetupContextMenu";
 import { SafeDataflowEngine } from "./features/safe-dataflow/safeDataflow";
@@ -117,6 +118,8 @@ export async function createNodeEditor(container: HTMLElement) {
   // ダブルクリックでズームするのを無効化
   disableDoubleClickZoom(area);
 
+  const cleanupDeleteKey = setupDeleteSelectedNodes(editor);
+
   // ノードの選択、追加
   const sn = selectableNodes(area, selector(), {
     accumulating: accumulateOnShift(),
@@ -137,6 +140,7 @@ export async function createNodeEditor(container: HTMLElement) {
     destroy: () => {
       area.destroy();
       cleanupDragPan();
+      cleanupDeleteKey();
     },
 
     // 現在のnode editorの状態を取得
