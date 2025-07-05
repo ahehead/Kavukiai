@@ -14,7 +14,7 @@ import { ButtonControl } from "../../Controls/Button";
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import type { OpenAIClientResponse } from "renderer/nodeEditor/types/Schemas";
 import type OpenAI from "openai";
-import { ControlJson } from "shared/JsonType";
+import type { ControlJson } from "shared/JsonType";
 
 // Run ノード
 export class OpenAINode extends SerializableInputsNode<
@@ -151,44 +151,48 @@ export class OpenAINode extends SerializableInputsNode<
     forward: (output: "exec") => void
   ): Promise<void> {
     const result = e.data as PortEventType;
+    // エラーは即終了
     if (result.type === "error") {
-      await this.logAndTerminate("error", result.message, forward);
-      return;
+      return this.logAndTerminate("error", result.message, forward);
     }
-    if (result.type === "openai") {
-      const data = result.data;
-      if ("type" in data) {
-        // ストリーミングイベントの場合
-        this.setResponse(data);
-        this.controls.console.addValue(`Event type: ${data.type}`);
-        if (data.type === "response.completed") {
-          this.controls.console.addValue(
-            `Response completed: ${JSON.stringify(data, null, 2)}`
-          );
-        }
-        if (data.type === "error") {
-          await this.logAndTerminate("error", data.message, forward);
-          return;
-        } else if (data.type === "response.failed") {
+    // OpenAI イベント以外はerror終了
+    if (result.type !== "openai") {
+      return this.logAndTerminate("error", "Not OpenAI event", forward);
+    }
+
+    const data = result.data;
+    this.setResponse(data);
+
+    // ストリーミング or 完了レスポンス
+    if ("type" in data) {
+      this.controls.console.addValue(`Event type: ${data.type}`);
+      switch (data.type) {
+        case "error":
+          return this.logAndTerminate("error", data.message, forward);
+        case "response.failed":
           this.controls.console.addValue(
             `Failed: ${data.response.error?.code} - ${data.response.error?.message}`
           );
-          await this.logAndTerminate("error", "response.failed", forward);
-          return;
-        } else if (data.type === "response.output_text.done") {
-          await this.logAndTerminate("done", data.text, forward);
-          return;
-        }
-      } else {
-        // レスポンスの場合
-        this.setResponse(data);
-        this.controls.console.addValue(
-          `Response: ${JSON.stringify(data, null, 2)}`
-        );
-        await this.logAndTerminate("done", data.output_text, forward);
-        return;
+          return this.logAndTerminate("error", "response.failed", forward);
+        case "response.output_text.done":
+          return this.logAndTerminate("done", data.text, forward);
+        case "response.completed":
+          this.controls.console.addValue(
+            `Response completed: ${JSON.stringify(data, null, 2)}`
+          );
+          break;
+        default:
+          break;
       }
+    } else {
+      // 非ストリーミング完了レスポンス
+      this.controls.console.addValue(
+        `Response: ${JSON.stringify(data, null, 2)}`
+      );
+      return this.logAndTerminate("done", data.output_text, forward);
     }
+
+    // 通常ストリーミング中の次イベント待ち
     forward("exec");
   }
 

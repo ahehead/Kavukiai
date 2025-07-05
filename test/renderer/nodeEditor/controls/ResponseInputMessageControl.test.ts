@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 
 import { ResponseInputMessageControl } from "renderer/nodeEditor/nodes/Controls/OpenAI/ResponseInputMessage";
-import { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
+import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
 
 const sampleMessage: ChatMessageItem = {
   id: "1",
