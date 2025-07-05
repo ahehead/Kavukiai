@@ -1,6 +1,11 @@
 import type { Schemes } from "renderer/nodeEditor/types/Schemes";
 import type { NodeEditor } from "rete";
 
+/**
+ * 指定したノードとノードにつながるConnectionを削除する
+ * @param editor NodeEditor instance
+ * @param nodeId ノードID
+ */
 export async function removeNodeWithConnections(
   editor: NodeEditor<Schemes>,
   nodeId: string
