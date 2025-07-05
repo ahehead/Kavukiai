@@ -36,7 +36,7 @@ export function createToggleInputControlMenuItem(
         // dataflowをリセット
         resetCacheDataflow(dataflow, context.id);
 
-        // objectNodeはoutputのSchemaを更新
+        // DynamicSchemaNodeはoutputのSchemaを更新
         if (isDynamicSchemaNode(context)) {
           await context.setupSchema();
         }

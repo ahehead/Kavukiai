@@ -62,7 +62,6 @@ export function setupContextMenu({
 
       if (isNode(context)) {
         // node のinputにcontrolがある場合、showControlをtoggleするメニューを追加
-        // 表示方式を変えられるinputのリスト
         const inputlist = filterInputControls(context.inputs);
         if (inputlist.length > 0) {
           listItems.push(
