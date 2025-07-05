@@ -153,9 +153,7 @@ export class ResponseInputMessageItemListNode
     const inpu = (await this.dataflow.fetchInputs(this.id)) as {
       responseList?: OpenAIClientResponseOrNull[];
     };
-    console.log("input", inpu);
     const responseList = inpu.responseList || [];
-    console.log("response", responseList);
     if (!responseList || responseList.length === 0 || !responseList[0]) return;
     const response = responseList[0];
     // レスポンスがイベント形式の場合
