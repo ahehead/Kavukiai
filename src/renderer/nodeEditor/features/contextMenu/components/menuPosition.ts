@@ -80,3 +80,18 @@ export function decideSide(
   const spaceRight = editorWidth - (menuPosX + menuWidth);
   return spaceRight >= submenuWidth ? "right" : "left";
 }
+
+export function computeSubmenuOffset(
+  anchorTop: number,
+  submenuHeight: number,
+  editorHeight: number
+) {
+  let offset = 0;
+  if (anchorTop + submenuHeight > editorHeight) {
+    offset = editorHeight - (anchorTop + submenuHeight);
+  }
+  if (anchorTop + offset < 0) {
+    offset = -anchorTop;
+  }
+  return offset;
+}

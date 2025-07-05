@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import type React from "react";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 
 /**
@@ -19,6 +20,7 @@ export function useContextMenu(
 ) {
   // どのサブメニューを開いているか保持
   const [viewSubmenu, setViewSubmenu] = useState<ViewSubmenu>(false);
+  const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
 
   // 現在マウスオーバー中の item.key を追跡
   const currentPointerKey = useRef<string | null>(null);
@@ -31,11 +33,15 @@ export function useContextMenu(
    * メニュー項目にマウスが乗ったときに呼び出す
    * 既存の開くタイマーはクリアし、新たに遅延を設定してサブメニューを表示
    */
-  function handleEnterMenuItem(item: Item) {
+  function handleEnterMenuItem(
+    e: React.PointerEvent<HTMLDivElement>,
+    item: Item
+  ) {
     if (subMenuOpenTimerRef.current) {
       clearTimeout(subMenuOpenTimerRef.current);
     }
     currentPointerKey.current = item.key;
+    setAnchorRect(e.currentTarget.getBoundingClientRect());
 
     subMenuOpenTimerRef.current = window.setTimeout(() => {
       // 項目から離れていなければ表示フラグをセット
@@ -81,6 +87,7 @@ export function useContextMenu(
 
   return {
     viewSubmenu, // 現在開いているサブメニューの情報
+    anchorRect, // サブメニューを開く基準の位置
     handleEnterMenuItem, // メニュー項目に入ったときの処理
     handleEnterSubmenu, // サブメニュー領域に入ったときの処理
     handleLeaveMenuItem, // メニュー領域から離れたときの処理

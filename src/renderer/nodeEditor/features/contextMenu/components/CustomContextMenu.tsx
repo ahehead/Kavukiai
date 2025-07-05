@@ -9,10 +9,10 @@ import { useContextMenu } from "./useContextMenu";
 
 export function CustomContextMenu({ element, type, items, searchBar, onHide }: ContextMenuRender["data"]) {
 
-  const menuWidth = 230; // メニューの幅を固定値で設定
+  const minMenuWidth = 230; // メニューの最小幅
   const itemHeight = 30; // アイテムの高さを固定値で設定
   // メニューの配置を計算
-  const { x, y, side } = computeMenuPlacement(element, items, menuWidth, itemHeight);
+  const { x, y, side } = computeMenuPlacement(element, items, minMenuWidth, itemHeight);
 
   return (
     <div
@@ -26,7 +26,7 @@ export function CustomContextMenu({ element, type, items, searchBar, onHide }: C
         items={items}
         side={side}
         onHide={onHide}
-        menuWidth={menuWidth}
+        menuWidth={minMenuWidth}
       />
     </div>
   );
@@ -46,6 +46,7 @@ export function Menu({
 
   const {
     viewSubmenu,
+    anchorRect,
     handleEnterMenuItem,
     handleEnterSubmenu,
     handleLeaveMenuItem,
@@ -58,13 +59,13 @@ export function Menu({
       width={menuWidth}
     >
       {/* items */}
-      {items.map(item => {
+      {items.map((item) => {
         return (
           // item
           <MenuItemContainer
             key={item.key}
             onClick={() => { item.handler(); if (!item.subitems) onHide(); }}
-            onPointerEnter={() => handleEnterMenuItem(item)}
+            onPointerEnter={(e) => handleEnterMenuItem(e, item)}
             onPointerLeave={handleLeaveMenuItem}
           >
             <div className="col-start-2 col-span-4">
@@ -79,6 +80,9 @@ export function Menu({
               <SubmenuWrapper
                 side={side}
                 width={menuWidth}
+                anchorRect={anchorRect}
+                itemHeight={itemHeight}
+                itemCount={item.subitems.length}
                 onPointerEnter={() => handleEnterSubmenu(item)}
                 onPointerLeave={handleLeaveMenuItem}
               >
