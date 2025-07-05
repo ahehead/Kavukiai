@@ -3,6 +3,7 @@ import { apiKeyApi } from "./apiKeys";
 import { appStateApi } from "./appState";
 import { fileOperationsApi } from "./fileOperations";
 import { openAIApi } from "./openAI";
+import { lmstudioApi } from "./lmstudio";
 import { settingsApi } from "./settings";
 
 declare global {
@@ -18,6 +19,8 @@ const API = {
   ...apiKeyApi,
   // OpenAI関連
   ...openAIApi,
+  // LMStudio関連
+  ...lmstudioApi,
   // 設定関連
   ...settingsApi,
   // ファイル操作関連
