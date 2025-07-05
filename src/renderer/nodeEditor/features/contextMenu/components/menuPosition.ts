@@ -6,7 +6,7 @@ export function computeMenuPlacement(
   items: Item[],
   menuWidth: number,
   itemHeight = 30
-): { x: number; y: number; side: "left" | "right" } {
+): { x: number; y: number; side: "left" | "right"; windowHeight: number } {
   // エディター画面のサイズを取得
   const editorWindowSize = getEditorWindowSize(element);
   // メニューの高さを計算
@@ -17,7 +17,7 @@ export function computeMenuPlacement(
   const rect = element.getBoundingClientRect();
   const { x, y } = calcMenuPosition(rect, menuSize, editorWindowSize);
   const side = decideSide(x, menuSize.width, editorWindowSize.width, menuWidth);
-  return { x, y, side };
+  return { x, y, side, windowHeight: editorWindowSize.height };
 }
 
 export function getEditorWindowSize(element: HTMLElement) {
