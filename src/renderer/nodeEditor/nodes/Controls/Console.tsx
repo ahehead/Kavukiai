@@ -1,11 +1,10 @@
-import type React from "react"
-import { useEffect, useRef, type JSX, useSyncExternalStore, useLayoutEffect } from 'react';
+import { useRef, type JSX, useSyncExternalStore, useLayoutEffect } from 'react';
 import { Drag } from "rete-react-plugin";
 import { useStopWheel } from "../util/useStopWheel";
 import { BaseControl, useControlValue, type ControlOptions } from "renderer/nodeEditor/types";
 import { ChevronRight } from "lucide-react";
 import { cva } from "class-variance-authority";
-import { ControlJson } from "shared/JsonType";
+import type { ControlJson } from "shared/JsonType";
 
 export interface ConsoleControlParams extends ControlOptions<any> {
   isOpen?: boolean;
@@ -78,6 +77,7 @@ export function ConsoleControlView(props: { data: ConsoleControl }): JSX.Element
   return (
     <Drag.NoDrag>
       <div className="flex flex-col w-full">
+        {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
         <div
           className="flex items-center cursor-pointer"
           onClick={toggle}

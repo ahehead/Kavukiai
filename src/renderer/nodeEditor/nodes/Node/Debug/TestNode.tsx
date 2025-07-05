@@ -1,11 +1,12 @@
 import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
-import { CheckBoxControl } from '../Controls/input/CheckBox';
-import { ButtonControl } from '../Controls/Button';
-import { SelectControl } from '../Controls/input/Select';
-import { ListControl } from '../Controls/input/List';
-import { SwitchControl } from '../Controls/input/Switch';
-import { PropertyInputControl } from '../Controls/input/PropertyInput';
-import { SliderControl } from '../Controls/input/Slider';
+import { CheckBoxControl } from "../../Controls/input/CheckBox";
+import { ButtonControl } from "../../Controls/Button";
+import { SelectControl } from "../../Controls/input/Select";
+import { ListControl } from "../../Controls/input/List";
+import { SwitchControl } from "../../Controls/input/Switch";
+import { SliderControl } from "../../Controls/input/Slider";
+import { PropertyInputControl } from "../../Controls/input/PropertyInput";
+
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
 // コントロール等の確認と、型チェック回避用のNode。

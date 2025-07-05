@@ -1,10 +1,10 @@
 // 新規 Node バレルファイル
-export { TestNode } from "./TestNode";
+export { TestNode } from "./Debug/TestNode";
 export { StringNode } from "./Primitive/StringNode";
 export { NumberNode } from "./Primitive/NumberNode";
 export { MultiLineStringNode } from "./Primitive/MultiLineStringNode";
 export { RunNode } from "./Primitive/RunNode";
-export { InspectorNode } from "./InspectorNode";
+export { InspectorNode } from "./Debug/InspectorNode";
 export { OpenAINode } from "./OpenAI/OpenAI";
 export { ResponseCreateParamsBaseNode } from "./OpenAI/ResponseCreateParamsBaseNode";
 export { ResponseInputMessageItemListNode } from "./OpenAI/ChatContextNode";
@@ -18,4 +18,4 @@ export { ObjectPickNode } from "./Primitive/Object/ObjectPickNode";
 export { JsonSchemaToObjectNode } from "./Primitive/Object/JsonSchemaToObject";
 export { JsonSchemaNode } from "./Primitive/Object/JsonSchemaNode";
 export { IFNode } from "./Flow/IFNode";
-export { UnknownNode } from "./UnknownNode";
+export { UnknownNode } from "./Debug/UnknownNode";
