@@ -1,18 +1,18 @@
-import { test, expect, vi } from 'vitest';
-import type { NodeEditor } from 'rete';
-import type { Schemes } from 'renderer/nodeEditor/types';
-import { setupDeleteSelectedNodes } from 'renderer/nodeEditor/features/deleteSelectedNodes/deleteSelectedNodes';
-import { removeNodeWithConnections } from 'renderer/nodeEditor/nodes/util/removeNode';
+import { test, expect, vi, type Mock } from "vitest";
+import type { NodeEditor } from "rete";
+import type { Schemes } from "renderer/nodeEditor/types";
+import { setupDeleteSelectedNodes } from "renderer/nodeEditor/features/deleteSelectedNodes/deleteSelectedNodes";
+import { removeNodeWithConnections } from "renderer/nodeEditor/nodes/util/removeNode";
 
-vi.mock('renderer/nodeEditor/nodes/util/removeNode', () => ({
+vi.mock("renderer/nodeEditor/nodes/util/removeNode", () => ({
   removeNodeWithConnections: vi.fn(),
 }));
 
-test('setupDeleteSelectedNodes removes selected nodes on Delete key press', async () => {
+test("setupDeleteSelectedNodes removes selected nodes on Delete key press", async () => {
   const nodes = [
-    { id: '1', selected: true },
-    { id: '2', selected: false },
-    { id: '3', selected: true },
+    { id: "1", selected: true },
+    { id: "2", selected: false },
+    { id: "3", selected: true },
   ] as any[];
   const editor = {
     getNodes: () => nodes,
@@ -27,12 +27,12 @@ test('setupDeleteSelectedNodes removes selected nodes on Delete key press', asyn
   };
 
   const cleanup = setupDeleteSelectedNodes(editor);
-  listeners['keydown']({ key: 'Delete' });
+  listeners.keydown({ key: "Delete" });
 
-  const fn = removeNodeWithConnections as unknown as vi.Mock;
+  const fn = removeNodeWithConnections as unknown as Mock;
   expect(fn).toHaveBeenCalledTimes(2);
-  expect(fn).toHaveBeenNthCalledWith(1, editor, '1');
-  expect(fn).toHaveBeenNthCalledWith(2, editor, '3');
+  expect(fn).toHaveBeenNthCalledWith(1, editor, "1");
+  expect(fn).toHaveBeenNthCalledWith(2, editor, "3");
 
   cleanup();
 });
