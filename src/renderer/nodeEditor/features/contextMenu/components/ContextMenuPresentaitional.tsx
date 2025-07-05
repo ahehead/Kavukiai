@@ -41,7 +41,7 @@ export function MenuItemContainer({
   );
 }
 
-const submenuContainer = cva("absolute top-0");
+const submenuContainer = cva("transform absolute");
 
 export function SubmenuWrapper({
   children,
@@ -59,8 +59,8 @@ export function SubmenuWrapper({
       className={submenuContainer()}
       style={
         side === "right"
-          ? { left: width }
-          : { right: width }}
+          ? { left: "100%" }
+          : { right: "100%" }}
       {...props}
     >
       {children}
