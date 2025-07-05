@@ -74,6 +74,7 @@ export async function createNodeEditor(container: HTMLElement) {
     history,
   });
 
+  // グリッドラインスナッププラグインのインスタンス化
   const gridLine = new GridLineSnapPlugin<Schemes>({ container, baseSize: 20 });
 
   // エディタにプラグインを接続
