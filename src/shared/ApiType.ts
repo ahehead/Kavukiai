@@ -22,6 +22,8 @@ export enum IpcChannel {
   LoadFile = "load-file",
 
   PortChatGpt = "port-chat-gpt",
+
+  ListLMStudioModels = "list-lmstudio-models",
 }
 
 export type OpenAIParams = any;
