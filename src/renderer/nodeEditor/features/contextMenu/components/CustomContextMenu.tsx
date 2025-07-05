@@ -9,13 +9,15 @@ import { useContextMenu } from "./useContextMenu";
 
 export function CustomContextMenu({ element, type, items, searchBar, onHide }: ContextMenuRender["data"]) {
 
-  const menuWidth = 230; // メニューの幅を固定値で設定
+  const menuWidthAndMargin = 250
+  const minMenuWidth = 230;
   const itemHeight = 30; // アイテムの高さを固定値で設定
   // メニューの配置を計算
-  const { x, y, side } = computeMenuPlacement(element, items, menuWidth, itemHeight);
+  const { x, y, side, windowHeight } = computeMenuPlacement(element, items, menuWidthAndMargin, itemHeight);
 
   return (
     <div
+      className="inline-flex w-fit"
       style={{
         position: "fixed",
         left: x,
@@ -26,7 +28,9 @@ export function CustomContextMenu({ element, type, items, searchBar, onHide }: C
         items={items}
         side={side}
         onHide={onHide}
-        menuWidth={menuWidth}
+        minMenuWidth={minMenuWidth}
+        windowHeight={windowHeight}
+        itemHeight={itemHeight}
       />
     </div>
   );
@@ -36,12 +40,16 @@ export function Menu({
   items,
   side,
   onHide,
-  menuWidth
+  minMenuWidth,
+  windowHeight,
+  itemHeight
 }: {
   items: Item[];
   side: "right" | "left";
   onHide: () => void
-  menuWidth: number;
+  minMenuWidth: number;
+  windowHeight: number;
+  itemHeight: number; // アイテムの高さ（オプション）
 }) {
 
   const {
@@ -55,7 +63,7 @@ export function Menu({
   return (
     // menu
     <MenuContainer
-      width={menuWidth}
+      style={{ minWidth: minMenuWidth }}
     >
       {/* items */}
       {items.map(item => {
@@ -67,26 +75,35 @@ export function Menu({
             onPointerEnter={() => handleEnterMenuItem(item)}
             onPointerLeave={handleLeaveMenuItem}
           >
-            <div className="col-start-2 col-span-4">
+            <div className="w-[30px]">
+              {/* アイコンなど */}
+            </div>
+            {/* ラベル */}
+            <div className="flex-1 inline-block w-fit">
               {item.label}
             </div>
+            {/* サブアイテムがある場合の矢印 */}
             {item.subitems && (
-              <div className="flex justify-end items-center mr-1">
+              <div className="flex items-center mr-1">
                 <ChevronRight className="w-[14px] h-[14px]" strokeWidth={0.8} />
               </div>
             )}
             {item.subitems && viewSubmenu && viewSubmenu.key === item.key && (
               <SubmenuWrapper
                 side={side}
-                width={menuWidth}
                 onPointerEnter={() => handleEnterSubmenu(item)}
                 onPointerLeave={handleLeaveMenuItem}
+                itemCount={item.subitems.length}
+                itemHeight={itemHeight}
+                windowHeight={windowHeight}
               >
                 <Menu
                   items={item.subitems}
                   side={side}
                   onHide={onHide}
-                  menuWidth={menuWidth}
+                  minMenuWidth={minMenuWidth}
+                  windowHeight={windowHeight}
+                  itemHeight={itemHeight}
                 />
               </SubmenuWrapper>
             )}
