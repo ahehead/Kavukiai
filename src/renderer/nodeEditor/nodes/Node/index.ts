@@ -19,3 +19,4 @@ export { JsonSchemaToObjectNode } from "./Primitive/Object/JsonSchemaToObject";
 export { JsonSchemaNode } from "./Primitive/Object/JsonSchemaNode";
 export { IFNode } from "./Flow/IFNode";
 export { UnknownNode } from "./Debug/UnknownNode";
+export { ListDownloadedModelsNode } from "./LMStudio/ListDownloadedModelsNode";

@@ -84,6 +84,7 @@ export function ListControlView<T>(props: { data: ListControl<T> }): JSX.Element
         className="w-full max-h-32 overflow-auto border border-input rounded-md bg-node-bg p-2"
       >
         {items.map((item, idx) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: list rendering order is stable
           <div key={idx} className="text-sm py-0.5 border-b last:border-b-0">
             {formatValue(item)}
           </div>

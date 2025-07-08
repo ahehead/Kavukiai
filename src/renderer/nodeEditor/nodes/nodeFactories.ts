@@ -15,6 +15,7 @@ import {
   JsonSchemaFormatNode,
   ResponseTextConfigNode,
   TemplateReplaceNode,
+  ListDownloadedModelsNode,
 } from "./Node";
 import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
@@ -52,6 +53,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   Bool: ({ history, area, dataflow }) => new BoolNode(history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
+  ListDownloadedModels: ({ area, dataflow }) =>
+    new ListDownloadedModelsNode(area, dataflow),
 
   OpenAI: ({ area, dataflow, controlflow }) =>
     new OpenAINode(area, dataflow, controlflow),
@@ -201,6 +204,17 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "Response Text Config",
         key: "response-text-config-node",
         factoryKey: "ResponseTextConfig",
+      },
+    ],
+  },
+  {
+    label: "LMStudio",
+    key: "lmstudio-category",
+    subitems: [
+      {
+        label: "List Downloaded Models",
+        key: "list-downloaded-models-node",
+        factoryKey: "ListDownloadedModels",
       },
     ],
   },

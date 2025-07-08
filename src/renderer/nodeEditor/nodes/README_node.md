@@ -18,3 +18,4 @@
 - [index.ts](Node/index.ts)のバニラインポートに追加
 - [nodeFactories.ts](nodeFactories.ts)にコンストラクタの生成を記述,右クリックに追加
 - [Schemes.ts](../types/Schemes.ts)のNodeTypesに追加
+- LMStudioノードの場合は LMStudio カテゴリに追加する
