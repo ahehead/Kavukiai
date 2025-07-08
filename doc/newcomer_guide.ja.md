@@ -54,3 +54,14 @@ src/
 
 より詳細な仕様や機能一覧は `doc/README.ja.md` も参照してください。
 
+## 5. レイヤーをまたぐノードの作成手順
+
+OpenAI や LMStudio などメインプロセス側の機能を利用するノードを追加する場合は、以下の流れで実装します。
+
+1. `shared/ApiType.ts` の `IpcChannel` に新しいチャンネルを定義する。
+2. `src/main/ipc` にハンドラを作成し、`registerIpcHandlers` から登録する。
+3. `src/preload` に対応 API を追加し、`index.ts` から `contextBridge` へ公開する。
+4. レンダラーでは `electronApiService` を通じて呼び出し、ノード内で結果を処理する。
+
+`ListDownloadedModelsNode` がこれらの手順を踏んだ実装例となっています。
+
