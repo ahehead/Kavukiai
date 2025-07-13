@@ -106,6 +106,7 @@ export function PropertyInputControlView(props: { data: PropertyInputControl }):
           className="flex-1 w-full min-h-0 overflow-y-auto border rounded p-2 bg-node-bg"
         >
           {items.map((item, idx) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: property list order is controlled
             <div key={idx} className="flex justify-between items-center text-sm py-0.5">
               <span>{item.key}: {item.typeStr}</span>
               {editable && (

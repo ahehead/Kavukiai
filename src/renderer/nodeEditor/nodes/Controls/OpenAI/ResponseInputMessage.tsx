@@ -204,6 +204,7 @@ export function ResponseInputMessageView(props: { data: ResponseInputMessageCont
         )}
         {messages.map((msg, index) => (
           // Message Item
+          // biome-ignore lint/suspicious/noArrayIndexKey: message list order doesn't change
           <div key={index} className="rounded group">
             {/* Message Content Wrapper */}
             <div className="group-hover:bg-node-header/30 py-1.5 px-3">

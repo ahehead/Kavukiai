@@ -23,6 +23,7 @@ import type {
   JsonSchemaFormatNode,
   ResponseTextConfigNode,
   TemplateReplaceNode,
+  ListDownloadedModelsNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./Node/BaseNode";
@@ -56,7 +57,8 @@ export type NodeTypes =
   | JsonSchemaNode
   | JsonSchemaFormatNode
   | ResponseTextConfigNode
-  | TemplateReplaceNode;
+  | TemplateReplaceNode
+  | ListDownloadedModelsNode;
 
 // BaseNodeを埋めたもの
 export interface NodeInterface
