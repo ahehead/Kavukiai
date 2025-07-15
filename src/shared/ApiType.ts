@@ -1,6 +1,6 @@
 import type OpenAI from "openai";
 import type { GraphJsonData } from "./JsonType";
-import type { Response } from "renderer/nodeEditor/types/Schemas/ResponseSchemas";
+import type { Response } from "renderer/nodeEditor/types/Schemas/openai/ResponseSchemas";
 import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/EventsSchemas";
 
 export enum IpcChannel {

@@ -10,7 +10,7 @@ import type {
   ResponseInputFile,
   EasyInputMessage,
   ResponseInputMessageContentList,
-} from "renderer/nodeEditor/types/Schemas/InputSchemas";
+} from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
 import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
 import { Drag } from "rete-react-plugin";
 

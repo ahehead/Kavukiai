@@ -1,16 +1,18 @@
 import { type Static, Type, type TSchema } from "@sinclair/typebox";
-import * as BaseSchemas from "../Schemas/BaseSchemas";
-import * as DefaultSchema from "../Schemas/DefaultSchema";
-import * as InputSchemas from "../Schemas/InputSchemas";
-import * as RequestSchemas from "../Schemas/RequestSchemas";
-import * as ResponseSchemas from "../Schemas/ResponseSchemas";
-import * as EventsSchemas from "../Schemas/EventsSchemas";
+
+import * as InputSchemas from "./openai/InputSchemas";
+import * as RequestSchemas from "./openai/RequestSchemas";
+import * as ResponseSchemas from "./openai/ResponseSchemas";
 import {
   type ResponseInput,
   ResponseInputMessageItem,
-} from "../Schemas/InputSchemas";
-import { ResponseStreamEvent } from "../Schemas/EventsSchemas";
-import * as Base from "../Schemas/BaseSchemas";
+} from "./openai/InputSchemas";
+import { ResponseStreamEvent } from "./openai/EventsSchemas";
+import { Timestamp } from "./openai/BaseSchemas";
+import * as BaseSchemas from "./openai/BaseSchemas";
+import * as DefaultSchema from "./DefaultSchema";
+import * as EventsSchemas from "./openai/EventsSchemas";
+import * as ModelInfoSchemas from "./lmstudio/ModelSchemas";
 
 // OpenAIのclientからのレスポンスを表す型
 export const OpenAIClientResponse = Type.Union([
@@ -35,7 +37,7 @@ export const ChatMessageItem = Type.Intersect(
     ResponseInputMessageItem,
     Type.Object({
       model: Type.Optional(Type.String()),
-      created_at: Type.Optional(Base.Timestamp),
+      created_at: Type.Optional(Timestamp),
       tokens: Type.Optional(Type.Number()),
       token_speed: Type.Optional(Type.Number()),
     }),
@@ -62,6 +64,8 @@ const registry = {
   OpenAIClientResponse,
   OpenAIClientResponseOrNull,
   ChatMessageItem,
+
+  ...ModelInfoSchemas,
 } satisfies Record<string, TSchema>;
 
 export type SchemaKey = keyof typeof registry;

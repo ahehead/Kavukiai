@@ -14,7 +14,7 @@ import { chatMessagesToResponseInput } from "renderer/nodeEditor/types/Schemas";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schemas";
 import { ButtonControl } from "../../Controls/Button";
-import type { EasyInputMessage } from "renderer/nodeEditor/types/Schemas/InputSchemas";
+import type { EasyInputMessage } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
 
 // open ai用のchat message list Node
 export class ResponseInputMessageItemListNode

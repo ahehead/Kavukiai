@@ -15,7 +15,7 @@ import { SelectControl } from "../../Controls/input/Select";
 import { type TSchema, Type } from "@sinclair/typebox";
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import type { DynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
-import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/RequestSchemas";
+import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/openai/RequestSchemas";
 
 type OpenAIParamKeys = keyof ResponseCreateParamsBase;
 // Run ノード

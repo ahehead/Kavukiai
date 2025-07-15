@@ -6,13 +6,14 @@ import type { AreaExtra, TypedSocket, Schemes } from "renderer/nodeEditor/types"
 import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import { ConsoleControl } from "../../Controls/Console";
+import type { ModelInfo } from "@lmstudio/sdk";
 
 export class ListDownloadedModelsNode extends SerializableInputsNode<
   { exec: TypedSocket },
   { exec: TypedSocket; list: TypedSocket },
   { console: ConsoleControl }
 > {
-  private models: unknown[] = [];
+  private models: ModelInfo[] = [];
 
   constructor(
     private area: AreaPlugin<Schemes, AreaExtra>,
@@ -22,12 +23,12 @@ export class ListDownloadedModelsNode extends SerializableInputsNode<
     this.addInputPort({ key: "exec", typeName: "exec", label: "In" });
     this.addOutputPort([
       { key: "exec", typeName: "exec", label: "Out" },
-      { key: "list", typeName: "array", label: "list" },
+      { key: "list", typeName: "ModelInfoArray", label: "ModelInfo" },
     ]);
     this.addControl("console", new ConsoleControl({ isOpen: true }));
   }
 
-  data(): { list: unknown[] } {
+  data(): { list: ModelInfo[] } {
     return { list: this.models };
   }
 
@@ -51,11 +52,11 @@ export class ListDownloadedModelsNode extends SerializableInputsNode<
     forward("exec");
   }
 
-  serializeControlValue(): { data: { list: unknown[] } } {
+  serializeControlValue(): { data: { list: ModelInfo[] } } {
     return { data: { list: this.models } };
   }
 
-  deserializeControlValue(data: { list: unknown[] }): void {
+  deserializeControlValue(data: { list: ModelInfo[] }): void {
     this.models = data.list;
   }
 }

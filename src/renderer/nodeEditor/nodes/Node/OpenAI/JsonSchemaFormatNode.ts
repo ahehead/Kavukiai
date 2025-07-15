@@ -5,7 +5,7 @@ import type {
   Schemes,
   TypedSocket,
 } from "renderer/nodeEditor/types";
-import { JsonSchemaFormat } from "renderer/nodeEditor/types/Schemas/RequestSchemas";
+import { JsonSchemaFormat } from "renderer/nodeEditor/types/Schemas/openai/RequestSchemas";
 import { InputValueControl } from "../../Controls/input/InputValue";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import type { HistoryPlugin } from "rete-history-plugin";

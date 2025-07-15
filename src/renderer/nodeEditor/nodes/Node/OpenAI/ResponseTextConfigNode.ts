@@ -9,7 +9,7 @@ import type {
 import type {
   ResponseFormatTextConfig,
   ResponseTextConfig,
-} from "renderer/nodeEditor/types/Schemas/RequestSchemas";
+} from "renderer/nodeEditor/types/Schemas/openai/RequestSchemas";
 
 export class ResponseTextConfigNode extends BaseNode<
   { format: TypedSocket },

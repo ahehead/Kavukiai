@@ -6,7 +6,7 @@ import {
   type PortEventType,
 } from "shared/ApiType";
 import { ApiKeyConf, getApiKeyConf } from "main/features/file/conf";
-import type { Response } from "renderer/nodeEditor/types/Schemas/ResponseSchemas";
+import type { Response } from "renderer/nodeEditor/types/Schemas/openai/ResponseSchemas";
 import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/EventsSchemas";
 
 // openaiリクエストを処理するハンドラを登録
