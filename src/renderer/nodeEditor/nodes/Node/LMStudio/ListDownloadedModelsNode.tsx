@@ -5,11 +5,12 @@ import type { DataflowEngine } from "rete-engine";
 import type { AreaExtra, TypedSocket, Schemes } from "renderer/nodeEditor/types";
 import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
+import { ConsoleControl } from "../../Controls/Console";
 
 export class ListDownloadedModelsNode extends SerializableInputsNode<
   { exec: TypedSocket },
   { exec: TypedSocket; list: TypedSocket },
-  object
+  { console: ConsoleControl }
 > {
   private models: unknown[] = [];
 
@@ -23,6 +24,7 @@ export class ListDownloadedModelsNode extends SerializableInputsNode<
       { key: "exec", typeName: "exec", label: "Out" },
       { key: "list", typeName: "array", label: "list" },
     ]);
+    this.addControl("console", new ConsoleControl({ isOpen: true }));
   }
 
   data(): { list: unknown[] } {
@@ -30,14 +32,19 @@ export class ListDownloadedModelsNode extends SerializableInputsNode<
   }
 
   async execute(_input: "exec", forward: (output: "exec") => void): Promise<void> {
+    if (this.status === NodeStatus.RUNNING) {
+      return; // Prevent re-execution if already running
+    }
     await this.setStatus(this.area, NodeStatus.RUNNING);
     const result = await electronApiService.listDownloadedModels();
     if (result.status === "success") {
       this.models = result.data;
       resetCacheDataflow(this.dataflow, this.id);
+      this.controls.console.addValue(`Downloaded models: ${this.models}`);
       await this.setStatus(this.area, NodeStatus.COMPLETED);
     } else {
       this.models = [];
+      this.controls.console.addValue(`Error: ${result.message}`);
       await this.setStatus(this.area, NodeStatus.ERROR);
     }
     await this.area.update("node", this.id);
