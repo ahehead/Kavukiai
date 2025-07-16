@@ -17,6 +17,7 @@ export type InputPortConfig<K> =
       control?: BaseControl<any, any>;
       showControl?: boolean;
       require?: boolean;
+      onClick?: () => Promise<void> | void;
     }
   | {
       key: K;
@@ -27,6 +28,7 @@ export type InputPortConfig<K> =
       control?: BaseControl<any, any>;
       showControl?: boolean;
       require?: boolean;
+      onClick?: () => Promise<void> | void;
     };
 
 export type NodeInputType = {
@@ -98,6 +100,7 @@ export abstract class NodeIO<
     control,
     showControl,
     require,
+    onClick,
   }: InputPortConfig<K>): void {
     const input = new TooltipInput<S>(
       new TypedSocket(typeName, schema ? schema : getSchema(typeName)) as S,
@@ -107,6 +110,19 @@ export abstract class NodeIO<
       require ?? false
     );
     this.addInput(key, input);
+    if (onClick) {
+      input.addControl(
+        new ButtonControl({
+          label: label ?? "Click",
+          onClick: async (e) => {
+            e.stopPropagation();
+            await onClick();
+          },
+        })
+      );
+      input.showControl = showControl ?? false;
+    }
+
     if (control) {
       input.addControl(control);
       input.showControl = showControl ?? false;
