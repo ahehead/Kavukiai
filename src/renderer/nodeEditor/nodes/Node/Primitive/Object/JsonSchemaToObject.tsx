@@ -8,7 +8,6 @@ import { SwitchControl } from '../../../Controls/input/Switch';
 import { Type, type TSchema } from '@sinclair/typebox';
 import { resetCacheDataflow } from '../../../util/resetCacheDataflow';
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
-import { ButtonControl } from '../../../Controls/Button';
 import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode';
 import { getInputValue } from '../../../util/getInput';
 import { removeLinkedSockets } from '../../../util/removeNode';
