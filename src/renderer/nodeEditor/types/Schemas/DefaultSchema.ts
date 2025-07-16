@@ -9,6 +9,7 @@ export const defaultNodeSchemas = {
   any: Type.Any(),
   exec: Type.Literal("exec"),
   JsonSchema: Type.Record(Type.String(), Type.Any()),
+  StringArray: Type.Array(Type.String()),
 } as const;
 
 export type DefaultSchemaKey = keyof typeof defaultNodeSchemas;
