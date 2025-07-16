@@ -1,7 +1,7 @@
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import { electronApiService } from "renderer/features/services/appService";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import type { AreaExtra, TypedSocket, Schemes } from "renderer/nodeEditor/types";
 import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
@@ -17,10 +17,16 @@ export class ListDownloadedModelsNode extends SerializableInputsNode<
 
   constructor(
     private area: AreaPlugin<Schemes, AreaExtra>,
-    private dataflow: DataflowEngine<Schemes>
+    private dataflow: DataflowEngine<Schemes>,
+    private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("ListDownloadedModels");
-    this.addInputPort({ key: "exec", typeName: "exec", label: "In" });
+    this.addInputPort({
+      key: "exec",
+      typeName: "exec",
+      label: "In",
+      onClick: () => this.controlflow.execute(this.id, "exec")
+    });
     this.addOutputPort([
       { key: "exec", typeName: "exec", label: "Out" },
       { key: "list", typeName: "ModelInfoArray", label: "ModelInfo" },

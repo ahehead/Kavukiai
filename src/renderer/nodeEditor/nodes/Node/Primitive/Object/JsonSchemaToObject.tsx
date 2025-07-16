@@ -36,16 +36,12 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
     this.addInputPort([{
       key: "exec",
       typeName: "exec",
-      label: 'create',
+      label: 'Generate',
       showControl: true,
-      control: new ButtonControl({
-        label: 'Create',
-        onClick: async (e) => {
-          e.stopPropagation();
-          this.controlflow.execute(this.id, "exec");
-          this.clearSize();
-        },
-      })
+      onClick: async () => {
+        this.controlflow.execute(this.id, "exec");
+        this.clearSize();
+      },
     }, {
       key: 'schema',
       typeName: 'JsonSchema',

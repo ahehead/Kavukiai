@@ -1,6 +1,6 @@
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import { NodeStatus } from "renderer/nodeEditor/types";
-import type { DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { AreaExtra, TypedSocket, Schemes } from "renderer/nodeEditor/types";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
@@ -13,11 +13,19 @@ export class TemplateReplaceNode extends SerializableInputsNode<
   private result = "";
   constructor(
     private area: AreaPlugin<Schemes, AreaExtra>,
-    private dataflow: DataflowEngine<Schemes>
+    private dataflow: DataflowEngine<Schemes>,
+    private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("TemplateReplace");
     this.addInputPort([
-      { key: "exec", typeName: "exec", label: "In" },
+      {
+        key: "exec",
+        typeName: "exec",
+        label: "In",
+        onClick: () => {
+          this.controlflow.execute(this.id, "exec");
+        },
+      },
       { key: "template", typeName: "string", label: "template" },
       { key: "obj", typeName: "object", label: "object" }
     ]);

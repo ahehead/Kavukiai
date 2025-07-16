@@ -45,16 +45,16 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
     new StringNode("", history, area, dataflow),
   MultiLineString: ({ history, area, dataflow }) =>
     new MultiLineStringNode("", history, area, dataflow),
-  TemplateReplace: ({ area, dataflow }) =>
-    new TemplateReplaceNode(area, dataflow),
+  TemplateReplace: ({ area, dataflow, controlflow }) =>
+    new TemplateReplaceNode(area, dataflow, controlflow),
 
   Number: ({ history, area, dataflow }) =>
     new NumberNode(0, history, area, dataflow),
   Bool: ({ history, area, dataflow }) => new BoolNode(history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
-  ListDownloadedModels: ({ area, dataflow }) =>
-    new ListDownloadedModelsNode(area, dataflow),
+  ListDownloadedModels: ({ area, dataflow, controlflow }) =>
+    new ListDownloadedModelsNode(area, dataflow, controlflow),
 
   OpenAI: ({ area, dataflow, controlflow }) =>
     new OpenAINode(area, dataflow, controlflow),
