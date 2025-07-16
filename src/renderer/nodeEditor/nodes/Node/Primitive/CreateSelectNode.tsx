@@ -60,13 +60,12 @@ export class CreateSelectNode extends SerializableInputsNode<
       list?: string[][];
     };
     const options = list?.[0] || [];
-    this.options = options;
-    this.controls.select.options = options.map((v) => ({ label: v, value: v }));
-    if (!options.includes(this.controls.select.getValue())) {
-      this.controls.select.setValue(options[0] ?? "");
+    if (options.length === 0) {
+      return;
     }
+    this.options = options;
+    this.controls.select.setValueAndOptions(options[0] ?? "", options.map((v) => ({ label: v, value: v })));
     resetCacheDataflow(this.dataflow, this.id);
-    await this.area.update("node", this.id);
     forward("exec");
   }
 
