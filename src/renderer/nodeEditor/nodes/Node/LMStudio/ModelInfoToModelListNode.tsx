@@ -1,5 +1,6 @@
 import { SerializableInputsNode } from '../../../types/Node/SerializableInputsNode'
 import type { TypedSocket } from '../../../types'
+import type { ModelInfo } from '@lmstudio/sdk'
 
 export class ModelInfoToModelListNode extends SerializableInputsNode<
   { list: TypedSocket },
@@ -24,7 +25,11 @@ export class ModelInfoToModelListNode extends SerializableInputsNode<
     })
   }
 
-  data(): { list: string[] } {
+  execute() { }
+
+  data(inputs?: { list?: ModelInfo[][] }): { list: string[] } {
+    const inputList = inputs?.list?.[0] || []
+    this.modelKeys = inputList.filter((item) => item.type === "llm").map((item) => item.modelKey)
     return { list: this.modelKeys }
   }
 

@@ -25,6 +25,7 @@ import type {
   TemplateReplaceNode,
   CreateSelectNode,
   ListDownloadedModelsNode,
+  ModelInfoToModelListNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./Node/BaseNode";
@@ -60,7 +61,8 @@ export type NodeTypes =
   | ResponseTextConfigNode
   | TemplateReplaceNode
   | CreateSelectNode
-  | ListDownloadedModelsNode;
+  | ListDownloadedModelsNode
+  | ModelInfoToModelListNode;
 
 // BaseNodeを埋めたもの
 export interface NodeInterface

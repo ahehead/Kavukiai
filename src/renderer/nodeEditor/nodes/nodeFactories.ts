@@ -17,6 +17,7 @@ import {
   TemplateReplaceNode,
   CreateSelectNode,
   ListDownloadedModelsNode,
+  ModelInfoToModelListNode,
 } from "./Node";
 import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
@@ -56,9 +57,13 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
   CreateSelect: ({ area, dataflow, controlflow }) =>
     new CreateSelectNode(area, dataflow, controlflow),
+
+  // lmstudio nodes
   ListDownloadedModels: ({ area, dataflow, controlflow }) =>
     new ListDownloadedModelsNode(area, dataflow, controlflow),
+  ModelInfoToModelList: () => new ModelInfoToModelListNode(),
 
+  // OpenAI nodes
   OpenAI: ({ area, dataflow, controlflow }) =>
     new OpenAINode(area, dataflow, controlflow),
   ResponseCreateParamsBase: ({ history, area, dataflow }) =>
@@ -223,6 +228,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "List Downloaded Models",
         key: "list-downloaded-models-node",
         factoryKey: "ListDownloadedModels",
+      },
+      {
+        label: "Model Info to Model List",
+        key: "model-info-to-model-list-node",
+        factoryKey: "ModelInfoToModelList",
       },
     ],
   },
