@@ -164,14 +164,22 @@ Ctrlで選択個別解除、
   - 説明: ローカルのComfyUIのapiに投げて画像を生成、取得
   - 入力:
     - prompt : string
-    - image : image | null  
+    - image : image | null
   - 出力
     - image
+- **CreateSelectNode**
+  - 説明: string 配列を受け取り、選択肢として表示する Select UI を生成する
+  - 入力:
+    - exec: トリガー
+    - list: string[]
+  - 出力:
+    - exec: トリガー
+    - string: 選択結果
 
 - **画像表示**
   - 説明: 画像を表示する
-  - 入力:  
-    - exec: any (トリガー)  
+  - 入力:
+    - exec: any (トリガー)
     - image: image    
 
 #### その他のノード構想
