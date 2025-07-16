@@ -22,3 +22,5 @@ export { IFNode } from "./Flow/IFNode";
 export { UnknownNode } from "./Debug/UnknownNode";
 export { ListDownloadedModelsNode } from "./LMStudio/ListDownloadedModelsNode";
 export { ModelInfoToModelListNode } from "./LMStudio/ModelInfoToModelListNode";
+export { LMStudioStartNode } from "./LMStudio/LMStudioStartNode";
+export { LMStudioStopNode } from "./LMStudio/LMStudioStopNode";

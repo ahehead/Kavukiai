@@ -20,6 +20,20 @@ async function listModelsViaCli(): Promise<ModelInfo[] | null> {
   }
 }
 
+async function startServerViaCli(): Promise<string> {
+  const { stdout } = await execFileAsync("lms", ["server", "start"], {
+    encoding: "utf8",
+  });
+  return stdout.trim();
+}
+
+async function stopServerViaCli(): Promise<string> {
+  const { stdout } = await execFileAsync("lms", ["server", "stop"], {
+    encoding: "utf8",
+  });
+  return stdout.trim();
+}
+
 export function registerLMStudioHandlers(): void {
   ipcMain.handle(
     IpcChannel.ListLMStudioModels,
@@ -35,6 +49,32 @@ export function registerLMStudioHandlers(): void {
         return { status: "success", data: models };
       } catch (err: any) {
         console.error("ListLMStudioModels error:", err);
+        return { status: "error", message: String(err?.message ?? err) };
+      }
+    }
+  );
+
+  ipcMain.handle(
+    IpcChannel.StartLMStudioServer,
+    async (): Promise<IpcResult<string>> => {
+      try {
+        const msg = await startServerViaCli();
+        return { status: "success", data: msg };
+      } catch (err: any) {
+        console.error("StartLMStudioServer error:", err);
+        return { status: "error", message: String(err?.message ?? err) };
+      }
+    }
+  );
+
+  ipcMain.handle(
+    IpcChannel.StopLMStudioServer,
+    async (): Promise<IpcResult<string>> => {
+      try {
+        const msg = await stopServerViaCli();
+        return { status: "success", data: msg };
+      } catch (err: any) {
+        console.error("StopLMStudioServer error:", err);
         return { status: "error", message: String(err?.message ?? err) };
       }
     }
