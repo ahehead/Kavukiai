@@ -33,6 +33,11 @@ ${JSON.stringify(schema, null, 2)}
       return this.isExec && other.isExec;
     }
 
+    // 型情報が同じなら互換性あり
+    if (this.schema === other.schema) {
+      return true;
+    }
+
     // console.log("Checking type compatibility:", this.schema, other.schema);
 
     const t = Type.Extends(
