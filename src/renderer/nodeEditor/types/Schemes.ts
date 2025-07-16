@@ -26,6 +26,8 @@ import type {
   CreateSelectNode,
   ListDownloadedModelsNode,
   ModelInfoToModelListNode,
+  LMStudioStartNode,
+  LMStudioStopNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./Node/BaseNode";
@@ -62,7 +64,9 @@ export type NodeTypes =
   | TemplateReplaceNode
   | CreateSelectNode
   | ListDownloadedModelsNode
-  | ModelInfoToModelListNode;
+  | ModelInfoToModelListNode
+  | LMStudioStartNode
+  | LMStudioStopNode;
 
 // BaseNodeを埋めたもの
 export interface NodeInterface
