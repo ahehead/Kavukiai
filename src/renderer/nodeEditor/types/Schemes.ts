@@ -23,6 +23,7 @@ import type {
   JsonSchemaFormatNode,
   ResponseTextConfigNode,
   TemplateReplaceNode,
+  CreateSelectNode,
   ListDownloadedModelsNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
@@ -58,6 +59,7 @@ export type NodeTypes =
   | JsonSchemaFormatNode
   | ResponseTextConfigNode
   | TemplateReplaceNode
+  | CreateSelectNode
   | ListDownloadedModelsNode;
 
 // BaseNodeを埋めたもの

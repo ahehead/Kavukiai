@@ -15,6 +15,7 @@ import {
   JsonSchemaFormatNode,
   ResponseTextConfigNode,
   TemplateReplaceNode,
+  CreateSelectNode,
   ListDownloadedModelsNode,
 } from "./Node";
 import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
@@ -53,6 +54,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   Bool: ({ history, area, dataflow }) => new BoolNode(history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
+  CreateSelect: ({ area, dataflow, controlflow }) =>
+    new CreateSelectNode(area, dataflow, controlflow),
   ListDownloadedModels: ({ area, dataflow, controlflow }) =>
     new ListDownloadedModelsNode(area, dataflow, controlflow),
 
@@ -126,6 +129,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "List",
         key: "list-node",
         factoryKey: "List",
+      },
+      {
+        label: "Create Select",
+        key: "create-select-node",
+        factoryKey: "CreateSelect",
       },
       {
         label: "Object Pick",
