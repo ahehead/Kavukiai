@@ -26,11 +26,7 @@ import {
   CheckBoxControlView,
 } from "../../nodes/Controls/input/CheckBox";
 
-import type {
-  AreaExtra,
-  BaseControl,
-  Schemes,
-} from "renderer/nodeEditor/types";
+import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
 import {
   ButtonControl,
   ButtonControlView,
