@@ -6,6 +6,7 @@ import { ListControl } from "../../Controls/input/List";
 import { SwitchControl } from "../../Controls/input/Switch";
 import { SliderControl } from "../../Controls/input/Slider";
 import { PropertyInputControl } from "../../Controls/input/PropertyInput";
+import { ImageControl } from "../../Controls/Image";
 
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
@@ -20,7 +21,8 @@ export class TestNode extends BaseNode<
     list: ListControl<string>,
     switch: SwitchControl,
     slider: SliderControl,
-    propertyInput: PropertyInputControl
+    propertyInput: PropertyInputControl,
+    image: ImageControl
     // コントロールを作った場合まずここに追加
   }
 > {
@@ -66,6 +68,10 @@ export class TestNode extends BaseNode<
       new PropertyInputControl({
         value: [{ key: 'example', typeStr: 'string' }],
       })
+    );
+    this.addControl(
+      'image',
+      new ImageControl({ value: null })
     );
 
     // ここに新しいコントロールを追加していく

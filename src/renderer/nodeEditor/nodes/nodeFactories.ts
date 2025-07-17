@@ -20,6 +20,7 @@ import {
   ModelInfoToModelListNode,
   LMStudioStartNode,
   LMStudioStopNode,
+  ImageNode,
 } from "./Node";
 import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
@@ -59,6 +60,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
   CreateSelect: ({ area, dataflow, controlflow }) =>
     new CreateSelectNode(area, dataflow, controlflow),
+  Image: ({ area, dataflow, controlflow }) =>
+    new ImageNode(area, dataflow, controlflow),
 
   // lmstudio nodes
   ListDownloadedModels: ({ area, dataflow, controlflow }) =>
@@ -187,6 +190,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "Inspector",
         key: "inspector-node",
         factoryKey: "Inspector",
+      },
+      {
+        label: "Image",
+        key: "image-node",
+        factoryKey: "Image",
       },
     ],
   },
