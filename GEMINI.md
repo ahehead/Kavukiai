@@ -19,6 +19,3 @@ Welcome! These instructions help AI coding agents (Copilot, AI assistants) get u
 - Fix any test or type errors until the whole suite is green.
 - After moving files or changing imports, run pnpm lint .
 - Add or update tests for the code you change, even if nobody asked.
-
-## 言語
-思考は英語で行い、ユーザーへの報告は日本語で行って
