@@ -26,7 +26,11 @@ import {
   CheckBoxControlView,
 } from "../../nodes/Controls/input/CheckBox";
 
-import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
+import type {
+  AreaExtra,
+  BaseControl,
+  Schemes,
+} from "renderer/nodeEditor/types";
 import {
   ButtonControl,
   ButtonControlView,
@@ -62,6 +66,25 @@ import {
   MessageInputControlView,
 } from "renderer/nodeEditor/nodes/Controls/OpenAI/MessageInput";
 
+type Ctor<T = unknown> = new (...a: any[]) => T;
+
+// control の View をコントロール クラスをキーにマッピング
+const controlViews = new Map<Ctor, any>([
+  [RunButtonControl, RunButtonControlView],
+  [MultiLineControl, TextAreaControllView],
+  [ConsoleControl, ConsoleControlView],
+  [InputValueControl, InputValueControlView],
+  [ResponseInputMessageControl, ResponseInputMessageView],
+  [CheckBoxControl, CheckBoxControlView],
+  [ButtonControl, ButtonControlView],
+  [SelectControl, SelectControlView],
+  [ListControl, ListControlView],
+  [SwitchControl, SwitchControlView],
+  [SliderControl, SliderControlView],
+  [PropertyInputControl, PropertyInputControlView],
+  [MessageInputControl, MessageInputControlView],
+]);
+
 export function customReactPresets(
   area: AreaPlugin<Schemes, AreaExtra>,
   history: HistoryPlugin<Schemes>,
@@ -76,46 +99,7 @@ export function customReactPresets(
         return CustomSocket;
       },
       control(data) {
-        if (data.payload instanceof RunButtonControl) {
-          return RunButtonControlView;
-        }
-        if (data.payload instanceof MultiLineControl) {
-          return TextAreaControllView;
-        }
-        if (data.payload instanceof ConsoleControl) {
-          return ConsoleControlView;
-        }
-        if (data.payload instanceof InputValueControl) {
-          return InputValueControlView;
-        }
-        if (data.payload instanceof ResponseInputMessageControl) {
-          return ResponseInputMessageView;
-        }
-        if (data.payload instanceof CheckBoxControl) {
-          return CheckBoxControlView;
-        }
-        if (data.payload instanceof ButtonControl) {
-          return ButtonControlView;
-        }
-        if (data.payload instanceof SelectControl) {
-          return SelectControlView;
-        }
-        if (data.payload instanceof ListControl) {
-          return ListControlView;
-        }
-        if (data.payload instanceof SwitchControl) {
-          return SwitchControlView;
-        }
-        if (data.payload instanceof SliderControl) {
-          return SliderControlView;
-        }
-        if (data.payload instanceof PropertyInputControl) {
-          return PropertyInputControlView;
-        }
-        if (data.payload instanceof MessageInputControl) {
-          return MessageInputControlView;
-        }
-        return null;
+        return controlViews.get((data.payload as any).constructor) ?? null;
       },
       node() {
         return createCustomNode(area, history, getZoom);
