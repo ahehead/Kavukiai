@@ -1,11 +1,12 @@
-import { BaseNode, NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
+import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaExtra, Schemes, TypedSocket } from "renderer/nodeEditor/types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import { ConsoleControl } from "../../Controls/Console";
 import { electronApiService } from "renderer/features/services/appService";
+import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 
-export class LMStudioStartNode extends BaseNode<
+export class LMStudioStartNode extends SerializableInputsNode<
   { exec: TypedSocket },
   { exec: TypedSocket },
   { console: ConsoleControl }
@@ -18,7 +19,7 @@ export class LMStudioStartNode extends BaseNode<
     this.addInputPort({
       key: "exec",
       typeName: "exec",
-      label: "In",
+      label: "Start",
       onClick: () => this.controlflow.execute(this.id, "exec"),
     });
     this.addOutputPort({ key: "exec", typeName: "exec", label: "Out" });
