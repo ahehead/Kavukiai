@@ -21,17 +21,17 @@ async function listModelsViaCli(): Promise<ModelInfo[] | null> {
 }
 
 async function startServerViaCli(): Promise<string> {
-  const { stdout } = await execFileAsync("lms", ["server", "start"], {
+  const { stdout, stderr } = await execFileAsync("lms", ["server", "start"], {
     encoding: "utf8",
   });
-  return stdout.trim();
+  return (stderr || stdout).trim(); // ← stderr 優先
 }
 
 async function stopServerViaCli(): Promise<string> {
-  const { stdout } = await execFileAsync("lms", ["server", "stop"], {
+  const { stdout, stderr } = await execFileAsync("lms", ["server", "stop"], {
     encoding: "utf8",
   });
-  return stdout.trim();
+  return (stderr || stdout).trim();
 }
 
 export function registerLMStudioHandlers(): void {
