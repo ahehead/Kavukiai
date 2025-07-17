@@ -138,6 +138,34 @@ export const LLMLoadModelConfig = Type.Object(
   { description: "Configuration for loading LLM models." }
 );
 export type LLMLoadModelConfig = Static<typeof LLMLoadModelConfig>;
+/**
+ * @public
+ * Options for loading a model.
+ */
+export const BaseLoadModelOpts = Type.Object(
+  {
+    identifier: Type.Optional(Type.String({ description: "The identifier to use for the loaded model." })),
+    config: Type.Optional(LLMLoadModelConfig),
+    signal: Type.Optional(Type.Any({ description: "An AbortSignal to cancel the model loading." })),
+    ttl: Type.Optional(Type.Number({ description: "Idle time to live (TTL) in seconds." })),
+    verbose: Type.Optional(
+      Type.Union(
+        [
+          Type.Boolean(),
+          Type.Literal("debug"),
+          Type.Literal("info"),
+          Type.Literal("warn"),
+          Type.Literal("error"),
+        ],
+        { description: "Controls the logging of model loading progress." }
+      )
+    ),
+    onProgress: Type.Optional(Type.Any({ description: "A function that is called with the progress of the model loading." })),
+  },
+  { description: "Options for loading a model." }
+);
+
+export type BaseLoadModelOpts = Static<typeof BaseLoadModelOpts>;
 
 /**
  * @public
