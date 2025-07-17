@@ -4,7 +4,7 @@ import { registerSaveHandlers } from "./save";
 import { registerCloseConfirmHandler } from "./close-confirm";
 import { registerLoadFileHandler } from "./load-file";
 import { registerApiKeysHandlers } from "./apikeys";
-import { registerLMStudioHandlers } from "./lmstudio";
+import { registerLMStudioHandlers } from "./LMStudio/lmstudio";
 // import { registerOtherServiceHandlers } from "./otherService";
 
 export function registerIpcHandlers(): void {
