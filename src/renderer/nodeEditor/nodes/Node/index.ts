@@ -24,3 +24,4 @@ export { ListDownloadedModelsNode } from "./LMStudio/ListDownloadedModelsNode";
 export { ModelInfoToModelListNode } from "./LMStudio/ModelInfoToModelListNode";
 export { LMStudioStartNode } from "./LMStudio/LMStudioStartNode";
 export { LMStudioStopNode } from "./LMStudio/LMStudioStopNode";
+export { ImageNode } from "./Output/ImageNode";

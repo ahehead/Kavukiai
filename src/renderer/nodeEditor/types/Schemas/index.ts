@@ -14,6 +14,12 @@ import * as DefaultSchema from "./DefaultSchema";
 import * as EventsSchemas from "./openai/EventsSchemas";
 import * as ModelInfoSchemas from "./lmstudio/ModelSchemas";
 
+export const Image = Type.Object({
+  url: Type.String({ description: "image url" }),
+  alt: Type.Optional(Type.String({ description: "alt text" })),
+});
+export type Image = Static<typeof Image>;
+
 // OpenAIのclientからのレスポンスを表す型
 export const OpenAIClientResponse = Type.Union([
   ResponseSchemas.Response,
@@ -64,6 +70,8 @@ const registry = {
   OpenAIClientResponse,
   OpenAIClientResponseOrNull,
   ChatMessageItem,
+
+  Image,
 
   ...ModelInfoSchemas,
 } satisfies Record<string, TSchema>;

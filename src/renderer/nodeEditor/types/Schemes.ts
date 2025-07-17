@@ -28,6 +28,7 @@ import type {
   ModelInfoToModelListNode,
   LMStudioStartNode,
   LMStudioStopNode,
+  ImageNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./Node/BaseNode";
@@ -63,6 +64,7 @@ export type NodeTypes =
   | ResponseTextConfigNode
   | TemplateReplaceNode
   | CreateSelectNode
+  | ImageNode
   | ListDownloadedModelsNode
   | ModelInfoToModelListNode
   | LMStudioStartNode

@@ -11,6 +11,7 @@ import type { SwitchControl } from "../nodes/Controls/input/Switch";
 import type { PropertyInputControl } from "../nodes/Controls/input/PropertyInput";
 import type { SliderControl } from "../nodes/Controls/input/Slider";
 import type { MessageInputControl } from "../nodes/Controls/OpenAI/MessageInput";
+import type { ImageControl } from "../nodes/Controls/Image";
 
 export type NodeControl =
   | RunButtonControl
@@ -27,4 +28,5 @@ export type NodeControl =
   | SwitchControl
   | SliderControl
   | PropertyInputControl
-  | MessageInputControl;
+  | MessageInputControl
+  | ImageControl;
