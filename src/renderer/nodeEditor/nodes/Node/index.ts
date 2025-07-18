@@ -15,6 +15,7 @@ export { BoolNode } from "./Primitive/BoolNode";
 export { ListNode } from "./Primitive/ListNode";
 export { CreateSelectNode } from "./Primitive/CreateSelectNode";
 export { TemplateReplaceNode } from "./Primitive/TemplateReplaceNode";
+export { LoadImageNode } from "./Primitive/LoadImageNode";
 export { ObjectPickNode } from "./Primitive/Object/ObjectPickNode";
 export { JsonSchemaToObjectNode } from "./Primitive/Object/JsonSchemaToObject";
 export { JsonSchemaNode } from "./Primitive/Object/JsonSchemaNode";
