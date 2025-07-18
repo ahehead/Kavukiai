@@ -1,4 +1,4 @@
-import { type JSX, useEffect, useRef, useState } from 'react'
+import { type JSX, useRef } from 'react'
 import { textAreaStyles } from 'renderer/nodeEditor/nodes/components/common/NodeControlParts'
 import {
   BaseControl,
