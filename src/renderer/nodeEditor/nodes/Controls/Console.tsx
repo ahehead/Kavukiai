@@ -77,7 +77,8 @@ export function ConsoleControlView(props: { data: ConsoleControl }): JSX.Element
   return (
     <Drag.NoDrag>
       <div className="flex flex-col w-full">
-        <div
+        <button
+          type="button"
           className="flex items-center cursor-pointer"
           onClick={toggle}
         >
@@ -92,7 +93,7 @@ export function ConsoleControlView(props: { data: ConsoleControl }): JSX.Element
             size={16}
           />
           <span className="text-sm ml-1">Console</span>
-        </div>
+        </button>
         {isOpen && (
           <textarea
             ref={textareaRef}
