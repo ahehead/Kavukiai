@@ -2,9 +2,9 @@ import { useState, useRef } from "react";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 
 /**
- * viewSubmenu: 現在表示中のサブメニューのキー、もしくは false（非表示）を保持
+ * viewSubmenu: 現在表示中のサブメニューのキー、階層に対応する配列
  */
-type ViewSubmenu = { key: string } | false;
+type ViewSubmenu = string[];
 
 /**
  * カスタムフック: コンテキストメニューのサブメニュー開閉ロジックを管理
@@ -18,10 +18,7 @@ export function useContextMenu(
   closeSubmenuTime = 1000
 ) {
   // どのサブメニューを開いているか保持
-  const [viewSubmenu, setViewSubmenu] = useState<ViewSubmenu>(false);
-
-  // 現在マウスオーバー中の item.key を追跡
-  const currentPointerKey = useRef<string | null>(null);
+  const [viewSubmenu, setViewSubmenu] = useState<ViewSubmenu>([]);
 
   // 開くタイマー、閉じるタイマー用の ref
   const subMenuOpenTimerRef = useRef<number | null>(null);
@@ -29,28 +26,28 @@ export function useContextMenu(
 
   /**
    * メニュー項目にマウスが乗ったときに呼び出す
-   * 既存の開くタイマーはクリアし、新たに遅延を設定してサブメニューを表示
    */
-  function handleEnterMenuItem(item: Item) {
-    if (subMenuOpenTimerRef.current) {
-      clearTimeout(subMenuOpenTimerRef.current);
-    }
-    currentPointerKey.current = item.key;
+  function handleEnterMenuItem(level: number, item: Item) {
+    if (subMenuOpenTimerRef.current) clearTimeout(subMenuOpenTimerRef.current);
+    if (submenuCloseTimerRef.current)
+      clearTimeout(submenuCloseTimerRef.current);
 
     subMenuOpenTimerRef.current = window.setTimeout(() => {
-      // 項目から離れていなければ表示フラグをセット
-      if (currentPointerKey.current === item.key) {
-        setViewSubmenu({ key: item.key });
-      }
+      setViewSubmenu((prev) => {
+        // prev の 0..level-1 はそのまま、level 以降を切り捨て
+        const next = prev.slice(0, level);
+        next[level] = item.key;
+        return next;
+      });
     }, submenuOpenDelay);
   }
 
   /**
    * サブメニュー領域にマウスが入ったとき
-   * サブメニューを継続して開いたままにするために key を更新
    */
-  function handleEnterSubmenu(item: Item) {
-    currentPointerKey.current = item.key;
+  function handleEnterSubmenu() {
+    if (submenuCloseTimerRef.current)
+      clearTimeout(submenuCloseTimerRef.current);
   }
 
   /**
@@ -68,14 +65,8 @@ export function useContextMenu(
       clearTimeout(submenuCloseTimerRef.current);
     }
 
-    // ポインタキーをリセット
-    currentPointerKey.current = null;
-
-    // 遅延後にサブメニューを閉じる
     submenuCloseTimerRef.current = window.setTimeout(() => {
-      if (!currentPointerKey.current) {
-        setViewSubmenu(false);
-      }
+      setViewSubmenu([]); // すべて閉じる
     }, closeSubmenuTime);
   }
 
