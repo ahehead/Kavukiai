@@ -1,6 +1,6 @@
 import type { Item } from "rete-context-menu-plugin/_types/types";
 
-function filterItems(list: Item[], q: string): Item[] {
+function _filterItems(list: Item[], q: string): Item[] {
   if (!q) return list;
   const lower = q.toLowerCase();
 
@@ -10,7 +10,7 @@ function filterItems(list: Item[], q: string): Item[] {
         item.label.toLowerCase().includes(lower) ||
         item.key.toLowerCase().includes(lower);
 
-      const sub = item.subitems && filterItems(item.subitems, q);
+      const sub = item.subitems && _filterItems(item.subitems, q);
       if (hit || (sub && sub.length > 0)) {
         return { ...item, subitems: sub };
       }
