@@ -36,8 +36,7 @@ export default function SettingsModal({ onClose }: Props) {
   const stop = (e: React.SyntheticEvent) => e.stopPropagation()
 
   return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: <explanation>
-    <div
+    <button
       className="fixed inset-0 w-full h-full bg-sidebar/30 backdrop-blur-xs flex items-center justify-center z-modal"
       onClick={onClose}
       onKeyDown={stop}
@@ -102,6 +101,6 @@ export default function SettingsModal({ onClose }: Props) {
           </div>
         </div>
       </dialog>
-    </div>
+    </button>
   )
 }
