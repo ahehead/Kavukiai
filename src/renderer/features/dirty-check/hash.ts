@@ -13,12 +13,10 @@ export async function sha256Hex(data: string): Promise<string> {
     return [...new Uint8Array(buf)]
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
-    // biome-ignore lint/style/noUselessElse: <explanation>
-  } else {
-    // Node.js / Electron main / preload
-    const { createHash } = await import("node:crypto");
-    return createHash("sha256").update(data).digest("hex");
   }
+  // Node.js / Electron main / preload
+  const { createHash } = await import("node:crypto");
+  return createHash("sha256").update(data).digest("hex");
 }
 
 export const hashGraph = async (g: GraphJsonData): Promise<string> =>
