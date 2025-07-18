@@ -1,40 +1,40 @@
 import type { GetSchemes } from "rete";
-import type { ReactArea2D } from "rete-react-plugin";
 import type { ContextMenuExtra } from "rete-context-menu-plugin";
+import type { ReactArea2D } from "rete-react-plugin";
 
 import type {
-  ResponseInputMessageItemListNode,
-  ResponseInputMessageItemNode,
-  MultiLineStringNode,
-  NumberNode,
-  OpenAINode,
-  ResponseCreateParamsBaseNode,
-  RunNode,
-  StringNode,
-  TestNode,
-  UnknownNode,
   BoolNode,
-  InspectorNode,
-  IFNode,
-  ListNode,
-  ObjectPickNode,
-  JsonSchemaToObjectNode,
-  JsonSchemaNode,
-  JsonSchemaFormatNode,
-  ResponseTextConfigNode,
-  TemplateReplaceNode,
   CreateSelectNode,
+  IFNode,
+  ImageNode,
+  InspectorNode,
+  JsonSchemaFormatNode,
+  JsonSchemaNode,
+  JsonSchemaToObjectNode,
   ListDownloadedModelsNode,
-  ModelInfoToModelListNode,
+  ListNode,
   LMStudioStartNode,
   LMStudioStopNode,
-  ImageNode,
   LoadImageNode,
+  ModelInfoToModelListNode,
+  MultiLineStringNode,
+  NumberNode,
+  ObjectPickNode,
+  OpenAINode,
+  ResponseCreateParamsBaseNode,
+  ResponseInputMessageItemListNode,
+  ResponseInputMessageItemNode,
+  ResponseTextConfigNode,
+  RunNode,
+  StringNode,
+  TemplateReplaceNode,
+  TestNode,
+  UnknownNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./Node/BaseNode";
-import type { TypedSocket } from "./TypedSocket";
 import type { NodeControl } from "./NodeControl";
+import type { TypedSocket } from "./TypedSocket";
 
 export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
 
@@ -72,9 +72,12 @@ export type NodeTypes =
   | LMStudioStartNode
   | LMStudioStopNode;
 
+export type NodeTypeKey = NodeTypes["label"];
+
 // BaseNodeを埋めたもの
 export interface NodeInterface
   extends BaseNode<
+    NodeTypeKey,
     { [key in string]?: TypedSocket },
     { [key in string]?: TypedSocket },
     { [key in string]?: NodeControl }
