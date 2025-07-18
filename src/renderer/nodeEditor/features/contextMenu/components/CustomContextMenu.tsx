@@ -2,18 +2,24 @@
 import type { Item } from "rete-context-menu-plugin/_types/types";
 import type { ContextMenuRender } from "rete-react-plugin/_types/presets/context-menu/types";
 
-import { MenuContainer, MenuItemContainer, SubmenuWrapper } from "./ContextMenuPresentaitional";
+import { MenuContainer, SubmenuWrapper } from "./ContextMenuPresentaitional";
 import { ChevronRight } from 'lucide-react';
 import { computeMenuPlacement } from "./menuPosition";
 import { useContextMenu } from "./useContextMenu";
+import { cva } from "class-variance-authority";
+import { createContext, useContext } from "react";
 
-export function CustomContextMenu({ element, type, items, searchBar, onHide }: ContextMenuRender["data"]) {
+const MenuCtx = createContext<ReturnType<typeof useContextMenu> | null>(null);
+
+export function CustomContextMenu({ element, items, onHide }: ContextMenuRender["data"]) {
 
   const menuWidthAndMargin = 250
   const minMenuWidth = 230;
   const itemHeight = 30; // アイテムの高さを固定値で設定
   // メニューの配置を計算
   const { x, y, side, windowHeight } = computeMenuPlacement(element, items, menuWidthAndMargin, itemHeight);
+
+  const menuState = useContextMenu();
 
   return (
     <div
@@ -24,81 +30,91 @@ export function CustomContextMenu({ element, type, items, searchBar, onHide }: C
         top: y
       }}
     >
-      <Menu
-        items={items}
-        side={side}
-        onHide={onHide}
-        minMenuWidth={minMenuWidth}
-        windowHeight={windowHeight}
-        itemHeight={itemHeight}
-      />
+      <MenuCtx.Provider value={menuState}>
+        <Menu
+          items={items}
+          level={0}
+          side={side}
+          onHide={onHide}
+          minMenuWidth={minMenuWidth}
+          windowHeight={windowHeight}
+          itemHeight={itemHeight}
+        />
+      </MenuCtx.Provider>
     </div>
   );
 }
 
-export function Menu({
-  items,
-  side,
-  onHide,
-  minMenuWidth,
-  windowHeight,
-  itemHeight
-}: {
+type MenuProps = {
   items: Item[];
+  level: number; // レベル（サブメニューの深さ）
   side: "right" | "left";
   onHide: () => void
   minMenuWidth: number;
   windowHeight: number;
   itemHeight: number; // アイテムの高さ（オプション）
-}) {
+}
 
-  const {
-    viewSubmenu,
-    handleEnterMenuItem,
-    handleEnterSubmenu,
-    handleLeaveMenuItem,
-  } = useContextMenu();
+export function Menu({
+  items,
+  level,
+  side,
+  onHide,
+  minMenuWidth,
+  windowHeight,
+  itemHeight
+}: MenuProps) {
+  const ctx = useContext(MenuCtx);
 
 
   return (
     // menu
     <MenuContainer
+      onPointerLeave={ctx?.handleLeaveMenuItem}
       style={{ minWidth: minMenuWidth }}
     >
-      {/* items */}
-      {items.map(item => {
+      {items.map((item) => {
+
+        const hasSub = (item: Item): item is Item & { subitems: Item[] } => !!item.subitems && item.subitems.length > 0;
+        const isOpen = ctx?.viewSubmenu[level] === item.key;
+
         return (
-          // item
-          <MenuItemContainer
+          <li
             key={item.key}
-            onClick={() => { item.handler(); if (!item.subitems) onHide(); }}
-            onPointerEnter={() => handleEnterMenuItem(item)}
-            onPointerLeave={handleLeaveMenuItem}
-          >
-            <div className="w-[30px]">
-              {/* アイコンなど */}
-            </div>
-            {/* ラベル */}
-            <div className="flex-1 inline-block w-fit">
-              {item.label}
-            </div>
-            {/* サブアイテムがある場合の矢印 */}
-            {item.subitems && (
-              <div className="flex items-center mr-1">
-                <ChevronRight className="w-[14px] h-[14px]" strokeWidth={0.8} />
-              </div>
-            )}
-            {item.subitems && viewSubmenu && viewSubmenu.key === item.key && (
+            role="none"
+            className="relative">
+            <button
+              type="button"
+              role="menuitem"
+              aria-haspopup={hasSub(item) ? "menu" : undefined}
+              aria-expanded={hasSub(item) ? isOpen : undefined}
+              className={menuItemButton()}
+              onClick={() => {
+                item.handler();
+                if (!hasSub(item)) onHide();
+              }}
+              onPointerEnter={() => ctx?.handleEnterMenuItem(level, item)}
+              onPointerLeave={ctx?.handleLeaveMenuItem}
+            >
+              <div className="w-[30px]">{/* アイコンなど */}</div>
+              <span className="flex-1 text-left">{item.label}</span>
+              {hasSub(item) && (
+                <ChevronRight className="w-[14px] h-[14px] pointer-events-none" strokeWidth={0.8} />
+              )}
+            </button>
+
+            {hasSub(item) && isOpen && (
               <SubmenuWrapper
                 side={side}
-                onPointerEnter={() => handleEnterSubmenu(item)}
-                onPointerLeave={handleLeaveMenuItem}
+                onPointerEnter={() => ctx?.handleEnterSubmenu()}
+                onPointerLeave={ctx?.handleLeaveMenuItem}
                 itemCount={item.subitems.length}
                 itemHeight={itemHeight}
                 windowHeight={windowHeight}
               >
                 <Menu
                   items={item.subitems}
+                  level={level + 1}
                   side={side}
                   onHide={onHide}
                   minMenuWidth={minMenuWidth}
@@ -107,11 +123,16 @@ export function Menu({
                 />
               </SubmenuWrapper>
             )}
-          </MenuItemContainer>
-        );
+          </li>
+        )
       })}
     </MenuContainer>
   );
 }
+
+const menuItemButton = cva(
+  "inline-flex w-full gap-1 hover:bg-accent/60 px-1 py-1.25 transition-colors duration-290"
+);
+
 
 
