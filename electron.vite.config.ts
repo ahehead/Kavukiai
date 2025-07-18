@@ -1,16 +1,13 @@
-import { defineConfig, externalizeDepsPlugin } from "electron-vite";
-import { codeInspectorPlugin } from "code-inspector-plugin";
-import { resolve, normalize, dirname } from "node:path";
+import { dirname, normalize, resolve } from "node:path";
 import tailwindcss from "@tailwindcss/vite";
-
-import injectProcessEnvPlugin from "rollup-plugin-inject-process-env";
-import tsconfigPathsPlugin from "vite-tsconfig-paths";
 import reactPlugin from "@vitejs/plugin-react";
-
-import { settings } from "./src/lib/electron-router-dom";
-import { main, resources } from "./package.json";
-
+import { codeInspectorPlugin } from "code-inspector-plugin";
+import { defineConfig, externalizeDepsPlugin } from "electron-vite";
+import injectProcessEnvPlugin from "rollup-plugin-inject-process-env";
 import svgr from "vite-plugin-svgr";
+import tsconfigPathsPlugin from "vite-tsconfig-paths";
+import { main, resources } from "./package.json";
+import { settings } from "./src/lib/electron-router-dom";
 
 const [nodeModules, devFolder] = normalize(dirname(main)).split(/\/|\\/g);
 const devPath = [nodeModules, devFolder].join("/");
