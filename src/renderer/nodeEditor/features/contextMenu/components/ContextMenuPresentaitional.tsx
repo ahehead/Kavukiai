@@ -4,23 +4,14 @@ import { useRef, useState, useLayoutEffect } from "react";
 
 const menuContainer = cva("inline-flex flex-col w-fit bg-node-bg shadow-lg text-sm border border-node-border/20 rounded-md");
 
-export function MenuContainer({ children, className, ...props }: { children: React.ReactNode } & React.ComponentProps<"div">) {
+export function MenuContainer({ children, className, ...props }: { children: React.ReactNode } & React.ComponentProps<"ul">) {
   return (
-    <div data-testid="context-menu" className={cn(menuContainer(), className)} {...props}>
+    <ul data-testid="context-menu" className={cn(menuContainer(), className)} {...props}>
       {children}
-    </div>
+    </ul>
   );
 }
 
-const menuItem = cva("inline-flex w-full gap-1 hover:bg-accent/60 px-1 relative transition-colors duration-290 delay-50 py-1.25");
-
-export function MenuItemContainer({ children, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div data-testid="context-menu-item" className={menuItem()} {...props}>
-      {children}
-    </div>
-  );
-}
 
 const submenuContainer = cva("transform absolute inline-flex w-fit");
 export function SubmenuWrapper({
