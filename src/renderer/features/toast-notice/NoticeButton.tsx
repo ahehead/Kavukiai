@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useId } from "react";
+import { useEffect, useState } from "react";
 import { useNoticeStore } from "./useNoticeStore";
 import type { Notice } from "./types";
 import { BellButton } from "renderer/components/UIButton";
@@ -11,7 +11,6 @@ export default function NoticeButton() {
   const unread = notices.filter((n) => !n.read).length;
 
   const [open, setOpen] = useState(false);
-  const id = useId();
 
   const toggle = () => {
     markAllRead();

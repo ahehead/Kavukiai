@@ -53,7 +53,7 @@ export function filterInputControls(
   inputs: NodeInterface["inputs"]
 ): Array<{ key: string; input: ClassicPreset.Input<TypedSocket> }> {
   const filtered = Object.entries(inputs).filter(
-    ([key, entry]) => entry && entry.control != null
+    ([_key, entry]) => entry && entry.control != null
   );
   return filtered.map(
     ([key, input]) =>
