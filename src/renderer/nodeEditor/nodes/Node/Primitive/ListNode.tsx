@@ -1,25 +1,34 @@
-import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
-import type { ConnectionParams, DynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
-import type { AreaPlugin } from 'rete-area-plugin';
-import type { DataflowEngine } from 'rete-engine';
-import { type TSchema, Type } from '@sinclair/typebox';
-import { resetCacheDataflow } from '../../util/resetCacheDataflow';
-import type { TypedSocket, Schemes, AreaExtra, TooltipInput } from 'renderer/nodeEditor/types';
+import { type TSchema, Type } from '@sinclair/typebox'
+import type {
+  AreaExtra,
+  Schemes,
+  TooltipInput,
+  TypedSocket,
+} from 'renderer/nodeEditor/types'
+import type {
+  ConnectionParams,
+  DynamicSchemaNode,
+} from 'renderer/nodeEditor/types/Node/DynamicSchemaNode'
+import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+import type { AreaPlugin } from 'rete-area-plugin'
+import type { DataflowEngine } from 'rete-engine'
+import { resetCacheDataflow } from '../../util/resetCacheDataflow'
 
 // リストノード: 6つの入力をリスト化し返す
-export class ListNode extends SerializableInputsNode<
-  Record<string, TypedSocket>,
-  { out: TypedSocket },
-  object
-> implements DynamicSchemaNode {
-
-  schemaName = 'any';
-  schema: TSchema = Type.Any();
+export class ListNode
+  extends SerializableInputsNode<
+    Record<string, TypedSocket>,
+    { out: TypedSocket },
+    object
+  >
+  implements DynamicSchemaNode {
+  schemaName = 'any'
+  schema: TSchema = Type.Any()
   constructor(
     private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>
   ) {
-    super('List');
+    super('List')
 
     this.addInputPort(
       Array.from({ length: 6 }, (_, i) => ({
@@ -28,13 +37,12 @@ export class ListNode extends SerializableInputsNode<
         label: 'item',
         tooltip: 'リストアイテム',
       }))
-    );
+    )
 
     this.addOutputPort({
       key: 'out',
       typeName: 'array',
-    });
-
+    })
   }
 
   /**
@@ -42,22 +50,29 @@ export class ListNode extends SerializableInputsNode<
    * @param params 接続パラメータ
    * @return Promise<void>
    */
-  public async onConnectionChangedSchema({ isConnected, source, target }: ConnectionParams): Promise<string[]> {
-    resetCacheDataflow(this.dataflow, this.id);
+  public async onConnectionChangedSchema({
+    isConnected,
+    source,
+  }: ConnectionParams): Promise<string[]> {
+    resetCacheDataflow(this.dataflow, this.id)
     // console.log('ListNode onConnectionChangedSchema', isConnected, source, target);
     if (isConnected) {
       if (this.isConnectedFirst(this.inputs)) {
-        await this.updateSchema(this.inputs, source.getName(), source.getSchema());
+        await this.updateSchema(
+          this.inputs,
+          source.getName(),
+          source.getSchema()
+        )
       } else {
-        await this.updateSchema(this.inputs, this.schemaName, this.schema);
+        await this.updateSchema(this.inputs, this.schemaName, this.schema)
       }
     } else {
       if (this.isNotConnectedInput(this.inputs)) {
-        await this.updateSchema(this.inputs, "any", Type.Any());
+        await this.updateSchema(this.inputs, 'any', Type.Any())
       }
     }
-    await this.area.update('node', this.id);
-    return ["out"];
+    await this.area.update('node', this.id)
+    return ['out']
   }
 
   /**
@@ -66,7 +81,7 @@ export class ListNode extends SerializableInputsNode<
    * @return Promise<void>
    */
   public async setupSchema(): Promise<void> {
-    await this.updateSchema(this.inputs, this.schemaName, this.schema);
+    await this.updateSchema(this.inputs, this.schemaName, this.schema)
   }
 
   /**
@@ -75,14 +90,19 @@ export class ListNode extends SerializableInputsNode<
    * @param schemaName スキーマ名
    * @param schema スキーマ
    */
-  public async updateSchema(inputs: Record<string, TooltipInput<TypedSocket> | undefined>,
+  public async updateSchema(
+    inputs: Record<string, TooltipInput<TypedSocket> | undefined>,
     schemaName: string,
     schema: TSchema
   ): Promise<void> {
-    await this.updateInputsSchema(inputs, schemaName, schema);
-    await this.updateOutSchema('out', `array<${schemaName}>`, Type.Array(schema));
-    this.schemaName = schemaName;
-    this.schema = schema;
+    await this.updateInputsSchema(inputs, schemaName, schema)
+    await this.updateOutSchema(
+      'out',
+      `array<${schemaName}>`,
+      Type.Array(schema)
+    )
+    this.schemaName = schemaName
+    this.schema = schema
   }
 
   /**
@@ -94,10 +114,10 @@ export class ListNode extends SerializableInputsNode<
   public async updateInputsSchema(
     inputs: Record<string, TooltipInput<TypedSocket> | undefined>,
     schemaName: string,
-    schema: TSchema,
+    schema: TSchema
   ) {
     for (const input of Object.values(inputs)) {
-      await input?.socket.setSchema(schemaName, schema);
+      await input?.socket.setSchema(schemaName, schema)
     }
   }
 
@@ -108,14 +128,11 @@ export class ListNode extends SerializableInputsNode<
    * @param schema スキーマ
    */
   public async updateOutSchema(
-    outputKey: "out",
+    outputKey: 'out',
     schemaName: string,
     schema: TSchema
   ): Promise<void> {
-    await this.outputs[outputKey]?.socket.setSchema(
-      schemaName,
-      schema
-    );
+    await this.outputs[outputKey]?.socket.setSchema(schemaName, schema)
   }
 
   /**
@@ -123,10 +140,12 @@ export class ListNode extends SerializableInputsNode<
    * @param inputs 入力のオブジェクト
    * @returns すべて未接続ならtrue
    */
-  public isNotConnectedInput(inputs: Record<string, TooltipInput<TypedSocket> | undefined>): boolean {
-    return Object.values(inputs).every(
-      input => input ? !input.socket.isConnected : true
-    );
+  public isNotConnectedInput(
+    inputs: Record<string, TooltipInput<TypedSocket> | undefined>
+  ): boolean {
+    return Object.values(inputs).every(input =>
+      input ? !input.socket.isConnected : true
+    )
   }
 
   /**
@@ -134,17 +153,23 @@ export class ListNode extends SerializableInputsNode<
    * @param inputs 入力のオブジェクト
    * @returns 1つだけ接続されていればtrue
    */
-  public isConnectedFirst(inputs: Record<string, TooltipInput<TypedSocket> | undefined>): boolean {
-    return Object.values(inputs).filter(
-      input => input ? input.socket.isConnected : false
-    ).length === 1;
+  public isConnectedFirst(
+    inputs: Record<string, TooltipInput<TypedSocket> | undefined>
+  ): boolean {
+    return (
+      Object.values(inputs).filter(input =>
+        input ? input.socket.isConnected : false
+      ).length === 1
+    )
   }
 
-  public data(
-    inputs: Partial<Record<string, unknown[]>>
-  ): { out: unknown[] } {
+  public data(inputs: Partial<Record<string, unknown[]>>): { out: unknown[] } {
     // console.log('ListNode data', inputs);
-    return { out: Object.keys(inputs).sort().flatMap(k => inputs[k] || []) };
+    return {
+      out: Object.keys(inputs)
+        .sort()
+        .flatMap(k => inputs[k] || []),
+    }
   }
 
   async execute(): Promise<void> { }
@@ -152,12 +177,12 @@ export class ListNode extends SerializableInputsNode<
   serializeControlValue(): { schemaName: string; schema: TSchema } {
     return {
       schemaName: this.schemaName,
-      schema: this.schema
-    };
+      schema: this.schema,
+    }
   }
 
   deserializeControlValue(data: { schemaName: string; schema: TSchema }): void {
-    this.schemaName = data.schemaName;
-    this.schema = data.schema;
+    this.schemaName = data.schemaName
+    this.schema = data.schema
   }
 }
