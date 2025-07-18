@@ -16,10 +16,7 @@ export class ResponseTextConfigNode extends BaseNode<
   { out: TypedSocket },
   object
 > {
-  constructor(
-    area: AreaPlugin<Schemes, AreaExtra>,
-    dataflow: DataflowEngine<Schemes>
-  ) {
+  constructor() {
     super("ResponseTextConfig");
     this.addInputPort({
       key: "format",
