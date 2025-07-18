@@ -62,6 +62,7 @@ import {
   MessageInputControlView,
 } from "renderer/nodeEditor/nodes/Controls/OpenAI/MessageInput";
 import { ImageControl, ImageControlView } from "renderer/nodeEditor/nodes/Controls/Image";
+import { ImageFileInputControl, ImageFileInputControlView } from "renderer/nodeEditor/nodes/Controls/input/ImageFileInput";
 
 type Ctor<T = unknown> = new (...a: any[]) => T;
 
@@ -81,6 +82,7 @@ const controlViews = new Map<Ctor, any>([
   [PropertyInputControl, PropertyInputControlView],
   [MessageInputControl, MessageInputControlView],
   [ImageControl, ImageControlView],
+  [ImageFileInputControl, ImageFileInputControlView],
 ]);
 
 export function customReactPresets(

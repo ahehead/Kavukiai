@@ -21,6 +21,7 @@ import {
   LMStudioStartNode,
   LMStudioStopNode,
   ImageNode,
+  LoadImageNode,
 } from "./Node";
 import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import type { AreaPlugin } from "rete-area-plugin";
@@ -60,6 +61,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
   CreateSelect: ({ area, dataflow, controlflow }) =>
     new CreateSelectNode(area, dataflow, controlflow),
+  LoadImage: ({ history, area, dataflow }) =>
+    new LoadImageNode(history, area, dataflow),
   Image: ({ area, dataflow, controlflow }) =>
     new ImageNode(area, dataflow, controlflow),
 
@@ -142,6 +145,11 @@ export const contextMenuStructure: MenuItemDefinition[] = [
         label: "List",
         key: "list-node",
         factoryKey: "List",
+      },
+      {
+        label: "Load Image",
+        key: "load-image-node",
+        factoryKey: "LoadImage",
       },
       {
         label: "Create Select",
