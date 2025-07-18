@@ -1,6 +1,6 @@
-import type { NodeControl } from "../NodeControl";
-import type { AreaExtra, Schemes, TypedSocket } from "..";
 import type { AreaPlugin } from "rete-area-plugin";
+import type { AreaExtra, Schemes, TypedSocket } from "..";
+import type { NodeControl } from "../NodeControl";
 import { NodeIO } from "./NodeIO";
 
 export enum NodeStatus {
@@ -11,7 +11,8 @@ export enum NodeStatus {
   WARNING = "WARNING",
 }
 
-export class BaseNode<
+export abstract class BaseNode<
+  L extends string,
   Inputs extends { [key in string]?: TypedSocket },
   Outputs extends { [key in string]?: TypedSocket },
   Controls extends { [key in string]?: NodeControl }
@@ -20,7 +21,9 @@ export class BaseNode<
   public height?: number;
   public status: NodeStatus;
 
-  constructor(label: string, initialStatus: NodeStatus = NodeStatus.IDLE) {
+  declare readonly label: L;
+
+  protected constructor(label: L, initialStatus: NodeStatus = NodeStatus.IDLE) {
     super(label);
     this.status = initialStatus;
   }
