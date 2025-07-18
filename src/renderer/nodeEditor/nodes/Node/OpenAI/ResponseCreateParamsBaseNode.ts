@@ -1,21 +1,21 @@
+import { type TSchema, Type } from "@sinclair/typebox";
 import type OpenAI from "openai";
-import type { AreaPlugin } from "rete-area-plugin";
-import type { HistoryPlugin } from "rete-history-plugin";
-import type { DataflowEngine } from "rete-engine";
-import { InputValueControl } from "../../Controls/input/InputValue";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
-import { CheckBoxControl } from "../../Controls/input/CheckBox";
-import { getInputValue } from "../../util/getInput";
 import type {
   AreaExtra,
-  TypedSocket,
   Schemes,
+  TypedSocket,
 } from "renderer/nodeEditor/types";
-import { SelectControl } from "../../Controls/input/Select";
-import { type TSchema, Type } from "@sinclair/typebox";
-import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import type { DynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
+import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/openai/RequestSchemas";
+import type { AreaPlugin } from "rete-area-plugin";
+import type { DataflowEngine } from "rete-engine";
+import type { HistoryPlugin } from "rete-history-plugin";
+import { CheckBoxControl } from "../../Controls/input/CheckBox";
+import { InputValueControl } from "../../Controls/input/InputValue";
+import { SelectControl } from "../../Controls/input/Select";
+import { getInputValue } from "../../util/getInput";
+import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 type OpenAIParamKeys = keyof ResponseCreateParamsBase;
 // Run ノード
@@ -28,9 +28,9 @@ export class ResponseCreateParamsBaseNode
   implements DynamicSchemaNode
 {
   constructor(
-    private history: HistoryPlugin<Schemes>,
+    history: HistoryPlugin<Schemes>,
     private area: AreaPlugin<Schemes, AreaExtra>,
-    private dataflow: DataflowEngine<Schemes>
+    dataflow: DataflowEngine<Schemes>
   ) {
     super("ResponseCreateParamsBase");
 
@@ -279,11 +279,7 @@ export class ResponseCreateParamsBaseNode
     void this.setupSchema();
   }
 
-  public async onConnectionChangedSchema(param: {
-    isConnected: boolean;
-    source: TypedSocket;
-    target: TypedSocket;
-  }): Promise<string[]> {
+  public async onConnectionChangedSchema(): Promise<string[]> {
     await this.setupSchema();
     await this.area.update("node", this.id);
     return ["param"];
