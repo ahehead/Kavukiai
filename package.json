@@ -79,7 +79,7 @@
     "zustand-debounce": "^2.2.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.1.2",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.0.9",
     "@types/node": "^22.13.8",
