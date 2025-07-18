@@ -6,6 +6,7 @@ import type {
 } from "renderer/nodeEditor/types/Schemas/openai/RequestSchemas";
 
 export class ResponseTextConfigNode extends BaseNode<
+  "ResponseTextConfig",
   { format: TypedSocket },
   { out: TypedSocket },
   object

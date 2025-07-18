@@ -13,6 +13,7 @@ import { formatValue } from '../util/formatValue'
 // View String ノード
 export class InspectorNode
   extends SerializableInputsNode<
+    'Inspector',
     {
       exec: TypedSocket
       inputAny: TypedSocket

@@ -2,7 +2,12 @@ import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
-import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
+import type {
+  AreaExtra,
+  NodeTypeKey,
+  NodeTypes,
+  Schemes,
+} from "../types/Schemes";
 import {
   BoolNode,
   CreateSelectNode,
@@ -42,7 +47,7 @@ export type NodeDeps = {
 };
 
 export const nodeFactories = {
-  UnknownNode: () => new UnknownNode(),
+  Unknown: () => new UnknownNode(),
   Test: () => new TestNode(),
   Inspector: ({ dataflow, area, controlflow }) =>
     new InspectorNode(dataflow, area, controlflow),
@@ -101,20 +106,20 @@ export const nodeFactories = {
     new JsonSchemaNode(history, area, dataflow),
 
   IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
-} satisfies Record<string, (deps: NodeDeps) => NodeTypes>;
+} satisfies Record<NodeTypeKey, (deps: NodeDeps) => NodeTypes>;
 
 export interface MenuItemDefinition {
   label: string;
   key: string;
   handler?: () => void;
-  factoryKey?: keyof typeof nodeFactories;
+  factoryKey?: NodeTypeKey;
   subitems?: MenuItemDefinition[];
 }
 
 // types for building raw menu without keys
 type RawMenuItem = {
   label: string;
-  factoryKey?: keyof typeof nodeFactories;
+  factoryKey?: NodeTypeKey;
   subitems?: RawMenuItem[];
 };
 // generate key from label
@@ -130,7 +135,7 @@ const rawMenu: RawMenuItem[] = [
           label: "Debug",
           subitems: [
             { label: "Test", factoryKey: "Test" },
-            { label: "Unknown", factoryKey: "UnknownNode" },
+            { label: "Unknown", factoryKey: "Unknown" },
           ],
         },
       ] as RawMenuItem[])

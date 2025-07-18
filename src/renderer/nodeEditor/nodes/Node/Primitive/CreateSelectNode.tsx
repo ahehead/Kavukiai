@@ -6,6 +6,7 @@ import { SelectControl } from '../../Controls/input/Select'
 import { resetCacheDataflow } from '../../util/resetCacheDataflow'
 
 export class CreateSelectNode extends SerializableInputsNode<
+  'CreateSelect',
   { exec: TypedSocket; list: TypedSocket },
   { exec: TypedSocket; out: TypedSocket },
   { select: SelectControl<string> }

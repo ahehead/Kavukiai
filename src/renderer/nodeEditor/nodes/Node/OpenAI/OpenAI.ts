@@ -1,23 +1,24 @@
-import { ConsoleControl } from "../../Controls/Console";
+import type OpenAI from "openai";
 import { electronApiService } from "renderer/features/services/appService";
-import type { OpenAIRequestArgs, PortEventType } from "shared/ApiType";
-import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 import {
   type AreaExtra,
-  type TypedSocket,
   NodeStatus,
   type Schemes,
+  type TypedSocket,
 } from "renderer/nodeEditor/types";
-import { ButtonControl } from "../../Controls/Button";
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import type { OpenAIClientResponse } from "renderer/nodeEditor/types/Schemas";
-import type OpenAI from "openai";
+import type { AreaPlugin } from "rete-area-plugin";
+import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { OpenAIRequestArgs, PortEventType } from "shared/ApiType";
 import type { ControlJson } from "shared/JsonType";
+import { ButtonControl } from "../../Controls/Button";
+import { ConsoleControl } from "../../Controls/Console";
+import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 // Run ノード
 export class OpenAINode extends SerializableInputsNode<
+  "OpenAI",
   { exec: TypedSocket; exec2: TypedSocket; param: TypedSocket },
   { exec: TypedSocket; response: TypedSocket },
   { console: ConsoleControl }

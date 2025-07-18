@@ -1,12 +1,13 @@
-import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
-import type { AreaExtra, Schemes, TypedSocket } from "renderer/nodeEditor/types";
-import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine } from "rete-engine";
-import { ConsoleControl } from "../../Controls/Console";
-import { electronApiService } from "renderer/features/services/appService";
-import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
+import { electronApiService } from 'renderer/features/services/appService'
+import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
+import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
+import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+import type { AreaPlugin } from 'rete-area-plugin'
+import type { ControlFlowEngine } from 'rete-engine'
+import { ConsoleControl } from '../../Controls/Console'
 
 export class LMStudioStartNode extends SerializableInputsNode<
+  'LMStudioStart',
   { exec: TypedSocket },
   { exec: TypedSocket },
   { console: ConsoleControl }
@@ -15,43 +16,46 @@ export class LMStudioStartNode extends SerializableInputsNode<
     private area: AreaPlugin<Schemes, AreaExtra>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
-    super("LMStudioStart");
+    super('LMStudioStart')
     this.addInputPort({
-      key: "exec",
-      typeName: "exec",
-      label: "Start",
-      onClick: () => this.controlflow.execute(this.id, "exec"),
-    });
-    this.addOutputPort({ key: "exec", typeName: "exec", label: "Out" });
-    this.addControl("console", new ConsoleControl({ isOpen: true }));
+      key: 'exec',
+      typeName: 'exec',
+      label: 'Start',
+      onClick: () => this.controlflow.execute(this.id, 'exec'),
+    })
+    this.addOutputPort({ key: 'exec', typeName: 'exec', label: 'Out' })
+    this.addControl('console', new ConsoleControl({ isOpen: true }))
   }
 
   data(): object {
-    return {};
+    return {}
   }
 
-  async execute(_input: "exec", forward: (output: "exec") => void): Promise<void> {
+  async execute(
+    _input: 'exec',
+    forward: (output: 'exec') => void
+  ): Promise<void> {
     if (this.status === NodeStatus.RUNNING) {
-      return;
+      return
     }
-    await this.setStatus(this.area, NodeStatus.RUNNING);
-    const result = await electronApiService.startServer();
-    if (result.status === "success") {
-      this.controls.console.addValue(result.data);
-      await this.setStatus(this.area, NodeStatus.COMPLETED);
+    await this.setStatus(this.area, NodeStatus.RUNNING)
+    const result = await electronApiService.startServer()
+    if (result.status === 'success') {
+      this.controls.console.addValue(result.data)
+      await this.setStatus(this.area, NodeStatus.COMPLETED)
     } else {
-      this.controls.console.addValue(`Error: ${result.message}`);
-      await this.setStatus(this.area, NodeStatus.ERROR);
+      this.controls.console.addValue(`Error: ${result.message}`)
+      await this.setStatus(this.area, NodeStatus.ERROR)
     }
-    await this.area.update("node", this.id);
-    forward("exec");
+    await this.area.update('node', this.id)
+    forward('exec')
   }
 
   serializeControlValue() {
-    return this.controls.console.toJSON();
+    return this.controls.console.toJSON()
   }
 
   deserializeControlValue(data: any) {
-    this.controls.console.setFromJSON({ data });
+    this.controls.console.setFromJSON({ data })
   }
 }

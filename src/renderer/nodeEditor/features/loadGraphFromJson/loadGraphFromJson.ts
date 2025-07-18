@@ -1,11 +1,11 @@
+import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 import type { AreaExtra, Schemes } from "renderer/nodeEditor/types/Schemes";
-import { nodeFactories } from "../../nodes/nodeFactories";
 import { ClassicPreset, type NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
 import type { GraphJsonData, InputPortJson } from "shared/JsonType";
-import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
+import { nodeFactories } from "../../nodes/nodeFactories";
 
 // JSON からノードを生成してエディタに登録
 export async function loadGraphFromJson(
@@ -28,7 +28,7 @@ export async function loadGraphFromJson(
     // ノードごとのファクトリを取得
     let factory = nodeFactories[type];
     if (!factory) {
-      factory = nodeFactories.UnknownNode;
+      factory = nodeFactories.Unknown;
       console.warn(`Unknown node type: ${type}. Using UnknownNode.`);
     }
 

@@ -1,7 +1,7 @@
 import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 
 // 名称がわからないノードのときのノード
-export class UnknownNode extends BaseNode<object, object, object> {
+export class UnknownNode extends BaseNode<"Unknown", object, object, object> {
   constructor() {
     super("Unknown");
   }

@@ -8,6 +8,7 @@ import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 
 // 長文文字列入力ノード
 export class MultiLineStringNode extends BaseNode<
+  'MultiLineString',
   object,
   { out: TypedSocket },
   { textArea: MultiLineControl }

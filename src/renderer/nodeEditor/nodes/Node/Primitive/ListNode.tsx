@@ -17,6 +17,7 @@ import { resetCacheDataflow } from '../../util/resetCacheDataflow'
 // リストノード: 6つの入力をリスト化し返す
 export class ListNode
   extends SerializableInputsNode<
+    'List',
     Record<string, TypedSocket>,
     { out: TypedSocket },
     object

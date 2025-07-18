@@ -6,6 +6,7 @@ import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
 
 export class ImageNode extends BaseNode<
+  "Image",
   { exec: TypedSocket; image: TypedSocket },
   object,
   { view: ImageControl }

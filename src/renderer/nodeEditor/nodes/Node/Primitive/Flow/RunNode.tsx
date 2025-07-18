@@ -5,6 +5,7 @@ import type { ControlFlowEngine } from 'rete-engine'
 
 // Run ノード
 export class RunNode extends BaseNode<
+  "Run",
   object,
   { exec: TypedSocket },
   { btn: RunButtonControl }

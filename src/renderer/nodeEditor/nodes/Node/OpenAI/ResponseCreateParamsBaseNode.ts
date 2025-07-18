@@ -21,6 +21,7 @@ type OpenAIParamKeys = keyof ResponseCreateParamsBase;
 // Run ノード
 export class ResponseCreateParamsBaseNode
   extends SerializableInputsNode<
+    "ResponseCreateParamsBase",
     Record<OpenAIParamKeys, TypedSocket>,
     { param: TypedSocket },
     object

@@ -1,24 +1,27 @@
-import type { HistoryPlugin } from "rete-history-plugin";
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
-import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
-import { ResponseInputMessageControl } from "../../Controls/OpenAI/ResponseInputMessage";
 import type {
   AreaExtra,
-  TypedSocket,
   Schemes,
+  TypedSocket,
 } from "renderer/nodeEditor/types";
-import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
-import { chatMessagesToResponseInput } from "renderer/nodeEditor/types/Schemas";
+import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
-import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schemas";
-import { ButtonControl } from "../../Controls/Button";
+import type {
+  ChatMessageItem,
+  OpenAIClientResponseOrNull,
+} from "renderer/nodeEditor/types/Schemas";
+import { chatMessagesToResponseInput } from "renderer/nodeEditor/types/Schemas";
 import type { EasyInputMessage } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
+import type { AreaPlugin } from "rete-area-plugin";
+import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { HistoryPlugin } from "rete-history-plugin";
+import { ButtonControl } from "../../Controls/Button";
+import { ResponseInputMessageControl } from "../../Controls/OpenAI/ResponseInputMessage";
+import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 // open ai用のchat message list Node
 export class ResponseInputMessageItemListNode
   extends BaseNode<
+    "ResponseInputMessageItemList",
     {
       exec: TypedSocket;
       exec2: TypedSocket;

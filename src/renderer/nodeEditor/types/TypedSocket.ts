@@ -1,5 +1,5 @@
-import { ClassicPreset } from "rete";
 import { type TSchema, Type } from "@sinclair/typebox";
+import { ClassicPreset } from "rete";
 
 export class TypedSocket extends ClassicPreset.Socket {
   schema: TSchema;
@@ -11,10 +11,10 @@ export class TypedSocket extends ClassicPreset.Socket {
     super(typeName); // 省略型情報
     this.schema = schema;
     this.isExec = typeName === "exec"; // exec 判定
-    void this.setTooltip(typeName, this.schema); // ツールチップの型情報を設定
+    void this.setTooltip(schema); // ツールチップの型情報を設定
   }
 
-  async setTooltip(name: string, schema: TSchema) {
+  async setTooltip(schema: TSchema) {
     this.tooltip = `
 \`\`\`typescript
 ${JSON.stringify(schema, null, 2)}
@@ -62,7 +62,7 @@ ${JSON.stringify(schema, null, 2)}
   async setSchema(name: string, schema: TSchema): Promise<void> {
     this.name = name;
     this.schema = schema;
-    await this.setTooltip(name, schema);
+    await this.setTooltip(schema);
   }
 
   getSchema(): TSchema {

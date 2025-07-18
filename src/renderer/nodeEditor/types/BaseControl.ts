@@ -1,10 +1,10 @@
+import { useSyncExternalStore } from "react";
+import { ClassicPreset } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
 import type { ControlJson } from "shared/JsonType";
-import type { Schemes, AreaExtra } from ".";
+import type { AreaExtra, Schemes } from ".";
 import { ValueHistoryAction } from "./ValueHistoryAction";
-import { ClassicPreset } from "rete";
-import { useSyncExternalStore } from "react";
 
 export interface SerializableControl {
   toJSON(): ControlJson | undefined;
@@ -72,6 +72,7 @@ export abstract class BaseControl<T, O extends ControlOptions<T>>
   toJSON(): ControlJson | undefined {
     return undefined;
   }
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: <explanation>
   setFromJSON({ data }: ControlJson): void {}
 
   addHistory(prev: T, next: T) {

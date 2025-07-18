@@ -1,3 +1,5 @@
+import type { NodeTypeKey } from "renderer/nodeEditor/types";
+
 // グラフデータの型定義
 export interface GraphJsonData {
   version: string; // バージョン情報
@@ -8,7 +10,7 @@ export interface GraphJsonData {
 
 export type NodeJson = {
   id: string;
-  type: string; // ノードの種類
+  type: NodeTypeKey; // ノードの種類
   position: { x: number; y: number };
   size: { width?: number; height?: number }; // サイズ、なければ自然なサイズ
   inputs?: { [key: string]: InputPortJson }; // 入力ポートの情報

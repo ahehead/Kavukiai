@@ -1,8 +1,9 @@
-import { SerializableInputsNode } from '../../../types/Node/SerializableInputsNode'
-import type { TypedSocket } from '../../../types'
 import type { ModelInfo } from '@lmstudio/sdk'
+import type { TypedSocket } from '../../../types'
+import { SerializableInputsNode } from '../../../types/Node/SerializableInputsNode'
 
 export class ModelInfoToModelListNode extends SerializableInputsNode<
+  'ModelInfoToModelList',
   { list: TypedSocket },
   { list: TypedSocket },
   Record<string, never>
@@ -29,7 +30,9 @@ export class ModelInfoToModelListNode extends SerializableInputsNode<
 
   data(inputs?: { list?: ModelInfo[][] }): { list: string[] } {
     const inputList = inputs?.list?.[0] || []
-    this.modelKeys = inputList.filter((item) => item.type === "llm").map((item) => item.modelKey)
+    this.modelKeys = inputList
+      .filter(item => item.type === 'llm')
+      .map(item => item.modelKey)
     return { list: this.modelKeys }
   }
 

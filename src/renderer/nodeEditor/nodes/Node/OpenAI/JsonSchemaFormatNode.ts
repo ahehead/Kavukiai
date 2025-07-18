@@ -1,20 +1,21 @@
-import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine } from "rete-engine";
 import type {
   AreaExtra,
   Schemes,
   TypedSocket,
 } from "renderer/nodeEditor/types";
+import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import { JsonSchemaFormat } from "renderer/nodeEditor/types/Schemas/openai/RequestSchemas";
-import { InputValueControl } from "../../Controls/input/InputValue";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
+import type { AreaPlugin } from "rete-area-plugin";
+import type { DataflowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
 import { CheckBoxControl } from "../../Controls/input/CheckBox";
-import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
+import { InputValueControl } from "../../Controls/input/InputValue";
 import { getInputValue } from "../../util/getInput";
+import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 type JsonSchemaFormatKeys = keyof JsonSchemaFormat;
 export class JsonSchemaFormatNode extends SerializableInputsNode<
+  "JsonSchemaFormat",
   Record<JsonSchemaFormatKeys, TypedSocket>,
   { out: TypedSocket },
   object

@@ -9,6 +9,7 @@ import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 // 短い文字列入力ノード
 export class StringNode
   extends BaseNode<
+    'String',
     object,
     { out: TypedSocket },
     { textInput: InputValueControl<string> }

@@ -7,6 +7,7 @@ import { BaseNode } from "./BaseNode";
 // inputsをシリアライズできるように拡張したノードクラス
 
 export class SerializableInputsNode<
+  L extends string,
   Inputs extends {
     [key in string]?: TypedSocket;
   },
@@ -16,7 +17,7 @@ export class SerializableInputsNode<
   Controls extends {
     [key in string]?: NodeControl;
   }
-> extends BaseNode<Inputs, Outputs, Controls> {
+> extends BaseNode<L, Inputs, Outputs, Controls> {
   serializeInputs(): { inputs: Record<string, InputPortJson> } {
     const inputsJson: Record<string, InputPortJson> = {};
     for (const [key, input] of Object.entries(this.inputs)) {

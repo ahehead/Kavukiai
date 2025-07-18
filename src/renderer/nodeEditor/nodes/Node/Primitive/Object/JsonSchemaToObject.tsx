@@ -21,6 +21,7 @@ import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 
 export class JsonSchemaToObjectNode
   extends SerializableInputsNode<
+    "JsonSchemaToObject",
     { exec: TypedSocket; schema: TypedSocket } & Record<string, TypedSocket>,
     { out: TypedSocket },
     object

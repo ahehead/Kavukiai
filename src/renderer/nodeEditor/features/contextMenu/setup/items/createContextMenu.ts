@@ -1,11 +1,11 @@
 import type { NodeEditor } from "rete";
+import type { Item } from "rete-context-menu-plugin/_types/types";
 import {
   type MenuItemDefinition,
   type NodeDeps,
   nodeFactories,
 } from "../../../../nodes/nodeFactories";
-import type { Schemes } from "../../../../types/Schemes";
-import type { Item } from "rete-context-menu-plugin/_types/types";
+import type { NodeTypeKey, Schemes } from "../../../../types/Schemes";
 
 // Helper function to generate context menu items
 export function createReteContextMenuItems(
@@ -36,7 +36,7 @@ export function createReteContextMenuItems(
 }
 
 function createHandler(
-  factoryKey: string,
+  factoryKey: NodeTypeKey,
   editor: NodeEditor<Schemes>,
   nodeDepsArgs: NodeDeps,
   pointer: { x: number; y: number }

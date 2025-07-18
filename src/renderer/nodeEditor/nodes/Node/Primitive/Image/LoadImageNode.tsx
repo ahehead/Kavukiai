@@ -9,6 +9,7 @@ import type { HistoryPlugin } from 'rete-history-plugin'
 import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 
 export class LoadImageNode extends BaseNode<
+  "LoadImage",
   object,
   { out: TypedSocket },
   { file: ImageFileInputControl; view: ImageControl }

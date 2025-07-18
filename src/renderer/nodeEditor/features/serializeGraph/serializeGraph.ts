@@ -1,7 +1,7 @@
 import type { NodeEditor } from "rete";
+import type { AreaPlugin, NodeView } from "rete-area-plugin";
 import type { GraphJsonData, NodeJson } from "../../../../shared/JsonType";
 import type { AreaExtra, NodeTypes, Schemes } from "../../types/Schemes";
-import type { AreaPlugin, NodeView } from "rete-area-plugin";
 
 /**
  * editor の状態を GraphJsonData 形式にシリアライズして返す

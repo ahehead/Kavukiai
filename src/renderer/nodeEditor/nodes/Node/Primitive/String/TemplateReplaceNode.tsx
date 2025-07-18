@@ -6,6 +6,7 @@ import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
 import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 
 export class TemplateReplaceNode extends SerializableInputsNode<
+  "TemplateReplace",
   { exec: TypedSocket; template: TypedSocket; obj: TypedSocket },
   { exec: TypedSocket; out: TypedSocket },
   object

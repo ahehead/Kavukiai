@@ -2,13 +2,14 @@
  * 状態管理 – AppState / PersistedAppState / ApiKeysState / PersistedApiKeysState
  * ===========================================================
  */
-import type { GraphJsonData } from "./JsonType";
-import basic from "./basic.json";
-import {
-  initializeHistoryState,
-  type HistoryState,
-} from "../renderer/nodeEditor/features/editor_state/historyState";
+
 import { hashGraph } from "../renderer/features/dirty-check/hash";
+import {
+  type HistoryState,
+  initializeHistoryState,
+} from "../renderer/nodeEditor/features/editor_state/historyState";
+import basic from "./basic.json";
+import type { GraphJsonData } from "./JsonType";
 
 /* ---------- UI 設定 ---------- */
 export type UISettings = {
@@ -63,7 +64,7 @@ export function createActiveFileId(): ActiveFileId {
 
 export async function createFile(
   title: string,
-  graph: GraphJsonData = basic,
+  graph: GraphJsonData = basic as GraphJsonData,
   path: string | null = null
 ): Promise<File> {
   const now = Date.now();
@@ -116,9 +117,11 @@ export function convertPersistedFilesToFiles(files: PersistedFile[]): File[] {
 }
 
 export function convertFileToPersistedFile(file: File): PersistedFile {
-  const { historyState, ...rest } = file;
-  return rest;
+  const rest = { ...file } as Partial<File>;
+  delete rest.historyState;
+  return rest as PersistedFile;
 }
+
 export function convertFilesToPersistedFiles(files: File[]): PersistedFile[] {
   return files.map(convertFileToPersistedFile);
 }

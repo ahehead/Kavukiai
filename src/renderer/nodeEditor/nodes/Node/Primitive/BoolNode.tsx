@@ -8,6 +8,7 @@ import { resetCacheDataflow } from '../../util/resetCacheDataflow'
 
 // Boolean入力ノード
 export class BoolNode extends BaseNode<
+  'Bool',
   object,
   { out: TypedSocket },
   { switch: SwitchControl }

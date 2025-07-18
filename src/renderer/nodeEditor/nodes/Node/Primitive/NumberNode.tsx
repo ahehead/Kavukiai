@@ -8,6 +8,7 @@ import { resetCacheDataflow } from '../../util/resetCacheDataflow'
 
 // 数値入力ノード
 export class NumberNode extends BaseNode<
+  'Number',
   object,
   { out: TypedSocket },
   { numInput: InputValueControl<number> }

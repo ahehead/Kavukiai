@@ -15,7 +15,11 @@ import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 
 // ObjectPickNode: オブジェクトの各キーを個別の出力として返す
 export class ObjectPickNode
-  extends BaseNode<{ obj: TypedSocket }, Record<string, TypedSocket>, object>
+  extends BaseNode<
+    "ObjectPick",
+    { obj: TypedSocket },
+    Record<string, TypedSocket>,
+    object>
   implements DynamicSchemaNode {
   constructor(
     private area: AreaPlugin<Schemes, AreaExtra>,

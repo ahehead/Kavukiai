@@ -1,18 +1,18 @@
-import type { ControlFlowEngine } from "rete-engine";
-import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine } from "rete-engine";
-import type { HistoryPlugin } from "rete-history-plugin";
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type {
   AreaExtra,
   Schemes,
   TypedSocket,
 } from "renderer/nodeEditor/types";
-import { MessageInputControl } from "../../Controls/OpenAI/MessageInput";
+import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
+import type { AreaPlugin } from "rete-area-plugin";
+import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { HistoryPlugin } from "rete-history-plugin";
+import { MessageInputControl } from "../../Controls/OpenAI/MessageInput";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 export class ResponseInputMessageItemNode extends BaseNode<
+  "ResponseInputMessageItem",
   object,
   { exec: TypedSocket; outMessage: TypedSocket },
   { input: MessageInputControl }

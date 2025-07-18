@@ -12,6 +12,7 @@ import { resetCacheDataflow } from "../../../util/resetCacheDataflow";
 
 // IF ノード
 export class IFNode extends BaseNode<
+  "IF",
   { exec: TypedSocket; boolData: TypedSocket },
   { exec: TypedSocket; exec2: TypedSocket },
   object
