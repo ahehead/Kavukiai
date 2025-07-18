@@ -1,10 +1,10 @@
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
-import type { HistoryPlugin } from 'rete-history-plugin';
-import type { AreaPlugin } from 'rete-area-plugin';
-import type { DataflowEngine } from 'rete-engine';
-import type { AreaExtra, TypedSocket, Schemes } from 'renderer/nodeEditor/types';
-import { InputValueControl } from '../../Controls/input/InputValue';
-import { resetCacheDataflow } from '../../util/resetCacheDataflow';
+import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
+import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
+import type { AreaPlugin } from 'rete-area-plugin'
+import type { DataflowEngine } from 'rete-engine'
+import type { HistoryPlugin } from 'rete-history-plugin'
+import { InputValueControl } from '../../Controls/input/InputValue'
+import { resetCacheDataflow } from '../../util/resetCacheDataflow'
 
 // 数値入力ノード
 export class NumberNode extends BaseNode<
@@ -18,12 +18,12 @@ export class NumberNode extends BaseNode<
     area: AreaPlugin<Schemes, AreaExtra>,
     dataflow: DataflowEngine<Schemes>
   ) {
-    super('Number');
+    super('Number')
 
     this.addOutputPort({
       key: 'out',
       typeName: 'number',
-    });
+    })
 
     this.addControl(
       'numInput',
@@ -34,14 +34,14 @@ export class NumberNode extends BaseNode<
         history,
         area,
         onChange: () => {
-          resetCacheDataflow(dataflow, this.id);
+          resetCacheDataflow(dataflow, this.id)
         },
       })
-    );
+    )
   }
 
   data(): { out: number } {
-    return { out: this.controls.numInput.value ?? 0 };
+    return { out: this.controls.numInput.value ?? 0 }
   }
 
   async execute(): Promise<void> { }
@@ -49,10 +49,10 @@ export class NumberNode extends BaseNode<
   serializeControlValue(): { data: { value: number } } {
     return {
       data: { value: this.controls.numInput.value ?? 0 },
-    };
+    }
   }
 
   deserializeControlValue(data: { value: number }): void {
-    this.controls.numInput.setValue(data.value);
+    this.controls.numInput.setValue(data.value)
   }
 }

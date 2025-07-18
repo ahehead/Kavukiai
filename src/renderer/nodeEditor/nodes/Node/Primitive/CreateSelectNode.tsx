@@ -1,72 +1,73 @@
-import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
-import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
-import { SelectControl } from "../../Controls/input/Select";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
-import type { AreaExtra, TypedSocket, Schemes } from "renderer/nodeEditor/types";
-import { Type } from "@sinclair/typebox";
+import { Type } from '@sinclair/typebox'
+import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
+import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
+import { SelectControl } from '../../Controls/input/Select'
+import { resetCacheDataflow } from '../../util/resetCacheDataflow'
 
 export class CreateSelectNode extends SerializableInputsNode<
   { exec: TypedSocket; list: TypedSocket },
   { exec: TypedSocket; out: TypedSocket },
   { select: SelectControl<string> }
 > {
-  private options: string[] = [];
+  private options: string[] = []
 
   constructor(
-    private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
-    super("CreateSelect");
+    super('CreateSelect')
 
     this.addInputPort([
       {
-        key: "exec",
-        typeName: "exec",
-        label: "Generate",
-        onClick: () => this.controlflow.execute(this.id, "exec"),
+        key: 'exec',
+        typeName: 'exec',
+        label: 'Generate',
+        onClick: () => this.controlflow.execute(this.id, 'exec'),
       },
       {
-        key: "list",
-        typeName: "array",
-        label: "List",
+        key: 'list',
+        typeName: 'array',
+        label: 'List',
         schema: Type.Array(Type.String()),
       },
-    ]);
+    ])
 
     this.addOutputPort([
-      { key: "exec", typeName: "exec", label: "Out" },
-      { key: "out", typeName: "string", label: "Selected" },
-    ]);
+      { key: 'exec', typeName: 'exec', label: 'Out' },
+      { key: 'out', typeName: 'string', label: 'Selected' },
+    ])
 
     this.addControl(
-      "select",
+      'select',
       new SelectControl<string>({
-        value: "",
+        value: '',
         optionsList: [],
-        label: "select",
+        label: 'select',
         editable: true,
       })
-    );
+    )
   }
 
   data(): { out: string } {
-    return { out: this.controls.select.getValue() };
+    return { out: this.controls.select.getValue() }
   }
 
-  async execute(_: "exec", forward: (output: "exec") => void): Promise<void> {
+  async execute(_: 'exec', forward: (output: 'exec') => void): Promise<void> {
     const { list } = (await this.dataflow.fetchInputs(this.id)) as {
-      list?: string[][];
-    };
-    const options = list?.[0] || [];
-    if (options.length === 0) {
-      return;
+      list?: string[][]
     }
-    this.options = options;
-    this.controls.select.setValueAndOptions(options[0] ?? "", options.map((v) => ({ label: v, value: v })));
-    resetCacheDataflow(this.dataflow, this.id);
-    forward("exec");
+    const options = list?.[0] || []
+    if (options.length === 0) {
+      return
+    }
+    this.options = options
+    this.controls.select.setValueAndOptions(
+      options[0] ?? '',
+      options.map(v => ({ label: v, value: v }))
+    )
+    resetCacheDataflow(this.dataflow, this.id)
+    forward('exec')
   }
 
   serializeControlValue(): { data: { value: string; options: string[] } } {
@@ -75,12 +76,15 @@ export class CreateSelectNode extends SerializableInputsNode<
         value: this.controls.select.getValue(),
         options: this.options,
       },
-    };
+    }
   }
 
   deserializeControlValue(data: { value: string; options: string[] }): void {
-    this.options = data.options;
-    this.controls.select.options = data.options.map((v) => ({ label: v, value: v }));
-    this.controls.select.setValue(data.value);
+    this.options = data.options
+    this.controls.select.options = data.options.map(v => ({
+      label: v,
+      value: v,
+    }))
+    this.controls.select.setValue(data.value)
   }
 }

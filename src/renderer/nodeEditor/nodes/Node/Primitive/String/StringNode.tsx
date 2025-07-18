@@ -5,7 +5,7 @@ import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/Serial
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { DataflowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
-import { resetCacheDataflow } from '../../util/resetCacheDataflow'
+import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 // 短い文字列入力ノード
 export class StringNode
   extends BaseNode<

@@ -1,14 +1,14 @@
-import type { DataflowEngine } from "rete-engine";
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
+import { SwitchControl } from "renderer/nodeEditor/nodes/Controls/input/Switch";
 import type {
-  TypedSocket,
-  Schemes,
   AreaExtra,
+  Schemes,
+  TypedSocket,
 } from "renderer/nodeEditor/types";
-import { SwitchControl } from "../../Controls/input/Switch";
-import type { HistoryPlugin } from "rete-history-plugin";
+import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
+import type { DataflowEngine } from "rete-engine";
+import type { HistoryPlugin } from "rete-history-plugin";
+import { resetCacheDataflow } from "../../../util/resetCacheDataflow";
 
 // IF ノード
 export class IFNode extends BaseNode<
