@@ -89,8 +89,7 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
     new ResponseInputMessageItemNode(area, dataflow, controlflow, history),
   JsonSchemaFormat: ({ history, area, dataflow }) =>
     new JsonSchemaFormatNode(history, area, dataflow),
-  ResponseTextConfig: ({ area, dataflow }) =>
-    new ResponseTextConfigNode(area, dataflow),
+  ResponseTextConfig: () => new ResponseTextConfigNode(),
 
   ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
   JsonSchemaToObject: ({ editor, history, area, dataflow, controlflow }) =>
