@@ -1,27 +1,32 @@
+import { type TSchema, Type } from '@sinclair/typebox'
+import { restoreKind } from 'renderer/nodeEditor/nodes/util/restoreKind'
+import type {
+  AreaExtra,
+  Schemes,
+  TooltipInput,
+  TypedSocket,
+} from 'renderer/nodeEditor/types'
+import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode'
+import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+import type { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema'
+import type { NodeEditor } from 'rete'
+import type { AreaPlugin } from 'rete-area-plugin'
+import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
+import type { HistoryPlugin } from 'rete-history-plugin'
+import { InputValueControl } from '../../../Controls/input/InputValue'
+import { SwitchControl } from '../../../Controls/input/Switch'
+import { getInputValue } from '../../../util/getInput'
+import { removeLinkedSockets } from '../../../util/removeNode'
+import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 
-import type { HistoryPlugin } from 'rete-history-plugin';
-import type { AreaPlugin } from 'rete-area-plugin';
-import type { ControlFlowEngine, DataflowEngine } from 'rete-engine';
-import type { TypedSocket, Schemes, AreaExtra, TooltipInput } from 'renderer/nodeEditor/types';
-import { InputValueControl } from '../../../Controls/input/InputValue';
-import { SwitchControl } from '../../../Controls/input/Switch';
-import { Type, type TSchema } from '@sinclair/typebox';
-import { resetCacheDataflow } from '../../../util/resetCacheDataflow';
-import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
-import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode';
-import { getInputValue } from '../../../util/getInput';
-import { removeLinkedSockets } from '../../../util/removeNode';
-import type { NodeEditor } from 'rete';
-import type { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema';
-import { restoreKind } from 'renderer/nodeEditor/nodes/util/restoreKind';
-
-export class JsonSchemaToObjectNode extends SerializableInputsNode<
-  { exec: TypedSocket; schema: TypedSocket } & Record<string, TypedSocket>,
-  { out: TypedSocket },
-  object
-> implements SerializableDataNode {
-
-  schema: TSchema | null = null;
+export class JsonSchemaToObjectNode
+  extends SerializableInputsNode<
+    { exec: TypedSocket; schema: TypedSocket } & Record<string, TypedSocket>,
+    { out: TypedSocket },
+    object
+  >
+  implements SerializableDataNode {
+  schema: TSchema | null = null
 
   constructor(
     private editor: NodeEditor<Schemes>,
@@ -30,98 +35,103 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
-    super('JsonSchemaToObject');
+    super('JsonSchemaToObject')
 
-    this.addInputPort([{
-      key: "exec",
-      typeName: "exec",
-      label: 'Generate',
-      showControl: true,
-      onClick: async () => {
-        this.controlflow.execute(this.id, "exec");
-        this.clearSize();
+    this.addInputPort([
+      {
+        key: 'exec',
+        typeName: 'exec',
+        label: 'Generate',
+        showControl: true,
+        onClick: async () => {
+          this.controlflow.execute(this.id, 'exec')
+          this.clearSize()
+        },
       },
-    }, {
-      key: 'schema',
-      typeName: 'JsonSchema',
-      label: 'schema',
-    }]);
+      {
+        key: 'schema',
+        typeName: 'JsonSchema',
+        label: 'schema',
+      },
+    ])
 
     this.addOutputPort({
       key: 'out',
       typeName: 'object',
-    });
+    })
   }
 
   setSchema(schema: TSchema | null) {
-    this.schema = schema;
+    this.schema = schema
   }
 
   getSchema(): TSchema | null {
-    return this.schema;
+    return this.schema
   }
 
   getDynamicInputs(): [string, TooltipInput<TypedSocket> | undefined][] {
-    return Object.entries(this.inputs)
-      .filter(([key]) => !["schema", "exec"].includes(key))
+    return Object.entries(this.inputs).filter(
+      ([key]) => !['schema', 'exec'].includes(key)
+    )
   }
 
   // トリガーで実行
   async execute(): Promise<void> {
     // スキーマを取得
-    const { schema } = (await this.dataflow.fetchInputs(this.id)) as { schema?: TSchema[] }
-    resetCacheDataflow(this.dataflow, this.id);
-    await this.removeDynamicPorts();
-    if (!schema || schema.length === 0 || !schema?.[0]) {
-      this.setSchema(null);
-      return;
+    const { schema } = (await this.dataflow.fetchInputs(this.id)) as {
+      schema?: TSchema[]
     }
-    this.setSchema(schema[0]);
-    await this.buildDynamicPorts(schema[0]);
-
+    resetCacheDataflow(this.dataflow, this.id)
+    await this.removeDynamicPorts()
+    if (!schema || schema.length === 0 || !schema?.[0]) {
+      this.setSchema(null)
+      return
+    }
+    this.setSchema(schema[0])
+    await this.buildDynamicPorts(schema[0])
   }
 
   // 動的なinputを削除
   async removeDynamicPorts(): Promise<void> {
-    for (const [key, tooltip] of this.getDynamicInputs()) {
-      await removeLinkedSockets(this.editor, this.id, key);
-      this.removeInput(key);
+    for (const [key, _tooltip] of this.getDynamicInputs()) {
+      await removeLinkedSockets(this.editor, this.id, key)
+      this.removeInput(key)
     }
   }
 
   // スキーマから動的なポートを作成
   async buildDynamicPorts(schema: TSchema) {
-    const props = schema.properties as Record<string, TSchema> | undefined;
-    let outSchema: TSchema = Type.Object({});
+    const props = schema.properties as Record<string, TSchema> | undefined
+    let outSchema: TSchema = Type.Object({})
     if (props) {
-      outSchema = schema;
-      this.addDynamicInput(props);
+      outSchema = schema
+      this.addDynamicInput(props)
     }
-    await this.outputs.out?.socket.setSchema('object', outSchema);
-    await this.area.update('node', this.id);
+    await this.outputs.out?.socket.setSchema('object', outSchema)
+    await this.area.update('node', this.id)
   }
 
   // スキーマのプロパティから動的なinputを作成
   addDynamicInput(TSchemaProperties: Record<string, TSchema>) {
     for (const [key, schema] of Object.entries(TSchemaProperties)) {
-      const typeName = this.getTypeName(schema);
+      const typeName = this.getTypeName(schema)
       this.addInputPort({
         key,
         typeName,
         label: key,
         showControl: true,
         control: this.createControl(key, typeName),
-      });
+      })
     }
   }
 
   // スキーマのtypeからコントロールのタイプを決定
   private getTypeName(schema: TSchema): keyof typeof defaultNodeSchemas {
-    const t = (schema as any).type;
-    if (t === 'string') return 'string';
-    if (t === 'number' || t === 'integer') return 'number';
-    if (t === 'boolean') return 'boolean';
-    return 'any';
+    const t = (schema as any).type
+    if (t === 'string') return 'string'
+    if (t === 'number' || t === 'integer') return 'number'
+    if (t === 'boolean') return 'boolean'
+    return 'any'
   }
 
   // コントロールを作成
@@ -132,38 +142,44 @@ export class JsonSchemaToObjectNode extends SerializableInputsNode<
       area: this.area,
       editable: true,
       onChange: () => resetCacheDataflow(this.dataflow, this.id),
-    };
+    }
     if (typeName === 'boolean') {
-      return new SwitchControl({ value: false, ...opts });
+      return new SwitchControl({ value: false, ...opts })
     }
     if (typeName === 'number') {
-      return new InputValueControl<number>({ value: 0, type: 'number', ...opts });
+      return new InputValueControl<number>({
+        value: 0,
+        type: 'number',
+        ...opts,
+      })
     }
-    return new InputValueControl<string>({ value: '', type: 'string', ...opts });
+    return new InputValueControl<string>({ value: '', type: 'string', ...opts })
   }
 
   // 動的なinputからobjectを作り返す
   data(inputs: Record<string, unknown>): { out: Record<string, unknown> } {
-    const result: Record<string, unknown> = {};
-    for (const [key, tooltip] of this.getDynamicInputs()) {
-      result[key] = getInputValue(this.inputs, key, inputs);
+    const result: Record<string, unknown> = {}
+    for (const [key, _tooltip] of this.getDynamicInputs()) {
+      result[key] = getInputValue(this.inputs, key, inputs)
     }
-    return { out: result };
+    return { out: result }
   }
 
   serializeControlValue(): { data: { schema: TSchema | null } } {
-    return { data: { schema: this.schema } };
+    return { data: { schema: this.schema } }
   }
 
-  async deserializeControlValue(data: { schema: TSchema | null }): Promise<void> {
+  async deserializeControlValue(data: {
+    schema: TSchema | null
+  }): Promise<void> {
     if (!data.schema) {
-      this.setSchema(null);
-      return;
+      this.setSchema(null)
+      return
     }
-    const typebox = restoreKind(data.schema);
+    const typebox = restoreKind(data.schema)
     // console.log('Deserializing schema:', typebox);
-    this.setSchema(typebox);
-    await this.removeDynamicPorts();
-    await this.buildDynamicPorts(typebox);
+    this.setSchema(typebox)
+    await this.removeDynamicPorts()
+    await this.buildDynamicPorts(typebox)
   }
 }
