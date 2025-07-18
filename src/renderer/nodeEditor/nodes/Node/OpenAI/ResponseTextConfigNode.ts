@@ -1,11 +1,5 @@
+import type { TypedSocket } from "renderer/nodeEditor/types";
 import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
-import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine } from "rete-engine";
-import type {
-  AreaExtra,
-  Schemes,
-  TypedSocket,
-} from "renderer/nodeEditor/types";
 import type {
   ResponseFormatTextConfig,
   ResponseTextConfig,
