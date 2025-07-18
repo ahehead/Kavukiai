@@ -1,36 +1,36 @@
+import type { NodeEditor } from "rete";
+import type { AreaPlugin } from "rete-area-plugin";
+import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
+import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
 import {
-  MultiLineStringNode,
-  NumberNode,
-  OpenAINode,
-  ResponseCreateParamsBaseNode,
-  RunNode,
-  StringNode,
-  TestNode,
-  UnknownNode,
   BoolNode,
-  InspectorNode,
-  ObjectPickNode,
-  JsonSchemaToObjectNode,
-  JsonSchemaNode,
-  JsonSchemaFormatNode,
-  ResponseTextConfigNode,
-  TemplateReplaceNode,
   CreateSelectNode,
+  ImageNode,
+  InspectorNode,
+  JsonSchemaFormatNode,
+  JsonSchemaNode,
+  JsonSchemaToObjectNode,
   ListDownloadedModelsNode,
-  ModelInfoToModelListNode,
   LMStudioStartNode,
   LMStudioStopNode,
-  ImageNode,
   LoadImageNode,
+  ModelInfoToModelListNode,
+  MultiLineStringNode,
+  NumberNode,
+  ObjectPickNode,
+  OpenAINode,
+  ResponseCreateParamsBaseNode,
+  ResponseTextConfigNode,
+  RunNode,
+  StringNode,
+  TemplateReplaceNode,
+  TestNode,
+  UnknownNode,
 } from "./Node";
-import type { AreaExtra, NodeTypes, Schemes } from "../types/Schemes";
-import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
-import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
-import type { NodeEditor } from "rete";
 import { ResponseInputMessageItemListNode } from "./Node/OpenAI/ChatContextNode";
 import { ResponseInputMessageItemNode } from "./Node/OpenAI/ResponseInputMessageItemNode";
-import { IFNode } from "./Node/Flow/IFNode";
+import { IFNode } from "./Node/Primitive/Flow/IFNode";
 import { ListNode } from "./Node/Primitive/ListNode";
 
 export type NodeDeps = {
@@ -41,7 +41,7 @@ export type NodeDeps = {
   history: HistoryPlugin<Schemes, HistoryActions<Schemes>>;
 };
 
-export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
+export const nodeFactories = {
   UnknownNode: () => new UnknownNode(),
   Test: () => new TestNode(),
   Inspector: ({ dataflow, area, controlflow }) =>
@@ -59,8 +59,8 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   Bool: ({ history, area, dataflow }) => new BoolNode(history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
-  CreateSelect: ({ area, dataflow, controlflow }) =>
-    new CreateSelectNode(area, dataflow, controlflow),
+  CreateSelect: ({ dataflow, controlflow }) =>
+    new CreateSelectNode(dataflow, controlflow),
   LoadImage: ({ history, area, dataflow }) =>
     new LoadImageNode(history, area, dataflow),
   Image: ({ area, dataflow, controlflow }) =>
@@ -101,186 +101,120 @@ export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
     new JsonSchemaNode(history, area, dataflow),
 
   IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
-};
+} satisfies Record<string, (deps: NodeDeps) => NodeTypes>;
 
 export interface MenuItemDefinition {
   label: string;
   key: string;
   handler?: () => void;
-  factoryKey?: keyof typeof nodeFactories; // nodeFactories のキーを参照
+  factoryKey?: keyof typeof nodeFactories;
   subitems?: MenuItemDefinition[];
 }
 
-export const contextMenuStructure: MenuItemDefinition[] = [
+// types for building raw menu without keys
+type RawMenuItem = {
+  label: string;
+  factoryKey?: keyof typeof nodeFactories;
+  subitems?: RawMenuItem[];
+};
+// generate key from label
+const generateKey = (label: string): string =>
+  label.toLowerCase().replace(/\s+/g, "-");
+
+// raw menu structure without explicit keys
+const rawMenu: RawMenuItem[] = [
+  // include Debug category only in development
+  ...(process.env.NODE_ENV === "development"
+    ? ([
+        {
+          label: "Debug",
+          subitems: [
+            { label: "Test", factoryKey: "Test" },
+            { label: "Unknown", factoryKey: "UnknownNode" },
+          ],
+        },
+      ] as RawMenuItem[])
+    : []),
+  { label: "Inspector", factoryKey: "Inspector" },
   {
-    label: "Primitive",
-    key: "primitive-category",
+    label: "LMStudio",
     subitems: [
-      {
-        label: "Run",
-        key: "run-node",
-        factoryKey: "Run",
-      },
-      {
-        label: "String",
-        key: "string-node",
-        factoryKey: "String",
-      },
-      {
-        label: "Number",
-        key: "number-node",
-        factoryKey: "Number",
-      },
-      {
-        label: "Multi Line String",
-        key: "multi-line-string-node",
-        factoryKey: "MultiLineString",
-      },
-      {
-        label: "Bool",
-        key: "bool-node",
-        factoryKey: "Bool",
-      },
-      {
-        label: "List",
-        key: "list-node",
-        factoryKey: "List",
-      },
-      {
-        label: "Load Image",
-        key: "load-image-node",
-        factoryKey: "LoadImage",
-      },
-      {
-        label: "Create Select",
-        key: "create-select-node",
-        factoryKey: "CreateSelect",
-      },
-      {
-        label: "Object Pick",
-        key: "object-pick-node",
-        factoryKey: "ObjectPick",
-      },
-      {
-        label: "JsonSchemaToObject",
-        key: "jsonschema-to-object-node",
-        factoryKey: "JsonSchemaToObject",
-      },
-      {
-        label: "JsonSchema",
-        key: "jsonschema-node",
-        factoryKey: "JsonSchema",
-      },
-      {
-        label: "TemplateReplace",
-        key: "template-replace",
-        factoryKey: "TemplateReplace",
-      },
-    ],
-  },
-  {
-    label: "Flow",
-    key: "flow-category",
-    subitems: [
-      {
-        label: "IF",
-        key: "if-node",
-        factoryKey: "IF",
-      },
-    ],
-  },
-  {
-    label: "Output",
-    key: "output-category",
-    subitems: [
-      {
-        label: "Inspector",
-        key: "inspector-node",
-        factoryKey: "Inspector",
-      },
-      {
-        label: "Image",
-        key: "image-node",
-        factoryKey: "Image",
-      },
+      { label: "ListDownloadedModels", factoryKey: "ListDownloadedModels" },
+      { label: "ModelInfoToModelList", factoryKey: "ModelInfoToModelList" },
+      { label: "LMStudioStart", factoryKey: "LMStudioStart" },
+      { label: "LMStudioStop", factoryKey: "LMStudioStop" },
     ],
   },
   {
     label: "OpenAI",
-    key: "openai-category",
     subitems: [
       {
-        label: "OpenAI",
-        key: "openai-node",
-        factoryKey: "OpenAI",
+        label: "ResponseInputMessageItemList",
+        factoryKey: "ResponseInputMessageItemList",
       },
+      { label: "JsonSchemaFormat", factoryKey: "JsonSchemaFormat" },
+      { label: "OpenAI", factoryKey: "OpenAI" },
       {
         label: "ResponseCreateParamsBase",
-        key: "response-create-params-base-node",
         factoryKey: "ResponseCreateParamsBase",
       },
       {
-        label: "ResponseInputMessageItemList",
-        key: "response-input-message-item-list",
-        factoryKey: "ResponseInputMessageItemList",
-      },
-      {
         label: "ResponseInputMessageItem",
-        key: "response-input-message-item",
         factoryKey: "ResponseInputMessageItem",
       },
-      {
-        label: "JsonSchema Format",
-        key: "jsonschema-format-node",
-        factoryKey: "JsonSchemaFormat",
-      },
-      {
-        label: "Response Text Config",
-        key: "response-text-config-node",
-        factoryKey: "ResponseTextConfig",
-      },
+      { label: "ResponseTextConfig", factoryKey: "ResponseTextConfig" },
     ],
   },
   {
-    label: "LMStudio",
-    key: "lmstudio-category",
+    label: "Primitive",
     subitems: [
+      { label: "Bool", factoryKey: "Bool" },
+      { label: "CreateSelect", factoryKey: "CreateSelect" },
+      { label: "List", factoryKey: "List" },
+      { label: "Number", factoryKey: "Number" },
       {
-        label: "List Downloaded Models",
-        key: "list-downloaded-models-node",
-        factoryKey: "ListDownloadedModels",
+        label: "String",
+        subitems: [
+          { label: "String", factoryKey: "String" },
+          { label: "MultiLineString", factoryKey: "MultiLineString" },
+          { label: "TemplateReplace", factoryKey: "TemplateReplace" },
+        ],
       },
       {
-        label: "Model Info to Model List",
-        key: "model-info-to-model-list-node",
-        factoryKey: "ModelInfoToModelList",
+        label: "Object",
+        subitems: [
+          { label: "JsonSchema", factoryKey: "JsonSchema" },
+          { label: "JsonSchemaToObject", factoryKey: "JsonSchemaToObject" },
+          { label: "ObjectPick", factoryKey: "ObjectPick" },
+        ],
       },
       {
-        label: "Start Server",
-        key: "lmstudio-start-node",
-        factoryKey: "LMStudioStart",
+        label: "Flow",
+        subitems: [
+          { label: "IF", factoryKey: "IF" },
+          { label: "Run", factoryKey: "Run" },
+        ],
       },
       {
-        label: "Stop Server",
-        key: "lmstudio-stop-node",
-        factoryKey: "LMStudioStop",
-      },
-    ],
-  },
-  {
-    label: "Debug",
-    key: "debug-category",
-    subitems: [
-      {
-        label: "Unknown Node",
-        key: "unknown-node",
-        factoryKey: "UnknownNode",
-      },
-      {
-        label: "Test Node",
-        key: "test-node",
-        factoryKey: "Test",
+        label: "Image",
+        subitems: [
+          { label: "LoadImage", factoryKey: "LoadImage" },
+          { label: "Image", factoryKey: "Image" },
+        ],
       },
     ],
   },
 ];
+
+// assign keys and sort items with subitems first
+function assignKeys(items: RawMenuItem[]): MenuItemDefinition[] {
+  return items
+    .map((item) => ({
+      ...item,
+      key: generateKey(item.label),
+      subitems: item.subitems ? assignKeys(item.subitems) : undefined,
+    }))
+    .sort((a, b) => (b.subitems ? 1 : 0) - (a.subitems ? 1 : 0));
+}
+
+export const contextMenuStructure = assignKeys(rawMenu);
