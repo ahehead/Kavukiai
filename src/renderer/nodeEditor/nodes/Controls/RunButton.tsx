@@ -13,7 +13,7 @@ export class RunButtonControl extends BaseControl<any, RunButtonControlOptions> 
     super(opts);
     this.onClick = opts.onClick ?? (() => { });
   }
-  setValue(value: object): void { }
+  setValue(_value: object): void { }
   getValue(): object { return {}; }
 }
 

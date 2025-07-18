@@ -22,7 +22,6 @@ export class InspectorNode extends SerializableInputsNode<
   { view: MultiLineControl }
 > implements DynamicSchemaNode {
   constructor(
-    private editor: NodeEditor<Schemes>,
     private dataflow: DataflowEngine<Schemes>,
     private area: AreaPlugin<Schemes, AreaExtra>,
     public controlflow: ControlFlowEngine<Schemes>
@@ -75,8 +74,7 @@ export class InspectorNode extends SerializableInputsNode<
 
   async onConnectionChangedSchema({
     isConnected,
-    source,
-    target
+    source
   }: ConnectionParams): Promise<string[]> {
     if (isConnected) {
       await this.updateSchema(source.getName(), source.getSchema());

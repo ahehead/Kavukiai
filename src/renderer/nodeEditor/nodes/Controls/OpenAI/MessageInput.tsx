@@ -75,7 +75,7 @@ export function MessageInputControlView(props: {
   const [text, setText] = useState(control.text)
   const [role, setRole] = useState<'user' | 'assistant'>(control.role)
 
-  const send = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const send = (_e: React.MouseEvent<HTMLButtonElement>) => {
     control.setText(text)
     control.setRole(role)
     control.onSend(control.getChatMessageItem())

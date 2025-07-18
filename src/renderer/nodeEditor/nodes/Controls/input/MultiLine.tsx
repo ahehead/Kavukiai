@@ -50,7 +50,7 @@ export function TextAreaControllView(props: {
 }): JSX.Element {
   const control = props.data;
   const [uiText, setUiText] = useState(control.getValue());
-  const [prevText, setPrevText] = useState(control.getValue());
+  const [_prevText, setPrevText] = useState(control.getValue());
   const ref = useRef<HTMLTextAreaElement | null>(null);
 
   Drag.useNoDrag(ref); // areaのdragを無効化

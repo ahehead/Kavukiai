@@ -77,7 +77,6 @@ export function ConsoleControlView(props: { data: ConsoleControl }): JSX.Element
   return (
     <Drag.NoDrag>
       <div className="flex flex-col w-full">
-        {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
         <div
           className="flex items-center cursor-pointer"
           onClick={toggle}

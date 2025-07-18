@@ -12,5 +12,5 @@ export class UnknownNode extends BaseNode<object, object, object> {
 
   async execute(): Promise<void> {}
 
-  async fromJSON(json: Record<string, unknown>): Promise<void> {}
+  async fromJSON(): Promise<void> {}
 }

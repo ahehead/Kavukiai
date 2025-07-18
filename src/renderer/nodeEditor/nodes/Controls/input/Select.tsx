@@ -72,7 +72,7 @@ export function SelectControlView<T>(props: { data: SelectControl<T>; }): JSX.El
   const value = useControlValue(control);
   const options = useControlOptions(control);
   const selectLabel = control.selectLabel ?? control.opts.label;
-  const { editable, label } = control.opts;
+  const { editable } = control.opts;
 
   return (
     <Drag.NoDrag>

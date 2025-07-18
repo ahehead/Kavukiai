@@ -43,8 +43,8 @@ export type NodeDeps = {
 export const nodeFactories: Record<string, (deps: NodeDeps) => NodeTypes> = {
   UnknownNode: () => new UnknownNode(),
   Test: () => new TestNode(),
-  Inspector: ({ editor, dataflow, area, controlflow }) =>
-    new InspectorNode(editor, dataflow, area, controlflow),
+  Inspector: ({ dataflow, area, controlflow }) =>
+    new InspectorNode(dataflow, area, controlflow),
 
   String: ({ history, area, dataflow }) =>
     new StringNode("", history, area, dataflow),
