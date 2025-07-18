@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 
 /**
@@ -54,7 +54,7 @@ export function useContextMenu(
    * メニュー項目からマウスが離れたときに呼び出す
    * 既存の開くタイマーをクリアし、閉じるタイマーを設定して遅延でサブメニューを閉じる
    */
-  function handleLeaveMenuItem() {
+  function handleLeaveMenu() {
     // 開くタイマーをクリア
     if (subMenuOpenTimerRef.current) {
       clearTimeout(subMenuOpenTimerRef.current);
@@ -74,6 +74,6 @@ export function useContextMenu(
     viewSubmenu, // 現在開いているサブメニューの情報
     handleEnterMenuItem, // メニュー項目に入ったときの処理
     handleEnterSubmenu, // サブメニュー領域に入ったときの処理
-    handleLeaveMenuItem, // メニュー領域から離れたときの処理
+    handleLeaveMenu, // メニュー領域から離れたときの処理
   };
 }
