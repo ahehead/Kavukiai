@@ -72,8 +72,8 @@ export abstract class BaseControl<T, O extends ControlOptions<T>>
   toJSON(): ControlJson | undefined {
     return undefined;
   }
-  // biome-ignore lint/correctness/noUnusedFunctionParameters: <explanation>
-  setFromJSON({ data }: ControlJson): void {}
+
+  setFromJSON({ data: _data }: ControlJson): void {}
 
   addHistory(prev: T, next: T) {
     if (this.opts.history && this.opts.area) {
