@@ -7,7 +7,7 @@ import {
 } from "shared/ApiType";
 import { ApiKeyConf, getApiKeyConf } from "main/features/file/conf";
 import type { Response } from "renderer/nodeEditor/types/Schemas/openai/ResponseSchemas";
-import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/EventsSchemas";
+import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/openai/EventsSchemas";
 
 // openaiリクエストを処理するハンドラを登録
 export function registerOpenAIHandlers(): void {
@@ -38,6 +38,7 @@ async function handlePortChatGpt(
   }
 }
 
+// ポートからのメッセージを監視し、abortイベントを処理
 function setupAbortController(port: Electron.MessagePortMain): AbortController {
   const controller = new AbortController();
   port.on("message", (e) => {
@@ -46,6 +47,7 @@ function setupAbortController(port: Electron.MessagePortMain): AbortController {
   return controller;
 }
 
+// ポートを開始
 function startPort(
   port: Electron.MessagePortMain,
   id: string,
@@ -55,6 +57,7 @@ function startPort(
   console.log("PortChatGPT start:", id, param);
 }
 
+// OpenAIクライアントを作成
 function createOpenAIClient(): OpenAI {
   const apiKeysConfig = ApiKeyConf();
   return new OpenAI({ apiKey: getApiKeyConf(apiKeysConfig, "openai") });
