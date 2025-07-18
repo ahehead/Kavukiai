@@ -1,7 +1,7 @@
 import type OpenAI from "openai";
 import type { GraphJsonData } from "./JsonType";
 import type { Response } from "renderer/nodeEditor/types/Schemas/openai/ResponseSchemas";
-import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/EventsSchemas";
+import { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/openai/EventsSchemas";
 
 export enum IpcChannel {
   LoadSnapshot = "load-snapshot",
