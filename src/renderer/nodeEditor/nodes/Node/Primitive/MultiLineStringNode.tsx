@@ -30,7 +30,7 @@ export class MultiLineStringNode extends BaseNode<
         value: initial,
         history,
         area,
-        onChange: (v: string) => {
+        onChange: (_v: string) => {
           resetCacheDataflow(dataflow, this.id); // この階層じゃないとなぜかnodeIdがおかしくなる
         }
       })
