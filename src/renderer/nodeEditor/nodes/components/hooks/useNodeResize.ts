@@ -1,8 +1,8 @@
 // New hook for node resizing logic
 import { useCallback } from "react";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { HistoryPlugin, HistoryAction } from "rete-history-plugin";
-import type { NodeInterface, Schemes, AreaExtra } from "../../../types/Schemes";
+import type { HistoryAction, HistoryPlugin } from "rete-history-plugin";
+import type { AreaExtra, NodeInterface, Schemes } from "../../../types/Schemes";
 
 const nodeMinWidth = 220;
 const nodeMinHeight = 100;
@@ -27,7 +27,6 @@ class SizeChangeHistory implements HistoryAction {
 // History action for clearing node size
 class ClearSizeHistoryAction implements HistoryAction {
   private prev: Size;
-  private next: Size = { width: undefined, height: undefined };
 
   constructor(
     private node: NodeInterface,

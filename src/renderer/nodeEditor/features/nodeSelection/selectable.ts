@@ -38,14 +38,12 @@ export class Selector<E extends SelectorEntity> {
   }
 
   unselectAll() {
-    // biome-ignore lint/complexity/noForEach: <explanation>
     [...Array.from(this.entities.values())].forEach((item) =>
       this.remove(item)
     );
   }
 
   translate(dx: number, dy: number) {
-    // biome-ignore lint/complexity/noForEach: <explanation>
     this.entities.forEach(
       (item) => !this.isPicked(item) && item.translate(dx, dy)
     );
@@ -99,9 +97,13 @@ export function selectableNodes<T>(
 ) {
   let editor: null | NodeEditor<Schemes> = null;
   const area = base as BaseAreaPlugin<Schemes, BaseArea<Schemes>>;
-  const getEditor = () =>
-    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
-    editor || (editor = area.parentScope<NodeEditor<Schemes>>(NodeEditor));
+  const getEditor = () => {
+    if (editor) {
+      return editor;
+    }
+    editor = area.parentScope<NodeEditor<Schemes>>(NodeEditor);
+    return editor;
+  };
 
   let twitch: null | number = 0;
 
@@ -156,7 +158,6 @@ export function selectableNodes<T>(
     core.remove({ id: nodeId, label: "node" });
   }
 
-  // eslint-disable-next-line max-statements, complexity
   area.addPipe((context) => {
     if (!context || typeof context !== "object" || !("type" in context))
       return context;

@@ -16,7 +16,7 @@ export class ButtonControl extends BaseControl<any, ButtonControlParams> {
     super({ cols: 0, ...params }); // cols:0でラベルを非表示にする
     this.onClick = params.onClick;
   }
-  setValue(value: object): void { }
+  setValue(): void { }
   getValue(): object { return {}; }
 
   override toJSON(): ControlJson { return { data: { label: this.opts.label } } }
