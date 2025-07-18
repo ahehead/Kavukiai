@@ -202,7 +202,7 @@ export const contextMenuStructure: MenuItemDefinition[] = [
     key: "openai-category",
     subitems: [
       {
-        label: "OpenAI Node",
+        label: "OpenAI",
         key: "openai-node",
         factoryKey: "OpenAI",
       },
