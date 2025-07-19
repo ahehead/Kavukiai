@@ -1,68 +1,77 @@
-import { type ReactArea2D, Presets as ReactPresets } from "rete-react-plugin";
-import type { AreaPlugin } from "rete-area-plugin";
-import type { HistoryPlugin } from "rete-history-plugin";
-import {
-  RunButtonControl,
-  RunButtonControlView,
-} from "../../nodes/Controls/RunButton";
-import {
-  MultiLineControl,
-  TextAreaControllView,
-} from "../../nodes/Controls/input/MultiLine";
-import {
-  ConsoleControl,
-  ConsoleControlView,
-} from "../../nodes/Controls/Console";
-import {
-  InputValueControl,
-  InputValueControlView,
-} from "../../nodes/Controls/input/InputValue";
-import {
-  ResponseInputMessageControl,
-  ResponseInputMessageView,
-} from "../../nodes/Controls/OpenAI/ResponseInputMessage";
-import {
-  CheckBoxControl,
-  CheckBoxControlView,
-} from "../../nodes/Controls/input/CheckBox";
-
-import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
 import {
   ButtonControl,
   ButtonControlView,
 } from "renderer/nodeEditor/nodes/Controls/Button";
 import {
-  SelectControl,
-  SelectControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/Select";
-
+  ImageControl,
+  ImageControlView,
+} from "renderer/nodeEditor/nodes/Controls/Image";
+import {
+  ImageFileInputControl,
+  ImageFileInputControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/ImageFileInput";
 import {
   ListControl,
   ListControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/List";
 import {
-  SwitchControl,
-  SwitchControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/Switch";
+  PropertyInputControl,
+  PropertyInputControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/PropertyInput";
+import {
+  SelectControl,
+  SelectControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/Select";
 import {
   SliderControl,
   SliderControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Slider";
 import {
-  PropertyInputControl,
-  PropertyInputControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/PropertyInput";
+  SwitchControl,
+  SwitchControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/Switch";
+import {
+  MessageInputControl,
+  MessageInputControlView,
+} from "renderer/nodeEditor/nodes/Controls/OpenAI/MessageInput";
+// Progress control
+import {
+  ProgressControl,
+  ProgressControlView,
+} from "renderer/nodeEditor/nodes/Controls/view/ProgressControl";
 import {
   CustomExecSocket,
   CustomSocket,
   createCustomNode,
 } from "renderer/nodeEditor/nodes/components";
+import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
+import type { AreaPlugin } from "rete-area-plugin";
+import type { HistoryPlugin } from "rete-history-plugin";
+import { type ReactArea2D, Presets as ReactPresets } from "rete-react-plugin";
 import {
-  MessageInputControl,
-  MessageInputControlView,
-} from "renderer/nodeEditor/nodes/Controls/OpenAI/MessageInput";
-import { ImageControl, ImageControlView } from "renderer/nodeEditor/nodes/Controls/Image";
-import { ImageFileInputControl, ImageFileInputControlView } from "renderer/nodeEditor/nodes/Controls/input/ImageFileInput";
+  ConsoleControl,
+  ConsoleControlView,
+} from "../../nodes/Controls/Console";
+import {
+  CheckBoxControl,
+  CheckBoxControlView,
+} from "../../nodes/Controls/input/CheckBox";
+import {
+  InputValueControl,
+  InputValueControlView,
+} from "../../nodes/Controls/input/InputValue";
+import {
+  MultiLineControl,
+  TextAreaControllView,
+} from "../../nodes/Controls/input/MultiLine";
+import {
+  ResponseInputMessageControl,
+  ResponseInputMessageView,
+} from "../../nodes/Controls/OpenAI/ResponseInputMessage";
+import {
+  RunButtonControl,
+  RunButtonControlView,
+} from "../../nodes/Controls/RunButton";
 
 type Ctor<T = unknown> = new (...a: any[]) => T;
 
@@ -83,6 +92,7 @@ const controlViews = new Map<Ctor, any>([
   [MessageInputControl, MessageInputControlView],
   [ImageControl, ImageControlView],
   [ImageFileInputControl, ImageFileInputControlView],
+  [ProgressControl, ProgressControlView],
 ]);
 
 export function customReactPresets(
