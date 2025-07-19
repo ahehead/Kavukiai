@@ -8,6 +8,8 @@ export const lmstudioApi = {
     ipcRenderer.invoke(IpcChannel.StartLMStudioServer),
   stopServer: (): Promise<IpcResult<string>> =>
     ipcRenderer.invoke(IpcChannel.StopLMStudioServer),
+  unloadAllModels: (): Promise<IpcResult<string>> =>
+    ipcRenderer.invoke(IpcChannel.UnloadLMStudioModels),
   loadModel: ({ id, modelKey }: LMStudioLoadRequestArgs) => {
     const { port1, port2 } = new MessageChannel()
     ipcRenderer.postMessage(

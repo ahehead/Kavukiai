@@ -20,6 +20,7 @@ import {
   LMStudioStartNode,
   LMStudioStopNode,
   LMStudioLoadModelNode,
+  UnLoadModelNode,
   LoadImageNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
@@ -82,6 +83,8 @@ export const nodeFactories = {
     new LMStudioStopNode(area, controlflow),
   LMStudioLoadModel: ({ area, dataflow, controlflow }) =>
     new LMStudioLoadModelNode(area, dataflow, controlflow),
+  UnLoadModel: ({ area, controlflow }) =>
+    new UnLoadModelNode(area, controlflow),
 
   // OpenAI nodes
   OpenAI: ({ area, dataflow, controlflow }) =>
@@ -152,6 +155,7 @@ const rawMenu: RawMenuItem[] = [
       { label: "LMStudioStart", factoryKey: "LMStudioStart" },
       { label: "LMStudioStop", factoryKey: "LMStudioStop" },
       { label: "LMStudioLoadModel", factoryKey: "LMStudioLoadModel" },
+      { label: "UnLoadModel", factoryKey: "UnLoadModel" },
     ],
   },
   {

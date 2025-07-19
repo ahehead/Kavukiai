@@ -35,6 +35,18 @@ describe('lmstudioApi', () => {
     expect(ports.length).toBe(1)
     expect(winPost).toHaveBeenCalled()
   })
+
+  test('unloadAllModels invokes ipcRenderer with correct channel', async () => {
+    const { lmstudioApi } = await import('preload/lmstudio')
+    const { ipcRenderer } = await import('electron') as any
+    const mockReturn = Promise.resolve({ status: 'success', data: 'ok' })
+    ipcRenderer.invoke.mockReturnValueOnce(mockReturn)
+    const result = lmstudioApi.unloadAllModels()
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith(
+      IpcChannel.UnloadLMStudioModels
+    )
+    expect(result).toBe(mockReturn)
+  })
 })
 
 
