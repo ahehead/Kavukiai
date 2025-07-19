@@ -1,9 +1,10 @@
-import type { GetSchemes } from 'rete'
-import type { ContextMenuExtra } from 'rete-context-menu-plugin'
-import type { ReactArea2D } from 'rete-react-plugin'
+import type { GetSchemes } from "rete";
+import type { ContextMenuExtra } from "rete-context-menu-plugin";
+import type { ReactArea2D } from "rete-react-plugin";
 
 import type {
   BoolNode,
+  ChatMessageItemNode,
   ChatMessageListNode,
   ChatMessageListToOpenAIInput,
   CreateSelectNode,
@@ -27,7 +28,6 @@ import type {
   ObjectPickNode,
   OpenAINode,
   ResponseCreateParamsBaseNode,
-  ResponseInputMessageItemNode,
   ResponseTextConfigNode,
   RunNode,
   StringNode,
@@ -35,18 +35,18 @@ import type {
   TestNode,
   UnknownNode,
   UnLoadModelNode,
-} from '../nodes/Node'
-import type { Connection } from './Connection'
-import type { BaseNode } from './Node/BaseNode'
-import type { NodeControl } from './NodeControl'
-import type { TypedSocket } from './TypedSocket'
+} from "../nodes/Node";
+import type { Connection } from "./Connection";
+import type { BaseNode } from "./Node/BaseNode";
+import type { NodeControl } from "./NodeControl";
+import type { TypedSocket } from "./TypedSocket";
 
-export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra
+export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
 
 export type Schemes = GetSchemes<
   NodeTypes,
   Connection<NodeInterface, NodeInterface>
->
+>;
 
 export type NodeTypes =
   | UnknownNode
@@ -60,7 +60,7 @@ export type NodeTypes =
   | ResponseCreateParamsBaseNode
   | ChatMessageListNode
   | ChatMessageListToOpenAIInput
-  | ResponseInputMessageItemNode
+  | ChatMessageItemNode
   | BoolNode
   | IFNode
   | ListNode
@@ -80,9 +80,9 @@ export type NodeTypes =
   | LMStudioStopNode
   | LMStudioLoadModelNode
   | UnLoadModelNode
-  | LLMPredictionConfigNode
+  | LLMPredictionConfigNode;
 
-export type NodeTypeKey = NodeTypes['label']
+export type NodeTypeKey = NodeTypes["label"];
 
 // BaseNodeを埋めたもの
 export interface NodeInterface
@@ -93,4 +93,4 @@ export interface NodeInterface
     { [key in string]?: NodeControl }
   > {}
 
-export const ExecList = ['exec', 'exec2']
+export const ExecList = ["exec", "exec2"];
