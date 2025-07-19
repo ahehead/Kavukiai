@@ -6,7 +6,7 @@
   --dataSocket: hsl(220, 65%, 55%);
   --execSocket: hsl(22, 87%, 60%);
 
-  --socket-icon-size: 0.7rem;
+  --socket-icon-size: 0.74rem;
 
   --node-bg: var(--card);
   --node-fg: var(--card-foreground);
