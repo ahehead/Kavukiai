@@ -1,18 +1,17 @@
-import { type Static, Type, type TSchema } from "@sinclair/typebox";
-
+import { type Static, type TSchema, Type } from "@sinclair/typebox";
+import * as DefaultSchema from "./DefaultSchema";
+import * as ModelInfoSchemas from "./lmstudio/ModelSchemas";
+import * as BaseSchemas from "./openai/BaseSchemas";
+import { Timestamp } from "./openai/BaseSchemas";
+import * as EventsSchemas from "./openai/EventsSchemas";
+import { ResponseStreamEvent } from "./openai/EventsSchemas";
 import * as InputSchemas from "./openai/InputSchemas";
-import * as RequestSchemas from "./openai/RequestSchemas";
-import * as ResponseSchemas from "./openai/ResponseSchemas";
 import {
   type ResponseInput,
   ResponseInputMessageItem,
 } from "./openai/InputSchemas";
-import { ResponseStreamEvent } from "./openai/EventsSchemas";
-import { Timestamp } from "./openai/BaseSchemas";
-import * as BaseSchemas from "./openai/BaseSchemas";
-import * as DefaultSchema from "./DefaultSchema";
-import * as EventsSchemas from "./openai/EventsSchemas";
-import * as ModelInfoSchemas from "./lmstudio/ModelSchemas";
+import * as RequestSchemas from "./openai/RequestSchemas";
+import * as ResponseSchemas from "./openai/ResponseSchemas";
 
 export const Image = Type.Object({
   url: Type.String({ description: "image url" }),
@@ -44,8 +43,8 @@ export const ChatMessageItem = Type.Intersect(
     Type.Object({
       model: Type.Optional(Type.String()),
       created_at: Type.Optional(Timestamp),
-      tokens: Type.Optional(Type.Number()),
-      token_speed: Type.Optional(Type.Number()),
+      tokensCount: Type.Optional(Type.Number()),
+      tokensPerSecond: Type.Optional(Type.Number()),
     }),
   ],
   { description: "A chat message item with extra metadata" }
@@ -56,7 +55,7 @@ export function chatMessagesToResponseInput(
   messages: ChatMessageItem[]
 ): ResponseInput {
   return messages.map(
-    ({ model, created_at, tokens, token_speed, ...rest }) => rest
+    ({ model, created_at, tokensCount, tokensPerSecond, ...rest }) => rest
   );
 }
 
