@@ -27,6 +27,7 @@ export enum IpcChannel {
   StartLMStudioServer = "start-lmstudio-server",
   StopLMStudioServer = "stop-lmstudio-server",
   PortLMStudioLoadModel = "port-lmstudio-load-model",
+  UnloadLMStudioModels = "unload-lmstudio-models",
 }
 
 export type OpenAIParams = any;
