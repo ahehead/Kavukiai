@@ -9,6 +9,7 @@ export { LMStudioStopNode } from "./LMStudio/LMStudioStopNode";
 export { ModelInfoToModelListNode } from "./LMStudio/ModelInfoToModelListNode";
 export { LMStudioLoadModelNode } from "./LMStudio/LMStudioLoadModelNode";
 export { UnLoadModelNode } from "./LMStudio/UnLoadModelNode";
+export { LLMPredictionConfigNode } from "./LMStudio/LLMPredictionConfigNode";
 export { ResponseInputMessageItemListNode } from "./OpenAI/ChatContextNode";
 export { JsonSchemaFormatNode } from "./OpenAI/JsonSchemaFormatNode";
 export { OpenAINode } from "./OpenAI/OpenAI";
