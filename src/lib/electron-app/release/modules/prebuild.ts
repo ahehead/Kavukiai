@@ -1,16 +1,19 @@
 import { writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-
-import trustedDependencies from "../../../../../trusted-dependencies-scripts.json";
 import packageJSON from "../../../../../package.json";
+import trustedDependencies from "../../../../../trusted-dependencies-scripts.json";
 import { getDevFolder } from "../utils/path";
 
 async function createPackageJSONDistVersion() {
-  const { main, pnpm, ...rest } = packageJSON;
+  const { main, pnpm, scripts = {}, ...rest } = packageJSON;
+
+  // ★ postinstall をダミー化して二重ビルドを防ぐ
+  const scriptsPatched = { ...scripts, postinstall: "echo skip" };
 
   const packageJSONDistVersion = {
     main: "./main/index.js",
     ...rest,
+    scripts: scriptsPatched,
   };
 
   try {

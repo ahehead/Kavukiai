@@ -17,7 +17,8 @@ const currentYear = new Date().getFullYear();
 const authorInKebabCase = author.replace(/\s+/g, "-");
 const appId = `com.${authorInKebabCase}.${name}`.toLowerCase();
 
-const artifactName = [`${name}-v${version}`, "-${os}.${ext}"].join("");
+// artifactName uses Electron Builder placeholders for OS and extension
+const artifactName = `${name}-v${version}-\${os}.\${ext}`;
 
 export default {
   appId,

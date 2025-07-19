@@ -16,20 +16,17 @@ const tsconfigPaths = tsconfigPathsPlugin({
   projects: [resolve("tsconfig.json")],
 });
 
+console.log("🚀 using config file:", __filename);
+
 export default defineConfig({
   main: {
     plugins: [tsconfigPaths, externalizeDepsPlugin({ exclude: ["arktype"] })],
 
     build: {
-      rollupOptions: {
-        input: {
-          index: resolve("src/main/index.ts"),
-        },
-
-        output: {
-          dir: resolve(devPath, "main"),
-        },
+      lib: {
+        entry: resolve(__dirname, "src/main/index.ts"),
       },
+      outDir: resolve(devPath, "main"),
     },
   },
 
