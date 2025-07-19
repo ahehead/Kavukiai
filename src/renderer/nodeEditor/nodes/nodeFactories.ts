@@ -37,7 +37,7 @@ import {
   UnknownNode,
   UnLoadModelNode,
 } from "./Node";
-import { ResponseInputMessageItemListNode } from "./Node/OpenAI/ChatContextNode";
+import { ChatMessageListNode } from "./Node/Chat/ChatContextNode";
 import { ResponseInputMessageItemNode } from "./Node/OpenAI/ResponseInputMessageItemNode";
 import { IFNode } from "./Node/Primitive/Flow/IFNode";
 import { ListNode } from "./Node/Primitive/ListNode";
@@ -95,14 +95,8 @@ export const nodeFactories = {
     new OpenAINode(area, dataflow, controlflow),
   ResponseCreateParamsBase: ({ history, area, dataflow }) =>
     new ResponseCreateParamsBaseNode(history, area, dataflow),
-  ResponseInputMessageItemList: ({ history, area, dataflow, controlflow }) =>
-    new ResponseInputMessageItemListNode(
-      [],
-      history,
-      area,
-      dataflow,
-      controlflow
-    ),
+  ChatMessageList: ({ history, area, dataflow, controlflow }) =>
+    new ChatMessageListNode([], history, area, dataflow, controlflow),
   ResponseInputMessageItem: ({ area, dataflow, controlflow, history }) =>
     new ResponseInputMessageItemNode(area, dataflow, controlflow, history),
   JsonSchemaFormat: ({ history, area, dataflow }) =>
@@ -167,8 +161,8 @@ const rawMenu: RawMenuItem[] = [
     label: "OpenAI",
     subitems: [
       {
-        label: "ResponseInputMessageItemList",
-        factoryKey: "ResponseInputMessageItemList",
+        label: "ChatMessageList",
+        factoryKey: "ChatMessageList",
       },
       { label: "JsonSchemaFormat", factoryKey: "JsonSchemaFormat" },
       { label: "OpenAI", factoryKey: "OpenAI" },

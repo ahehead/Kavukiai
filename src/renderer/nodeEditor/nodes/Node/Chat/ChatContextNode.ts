@@ -19,9 +19,9 @@ import { ResponseInputMessageControl } from "../../Controls/OpenAI/ResponseInput
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 // open ai用のchat message list Node
-export class ResponseInputMessageItemListNode
+export class ChatMessageListNode
   extends BaseNode<
-    "ResponseInputMessageItemList",
+    "ChatMessageList",
     {
       exec: TypedSocket;
       exec2: TypedSocket;
@@ -45,7 +45,7 @@ export class ResponseInputMessageItemListNode
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
-    super("ResponseInputMessageItemList");
+    super("ChatMessageList");
     this.addInputPort([
       {
         key: "exec",

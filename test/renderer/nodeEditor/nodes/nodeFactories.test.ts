@@ -23,7 +23,7 @@ describe("getContextMenuPath", () => {
     expect(getContextMenuPath("OpenAI")).toBe("OpenAI");
   });
 
-  it("returns OpenAI for ResponseInputMessageItemList key", () => {
-    expect(getContextMenuPath("ResponseInputMessageItemList")).toBe("OpenAI");
+  it("returns OpenAI for ChatMessageList key", () => {
+    expect(getContextMenuPath("ChatMessageList")).toBe("OpenAI");
   });
 });

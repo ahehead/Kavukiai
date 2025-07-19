@@ -4,6 +4,7 @@ import type { ReactArea2D } from "rete-react-plugin";
 
 import type {
   BoolNode,
+  ChatMessageListNode,
   CreateSelectNode,
   IFNode,
   ImageNode,
@@ -25,7 +26,6 @@ import type {
   ObjectPickNode,
   OpenAINode,
   ResponseCreateParamsBaseNode,
-  ResponseInputMessageItemListNode,
   ResponseInputMessageItemNode,
   ResponseTextConfigNode,
   RunNode,
@@ -57,7 +57,7 @@ export type NodeTypes =
   | InspectorNode
   | OpenAINode
   | ResponseCreateParamsBaseNode
-  | ResponseInputMessageItemListNode
+  | ChatMessageListNode
   | ResponseInputMessageItemNode
   | BoolNode
   | IFNode
