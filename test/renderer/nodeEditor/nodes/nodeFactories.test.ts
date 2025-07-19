@@ -7,12 +7,16 @@ describe("getContextMenuPath", () => {
     expect(getContextMenuPath("NonExistent" as any)).toBe("");
   });
 
+  it("returns empty for Inspector key", () => {
+    expect(getContextMenuPath("Inspector")).toBe("");
+  });
+
   it("returns Primitive/String for String key", () => {
     expect(getContextMenuPath("String")).toBe("Primitive/String");
   });
 
   it("returns Primitive/Flow/IF for IF key", () => {
-    expect(getContextMenuPath("IF")).toBe("Primitive/Flow/IF");
+    expect(getContextMenuPath("IF")).toBe("Primitive/Flow");
   });
 
   it("returns OpenAI for OpenAI key", () => {
