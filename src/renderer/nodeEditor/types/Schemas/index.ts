@@ -72,7 +72,7 @@ const registry = {
   OpenAIClientResponse,
   OpenAIClientResponseOrNull,
   ChatMessageItem,
-
+  ChatMessageItemList,
   Image,
 
   ...ModelInfoSchemas,
