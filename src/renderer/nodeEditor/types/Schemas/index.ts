@@ -51,6 +51,9 @@ export const ChatMessageItem = Type.Intersect(
 );
 export type ChatMessageItem = Static<typeof ChatMessageItem>;
 
+export const ChatMessageItemList = Type.Array(ChatMessageItem);
+export type ChatMessageItemList = Static<typeof ChatMessageItemList>;
+
 export function chatMessagesToResponseInput(
   messages: ChatMessageItem[]
 ): ResponseInput {
