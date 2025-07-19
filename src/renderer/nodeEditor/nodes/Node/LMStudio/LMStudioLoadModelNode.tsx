@@ -4,9 +4,9 @@ import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
-import type { LMStudioPortEvent, LMStudioLoadRequestArgs } from 'shared/ApiType'
-import { ConsoleControl } from '../../Controls/Console'
+import type { LMStudioLoadRequestArgs, LMStudioPortEvent } from 'shared/ApiType'
 import { ButtonControl } from '../../Controls/Button'
+import { ConsoleControl } from '../../Controls/Console'
 
 export class LMStudioLoadModelNode extends SerializableInputsNode<
   'LMStudioLoadModel',
@@ -22,7 +22,10 @@ export class LMStudioLoadModelNode extends SerializableInputsNode<
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('LMStudioLoadModel')
-    this.addInputPortPattern({ type: 'RunButton', controlflow: this.controlflow })
+    this.addInputPortPattern({
+      type: 'RunButton',
+      controlflow: this.controlflow,
+    })
     this.addInputPort([
       {
         key: 'exec2',
@@ -30,13 +33,13 @@ export class LMStudioLoadModelNode extends SerializableInputsNode<
         label: 'Cancel',
         control: new ButtonControl({
           label: 'Cancel',
-          onClick: (e) => {
+          onClick: e => {
             e.stopPropagation()
             this.controlflow.execute(this.id, 'exec2')
           },
         }),
       },
-      { key: 'modelKey', typeName: 'String', tooltip: 'Model key' },
+      { key: 'modelKey', typeName: 'string', tooltip: 'Model key' },
     ])
     this.addOutputPort({ key: 'exec', typeName: 'exec', label: 'Out' })
     this.addControl('console', new ConsoleControl({}))
@@ -86,7 +89,8 @@ export class LMStudioLoadModelNode extends SerializableInputsNode<
     this.controls.console.addValue(`Load: ${key}`)
 
     this.port = await createLoadModelPort({ id: this.id, modelKey: key })
-    this.port.onmessage = (e: MessageEvent) => this.handlePortMessage(e, forward)
+    this.port.onmessage = (e: MessageEvent) =>
+      this.handlePortMessage(e, forward)
   }
 
   private async handlePortMessage(
@@ -142,7 +146,7 @@ async function createLoadModelPort({
   id,
   modelKey,
 }: LMStudioLoadRequestArgs): Promise<MessagePort> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const handler = (e: MessageEvent) => {
       if (e.data?.type === 'node-port' && e.data.id === id) {
         window.removeEventListener('message', handler)
@@ -155,4 +159,3 @@ async function createLoadModelPort({
     electronApiService.loadModel({ id, modelKey })
   })
 }
-
