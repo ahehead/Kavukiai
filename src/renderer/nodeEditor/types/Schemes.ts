@@ -17,6 +17,7 @@ import type {
   LMStudioStopNode,
   LMStudioLoadModelNode,
   UnLoadModelNode,
+  LLMPredictionConfigNode,
   LoadImageNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
@@ -74,7 +75,8 @@ export type NodeTypes =
   | LMStudioStartNode
   | LMStudioStopNode
   | LMStudioLoadModelNode
-  | UnLoadModelNode;
+  | UnLoadModelNode
+  | LLMPredictionConfigNode;
 
 export type NodeTypeKey = NodeTypes["label"];
 
