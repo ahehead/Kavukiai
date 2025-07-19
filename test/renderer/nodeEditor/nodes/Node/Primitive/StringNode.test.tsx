@@ -1,5 +1,5 @@
 import { test, expect, vi } from 'vitest';
-import { StringNode } from 'renderer/nodeEditor/nodes/Node/Primitive/StringNode';
+import { StringNode } from 'renderer/nodeEditor/nodes/Node/Primitive/String/StringNode';
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';

@@ -3,7 +3,7 @@ import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';
 import type { Schemes } from 'renderer/nodeEditor/types';
-import { LoadImageNode } from 'renderer/nodeEditor/nodes/Node/Primitive/LoadImageNode';
+import { LoadImageNode } from 'renderer/nodeEditor/nodes/Node/Primitive/Image/LoadImageNode';
 
 const history = {} as HistoryPlugin<Schemes>;
 const area = {} as AreaPlugin<Schemes, any>;

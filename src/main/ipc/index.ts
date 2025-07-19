@@ -5,6 +5,7 @@ import { registerCloseConfirmHandler } from "./close-confirm";
 import { registerLoadFileHandler } from "./load-file";
 import { registerApiKeysHandlers } from "./apikeys";
 import { registerLMStudioHandlers } from "./LMStudio/lmstudio";
+import { registerLMStudioLoadModelHandler } from "./LMStudio/loadModel";
 // import { registerOtherServiceHandlers } from "./otherService";
 
 export function registerIpcHandlers(): void {
@@ -15,5 +16,6 @@ export function registerIpcHandlers(): void {
   registerLoadFileHandler();
   registerApiKeysHandlers();
   registerLMStudioHandlers();
+  registerLMStudioLoadModelHandler();
   // registerOtherServiceHandlers();
 }
