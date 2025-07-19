@@ -32,9 +32,9 @@ export class LLMPredictionConfigNode extends SerializableInputsNode<
         typeName: "number",
         schema: Type.Index(LLMPredictionConfig, ["maxTokens"]),
         label: "maxTokens",
-        showControl: true,
+        showControl: false,
         control: new InputValueControl<number>({
-          value: 1024,
+          value: 4096,
           type: "number",
           label: "maxTokens",
           ...opts,
@@ -45,7 +45,7 @@ export class LLMPredictionConfigNode extends SerializableInputsNode<
         typeName: "number",
         schema: Type.Index(LLMPredictionConfig, ["temperature"]),
         label: "temperature",
-        showControl: true,
+        showControl: false,
         control: new InputValueControl<number>({
           value: 1,
           type: "number",
@@ -71,7 +71,7 @@ export class LLMPredictionConfigNode extends SerializableInputsNode<
         typeName: "contextOverflowPolicy",
         schema: Type.Index(LLMPredictionConfig, ["contextOverflowPolicy"]),
         label: "contextOverflowPolicy",
-        showControl: true,
+        showControl: false,
         control: new SelectControl<"stopAtLimit" | "truncateMiddle" | "rollingWindow">({
           value: "stopAtLimit",
           optionsList: [
@@ -109,7 +109,7 @@ export class LLMPredictionConfigNode extends SerializableInputsNode<
     return { config: cfg as LLMPredictionConfig };
   }
 
-  async execute(): Promise<void> {}
+  async execute(): Promise<void> { }
 }
 
 type LLMPredictionConfigKey = keyof LLMPredictionConfigType;
