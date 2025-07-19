@@ -199,7 +199,7 @@ export class ResponseInputMessageItemListNode
                 type: "message",
                 model: response.model,
                 created_at: response.created_at,
-                tokens: response.usage?.output_tokens,
+                tokensCount: response.usage?.output_tokens,
               } as EasyInputMessage as ChatMessageItem);
             }
           }
@@ -214,7 +214,7 @@ export class ResponseInputMessageItemListNode
         type: "message",
         model: response.model,
         created_at: response.created_at,
-        tokens: response.usage?.output_tokens,
+        tokensCount: response.usage?.output_tokens,
       });
     }
   }
