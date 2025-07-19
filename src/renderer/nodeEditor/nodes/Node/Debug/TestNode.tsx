@@ -8,6 +8,7 @@ import { PropertyInputControl } from '../../Controls/input/PropertyInput'
 import { SelectControl } from '../../Controls/input/Select'
 import { SliderControl } from '../../Controls/input/Slider'
 import { SwitchControl } from '../../Controls/input/Switch'
+import { ProgressControl } from '../../Controls/view/ProgressControl'
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
 // コントロール等の確認と、型チェック回避用のNode。
@@ -25,6 +26,7 @@ export class TestNode extends BaseNode<
     propertyInput: PropertyInputControl
     image: ImageControl
     imageFileInput: ImageFileInputControl
+    progress: ProgressControl
     // コントロールを作った場合まずここに追加
   }
 > {
@@ -81,6 +83,14 @@ export class TestNode extends BaseNode<
     this.addControl(
       'imageFileInput',
       new ImageFileInputControl({ value: null })
+    )
+
+    this.addControl(
+      'progress',
+      new ProgressControl({
+        value: 0,
+        label: 'Progress',
+      })
     )
 
     // ここに新しいコントロールを追加していく
