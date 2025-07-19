@@ -1,5 +1,5 @@
 import { test, expect, vi } from 'vitest';
-import { IFNode } from 'renderer/nodeEditor/nodes/Node/Flow/IFNode';
+import { IFNode } from 'renderer/nodeEditor/nodes/Node/Primitive/Flow/IFNode';
 import type { HistoryPlugin } from 'rete-history-plugin';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine } from 'rete-engine';

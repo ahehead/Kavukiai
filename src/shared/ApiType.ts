@@ -26,6 +26,7 @@ export enum IpcChannel {
   ListLMStudioModels = "list-lmstudio-models",
   StartLMStudioServer = "start-lmstudio-server",
   StopLMStudioServer = "stop-lmstudio-server",
+  PortLMStudioLoadModel = "port-lmstudio-load-model",
 }
 
 export type OpenAIParams = any;
@@ -61,6 +62,18 @@ export type OpenAIRequestArgs = {
   id: string;
   param: OpenAI.Responses.ResponseCreateParams;
 };
+
+export type LMStudioLoadRequestArgs = {
+  id: string;
+  modelKey: string;
+};
+
+export type LMStudioPortEvent =
+  | { type: "start" }
+  | { type: "progress"; progress: number }
+  | { type: "done" }
+  | { type: "error"; message: string }
+  | { type: "abort" };
 
 export type IpcResult<T> =
   | { status: "success"; data: T }

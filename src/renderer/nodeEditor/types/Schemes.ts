@@ -15,6 +15,7 @@ import type {
   ListNode,
   LMStudioStartNode,
   LMStudioStopNode,
+  LMStudioLoadModelNode,
   LoadImageNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
@@ -70,7 +71,8 @@ export type NodeTypes =
   | ListDownloadedModelsNode
   | ModelInfoToModelListNode
   | LMStudioStartNode
-  | LMStudioStopNode;
+  | LMStudioStopNode
+  | LMStudioLoadModelNode;
 
 export type NodeTypeKey = NodeTypes["label"];
 

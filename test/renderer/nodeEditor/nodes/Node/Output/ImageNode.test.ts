@@ -2,7 +2,7 @@ import { test, expect, vi } from 'vitest';
 import type { AreaPlugin } from 'rete-area-plugin';
 import type { DataflowEngine, ControlFlowEngine } from 'rete-engine';
 import type { Schemes } from 'renderer/nodeEditor/types';
-import { ImageNode } from 'renderer/nodeEditor/nodes/Node/Output/ImageNode';
+import { ImageNode } from 'renderer/nodeEditor/nodes/Node/Primitive/Image/ImageNode';
 
 const area = { update: vi.fn() } as unknown as AreaPlugin<Schemes, any>;
 const dataflow = { fetchInputs: vi.fn() } as unknown as DataflowEngine<Schemes>;

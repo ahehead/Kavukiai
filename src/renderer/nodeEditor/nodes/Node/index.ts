@@ -7,6 +7,7 @@ export { ListDownloadedModelsNode } from "./LMStudio/ListDownloadedModelsNode";
 export { LMStudioStartNode } from "./LMStudio/LMStudioStartNode";
 export { LMStudioStopNode } from "./LMStudio/LMStudioStopNode";
 export { ModelInfoToModelListNode } from "./LMStudio/ModelInfoToModelListNode";
+export { LMStudioLoadModelNode } from "./LMStudio/LMStudioLoadModelNode";
 export { ResponseInputMessageItemListNode } from "./OpenAI/ChatContextNode";
 export { JsonSchemaFormatNode } from "./OpenAI/JsonSchemaFormatNode";
 export { OpenAINode } from "./OpenAI/OpenAI";
