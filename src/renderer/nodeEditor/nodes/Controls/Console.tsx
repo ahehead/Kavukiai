@@ -1,76 +1,79 @@
-import { useRef, type JSX, useSyncExternalStore, useLayoutEffect } from 'react';
-import { Drag } from "rete-react-plugin";
-import { useStopWheel } from "../util/useStopWheel";
-import { BaseControl, useControlValue, type ControlOptions } from "renderer/nodeEditor/types";
-import { ChevronRight } from "lucide-react";
-import { cva } from "class-variance-authority";
-import type { ControlJson } from "shared/JsonType";
+import { cva } from 'class-variance-authority'
+import { ChevronRight } from 'lucide-react'
+import { type JSX, useLayoutEffect, useRef, useSyncExternalStore } from 'react'
+import {
+  BaseControl,
+  type ControlOptions,
+  useControlValue,
+} from 'renderer/nodeEditor/types'
+import { Drag } from 'rete-react-plugin'
+import type { ControlJson } from 'shared/JsonType'
+import { useStopWheel } from '../util/useStopWheel'
 
 export interface ConsoleControlParams extends ControlOptions<any> {
-  isOpen?: boolean;
+  isOpen?: boolean
 }
 
 // なんか表示する用の用コントロール
 export class ConsoleControl extends BaseControl<any, ConsoleControlParams> {
-  value: string;
-  isOpen: boolean;
+  value: string
+  isOpen: boolean
 
-  constructor(
-    public params: ConsoleControlParams
-  ) {
-    super(params);
-    this.isOpen = params.isOpen ?? false;
-    this.value = "";
+  constructor(public params: ConsoleControlParams) {
+    super(params)
+    this.isOpen = params.isOpen ?? false
+    this.value = ''
   }
 
   toggle() {
-    this.isOpen = !this.isOpen;
-    this.notify();
+    this.isOpen = !this.isOpen
+    this.notify()
   }
 
   isConsoleOpen() {
     return this.isOpen
   }
 
-  addValue: (addValue: string) => void = (addValue) => {
-    this.value += addValue;
-    this.value += "\n-----------\n"
+  addValue: (addValue: string) => void = addValue => {
+    this.value += addValue
+    this.value += '\n-----------\n'
     this.notify()
-  };
+  }
   setValue(value: string) {
     this.value = value
-    this.notify();
+    this.notify()
   }
   getValue(): string {
-    return this.value;
+    return this.value
   }
   override toJSON(): ControlJson {
     return {
-      data:
-      {
+      data: {
         value: this.value,
-        isOpen: this.isOpen
-      }
+        isOpen: this.isOpen,
+      },
     }
   }
   override setFromJSON({ data }: ControlJson): void {
-    const { value, isOpen } = data as any;
-    this.value = value;
-    this.isOpen = isOpen;
+    const { value, isOpen } = data as any
+    this.value = value
+    this.isOpen = isOpen
   }
 }
 
-export function ConsoleControlView(props: { data: ConsoleControl }): JSX.Element {
-  const value = useControlValue(props.data);
-  const isOpen = useControlOpen(props.data);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  useStopWheel(textareaRef);
+export function ConsoleControlView(props: {
+  data: ConsoleControl
+}): JSX.Element {
+  const value = useControlValue(props.data)
+  const isOpen = useControlOpen(props.data)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  useStopWheel(textareaRef)
 
   useLayoutEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+      textareaRef.current.scrollTop = textareaRef.current.scrollHeight
     }
-  }, [value]);
+  }, [value])
 
   const toggle = () => props.data.toggle()
 
@@ -83,10 +86,10 @@ export function ConsoleControlView(props: { data: ConsoleControl }): JSX.Element
           onClick={toggle}
         >
           <ChevronRight
-            className={cva("transition-transform", {
+            className={cva('transition-transform', {
               variants: {
                 open: {
-                  true: "rotate-90",
+                  true: 'rotate-90',
                 },
               },
             })({ open: isOpen })}
@@ -105,12 +108,12 @@ export function ConsoleControlView(props: { data: ConsoleControl }): JSX.Element
         )}
       </div>
     </Drag.NoDrag>
-  );
+  )
 }
 
 export function useControlOpen(control: ConsoleControl): boolean {
   return useSyncExternalStore(
-    (cb) => control.subscribe(cb),
+    cb => control.subscribe(cb),
     () => control.isConsoleOpen()
-  );
+  )
 }
