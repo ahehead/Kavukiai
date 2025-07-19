@@ -1,12 +1,12 @@
+import type { ModelInfo } from "@lmstudio/sdk";
 import { ipcMain } from "electron";
 import { IpcChannel, type IpcResult } from "shared/ApiType";
+import { unloadAllModels } from "./client";
 import {
   listModelsViaCli,
   startServerViaCli,
   stopServerViaCli,
 } from "./service";
-import { unloadAllModels } from "./client";
-import type { ModelInfo } from "@lmstudio/sdk";
 
 export function registerLMStudioHandlers(): void {
   ipcMain.handle(
