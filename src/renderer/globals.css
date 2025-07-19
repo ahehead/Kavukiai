@@ -211,7 +211,7 @@ dialog::backdrop {
 }
 
 .control {
-  @apply flex-1 flex h-full;
+  @apply flex min-h-0;
 }
 
 .control > span {
@@ -220,4 +220,21 @@ dialog::backdrop {
 
 .control > span > span {
   @apply flex flex-1 h-full;
+}
+
+/* control-console に flex-1 を適用 */
+[data-testid="control-console"] {
+  @apply flex-1;
+}
+
+[data-testid="control-view"] {
+  @apply flex-1;
+}
+
+[data-testid="control-textArea"] {
+  @apply flex-1;
+}
+
+[data-testid="control-input"] {
+  @apply flex-1;
 }
