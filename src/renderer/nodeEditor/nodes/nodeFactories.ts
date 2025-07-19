@@ -62,7 +62,7 @@ export const nodeFactories = {
     new MultiLineStringNode("", history, area, dataflow),
   TemplateReplace: ({ area, dataflow, controlflow }) =>
     new TemplateReplaceNode(area, dataflow, controlflow),
-  Join: () => new JoinNode(),
+  Join: ({ dataflow }) => new JoinNode(dataflow),
 
   Number: ({ history, area, dataflow }) =>
     new NumberNode(0, history, area, dataflow),
