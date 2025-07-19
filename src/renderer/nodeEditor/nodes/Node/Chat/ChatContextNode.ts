@@ -7,9 +7,9 @@ import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 import type {
   ChatMessageItem,
+  ChatMessageItemList,
   OpenAIClientResponseOrNull,
 } from "renderer/nodeEditor/types/Schemas";
-import { chatMessagesToResponseInput } from "renderer/nodeEditor/types/Schemas";
 import type { EasyInputMessage } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
@@ -89,7 +89,7 @@ export class ChatMessageListNode
 
       {
         key: "out",
-        typeName: "ResponseInput",
+        typeName: "ChatMessageItemList",
       },
     ]);
     this.addControl(
@@ -106,18 +106,14 @@ export class ChatMessageListNode
     );
   }
 
-  // dataflowで流す (ChatMessageItem[] を ResponseInputMessageItem[] に変換)
+  // dataflowで流す
   async data(): Promise<{
-    out: ReturnType<typeof chatMessagesToResponseInput>;
+    out: ChatMessageItemList;
   }> {
     const systemPromptMessage =
       this.controls.chatContext.createSystemPromptMessage(this.systemPrompt);
     const messages = this.controls.chatContext.getValue();
-    const responseInputs = chatMessagesToResponseInput([
-      systemPromptMessage,
-      ...messages,
-    ]);
-    return { out: responseInputs };
+    return { out: [systemPromptMessage, ...messages] };
   }
 
   async execute(
@@ -188,6 +184,7 @@ export class ChatMessageListNode
         this.processingMessageIndex = 0; // 処理中のメッセージインデックスをリセット
       }
     } else {
+      // outputは複数ある場合がある
       for (const item of response.output) {
         if (item.type === "message") {
           for (const content of item.content) {
