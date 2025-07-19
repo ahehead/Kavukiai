@@ -11,8 +11,8 @@ import type { HistoryPlugin } from "rete-history-plugin";
 import { MessageInputControl } from "../../Controls/OpenAI/MessageInput";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
-export class ResponseInputMessageItemNode extends BaseNode<
-  "ResponseInputMessageItem",
+export class ChatMessageItemNode extends BaseNode<
+  "ChatMessageItem",
   object,
   { exec: TypedSocket; outMessage: TypedSocket },
   { input: MessageInputControl }
@@ -25,7 +25,7 @@ export class ResponseInputMessageItemNode extends BaseNode<
     private controlflow: ControlFlowEngine<Schemes>,
     history: HistoryPlugin<Schemes>
   ) {
-    super("ResponseInputMessageItem");
+    super("ChatMessageItem");
     this.addOutputPort([
       {
         key: "exec",

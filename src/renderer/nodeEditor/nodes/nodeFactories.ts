@@ -38,8 +38,8 @@ import {
   UnLoadModelNode,
 } from "./Node";
 import { ChatMessageListNode } from "./Node/Chat/ChatContextNode";
+import { ChatMessageItemNode } from "./Node/Chat/ChatMessageItemNode";
 import { ChatMessageListToOpenAIInput } from "./Node/Chat/ChatMessageListToOpenAIInput";
-import { ResponseInputMessageItemNode } from "./Node/OpenAI/ResponseInputMessageItemNode";
 import { IFNode } from "./Node/Primitive/Flow/IFNode";
 import { ListNode } from "./Node/Primitive/ListNode";
 
@@ -99,8 +99,8 @@ export const nodeFactories = {
   ChatMessageList: ({ history, area, dataflow, controlflow }) =>
     new ChatMessageListNode([], history, area, dataflow, controlflow),
   ChatMessageListToOpenAIInput: () => new ChatMessageListToOpenAIInput(),
-  ResponseInputMessageItem: ({ area, dataflow, controlflow, history }) =>
-    new ResponseInputMessageItemNode(area, dataflow, controlflow, history),
+  ChatMessageItem: ({ area, dataflow, controlflow, history }) =>
+    new ChatMessageItemNode(area, dataflow, controlflow, history),
   JsonSchemaFormat: ({ history, area, dataflow }) =>
     new JsonSchemaFormatNode(history, area, dataflow),
   ResponseTextConfig: () => new ResponseTextConfigNode(),
@@ -219,8 +219,8 @@ const rawMenu: RawMenuItem[] = [
       },
       { label: "JsonSchemaFormat", factoryKey: "JsonSchemaFormat" },
       {
-        label: "ResponseInputMessageItem",
-        factoryKey: "ResponseInputMessageItem",
+        label: "ChatMessageItem",
+        factoryKey: "ChatMessageItem",
       },
       { label: "ResponseTextConfig", factoryKey: "ResponseTextConfig" },
     ],
