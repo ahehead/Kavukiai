@@ -7,12 +7,13 @@ import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
 import type { LMStudioLoadRequestArgs, LMStudioPortEvent } from 'shared/ApiType'
 import { ButtonControl } from '../../Controls/Button'
 import { ConsoleControl } from '../../Controls/Console'
+import { ProgressControl } from '../../Controls/view/ProgressControl'
 
 export class LMStudioLoadModelNode extends SerializableInputsNode<
   'LMStudioLoadModel',
   { exec: TypedSocket; exec2: TypedSocket; modelKey: TypedSocket },
   { exec: TypedSocket },
-  { console: ConsoleControl }
+  { progress: ProgressControl, console: ConsoleControl; }
 > {
   port: MessagePort | null = null
 
@@ -42,6 +43,7 @@ export class LMStudioLoadModelNode extends SerializableInputsNode<
       { key: 'modelKey', typeName: 'string', tooltip: 'Model key' },
     ])
     this.addOutputPort({ key: 'exec', typeName: 'exec', label: 'Out' })
+    this.addControl('progress', new ProgressControl({ value: 0 }))
     this.addControl('console', new ConsoleControl({}))
   }
 
@@ -103,9 +105,11 @@ export class LMStudioLoadModelNode extends SerializableInputsNode<
         this.controls.console.addValue('Start')
         break
       case 'progress':
-        this.controls.console.addValue(`Progress: ${evt.progress}`)
+        this.controls.progress.setValue(evt.progress * 100)
         break
       case 'done':
+        // set progress to 100% on completion
+        this.controls.progress.setValue(100)
         await this.logAndTerminate('done', 'loaded', forward)
         break
       case 'error':
