@@ -13,15 +13,15 @@ import {
   CreateSelectNode,
   ImageNode,
   InspectorNode,
+  JoinNode,
   JsonSchemaFormatNode,
   JsonSchemaNode,
   JsonSchemaToObjectNode,
   ListDownloadedModelsNode,
+  LLMPredictionConfigNode,
+  LMStudioLoadModelNode,
   LMStudioStartNode,
   LMStudioStopNode,
-  LMStudioLoadModelNode,
-  UnLoadModelNode,
-  LLMPredictionConfigNode,
   LoadImageNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
@@ -33,9 +33,9 @@ import {
   RunNode,
   StringNode,
   TemplateReplaceNode,
-  JoinNode,
   TestNode,
   UnknownNode,
+  UnLoadModelNode,
 } from "./Node";
 import { ResponseInputMessageItemListNode } from "./Node/OpenAI/ChatContextNode";
 import { ResponseInputMessageItemNode } from "./Node/OpenAI/ResponseInputMessageItemNode";
@@ -88,8 +88,7 @@ export const nodeFactories = {
     new LMStudioLoadModelNode(area, dataflow, controlflow),
   UnLoadModel: ({ area, controlflow }) =>
     new UnLoadModelNode(area, controlflow),
-  LLMPredictionConfig: ({ dataflow }) =>
-    new LLMPredictionConfigNode(dataflow),
+  LLMPredictionConfig: ({ dataflow }) => new LLMPredictionConfigNode(dataflow),
 
   // OpenAI nodes
   OpenAI: ({ area, dataflow, controlflow }) =>
