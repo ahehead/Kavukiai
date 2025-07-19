@@ -31,6 +31,7 @@ import type {
   RunNode,
   StringNode,
   TemplateReplaceNode,
+  JoinNode,
   TestNode,
   UnknownNode,
 } from "../nodes/Node";
@@ -67,6 +68,7 @@ export type NodeTypes =
   | JsonSchemaFormatNode
   | ResponseTextConfigNode
   | TemplateReplaceNode
+  | JoinNode
   | CreateSelectNode
   | ImageNode
   | LoadImageNode

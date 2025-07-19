@@ -33,6 +33,7 @@ import {
   RunNode,
   StringNode,
   TemplateReplaceNode,
+  JoinNode,
   TestNode,
   UnknownNode,
 } from "./Node";
@@ -61,6 +62,7 @@ export const nodeFactories = {
     new MultiLineStringNode("", history, area, dataflow),
   TemplateReplace: ({ area, dataflow, controlflow }) =>
     new TemplateReplaceNode(area, dataflow, controlflow),
+  Join: () => new JoinNode(),
 
   Number: ({ history, area, dataflow }) =>
     new NumberNode(0, history, area, dataflow),
@@ -195,6 +197,7 @@ const rawMenu: RawMenuItem[] = [
           { label: "String", factoryKey: "String" },
           { label: "MultiLineString", factoryKey: "MultiLineString" },
           { label: "TemplateReplace", factoryKey: "TemplateReplace" },
+          { label: "Join", factoryKey: "Join" },
         ],
       },
       {
