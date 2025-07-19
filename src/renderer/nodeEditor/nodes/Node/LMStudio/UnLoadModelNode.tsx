@@ -9,7 +9,7 @@ import { ConsoleControl } from '../../Controls/Console'
 export class UnLoadModelNode extends SerializableInputsNode<
   'UnLoadModel',
   { exec: TypedSocket },
-  Record<string, never>,
+  object,
   { console: ConsoleControl }
 > {
   constructor(
