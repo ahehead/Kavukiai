@@ -7,6 +7,7 @@ import type {
   ChatMessageItemNode,
   ChatMessageListNode,
   ChatMessageListToOpenAIInput,
+  ChatMessageNode,
   CreateSelectNode,
   IFNode,
   ImageNode,
@@ -29,6 +30,7 @@ import type {
   OpenAINode,
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
+  RoleNode,
   RunNode,
   StringFormNode,
   StringNode,
@@ -62,6 +64,8 @@ export type NodeTypes =
   | ChatMessageListNode
   | ChatMessageListToOpenAIInput
   | ChatMessageItemNode
+  | ChatMessageNode
+  | RoleNode
   | BoolNode
   | IFNode
   | ListNode
