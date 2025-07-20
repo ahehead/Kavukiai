@@ -7,13 +7,12 @@ import type { DataflowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 // 短い文字列入力ノード
-export class StringNode
-  extends BaseNode<
-    'String',
-    object,
-    { out: TypedSocket },
-    { textInput: InputValueControl<string> }
-  >
+export class StringNode extends BaseNode<
+  'String',
+  object,
+  { out: TypedSocket },
+  { textInput: InputValueControl<string> }
+>
   implements SerializableDataNode {
   constructor(
     initial: string,
