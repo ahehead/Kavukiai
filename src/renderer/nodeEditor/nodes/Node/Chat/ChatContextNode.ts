@@ -3,8 +3,8 @@ import type {
   Schemes,
   TypedSocket,
 } from "renderer/nodeEditor/types";
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
+import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import type {
   ChatMessageItem,
   ChatMessageItemList,
@@ -14,19 +14,18 @@ import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schem
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
-import { ButtonControl } from "../../Controls/Button";
 import { ResponseInputMessageControl } from "../../Controls/OpenAI/ResponseInputMessage";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 // open ai用のchat message list Node
 export class ChatMessageListNode
-  extends BaseNode<
+  extends SerializableInputsNode<
     "ChatMessageList",
     {
-      exec: TypedSocket;
-      exec2: TypedSocket;
       systemPrompt: TypedSocket;
+      exec: TypedSocket;
       newMessage: TypedSocket;
+      exec2: TypedSocket;
       responseList: TypedSocket;
     },
     { exec: TypedSocket; out: TypedSocket },
@@ -34,45 +33,38 @@ export class ChatMessageListNode
   >
   implements SerializableDataNode
 {
-  systemPrompt = ""; // システムプロンプト
   // 処理中messageのindex
   processingMessageIndex = 0;
 
   constructor(
     initial: ChatMessageItem[],
     history: HistoryPlugin<Schemes>,
-    private area: AreaPlugin<Schemes, AreaExtra>,
+    area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("ChatMessageList");
     this.addInputPort([
       {
-        key: "exec",
-        typeName: "exec",
-        label: "add",
-      },
-      {
-        key: "exec2",
-        typeName: "exec",
-        label: "response",
-        control: new ButtonControl({
-          label: "Response",
-          onClick: async (e) => {
-            e.stopPropagation();
-            this.controlflow.execute(this.id, "exec2");
-          },
-        }),
-      },
-      {
         key: "systemPrompt",
         typeName: "string",
         label: "System Prompt",
       },
       {
+        key: "exec",
+        typeName: "exec",
+        label: "push",
+        onClick: () => this.controlflow.execute(this.id, "exec"),
+      },
+      {
         key: "newMessage",
         typeName: "ChatMessageItem",
         label: "New Message",
+      },
+      {
+        key: "exec2",
+        typeName: "exec",
+        label: "response",
       },
       {
         key: "responseList",
@@ -84,7 +76,7 @@ export class ChatMessageListNode
       {
         key: "exec",
         typeName: "exec",
-        label: "added",
+        label: "pushed",
       },
 
       {
@@ -107,11 +99,12 @@ export class ChatMessageListNode
   }
 
   // dataflowで流す
-  async data(): Promise<{
+  async data(inputs?: { systemPrompt?: string[] }): Promise<{
     out: ChatMessageItemList;
   }> {
+    const systemPrompt = inputs?.systemPrompt?.[0] || "";
     const systemPromptMessage =
-      this.controls.chatContext.createSystemPromptMessage(this.systemPrompt);
+      this.controls.chatContext.createSystemPromptMessage(systemPrompt);
     const messages = this.controls.chatContext.getValue();
     return { out: [systemPromptMessage, ...messages] };
   }
@@ -128,22 +121,16 @@ export class ChatMessageListNode
   }
 
   // messageを追加する
-  // systemPromptがあればそれを設定する
   private async updateChatContext(
     forward: (output: "exec") => void
   ): Promise<void> {
     // データフローから入力を取得
-    const { systemPrompt, newMessage } = (await this.dataflow.fetchInputs(
-      this.id
-    )) as { systemPrompt?: string[]; newMessage?: ChatMessageItem[] };
-
-    if (!!systemPrompt && systemPrompt.length > 0) {
-      this.systemPrompt = systemPrompt[0];
-    }
+    const { newMessage } = (await this.dataflow.fetchInputs(this.id)) as {
+      newMessage?: ChatMessageItem[];
+    };
     if (!!newMessage && newMessage.length > 0) {
       this.controls.chatContext.addMessage(newMessage[0]);
     }
-    await this.area?.update("node", this.id);
     forward("exec");
   }
 
@@ -217,21 +204,16 @@ export class ChatMessageListNode
   }
 
   serializeControlValue(): {
-    data: { systemPrompt: string; list: ChatMessageItem[] };
+    data: { list: ChatMessageItem[] };
   } {
     return {
       data: {
-        systemPrompt: this.systemPrompt,
         list: this.controls.chatContext.getValue(),
       },
     };
   }
 
-  deserializeControlValue(data: {
-    systemPrompt: string;
-    list: ChatMessageItem[];
-  }): void {
-    this.systemPrompt = data.systemPrompt;
+  deserializeControlValue(data: { list: ChatMessageItem[] }): void {
     this.controls.chatContext.setValue(data.list);
   }
 }
