@@ -34,6 +34,11 @@
   --node-error: hsl(0, 100%, 93%);
   --node-warning: hsl(53, 100%, 93%);
   --node-running: rgb(104, 139, 255);
+
+  --node-icon-success: hsl(214, 93%, 40%);
+  --node-icon-error: hsl(0, 98%, 59%);
+  --node-icon-warning: hsl(53, 87%, 55%);
+  --node-icon-running: rgb(125, 209, 108);
 }
 
 .dark {
@@ -61,6 +66,11 @@
   --color-node-error: var(--node-error);
   --color-node-warning: var(--node-warning);
   --color-node-running: var(--node-running);
+
+  --color-node-icon-success: var(--node-icon-success);
+  --color-node-icon-error: var(--node-icon-error);
+  --color-node-icon-warning: var(--node-icon-warning);
+  --color-node-icon-running: var(--node-icon-running);
 }
 
 @layer utilities {
