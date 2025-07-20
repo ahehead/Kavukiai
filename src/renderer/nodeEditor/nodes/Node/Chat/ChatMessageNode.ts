@@ -1,5 +1,6 @@
 import { BaseNode, type TypedSocket } from "renderer/nodeEditor/types";
 import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/ChatMessageItem";
+import type { Role } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
 
 /**
  * ChatMessageNode
@@ -20,7 +21,7 @@ export class ChatMessageNode extends BaseNode<
     super("ChatMessage");
     // inputs: text and role
     this.addInputPort([
-      { key: "role", typeName: "string", label: "role" },
+      { key: "role", typeName: "Role", label: "role" },
       { key: "text", typeName: "string", label: "text" },
     ]);
     // output: message
@@ -32,7 +33,7 @@ export class ChatMessageNode extends BaseNode<
   }
 
   /** Build and return ChatMessageItem from inputs */
-  data(inputs: { text?: string[]; role?: string[] }): {
+  data(inputs: { text?: string[]; role?: Role[] }): {
     message: ChatMessageItem;
   } {
     const content = inputs.text?.[0] ?? "";
