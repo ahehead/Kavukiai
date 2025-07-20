@@ -1,5 +1,4 @@
-import type { TypedSocket } from "renderer/nodeEditor/types";
-import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
+import { BaseNode, type TypedSocket } from "renderer/nodeEditor/types";
 import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/ChatMessageItem";
 
 /**
@@ -11,7 +10,7 @@ import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/ChatMess
  * Output:
  *  - message: ChatMessageItem
  */
-export class ChatMessageNode extends SerializableInputsNode<
+export class ChatMessageNode extends BaseNode<
   "ChatMessage",
   { role: TypedSocket; text: TypedSocket },
   { message: TypedSocket },
