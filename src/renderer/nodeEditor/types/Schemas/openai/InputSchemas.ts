@@ -1,4 +1,4 @@
-import { Type, type Static } from "@sinclair/typebox";
+import { type Static, Type } from "@sinclair/typebox";
 import * as Base from "./BaseSchemas";
 
 // Text input
@@ -66,17 +66,20 @@ export type ResponseInputMessageContentList = Static<
   typeof ResponseInputMessageContentList
 >;
 
+export const Role = Type.Union([
+  Type.Literal("user"),
+  Type.Literal("assistant"),
+  Type.Literal("system"),
+  Type.Literal("developer"),
+]);
+export type Role = Static<typeof Role>;
+
 // Message item
 export const ResponseInputMessageItem = Type.Object(
   {
     id: Type.Optional(Base.ID),
     content: ResponseInputMessageContentList,
-    role: Type.Union([
-      Type.Literal("user"),
-      Type.Literal("assistant"),
-      Type.Literal("system"),
-      Type.Literal("developer"),
-    ]),
+    role: Role,
     status: Type.Optional(
       Type.Union([
         Type.Literal("in_progress"),
@@ -97,12 +100,7 @@ export const EasyInputMessage = Type.Object(
       description:
         "Text, image, or audio input to the model, used to generate a response.",
     }),
-    role: Type.Union([
-      Type.Literal("user"),
-      Type.Literal("assistant"),
-      Type.Literal("system"),
-      Type.Literal("developer"),
-    ]),
+    role: Role,
     type: Type.Optional(Type.Literal("message")),
   },
   {
