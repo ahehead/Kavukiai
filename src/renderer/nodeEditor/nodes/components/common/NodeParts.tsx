@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import { AlertTriangle, CheckCircle, Circle, Loader2, XCircle } from 'lucide-react'
+import { AlertTriangle, CheckCircle, Circle, Loader2 } from 'lucide-react'
 import React, { useRef } from 'react'
 import { cn } from 'renderer/lib/utils'
 import { NodeStatus } from 'renderer/nodeEditor/types'
@@ -67,10 +67,10 @@ const iconStyle = cva(["h-[10px] w-[10px] inline-block"], {
   variants: {
     status: {
       IDLE: 'h-[9px] w-[9px] text-node-header-fg/50 fill-[var(--color-node-header-fg)]/50',
-      RUNNING: 'animate-spin',
-      COMPLETED: '',
-      ERROR: '',
-      WARNING: '',
+      RUNNING: 'animate-spin text-node-icon-running',
+      COMPLETED: 'text-node-icon-success',
+      ERROR: 'text-node-icon-error fill-[var(--color-node-icon-error)]',
+      WARNING: 'text-node-icon-warning',
     },
   },
   defaultVariants: {
@@ -94,7 +94,7 @@ export function NodeHeader({
       case NodeStatus.COMPLETED:
         return <CheckCircle className={cn(iconStyle({ status }))} />
       case NodeStatus.ERROR:
-        return <XCircle className={cn(iconStyle({ status }))} />
+        return <Circle className={cn(iconStyle({ status }))} />
       case NodeStatus.WARNING:
         return <AlertTriangle className={cn(iconStyle({ status }))} />
       default:
