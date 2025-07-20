@@ -8,17 +8,17 @@
 - nodes/util/         -- ノード用ユーティリティ
 - nodes/README_node.md -- この文章
 
-## Controlの追加後
-- [NodeControl.ts](../types/NodeControl.ts)に追加
-- [TestNode.ts](Node/TestNode.tsx)のコントロールに追加
-- [customReactPresets](../features/customReactPresets/customReactPresets.ts)に追加
+## Controlの追加後の登録方法
+  1. [NodeControl.ts](../types/NodeControl.ts)に追加
+  2. [TestNode.ts](Node/TestNode.tsx)のコントロールに追加
+  3. [customReactPresets](../features/customReactPresets/customReactPresets.ts)に追加
 
-## ノードの追加後
+## ノードの追加後の登録方法
 
-- [index.ts](Node/index.ts)のバニラインポートに追加
-- [Schemes.ts](../types/Schemes.ts)のNodeTypesに追加
-- [nodeFactories.ts](nodeFactories.ts)にコンストラクタの生成を記述,右クリックに追加
-- LMStudioノードの場合は LMStudio カテゴリに追加する
+1. [index.ts](Node/index.ts)のバニラインポートに追加
+2. [Schemes.ts](../types/Schemes.ts)のNodeTypesに追加
+3. [nodeFactories.ts](nodeFactories.ts)にコンストラクタの生成を記述,右クリックに追加
+4. LMStudioノードの場合は LMStudio カテゴリに追加する
 
 ### レイヤーをまたぐノード
 
