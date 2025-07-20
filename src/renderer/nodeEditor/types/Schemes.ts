@@ -4,7 +4,6 @@ import type { ReactArea2D } from "rete-react-plugin";
 
 import type {
   BoolNode,
-  ChatMessageItemNode,
   ChatMessageListNode,
   ChatMessageListToOpenAIInput,
   ChatMessageNode,
@@ -63,7 +62,6 @@ export type NodeTypes =
   | ResponseCreateParamsBaseNode
   | ChatMessageListNode
   | ChatMessageListToOpenAIInput
-  | ChatMessageItemNode
   | ChatMessageNode
   | RoleNode
   | BoolNode
