@@ -30,5 +30,6 @@ export { JsonSchemaToObjectNode } from "./Primitive/Object/JsonSchemaToObject";
 export { ObjectPickNode } from "./Primitive/Object/ObjectPickNode";
 export { JoinNode } from "./Primitive/String/JoinNode";
 export { MultiLineStringNode } from "./Primitive/String/MultiLineStringNode";
+export { StringFormNode } from "./Primitive/String/StringFormNode";
 export { StringNode } from "./Primitive/String/StringNode";
 export { TemplateReplaceNode } from "./Primitive/String/TemplateReplaceNode";

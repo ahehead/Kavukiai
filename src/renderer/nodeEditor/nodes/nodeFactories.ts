@@ -31,6 +31,7 @@ import {
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
   RunNode,
+  StringFormNode,
   StringNode,
   TemplateReplaceNode,
   TestNode,
@@ -63,6 +64,8 @@ export const nodeFactories = {
     new MultiLineStringNode("", history, area, dataflow),
   TemplateReplace: ({ area, dataflow, controlflow }) =>
     new TemplateReplaceNode(area, dataflow, controlflow),
+  StringForm: ({ history, area, dataflow, controlflow }: NodeDeps) =>
+    new StringFormNode("", history, area, dataflow, controlflow),
   Join: ({ dataflow }) => new JoinNode(dataflow),
 
   Number: ({ history, area, dataflow }) =>
@@ -160,6 +163,7 @@ const rawMenu: RawMenuItem[] = [
           { label: "MultiLineString", factoryKey: "MultiLineString" },
           { label: "TemplateReplace", factoryKey: "TemplateReplace" },
           { label: "Join", factoryKey: "Join" },
+          { label: "StringForm", factoryKey: "StringForm" },
         ],
       },
       {

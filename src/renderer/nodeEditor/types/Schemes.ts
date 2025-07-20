@@ -30,6 +30,7 @@ import type {
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
   RunNode,
+  StringFormNode,
   StringNode,
   TemplateReplaceNode,
   TestNode,
@@ -70,6 +71,7 @@ export type NodeTypes =
   | JsonSchemaFormatNode
   | ResponseTextConfigNode
   | TemplateReplaceNode
+  | StringFormNode
   | JoinNode
   | CreateSelectNode
   | ImageNode
