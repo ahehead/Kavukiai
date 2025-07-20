@@ -3,6 +3,7 @@ import {
   Dataflow,
   DataflowEngine,
   type DataflowEngineScheme,
+  type DataflowNode,
 } from "rete-engine";
 import type { ClassicScheme } from "rete-engine/_types/types";
 
@@ -11,6 +12,7 @@ type Inputs = Partial<Record<string, any[]>> | DefaultInputs;
 type FetchInputs<T> = T extends DefaultInputs
   ? Record<string, any>
   : Partial<T>;
+type Node = ClassicScheme["Node"] & DataflowNode;
 
 export class SafeDataflow<S extends ClassicScheme> extends Dataflow<S> {
   // --------------- ① 入口 ---------------
@@ -18,11 +20,19 @@ export class SafeDataflow<S extends ClassicScheme> extends Dataflow<S> {
     return this._fetch(nodeId, new Set<NodeId>());
   }
 
-  // --------------- ② fetchInputs ---------------
-  public fetchInputs<T extends Inputs = DefaultInputs>(
+  // --------------- ② fetchInputs with optional keys ---------------
+  public override fetchInputs<T extends Inputs = DefaultInputs>(
     nodeId: NodeId
-  ): Promise<FetchInputs<T>> {
-    return this._fetchInputs(nodeId, new Set<NodeId>());
+  ): Promise<FetchInputs<T>>;
+  public override fetchInputs<
+    T extends Inputs = DefaultInputs,
+    K extends keyof FetchInputs<T> = keyof FetchInputs<T>
+  >(nodeId: NodeId, keys: readonly K[]): Promise<Pick<FetchInputs<T>, K>>;
+  public override fetchInputs<
+    T extends Inputs = DefaultInputs,
+    K extends keyof FetchInputs<T> = keyof FetchInputs<T>
+  >(nodeId: NodeId, keys?: readonly K[]): Promise<any> {
+    return this._fetchInputs(new Set<NodeId>(), nodeId, keys as any);
   }
 
   // --------------- ③ 再帰本体 (private) ---------------
@@ -38,7 +48,7 @@ export class SafeDataflow<S extends ClassicScheme> extends Dataflow<S> {
 
     // ---- Dataflow.fetch() のロジックを丸ごと再掲 ----
     const outputKeys = setup.outputs();
-    const data = await setup.data(() => this._fetchInputs(nodeId, path));
+    const data = await setup.data(() => this._fetchInputs(path, nodeId));
 
     const returningKeys = Object.keys(data) as (string | number | symbol)[];
     if (!outputKeys.every((k) => returningKeys.includes(k))) {
@@ -52,14 +62,19 @@ export class SafeDataflow<S extends ClassicScheme> extends Dataflow<S> {
     return data as T;
   }
 
-  private async _fetchInputs<T extends Inputs = DefaultInputs>(
+  private async _fetchInputs<
+    T extends Inputs = DefaultInputs,
+    K extends keyof FetchInputs<T> = keyof FetchInputs<T>
+  >(
+    path: Set<NodeId>,
     nodeId: NodeId,
-    path: Set<NodeId>
-  ): Promise<FetchInputs<T>> {
+    keys?: readonly K[]
+  ): Promise<Pick<FetchInputs<T>, K>> {
     const setup = this.setups.get(nodeId);
     if (!setup) throw new Error("node is not initialized");
 
-    const inputKeys = setup.inputs();
+    const inputKeys = (keys ?? setup.inputs()) as readonly string[];
+
     // access private editor via any and treat connections as any for simplicity
     const cons = (this as any).editor
       .getConnections()
@@ -77,7 +92,7 @@ export class SafeDataflow<S extends ClassicScheme> extends Dataflow<S> {
         sourceData[c.sourceOutput],
       ];
     }
-    return inputs;
+    return inputs as Pick<FetchInputs<T>, K>;
   }
 }
 
@@ -88,5 +103,16 @@ export class SafeDataflowEngine<
     super.setParent(scope); // ここで this.editor が確定
     // ↓オリジナルは `new Dataflow(this.editor)` なので差し替える
     (this as any).dataflow = new SafeDataflow(this.editor as NodeEditor<S>);
+  }
+
+  override async fetchInputs<
+    N extends Node,
+    K extends keyof Parameters<N["data"]>[0] & string
+  >(
+    node: NodeId | N,
+    keys?: readonly K[]
+  ): Promise<Pick<Parameters<N["data"]>[0], K>> {
+    const id = typeof node === "object" ? node.id : node;
+    return (this as any).getDataflow().fetchInputs(id, keys);
   }
 }
