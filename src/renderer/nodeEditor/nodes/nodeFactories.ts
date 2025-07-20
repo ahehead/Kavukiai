@@ -10,6 +10,7 @@ import type {
 } from "../types/Schemes";
 import {
   BoolNode,
+  ChatMessageNode,
   CreateSelectNode,
   ImageNode,
   InspectorNode,
@@ -30,6 +31,7 @@ import {
   OpenAINode,
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
+  RoleNode,
   RunNode,
   StringFormNode,
   StringNode,
@@ -99,14 +101,19 @@ export const nodeFactories = {
     new OpenAINode(area, dataflow, controlflow),
   ResponseCreateParamsBase: ({ history, area, dataflow }) =>
     new ResponseCreateParamsBaseNode(history, area, dataflow),
-  ChatMessageList: ({ history, area, dataflow, controlflow }) =>
-    new ChatMessageListNode([], history, area, dataflow, controlflow),
-  ChatMessageListToOpenAIInput: () => new ChatMessageListToOpenAIInput(),
-  ChatMessageItem: ({ area, dataflow, controlflow, history }) =>
-    new ChatMessageItemNode(area, dataflow, controlflow, history),
   JsonSchemaFormat: ({ history, area, dataflow }) =>
     new JsonSchemaFormatNode(history, area, dataflow),
   ResponseTextConfig: () => new ResponseTextConfigNode(),
+
+  // chat
+  ChatMessageListToOpenAIInput: () => new ChatMessageListToOpenAIInput(),
+  ChatMessageItem: ({ area, dataflow, controlflow, history }) =>
+    new ChatMessageItemNode(area, dataflow, controlflow, history),
+  ChatMessageList: ({ history, area, dataflow, controlflow }) =>
+    new ChatMessageListNode([], history, area, dataflow, controlflow),
+  ChatMessage: () => new ChatMessageNode(),
+  Role: ({ history, area, dataflow }) =>
+    new RoleNode("user", history, area, dataflow),
 
   ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
   JsonSchemaToObject: ({ editor, history, area, dataflow, controlflow }) =>
@@ -193,11 +200,20 @@ const rawMenu: RawMenuItem[] = [
   {
     label: "Chat",
     subitems: [
+      {
+        label: "ChatMessage",
+        factoryKey: "ChatMessage",
+      },
       { label: "ChatMessageList", factoryKey: "ChatMessageList" },
       {
         label: "ChatMessageListToOpenAIInput",
         factoryKey: "ChatMessageListToOpenAIInput",
       },
+      {
+        label: "ChatMessageItem",
+        factoryKey: "ChatMessageItem",
+      },
+      { label: "Role", factoryKey: "Role" },
     ],
   },
   { label: "Inspector", factoryKey: "Inspector" },
@@ -222,10 +238,7 @@ const rawMenu: RawMenuItem[] = [
         factoryKey: "ResponseCreateParamsBase",
       },
       { label: "JsonSchemaFormat", factoryKey: "JsonSchemaFormat" },
-      {
-        label: "ChatMessageItem",
-        factoryKey: "ChatMessageItem",
-      },
+
       { label: "ResponseTextConfig", factoryKey: "ResponseTextConfig" },
     ],
   },

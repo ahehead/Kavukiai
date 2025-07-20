@@ -3,6 +3,8 @@
 export { ChatMessageListNode } from "./Chat/ChatContextNode";
 export { ChatMessageItemNode } from "./Chat/ChatMessageItemNode";
 export { ChatMessageListToOpenAIInput } from "./Chat/ChatMessageListToOpenAIInput";
+export { ChatMessageNode } from "./Chat/ChatMessageNode";
+export { RoleNode } from "./Chat/RoleNode";
 export { TestNode } from "./Debug/TestNode";
 export { UnknownNode } from "./Debug/UnknownNode";
 export { InspectorNode } from "./InspectorNode";
