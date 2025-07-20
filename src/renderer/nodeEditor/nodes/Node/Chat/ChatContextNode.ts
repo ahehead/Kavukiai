@@ -1,3 +1,4 @@
+import type { SafeDataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/safeDataflow";
 import type {
   AreaExtra,
   Schemes,
@@ -12,7 +13,7 @@ import type {
 import type { EasyInputMessage } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
 import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schemas/Util";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
 import { ResponseInputMessageControl } from "../../Controls/OpenAI/ResponseInputMessage";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
@@ -40,7 +41,7 @@ export class ChatMessageListNode
     initial: ChatMessageItem[],
     history: HistoryPlugin<Schemes>,
     area: AreaPlugin<Schemes, AreaExtra>,
-    private dataflow: DataflowEngine<Schemes>,
+    private dataflow: SafeDataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("ChatMessageList");
@@ -125,7 +126,9 @@ export class ChatMessageListNode
     forward: (output: "exec") => void
   ): Promise<void> {
     // データフローから入力を取得
-    const { newMessage } = (await this.dataflow.fetchInputs(this.id)) as {
+    const { newMessage } = (await this.dataflow.fetchInputs(this.id, [
+      "newMessage",
+    ])) as {
       newMessage?: ChatMessageItem[];
     };
     if (!!newMessage && newMessage.length > 0) {
