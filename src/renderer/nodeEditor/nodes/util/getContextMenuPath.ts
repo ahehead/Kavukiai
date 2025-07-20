@@ -4,7 +4,7 @@ import {
   type MenuItemDefinition,
 } from "../nodeFactories";
 
-// returns hierarchy path for a given factoryKey; e.g., "String" -> "Primitive/String"
+// returns hierarchy path for a given factoryKey; e.g., "String" -> "Primitive/String/"
 
 export function getContextMenuPath(factoryKey: NodeTypeKey): string {
   // recursive helper to collect path of labels
@@ -26,6 +26,6 @@ export function getContextMenuPath(factoryKey: NodeTypeKey): string {
   };
 
   const fullPath = findPath(contextMenuStructure, []);
-  if (!fullPath) return "";
-  return fullPath.join("/");
+  if (!fullPath || fullPath.length === 0) return "";
+  return fullPath.join("/") + "/";
 }
