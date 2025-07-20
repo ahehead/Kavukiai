@@ -4,7 +4,7 @@ import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import {
   type ChatMessageItem,
   chatMessagesToResponseInput,
-} from "renderer/nodeEditor/types/Schemas";
+} from "renderer/nodeEditor/types/Schemas/ChatMessageItem";
 import type { ResponseInput } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
 
 export class ChatMessageListToOpenAIInput extends BaseNode<

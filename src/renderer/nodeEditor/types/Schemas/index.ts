@@ -1,66 +1,19 @@
-import { type Static, type TSchema, Type } from "@sinclair/typebox";
+import type { TSchema } from "@sinclair/typebox";
+import { ChatMessageItem, ChatMessageItemList } from "./ChatMessageItem";
 import * as DefaultSchema from "./DefaultSchema";
 import * as ModelInfoSchemas from "./lmstudio/ModelSchemas";
 import * as BaseSchemas from "./openai/BaseSchemas";
-import { Timestamp } from "./openai/BaseSchemas";
+
 import * as EventsSchemas from "./openai/EventsSchemas";
-import { ResponseStreamEvent } from "./openai/EventsSchemas";
 import * as InputSchemas from "./openai/InputSchemas";
-import {
-  type ResponseInput,
-  ResponseInputMessageItem,
-} from "./openai/InputSchemas";
+
 import * as RequestSchemas from "./openai/RequestSchemas";
 import * as ResponseSchemas from "./openai/ResponseSchemas";
-
-export const Image = Type.Object({
-  url: Type.String({ description: "image url" }),
-  alt: Type.Optional(Type.String({ description: "alt text" })),
-});
-export type Image = Static<typeof Image>;
-
-// OpenAIのclientからのレスポンスを表す型
-export const OpenAIClientResponse = Type.Union([
-  ResponseSchemas.Response,
-  ResponseStreamEvent,
-]);
-
-export type OpenAIClientResponse = Static<typeof OpenAIClientResponse>;
-
-export const OpenAIClientResponseOrNull = Type.Union([
+import {
+  Image,
   OpenAIClientResponse,
-  Type.Null(),
-]);
-
-export type OpenAIClientResponseOrNull = Static<
-  typeof OpenAIClientResponseOrNull
->;
-
-// chat用type
-export const ChatMessageItem = Type.Intersect(
-  [
-    ResponseInputMessageItem,
-    Type.Object({
-      model: Type.Optional(Type.String()),
-      created_at: Type.Optional(Timestamp),
-      tokensCount: Type.Optional(Type.Number()),
-      tokensPerSecond: Type.Optional(Type.Number()),
-    }),
-  ],
-  { description: "A chat message item with extra metadata" }
-);
-export type ChatMessageItem = Static<typeof ChatMessageItem>;
-
-export const ChatMessageItemList = Type.Array(ChatMessageItem);
-export type ChatMessageItemList = Static<typeof ChatMessageItemList>;
-
-export function chatMessagesToResponseInput(
-  messages: ChatMessageItem[]
-): ResponseInput {
-  return messages.map(
-    ({ model, created_at, tokensCount, tokensPerSecond, ...rest }) => rest
-  );
-}
+  OpenAIClientResponseOrNull,
+} from "./Util";
 
 const registry = {
   ...BaseSchemas,

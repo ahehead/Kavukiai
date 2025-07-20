@@ -7,7 +7,7 @@ import {
   type TypedSocket,
 } from "renderer/nodeEditor/types";
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
-import type { OpenAIClientResponse } from "renderer/nodeEditor/types/Schemas";
+import type { OpenAIClientResponse } from "renderer/nodeEditor/types/Schemas/Util";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import type { OpenAIRequestArgs, PortEventType } from "shared/ApiType";

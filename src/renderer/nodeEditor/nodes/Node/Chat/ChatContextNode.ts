@@ -8,9 +8,9 @@ import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/Serial
 import type {
   ChatMessageItem,
   ChatMessageItemList,
-  OpenAIClientResponseOrNull,
-} from "renderer/nodeEditor/types/Schemas";
+} from "renderer/nodeEditor/types/Schemas/ChatMessageItem";
 import type { EasyInputMessage } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
+import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schemas/Util";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";

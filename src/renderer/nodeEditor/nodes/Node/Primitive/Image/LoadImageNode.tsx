@@ -2,7 +2,7 @@ import { ImageControl } from 'renderer/nodeEditor/nodes/Controls/Image'
 import { ImageFileInputControl } from 'renderer/nodeEditor/nodes/Controls/input/ImageFileInput'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
-import type { Image } from 'renderer/nodeEditor/types/Schemas'
+import type { Image } from "renderer/nodeEditor/types/Schemas/Util"
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { DataflowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'

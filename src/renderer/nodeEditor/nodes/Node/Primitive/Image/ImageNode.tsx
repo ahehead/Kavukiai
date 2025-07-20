@@ -1,7 +1,7 @@
 import { ImageControl } from 'renderer/nodeEditor/nodes/Controls/Image'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
-import type { Image } from 'renderer/nodeEditor/types/Schemas'
+import type { Image } from "renderer/nodeEditor/types/Schemas/Util"
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
 

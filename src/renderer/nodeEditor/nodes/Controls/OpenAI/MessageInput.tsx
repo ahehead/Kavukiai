@@ -1,7 +1,7 @@
 import { type JSX, useState } from 'react'
 import { BaseControl, type ControlOptions } from 'renderer/nodeEditor/types'
+import type { ChatMessageItem } from 'renderer/nodeEditor/types/Schemas/ChatMessageItem'
 import type { ResponseInputMessageContentList } from 'renderer/nodeEditor/types/Schemas/openai/InputSchemas'
-import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas"
 import { Drag } from 'rete-react-plugin'
 
 export interface MessageInputControlParams
@@ -96,13 +96,16 @@ export function MessageInputControlView(props: {
           className="w-full h-full border rounded p-1 text-sm  resize-none"
           value={text}
           onChange={e => setText(e.target.value)}
-          placeholder='...'
+          placeholder="..."
         />
         <div className="flex gap-1">
           <button className="border px-2 rounded" onClick={toggleRole}>
             {role}
           </button>
-          <button className="flex-1 border px-2 rounded active:bg-accent/40" onClick={send}>
+          <button
+            className="flex-1 border px-2 rounded active:bg-accent/40"
+            onClick={send}
+          >
             Send
           </button>
         </div>

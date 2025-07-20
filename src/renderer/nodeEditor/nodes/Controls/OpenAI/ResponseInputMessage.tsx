@@ -7,7 +7,7 @@ import {
   type ControlOptions,
   useControlValue,
 } from 'renderer/nodeEditor/types'
-import type { ChatMessageItem } from 'renderer/nodeEditor/types/Schemas'
+import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/ChatMessageItem"
 import type {
   EasyInputMessage,
   ResponseInputContent,

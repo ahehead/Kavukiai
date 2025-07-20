@@ -4,7 +4,7 @@ import type {
   TypedSocket,
 } from "renderer/nodeEditor/types";
 import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
-import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
+import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/ChatMessageItem";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";

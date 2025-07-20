@@ -3,7 +3,7 @@ import {
   type ControlOptions,
   useControlValue,
 } from 'renderer/nodeEditor/types'
-import type { Image } from 'renderer/nodeEditor/types/Schemas'
+import type { Image } from "renderer/nodeEditor/types/Schemas/Util"
 import { Drag } from 'rete-react-plugin'
 import type { ControlJson } from 'shared/JsonType'
 
