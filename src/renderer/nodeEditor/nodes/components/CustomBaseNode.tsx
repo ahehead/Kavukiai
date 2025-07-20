@@ -18,6 +18,7 @@ import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { Presets, type RenderEmit } from 'rete-react-plugin'
 import type { AreaExtra, NodeInterface, Schemes } from '../../types/Schemes'
+import { getContextMenuPath } from '../util/getContextMenuPath'
 import { withTooltip } from './common/TooltipSetting'
 import { useNodeResize } from './hooks/useNodeResize'
 
@@ -36,18 +37,18 @@ export function createCustomNode(
     emit,
   }: Props<Scheme>) {
     const panelRef = useRef<HTMLDivElement>(null)
-    const { startResize, nodeMinWidth, clearNodeSize } =
-      useNodeResize({
-        node: data,
-        area,
-        history,
-        getZoom,
-        panelRef,
-      })
+    const { startResize, nodeMinWidth, clearNodeSize } = useNodeResize({
+      node: data,
+      area,
+      history,
+      getZoom,
+      panelRef,
+    })
     const inputs = Object.entries(data.inputs)
     const outputs = Object.entries(data.outputs)
     const controls = Object.entries(data.controls)
     const { id, label, width, height, selected } = data
+    const hierarchyPath = getContextMenuPath(label)
 
     function sortByIndex<T extends [string, undefined | { index?: number }][]>(
       entries: T
@@ -77,6 +78,15 @@ export function createCustomNode(
         <NodeHeader status={data.status} nodeType={label}>
           <NodeTitle status={data.status}>{label}</NodeTitle>
         </NodeHeader>
+        {/* Hierarchy ribbon above title, extends from header and left-aligned */}
+        {hierarchyPath && (
+          <div
+            className="absolute left-0 -top-5 bg-node-header text-xs px-2 pt-1 pb-2 truncate text-node-header-fg/90"
+            title={hierarchyPath}
+          >
+            {hierarchyPath}
+          </div>
+        )}
 
         <NodeBody>
           <NodeSocketsWrapper>
