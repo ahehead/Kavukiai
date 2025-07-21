@@ -23,6 +23,7 @@ import {
   LMStudioLoadModelNode,
   LMStudioStartNode,
   LMStudioStopNode,
+  ServerStatusNode,
   LoadImageNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
@@ -91,6 +92,8 @@ export const nodeFactories = {
     new LMStudioStopNode(area, controlflow),
   LMStudioLoadModel: ({ area, dataflow, controlflow }) =>
     new LMStudioLoadModelNode(area, dataflow, controlflow),
+  ServerStatus: ({ area, dataflow, controlflow }) =>
+    new ServerStatusNode(area, dataflow, controlflow),
   UnLoadModel: ({ area, controlflow }) =>
     new UnLoadModelNode(area, controlflow),
   LLMPredictionConfig: ({ dataflow }) => new LLMPredictionConfigNode(dataflow),
@@ -219,6 +222,7 @@ const rawMenu: RawMenuItem[] = [
       { label: "LMStudioStop", factoryKey: "LMStudioStop" },
       { label: "LMStudioLoadModel", factoryKey: "LMStudioLoadModel" },
       { label: "UnLoadModel", factoryKey: "UnLoadModel" },
+      { label: "ServerStatus", factoryKey: "ServerStatus" },
       { label: "LLMPredictionConfig", factoryKey: "LLMPredictionConfig" },
     ],
   },

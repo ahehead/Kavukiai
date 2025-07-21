@@ -21,6 +21,7 @@ import type {
   LMStudioLoadModelNode,
   LMStudioStartNode,
   LMStudioStopNode,
+  ServerStatusNode,
   LoadImageNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
@@ -83,6 +84,7 @@ export type NodeTypes =
   | LMStudioStartNode
   | LMStudioStopNode
   | LMStudioLoadModelNode
+  | ServerStatusNode
   | UnLoadModelNode
   | LLMPredictionConfigNode;
 

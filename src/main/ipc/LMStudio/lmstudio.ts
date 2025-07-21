@@ -1,11 +1,16 @@
 import type { ModelInfo } from "@lmstudio/sdk";
 import { ipcMain } from "electron";
-import { IpcChannel, type IpcResult } from "shared/ApiType";
+import {
+  IpcChannel,
+  type IpcResult,
+  type LMStudioStatusInfo,
+} from "shared/ApiType";
 import { unloadAllModels } from "./client";
 import {
   listModelsViaCli,
   startServerViaCli,
   stopServerViaCli,
+  getStatusViaCli,
 } from "./service";
 
 export function registerLMStudioHandlers(): void {
@@ -49,6 +54,22 @@ export function registerLMStudioHandlers(): void {
         return { status: "success", data: msg };
       } catch (err: any) {
         console.error("StopLMStudioServer error:", err);
+        return { status: "error", message: String(err?.message ?? err) };
+      }
+    }
+  );
+
+  ipcMain.handle(
+    IpcChannel.GetLMStudioStatus,
+    async (): Promise<IpcResult<LMStudioStatusInfo>> => {
+      try {
+        const info = await getStatusViaCli();
+        if (info === null) {
+          return { status: "error", message: "CLI not found or failed to execute." };
+        }
+        return { status: "success", data: info };
+      } catch (err: any) {
+        console.error("GetLMStudioStatus error:", err);
         return { status: "error", message: String(err?.message ?? err) };
       }
     }

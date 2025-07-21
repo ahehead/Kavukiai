@@ -12,6 +12,7 @@ export { LLMPredictionConfigNode } from "./LMStudio/LLMPredictionConfigNode";
 export { LMStudioLoadModelNode } from "./LMStudio/LMStudioLoadModelNode";
 export { LMStudioStartNode } from "./LMStudio/LMStudioStartNode";
 export { LMStudioStopNode } from "./LMStudio/LMStudioStopNode";
+export { ServerStatusNode } from "./LMStudio/ServerStatusNode";
 export { ModelInfoToModelListNode } from "./LMStudio/ModelInfoToModelListNode";
 export { UnLoadModelNode } from "./LMStudio/UnLoadModelNode";
 export { JsonSchemaFormatNode } from "./OpenAI/JsonSchemaFormatNode";
