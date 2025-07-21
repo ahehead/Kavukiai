@@ -29,7 +29,7 @@
     "clean:dev": "rimraf ./node_modules/.dev",
     "lint": "biome lint --no-errors-on-unmatched",
     "lint:fix": "biome lint --write --no-errors-on-unmatched",
-    "prepare": "husky install",
+    "prepare": "husky",
     "test": "vitest"
   },
   "dependencies": {
