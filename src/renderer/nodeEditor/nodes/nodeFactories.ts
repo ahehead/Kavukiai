@@ -24,7 +24,6 @@ import {
   LMStudioLoadModelNode,
   LMStudioStartNode,
   LMStudioStopNode,
-  ServerStatusNode,
   LoadImageNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
@@ -35,6 +34,7 @@ import {
   ResponseTextConfigNode,
   RoleNode,
   RunNode,
+  ServerStatusNode,
   StringFormNode,
   StringNode,
   TemplateReplaceNode,
@@ -74,9 +74,7 @@ export const nodeFactories = {
   Number: ({ history, area, dataflow }) =>
     new NumberNode(0, history, area, dataflow),
   Bool: ({ history, area, dataflow }) => new BoolNode(history, area, dataflow),
-  Run: ({ controlflow }) => new RunNode(controlflow),
-  CounterLoop: ({ history, area, dataflow, controlflow }) =>
-    new CounterLoopNode(1, history, area, dataflow, controlflow),
+
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
   CreateSelect: ({ dataflow, controlflow }) =>
     new CreateSelectNode(dataflow, controlflow),
@@ -124,7 +122,11 @@ export const nodeFactories = {
   JsonSchema: ({ history, area, dataflow }) =>
     new JsonSchemaNode(history, area, dataflow),
 
+  // flow
   IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
+  Run: ({ controlflow }) => new RunNode(controlflow),
+  CounterLoop: ({ history, area, dataflow, controlflow }) =>
+    new CounterLoopNode(1, history, area, dataflow, controlflow),
 } satisfies Record<NodeTypeKey, (deps: NodeDeps) => NodeTypes>;
 
 export interface MenuItemDefinition {
