@@ -1,0 +1,23 @@
+import type { TypedSocket } from 'renderer/nodeEditor/types';
+import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode';
+import { formatValue } from 'renderer/nodeEditor/nodes/util/formatValue';
+
+export class ObjectToStringNode extends BaseNode<
+  'ObjectToString',
+  { obj: TypedSocket },
+  { out: TypedSocket },
+  object
+> {
+  constructor() {
+    super('ObjectToString');
+    this.addInputPort({ key: 'obj', typeName: 'object', label: 'object' });
+    this.addOutputPort({ key: 'out', typeName: 'string', label: 'out' });
+  }
+
+  data(inputs: { obj?: Record<string, unknown>[] }): { out: string } {
+    const v = inputs.obj?.[0];
+    return { out: formatValue(v) };
+  }
+
+  async execute(): Promise<void> {}
+}

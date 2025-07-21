@@ -36,3 +36,7 @@ export { MultiLineStringNode } from "./Primitive/String/MultiLineStringNode";
 export { StringFormNode } from "./Primitive/String/StringFormNode";
 export { StringNode } from "./Primitive/String/StringNode";
 export { TemplateReplaceNode } from "./Primitive/String/TemplateReplaceNode";
+export { NumberToStringNode } from "./Primitive/String/NumberToStringNode";
+export { ObjectToStringNode } from "./Primitive/String/ObjectToStringNode";
+export { ObjectToYAMLStringNode } from "./Primitive/String/ObjectToYAMLStringNode";
+export { CodeFenceNode } from "./Primitive/String/CodeFenceNode";
