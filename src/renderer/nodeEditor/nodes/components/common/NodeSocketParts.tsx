@@ -37,7 +37,11 @@ const nodeInputPortStyles = cva(['node-socket-text-size tracking-tight pl-0.5'],
       cols: 1,
       class: 'grid-cols-1 grid-cols-subgrid my-0.5',
     },
-    { showControl: true, cols: 2, class: 'grid-cols-2 gap-x-2 my-0.5' },
+    {
+      showControl: true,
+      cols: 2,
+      class: 'grid-cols-2 gap-x-2 my-0.5'
+    },
   ],
   defaultVariants: {
     showControl: false,
