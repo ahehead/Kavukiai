@@ -1,3 +1,5 @@
+import type { SafeDataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/safeDataflow";
+import { getInputValue } from "renderer/nodeEditor/nodes/util/getInput";
 import type {
   AreaExtra,
   Schemes,
@@ -6,7 +8,7 @@ import type {
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
 import { InputValueControl } from "../../../Controls/input/InputValue";
 import { resetCacheDataflow } from "../../../util/resetCacheDataflow";
@@ -14,7 +16,14 @@ import { resetCacheDataflow } from "../../../util/resetCacheDataflow";
 export class CounterLoopNode
   extends SerializableInputsNode<
     "CounterLoop",
-    { exec: TypedSocket; stop: TypedSocket; count: TypedSocket },
+    {
+      exec: TypedSocket;
+      start: TypedSocket;
+      stop: TypedSocket;
+      reset: TypedSocket;
+      continue: TypedSocket;
+      count: TypedSocket;
+    },
     { exec: TypedSocket; count: TypedSocket },
     { count: InputValueControl<number> }
   >
@@ -25,8 +34,8 @@ export class CounterLoopNode
   constructor(
     initial: number,
     history: HistoryPlugin<Schemes>,
-    private area: AreaPlugin<Schemes, AreaExtra>,
-    private dataflow: DataflowEngine<Schemes>,
+    area: AreaPlugin<Schemes, AreaExtra>,
+    private dataflow: SafeDataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("CounterLoop");
@@ -39,23 +48,48 @@ export class CounterLoopNode
         onClick: () => this.controlflow.execute(this.id, "exec"),
       },
       {
+        key: "start",
+        typeName: "exec",
+        label: "Start",
+        onClick: () => this.controlflow.execute(this.id, "start"),
+      },
+      {
         key: "stop",
         typeName: "exec",
         label: "Stop",
         onClick: () => this.controlflow.execute(this.id, "stop"),
       },
+      // Add "reset" and "continue" input ports
+      {
+        key: "reset",
+        typeName: "exec",
+        label: "Reset",
+        onClick: () => this.controlflow.execute(this.id, "reset"),
+      },
+      {
+        key: "continue",
+        typeName: "exec",
+        label: "Continue",
+        onClick: () => this.controlflow.execute(this.id, "continue"),
+      },
       {
         key: "count",
         typeName: "number",
         label: "Count",
-        showControl: true,
+        showControl: false,
         control: new InputValueControl<number>({
           value: initial,
+          cols: 1,
+          label: "Counter",
           type: "number",
           editable: true,
           history,
           area,
-          onChange: () => resetCacheDataflow(this.dataflow, this.id),
+          onChange: (value: number) => {
+            this.counter = value;
+            resetCacheDataflow(this.dataflow, this.id);
+            this.controls.count.setValue(value);
+          },
         }),
       },
     ]);
@@ -65,6 +99,18 @@ export class CounterLoopNode
       { key: "count", typeName: "number", label: "Count" },
     ]);
 
+    this.addControl(
+      "count",
+      new InputValueControl<number>({
+        value: initial,
+        type: "number",
+        editable: false,
+        history,
+        area,
+        onChange: () => resetCacheDataflow(this.dataflow, this.id),
+      })
+    );
+
     this.counter = initial;
   }
 
@@ -72,24 +118,63 @@ export class CounterLoopNode
     return { count: this.counter };
   }
 
-  async execute(input: "exec" | "stop", forward: (output: "exec") => void) {
-    if (input === "stop") {
-      this.counter = 0;
+  async execute(
+    input: "exec" | "start" | "stop" | "reset" | "continue",
+    forward: (output: "exec") => void
+  ) {
+    if (input === "reset") {
+      const inputs = (await this.dataflow.fetchInputs(this.id, ["count"])) as {
+        count: number;
+      };
+      const value = getInputValue(this.inputs, "count", inputs) || 0;
+      this.counter = value;
+      this.controls.count.setValue(value);
+      resetCacheDataflow(this.dataflow, this.id);
       return;
     }
 
-    if (this.counter <= 0) {
-      const result = (await this.dataflow.fetchInputs(this.id)) as
-        | { count?: number[] }
-        | undefined;
-      const count = result?.count;
-      this.counter = count?.[0] ?? this.controls.count.getValue() ?? 0;
+    if (input === "continue") {
+      if (this.counter <= 0) {
+        return;
+      }
+      this.counter -= 1;
+      this.controls.count.setValue(this.counter);
+      resetCacheDataflow(this.dataflow, this.id);
+      forward("exec");
+      return;
     }
 
-    if (this.counter > 0) {
+    if (input === "stop") {
+      this.counter = 0;
+      this.controls.count.setValue(0);
+      resetCacheDataflow(this.dataflow, this.id);
+      return;
+    }
+
+    if (input === "start") {
+      const inputs = (await this.dataflow.fetchInputs(this.id, ["count"])) as {
+        count: number;
+      };
+      this.counter = getInputValue(this.inputs, "count", inputs) || 0;
       this.counter -= 1;
-      await this.area.update("node", this.id);
       forward("exec");
+      return;
+    }
+
+    if (input === "exec") {
+      if (this.counter <= 0) {
+        this.counter = 0;
+        this.controls.count.setValue(0);
+        resetCacheDataflow(this.dataflow, this.id);
+        return;
+      }
+
+      if (this.counter > 0) {
+        this.counter -= 1;
+        this.controls.count.setValue(this.counter);
+        resetCacheDataflow(this.dataflow, this.id);
+        forward("exec");
+      }
     }
   }
 

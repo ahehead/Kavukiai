@@ -11,6 +11,7 @@ import type {
 import {
   BoolNode,
   ChatMessageNode,
+  CounterLoopNode,
   CreateSelectNode,
   ImageNode,
   InspectorNode,
@@ -32,7 +33,6 @@ import {
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
   RoleNode,
-  CounterLoopNode,
   RunNode,
   StringFormNode,
   StringNode,
@@ -144,18 +144,6 @@ const generateKey = (label: string): string =>
 
 // raw menu structure without explicit keys
 const rawMenu: RawMenuItem[] = [
-  // include Debug category only in development
-  ...(process.env.NODE_ENV === "development"
-    ? ([
-        {
-          label: "Debug",
-          subitems: [
-            { label: "Test", factoryKey: "Test" },
-            { label: "Unknown", factoryKey: "Unknown" },
-          ],
-        },
-      ] as RawMenuItem[])
-    : []),
   {
     label: "Primitive",
     subitems: [
@@ -239,6 +227,18 @@ const rawMenu: RawMenuItem[] = [
       { label: "ResponseTextConfig", factoryKey: "ResponseTextConfig" },
     ],
   },
+  // include Debug category only in development, placed at bottom
+  ...(process.env.NODE_ENV === "development"
+    ? ([
+        {
+          label: "Debug",
+          subitems: [
+            { label: "Test", factoryKey: "Test" },
+            { label: "Unknown", factoryKey: "Unknown" },
+          ],
+        },
+      ] as RawMenuItem[])
+    : []),
 ];
 
 // assign keys and sort items with subitems first

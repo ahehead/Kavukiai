@@ -7,6 +7,7 @@ import type {
   ChatMessageListNode,
   ChatMessageListToOpenAIInput,
   ChatMessageNode,
+  CounterLoopNode,
   CreateSelectNode,
   IFNode,
   ImageNode,
@@ -30,7 +31,6 @@ import type {
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
   RoleNode,
-  CounterLoopNode,
   RunNode,
   StringFormNode,
   StringNode,
@@ -99,4 +99,13 @@ export interface NodeInterface
     { [key in string]?: NodeControl }
   > {}
 
-export const ExecList = ["exec", "exec2"];
+export const ExecList = [
+  "exec",
+  "exec2",
+  "exec3",
+  "exec4",
+  "start",
+  "stop",
+  "reset",
+  "continue",
+] as const;
