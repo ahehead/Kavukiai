@@ -5,7 +5,6 @@ import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/Serializa
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
 import type { LMStudioLoadRequestArgs, LMStudioPortEvent } from 'shared/ApiType'
-import { ButtonControl } from '../../Controls/Button'
 import { ConsoleControl } from '../../Controls/Console'
 import { ProgressControl } from '../../Controls/view/ProgressControl'
 
@@ -32,13 +31,7 @@ export class LMStudioLoadModelNode extends SerializableInputsNode<
         key: 'exec2',
         typeName: 'exec',
         label: 'Cancel',
-        control: new ButtonControl({
-          label: 'Cancel',
-          onClick: e => {
-            e.stopPropagation()
-            this.controlflow.execute(this.id, 'exec2')
-          },
-        }),
+        onClick: () => this.controlflow.execute(this.id, 'exec2'),
       },
       { key: 'modelKey', typeName: 'string', tooltip: 'Model key' },
     ])

@@ -12,7 +12,6 @@ import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 import type { OpenAIRequestArgs, PortEventType } from "shared/ApiType";
 import type { ControlJson } from "shared/JsonType";
-import { ButtonControl } from "../../Controls/Button";
 import { ConsoleControl } from "../../Controls/Console";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
@@ -23,9 +22,11 @@ export class OpenAINode extends SerializableInputsNode<
   { exec: TypedSocket; response: TypedSocket },
   { console: ConsoleControl }
 > {
+  // portを保持する
   port: MessagePort | null = null;
   // OpenAi Clientのレスポンスを保持する
   response: OpenAIClientResponse | null = null;
+
   constructor(
     private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
@@ -41,13 +42,7 @@ export class OpenAINode extends SerializableInputsNode<
         key: "exec2",
         typeName: "exec",
         label: "Stop",
-        control: new ButtonControl({
-          label: "Stop",
-          onClick: async (e) => {
-            e.stopPropagation();
-            this.controlflow.execute(this.id, "exec2");
-          },
-        }),
+        onClick: () => this.controlflow.execute(this.id, "exec2"),
       },
       {
         key: "param",
