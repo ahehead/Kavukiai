@@ -4,8 +4,9 @@ mode: agent
 新しいノードを作成して。
 
 ```
-ノードの名前:
 ノードの説明:
+作成場所:
+ノードの名前: A extends BaseNode or  SerializableInputsNode
 input:
 output:
 実行時
