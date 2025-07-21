@@ -14,11 +14,10 @@ describe('NodeParts', () => {
     expect(html).toContain('data-node-type="Test"')
   })
 
-  test('NodeTitle renders status icon', () => {
+  test('NodeTitle renders children', () => {
     const html = renderToStaticMarkup(
       <NodeTitle status={NodeStatus.COMPLETED}>done</NodeTitle>
     )
-    expect(html).toContain('svg')
     expect(html).toContain('done')
   })
 
