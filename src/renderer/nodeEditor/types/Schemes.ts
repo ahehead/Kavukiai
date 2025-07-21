@@ -27,6 +27,10 @@ import type {
   ModelInfoToModelListNode,
   MultiLineStringNode,
   NumberNode,
+  NumberToStringNode,
+  ObjectToStringNode,
+  ObjectToYAMLStringNode,
+  CodeFenceNode,
   ObjectPickNode,
   OpenAINode,
   ResponseCreateParamsBaseNode,
@@ -78,6 +82,10 @@ export type NodeTypes =
   | TemplateReplaceNode
   | StringFormNode
   | JoinNode
+  | NumberToStringNode
+  | ObjectToStringNode
+  | ObjectToYAMLStringNode
+  | CodeFenceNode
   | CreateSelectNode
   | ImageNode
   | LoadImageNode

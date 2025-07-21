@@ -31,6 +31,10 @@ import {
   ObjectPickNode,
   OpenAINode,
   ResponseCreateParamsBaseNode,
+  NumberToStringNode,
+  ObjectToStringNode,
+  ObjectToYAMLStringNode,
+  CodeFenceNode,
   ResponseTextConfigNode,
   RoleNode,
   RunNode,
@@ -70,6 +74,10 @@ export const nodeFactories = {
   StringForm: ({ history, area, dataflow, controlflow }: NodeDeps) =>
     new StringFormNode("", history, area, dataflow, controlflow),
   Join: ({ dataflow }) => new JoinNode(dataflow),
+  NumberToString: () => new NumberToStringNode(),
+  ObjectToString: () => new ObjectToStringNode(),
+  ObjectToYAMLString: () => new ObjectToYAMLStringNode(),
+  CodeFence: ({ dataflow }) => new CodeFenceNode(dataflow),
 
   Number: ({ history, area, dataflow }) =>
     new NumberNode(0, history, area, dataflow),
@@ -164,6 +172,10 @@ const rawMenu: RawMenuItem[] = [
           { label: "TemplateReplace", factoryKey: "TemplateReplace" },
           { label: "Join", factoryKey: "Join" },
           { label: "StringForm", factoryKey: "StringForm" },
+          { label: "NumberToString", factoryKey: "NumberToString" },
+          { label: "ObjectToString", factoryKey: "ObjectToString" },
+          { label: "ObjectToYAMLString", factoryKey: "ObjectToYAMLString" },
+          { label: "CodeFence", factoryKey: "CodeFence" },
         ],
       },
       {
