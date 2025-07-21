@@ -2,11 +2,11 @@ import { electronApiService } from 'renderer/features/services/appService'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+import type { ServerStatusInfo } from 'renderer/nodeEditor/types/Schemas/lmstudio/StatusSchemas'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
 import { ConsoleControl } from '../../Controls/Console'
 import { resetCacheDataflow } from '../../util/resetCacheDataflow'
-import type { ServerStatusInfo } from 'renderer/nodeEditor/types/Schemas/lmstudio/StatusSchemas'
 
 export class ServerStatusNode extends SerializableInputsNode<
   'ServerStatus',
@@ -39,7 +39,10 @@ export class ServerStatusNode extends SerializableInputsNode<
     return { status: this.info }
   }
 
-  async execute(_input: 'exec', forward: (output: 'exec') => void): Promise<void> {
+  async execute(
+    _input: 'exec',
+    forward: (output: 'exec') => void
+  ): Promise<void> {
     if (this.status === NodeStatus.RUNNING) return
     await this.setStatus(this.area, NodeStatus.RUNNING)
     const result = await electronApiService.getServerStatus()
