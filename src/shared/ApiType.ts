@@ -26,6 +26,7 @@ export enum IpcChannel {
   ListLMStudioModels = "list-lmstudio-models",
   StartLMStudioServer = "start-lmstudio-server",
   StopLMStudioServer = "stop-lmstudio-server",
+  GetLMStudioStatus = "get-lmstudio-status",
   PortLMStudioLoadModel = "port-lmstudio-load-model",
   UnloadLMStudioModels = "unload-lmstudio-models",
 }
@@ -75,6 +76,12 @@ export type LMStudioPortEvent =
   | { type: "done" }
   | { type: "error"; message: string }
   | { type: "abort" };
+
+export type LMStudioStatusInfo = {
+  server: "ON" | "OFF";
+  port?: number;
+  loadedModels: string[];
+};
 
 export type IpcResult<T> =
   | { status: "success"; data: T }

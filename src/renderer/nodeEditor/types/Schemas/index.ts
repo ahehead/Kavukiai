@@ -2,6 +2,7 @@ import type { TSchema } from "@sinclair/typebox";
 import { ChatMessageItem, ChatMessageItemList } from "./ChatMessageItem";
 import * as DefaultSchema from "./DefaultSchema";
 import * as ModelInfoSchemas from "./lmstudio/ModelSchemas";
+import * as StatusSchemas from "./lmstudio/StatusSchemas";
 import * as BaseSchemas from "./openai/BaseSchemas";
 
 import * as EventsSchemas from "./openai/EventsSchemas";
@@ -29,6 +30,7 @@ const registry = {
   Image,
 
   ...ModelInfoSchemas,
+  ...StatusSchemas,
 } satisfies Record<string, TSchema>;
 
 export type SchemaKey = keyof typeof registry;
