@@ -30,6 +30,7 @@ import type {
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
   RoleNode,
+  CounterLoopNode,
   RunNode,
   StringFormNode,
   StringNode,
@@ -66,6 +67,7 @@ export type NodeTypes =
   | RoleNode
   | BoolNode
   | IFNode
+  | CounterLoopNode
   | ListNode
   | ObjectPickNode
   | JsonSchemaToObjectNode

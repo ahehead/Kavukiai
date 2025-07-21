@@ -21,6 +21,7 @@ export { ResponseTextConfigNode } from "./OpenAI/ResponseTextConfigNode";
 export { BoolNode } from "./Primitive/BoolNode";
 export { CreateSelectNode } from "./Primitive/CreateSelectNode";
 export { IFNode } from "./Primitive/Flow/IFNode";
+export { CounterLoopNode } from "./Primitive/Flow/CounterLoopNode";
 export { RunNode } from "./Primitive/Flow/RunNode";
 export { ImageNode } from "./Primitive/Image/ImageNode";
 export { LoadImageNode } from "./Primitive/Image/LoadImageNode";

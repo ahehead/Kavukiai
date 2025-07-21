@@ -32,6 +32,7 @@ import {
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
   RoleNode,
+  CounterLoopNode,
   RunNode,
   StringFormNode,
   StringNode,
@@ -73,6 +74,8 @@ export const nodeFactories = {
     new NumberNode(0, history, area, dataflow),
   Bool: ({ history, area, dataflow }) => new BoolNode(history, area, dataflow),
   Run: ({ controlflow }) => new RunNode(controlflow),
+  CounterLoop: ({ history, area, dataflow, controlflow }) =>
+    new CounterLoopNode(1, history, area, dataflow, controlflow),
   List: ({ area, dataflow }) => new ListNode(area, dataflow),
   CreateSelect: ({ dataflow, controlflow }) =>
     new CreateSelectNode(dataflow, controlflow),
@@ -183,6 +186,7 @@ const rawMenu: RawMenuItem[] = [
         subitems: [
           { label: "IF", factoryKey: "IF" },
           { label: "Run", factoryKey: "Run" },
+          { label: "CounterLoop", factoryKey: "CounterLoop" },
         ],
       },
       {
