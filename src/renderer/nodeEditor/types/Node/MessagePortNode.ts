@@ -14,11 +14,11 @@ export abstract class MessagePortNode<
   Outputs extends Record<string, TypedSocket>,
   Controls extends Record<string, any>,
   PortEvent,
-  RequestArgs,
+  RequestArgs extends { id: string },
   ExecInKey extends keyof Inputs = "exec" | "exec2",
   ExecOutKey extends keyof Outputs = "exec"
 > extends SerializableInputsNode<Name, Inputs, Outputs, Controls> {
-  protected port: MessagePort | null = null;
+  public port: MessagePort | null = null;
 
   protected constructor(
     name: Name,
@@ -107,10 +107,10 @@ export abstract class MessagePortNode<
   protected abstract onLog(msg: string): void;
 
   /** 各ノード固有の main‑process 呼び出しを返す */
-  protected abstract callMain(args: RequestArgs & { id: string }): void;
+  protected abstract callMain(args: RequestArgs): void;
 
   /** 汎用ポート生成。subclass からは await this.openPort(args) と呼ぶだけ */
-  protected openPort(args: RequestArgs & { id: string }): Promise<MessagePort> {
+  protected openPort(args: RequestArgs): Promise<MessagePort> {
     return new Promise((resolve) => {
       const handler = (e: MessageEvent) => {
         if (e.data?.type === "node-port" && e.data.id === args.id) {
