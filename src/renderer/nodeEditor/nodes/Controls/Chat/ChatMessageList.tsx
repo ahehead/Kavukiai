@@ -141,6 +141,13 @@ export class ChatMessageListControl extends BaseControl<
     this.opts.onChange?.(next)
     this.notify()
   }
+
+  // システムメッセージを追加したthis.messagesのコピーを返す
+  getMessagesWithSystemPrompt(text: string): ChatMessageItem[] {
+    const systemMessage = this.createSystemPromptMessage(text)
+    return [systemMessage, ...this.messages]
+  }
+
 }
 
 export function ChatMesaageListControlView(props: {
