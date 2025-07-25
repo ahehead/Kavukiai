@@ -1,14 +1,14 @@
-import { test, expect, vi } from 'vitest';
+import { expect, test, vi } from "vitest";
 
-vi.mock('renderer/features/services/appService', () => ({
+vi.mock("renderer/features/services/appService", () => ({
   electronApiService: { sendChatGptMessage: vi.fn() },
 }));
 
-import { OpenAINode } from 'renderer/nodeEditor/nodes/Node/OpenAI/OpenAI';
-import type { AreaPlugin } from 'rete-area-plugin';
-import type { DataflowEngine, ControlFlowEngine } from 'rete-engine';
-import type { Schemes } from 'renderer/nodeEditor/types';
-import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode';
+import { OpenAINode } from "renderer/nodeEditor/nodes/Node/OpenAI/OpenAI";
+import type { Schemes } from "renderer/nodeEditor/types";
+import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
+import type { AreaPlugin } from "rete-area-plugin";
+import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
 
 const area = { update: vi.fn() } as unknown as AreaPlugin<Schemes, any>;
 const dataflow = { fetchInputs: vi.fn() } as unknown as DataflowEngine<Schemes>;
@@ -18,35 +18,70 @@ function createNode() {
   return new OpenAINode(area, dataflow, controlflow);
 }
 
-test('stopExecution aborts running port', async () => {
+test("stopExecution aborts running port", async () => {
   const node = createNode();
   const post = vi.fn();
   const close = vi.fn();
   node.port = { postMessage: post, close } as unknown as MessagePort;
   node.status = NodeStatus.RUNNING;
-  const spy = vi.spyOn(node.controls.console, 'addValue');
+  const spy = vi.spyOn(node.controls.console, "addValue");
   await (node as any).stopExecution();
-  expect(post).toHaveBeenCalledWith({ type: 'abort' });
+  expect(post).toHaveBeenCalledWith({ type: "abort" });
   expect(close).toHaveBeenCalled();
   expect(node.status).toBe(NodeStatus.IDLE);
-  expect(spy).toHaveBeenCalledWith('Stop');
+  expect(spy).toHaveBeenCalledWith("Stop");
 });
 
-test('handlePortMessage processes stream events', async () => {
+test("onPortEvent processes stream events", async () => {
   const node = createNode();
   const close = vi.fn();
   node.port = { close } as unknown as MessagePort;
   const forward = vi.fn();
-  await (node as any).handlePortMessage(
-    { data: { type: 'openai', data: { type: 'response.output_text.delta', delta: 'a', content_index: 0, item_id: 'id', output_index: 0, sequence_number: 0 } } } as MessageEvent,
+  await (node as any).onPortEvent(
+    {
+      type: "openai",
+      data: {
+        type: "response.output_text.delta",
+        delta: "a",
+        content_index: 0,
+        item_id: "id",
+        output_index: 0,
+        sequence_number: 0,
+      },
+    },
+
     forward
   );
-  expect(node.response).toEqual({ type: 'response.output_text.delta', delta: 'a', content_index: 0, item_id: 'id', output_index: 0, sequence_number: 0 });
-  await (node as any).handlePortMessage(
-    { data: { type: 'openai', data: { type: 'response.output_text.done', text: 'end', content_index: 0, item_id: 'id', output_index: 0, sequence_number: 1 } } } as MessageEvent,
+  expect(node.response).toEqual({
+    type: "response.output_text.delta",
+    delta: "a",
+    content_index: 0,
+    item_id: "id",
+    output_index: 0,
+    sequence_number: 0,
+  });
+  await (node as any).onPortEvent(
+    {
+      type: "openai",
+      data: {
+        type: "response.output_text.done",
+        text: "end",
+        content_index: 0,
+        item_id: "id",
+        output_index: 0,
+        sequence_number: 1,
+      },
+    },
     forward
   );
-  expect(node.response).toEqual({ type: 'response.output_text.done', text: 'end', content_index: 0, item_id: 'id', output_index: 0, sequence_number: 1 });
+  expect(node.response).toEqual({
+    type: "response.output_text.done",
+    text: "end",
+    content_index: 0,
+    item_id: "id",
+    output_index: 0,
+    sequence_number: 1,
+  });
   expect(node.status).toBe(NodeStatus.COMPLETED);
   expect(forward).toHaveBeenCalledTimes(2);
   expect(close).toHaveBeenCalled();
