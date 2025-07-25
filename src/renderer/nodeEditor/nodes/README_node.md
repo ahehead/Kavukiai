@@ -10,7 +10,7 @@
 
 ## Controlの追加後の登録方法
   1. [NodeControl.ts](../types/NodeControl.ts)に追加
-  2. [TestNode.ts](Node/TestNode.tsx)のコントロールに追加
+  2. [TestNode.ts](Node/Debug/TestNode.tsx)のコントロールに追加
   3. [customReactPresets](../features/customReactPresets/customReactPresets.ts)に追加
 
 ## ノードの追加後の登録方法

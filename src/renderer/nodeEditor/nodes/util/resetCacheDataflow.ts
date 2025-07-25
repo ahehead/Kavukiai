@@ -8,7 +8,7 @@ export function resetCacheDataflow(
   try {
     dataflow.reset(id);
   } catch (_error) {
-    // 握りつぶして問題ないはず…デバッグ時に
+    // 握りつぶして問題ないはず…
     //console.info("No cache in the data flow. nodeId:", id);
   }
 }

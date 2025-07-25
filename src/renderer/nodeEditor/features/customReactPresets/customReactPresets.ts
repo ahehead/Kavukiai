@@ -3,6 +3,10 @@ import {
   ButtonControlView,
 } from "renderer/nodeEditor/nodes/Controls/Button";
 import {
+  MessageInputControl,
+  MessageInputControlView,
+} from "renderer/nodeEditor/nodes/Controls/Chat/MessageInput";
+import {
   ImageControl,
   ImageControlView,
 } from "renderer/nodeEditor/nodes/Controls/Image";
@@ -30,10 +34,6 @@ import {
   SwitchControl,
   SwitchControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Switch";
-import {
-  MessageInputControl,
-  MessageInputControlView,
-} from "renderer/nodeEditor/nodes/Controls/OpenAI/MessageInput";
 // Progress control
 import {
   ProgressControl,
@@ -48,6 +48,10 @@ import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
 import { type ReactArea2D, Presets as ReactPresets } from "rete-react-plugin";
+import {
+  ChatMesaageListControlView,
+  ChatMessageListControl,
+} from "../../nodes/Controls/Chat/ResponseInputMessage";
 import {
   ConsoleControl,
   ConsoleControlView,
@@ -65,10 +69,6 @@ import {
   TextAreaControllView,
 } from "../../nodes/Controls/input/MultiLine";
 import {
-  ResponseInputMessageControl,
-  ResponseInputMessageView,
-} from "../../nodes/Controls/OpenAI/ResponseInputMessage";
-import {
   RunButtonControl,
   RunButtonControlView,
 } from "../../nodes/Controls/RunButton";
@@ -81,7 +81,7 @@ const controlViews = new Map<Ctor, any>([
   [MultiLineControl, TextAreaControllView],
   [ConsoleControl, ConsoleControlView],
   [InputValueControl, InputValueControlView],
-  [ResponseInputMessageControl, ResponseInputMessageView],
+  [ChatMessageListControl, ChatMesaageListControlView],
   [CheckBoxControl, CheckBoxControlView],
   [ButtonControl, ButtonControlView],
   [SelectControl, SelectControlView],

@@ -18,20 +18,20 @@ import type {
 } from 'renderer/nodeEditor/types/Schemas/openai/InputSchemas'
 import { Drag } from 'rete-react-plugin'
 
-export interface ResponseInputMessageControlParams
+export interface ChatMessageListControlParams
   extends ControlOptions<ChatMessageItem[]> {
   value: ChatMessageItem[]
 }
 
-export class ResponseInputMessageControl extends BaseControl<
+export class ChatMessageListControl extends BaseControl<
   ChatMessageItem[],
-  ResponseInputMessageControlParams
+  ChatMessageListControlParams
 > {
   messages: ChatMessageItem[]
   totalTokens = 0
   messageTemp = ''
 
-  constructor(options: ResponseInputMessageControlParams) {
+  constructor(options: ChatMessageListControlParams) {
     super(options)
     this.messages = options.value ?? []
   }
@@ -62,13 +62,15 @@ export class ResponseInputMessageControl extends BaseControl<
     this.notify()
   }
 
+  // delta用
   // 一時的にMessageを追加して、indexを返す
   addTempMessage(msg: ChatMessageItem): number {
     this.messages = [...this.messages, msg]
     return this.messages.length - 1
   }
 
-  // 一時messageのroleとidを設定する
+  // delta用
+  // 一時messageのidを設定する
   setTempMessageId(index: number, id: string): void {
     const message = this.messages[index]
     if (message) {
@@ -80,12 +82,13 @@ export class ResponseInputMessageControl extends BaseControl<
     }
   }
 
+  // delta用
   // indexのメッセージの内容をdeltaで書き換えていく
   modifyMessageTextDelta(index: number, deltaString: string): void {
     this.messageTemp += deltaString
     const message = this.messages[index]
     if (message && message.role === 'assistant') {
-      ; (message as EasyInputMessage).content = this.messageTemp
+      (message as EasyInputMessage).content = this.messageTemp
       this.messages = [...this.messages]
     }
     this.notify()
@@ -95,7 +98,7 @@ export class ResponseInputMessageControl extends BaseControl<
     this.messageTemp = ''
     const message = this.messages[index]
     if (message && message.role === 'assistant') {
-      ; (message as EasyInputMessage).content = text
+      (message as EasyInputMessage).content = text
       this.messages = [...this.messages]
       this.addHistory(this.messages, this.messages)
       this.opts.onChange?.(this.messages)
@@ -140,8 +143,8 @@ export class ResponseInputMessageControl extends BaseControl<
   }
 }
 
-export function ResponseInputMessageView(props: {
-  data: ResponseInputMessageControl
+export function ChatMesaageListControlView(props: {
+  data: ChatMessageListControl
 }): JSX.Element {
   const control = props.data
   const messages = useControlValue<ChatMessageItem[]>(control)

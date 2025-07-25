@@ -1,7 +1,6 @@
-import { test, expect } from "vitest";
-
-import { ResponseInputMessageControl } from "renderer/nodeEditor/nodes/Controls/OpenAI/ResponseInputMessage";
-import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas";
+import { ChatMessageListControl } from "renderer/nodeEditor/nodes/Controls/Chat/ResponseInputMessage";
+import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/ChatMessageItem";
+import { expect, test } from "vitest";
 
 const sampleMessage: ChatMessageItem = {
   id: "1",
@@ -11,14 +10,14 @@ const sampleMessage: ChatMessageItem = {
 };
 
 test("addNewMessage adds a message", () => {
-  const control = new ResponseInputMessageControl({ value: [] });
+  const control = new ChatMessageListControl({ value: [] });
   control.addMessage(sampleMessage);
   expect(control.getValue()).toHaveLength(1);
   expect(control.getValue()[0]).toEqual(sampleMessage);
 });
 
 test("removeMessage deletes the given index", () => {
-  const control = new ResponseInputMessageControl({ value: [sampleMessage] });
+  const control = new ChatMessageListControl({ value: [sampleMessage] });
   control.removeMessage(0);
   expect(control.getValue()).toHaveLength(0);
 });

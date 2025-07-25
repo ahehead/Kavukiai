@@ -1,4 +1,4 @@
-import type { SafeDataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/safeDataflow";
+import type { SafeDataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/SafeDataflowEngine";
 import { getInputValue } from "renderer/nodeEditor/nodes/util/getInput";
 import type {
   AreaExtra,

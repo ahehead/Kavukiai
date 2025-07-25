@@ -6,16 +6,19 @@ import {
   ConnectionPlugin,
   Presets as ConnectionPresets,
 } from "rete-connection-plugin";
-import { ReactPlugin } from "rete-react-plugin";
-import {
-  Presets as HistoryPresets,
-  HistoryExtensions,
-  type HistoryActions,
-  HistoryPlugin,
-} from "rete-history-plugin";
 import { ControlFlowEngine } from "rete-engine";
-
-import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
+import {
+  type HistoryActions,
+  HistoryExtensions,
+  HistoryPlugin,
+  Presets as HistoryPresets,
+} from "rete-history-plugin";
+import { ReactPlugin } from "rete-react-plugin";
+import { customContextMenuPreset } from "./features/contextMenu/setup/CustomContextMenuPreset";
+import { setupContextMenu } from "./features/contextMenu/setup/SetupContextMenu";
+import { customReactPresets } from "./features/customReactPresets/customReactPresets";
+import { setupDeleteSelectedNodes } from "./features/deleteSelectedNodes/deleteSelectedNodes";
+import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
 import { setupDragPan } from "./features/dragPan";
 import {
   getCurrentEditorState,
@@ -23,19 +26,13 @@ import {
   patchHistoryAdd,
   resetEditorState,
 } from "./features/editor_state/historyState";
-import { registerConnectionPipeline } from "./features/updateConnectionState/updateConnectionState";
-import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
-
-import { customReactPresets } from "./features/customReactPresets/customReactPresets";
-import { type AreaExtra, ExecList, type Schemes } from "./types";
-
-import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
+import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
 import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
+import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
 import { selectableNodes, selector } from "./features/nodeSelection/selectable";
-import { setupDeleteSelectedNodes } from "./features/deleteSelectedNodes/deleteSelectedNodes";
-import { customContextMenuPreset } from "./features/contextMenu/setup/CustomContextMenuPreset";
-import { setupContextMenu } from "./features/contextMenu/setup/SetupContextMenu";
-import { SafeDataflowEngine } from "./features/safe-dataflow/safeDataflow";
+import { SafeDataflowEngine } from "./features/safe-dataflow/SafeDataflowEngine";
+import { registerConnectionPipeline } from "./features/updateConnectionState/updateConnectionState";
+import { type AreaExtra, ExecList, type Schemes } from "./types";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();

@@ -1,4 +1,4 @@
-import type { SafeDataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/safeDataflow";
+import type { SafeDataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/SafeDataflowEngine";
 import type {
   AreaExtra,
   Schemes,
@@ -15,7 +15,7 @@ import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schem
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
-import { ResponseInputMessageControl } from "../../Controls/OpenAI/ResponseInputMessage";
+import { ChatMessageListControl } from "../../Controls/Chat/ResponseInputMessage";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 // open ai用のchat message list Node
@@ -27,10 +27,10 @@ export class ChatMessageListNode
       exec: TypedSocket;
       newMessage: TypedSocket;
       exec2: TypedSocket;
-      responseList: TypedSocket;
+      responseData: TypedSocket;
     },
     { exec: TypedSocket; out: TypedSocket },
-    { chatContext: ResponseInputMessageControl }
+    { chatContext: ChatMessageListControl }
   >
   implements SerializableDataNode
 {
@@ -68,7 +68,7 @@ export class ChatMessageListNode
         label: "response",
       },
       {
-        key: "responseList",
+        key: "responseData",
         typeName: "OpenAIClientResponseOrNull",
         label: "Response",
       },
@@ -87,7 +87,7 @@ export class ChatMessageListNode
     ]);
     this.addControl(
       "chatContext",
-      new ResponseInputMessageControl({
+      new ChatMessageListControl({
         value: initial,
         editable: true,
         history: history,
@@ -115,36 +115,35 @@ export class ChatMessageListNode
     forward: (output: "exec") => void
   ): Promise<void> {
     if (input === "exec") {
-      await this.updateChatContext(forward);
+      await this.addMessageToContext(forward);
     } else if (input === "exec2") {
       await this.executeChatResponseHandling();
     }
   }
 
   // messageを追加する
-  private async updateChatContext(
+  private async addMessageToContext(
     forward: (output: "exec") => void
   ): Promise<void> {
-    // データフローから入力を取得
-    const { newMessage } = (await this.dataflow.fetchInputs(this.id, [
-      "newMessage",
-    ])) as {
-      newMessage?: ChatMessageItem[];
-    };
-    if (!!newMessage && newMessage.length > 0) {
-      this.controls.chatContext.addMessage(newMessage[0]);
+    // データフローから単一の入力を取得
+    const newMessage = await this.dataflow.fetchInputSingle<ChatMessageItem>(
+      this.id,
+      "newMessage"
+    );
+    if (newMessage !== null) {
+      this.controls.chatContext.addMessage(newMessage);
     }
     forward("exec");
   }
 
   // openai clientのレスポンスを処理する
   private async executeChatResponseHandling(): Promise<void> {
-    const inpu = (await this.dataflow.fetchInputs(this.id)) as {
-      responseList?: OpenAIClientResponseOrNull[];
-    };
-    const responseList = inpu.responseList || [];
-    if (!responseList || responseList.length === 0 || !responseList[0]) return;
-    const response = responseList[0];
+    const response =
+      await this.dataflow.fetchInputSingle<OpenAIClientResponseOrNull>(
+        this.id,
+        "responseData"
+      );
+    if (response === null) return;
     // レスポンスがイベント形式の場合
     if ("type" in response) {
       if (response.type === "response.created") {
