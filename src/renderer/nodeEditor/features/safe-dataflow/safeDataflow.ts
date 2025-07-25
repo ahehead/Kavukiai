@@ -1,10 +1,5 @@
-import type { NodeEditor, NodeId, Scope } from "rete";
-import {
-  Dataflow,
-  DataflowEngine,
-  type DataflowEngineScheme,
-  type DataflowNode,
-} from "rete-engine";
+import type { NodeId } from "rete";
+import { Dataflow, type DataflowNode } from "rete-engine";
 import type { ClassicScheme } from "rete-engine/_types/types";
 
 type DefaultInputs = null;
@@ -12,7 +7,7 @@ type Inputs = Partial<Record<string, any[]>> | DefaultInputs;
 type FetchInputs<T> = T extends DefaultInputs
   ? Record<string, any>
   : Partial<T>;
-type Node = ClassicScheme["Node"] & DataflowNode;
+export type Node = ClassicScheme["Node"] & DataflowNode;
 
 export class SafeDataflow<S extends ClassicScheme> extends Dataflow<S> {
   // --------------- ① 入口 ---------------
@@ -93,26 +88,5 @@ export class SafeDataflow<S extends ClassicScheme> extends Dataflow<S> {
       ];
     }
     return inputs as Pick<FetchInputs<T>, K>;
-  }
-}
-
-export class SafeDataflowEngine<
-  S extends DataflowEngineScheme
-> extends DataflowEngine<S> {
-  override setParent(scope: Scope<any>): void {
-    super.setParent(scope); // ここで this.editor が確定
-    // ↓オリジナルは `new Dataflow(this.editor)` なので差し替える
-    (this as any).dataflow = new SafeDataflow(this.editor as NodeEditor<S>);
-  }
-
-  override async fetchInputs<
-    N extends Node,
-    K extends keyof Parameters<N["data"]>[0] & string
-  >(
-    node: NodeId | N,
-    keys?: readonly K[]
-  ): Promise<Pick<Parameters<N["data"]>[0], K>> {
-    const id = typeof node === "object" ? node.id : node;
-    return (this as any).getDataflow().fetchInputs(id, keys);
   }
 }
