@@ -92,6 +92,22 @@ export abstract class MessagePortNode<
     if (kind === "done") forward("exec" as ExecOutKey);
   }
 
+  /** 汎用ポート生成。subclass からは await this.openPort(args) と呼ぶだけ */
+  protected openPort(args: RequestArgs): Promise<MessagePort> {
+    return new Promise((resolve) => {
+      const handler = (e: MessageEvent) => {
+        if (e.data?.type === "node-port" && e.data.id === args.id) {
+          window.removeEventListener("message", handler);
+          const [port] = e.ports;
+          port.start();
+          resolve(port);
+        }
+      };
+      window.addEventListener("message", handler);
+      this.callMain(args); // ← サブクラス実装を呼ぶ
+    });
+  }
+
   /* ========= サブクラスが実装するフック ========= */
 
   /** window から渡って来る PortEvent をどう解釈するか */
@@ -108,20 +124,4 @@ export abstract class MessagePortNode<
 
   /** 各ノード固有の main‑process 呼び出しを返す */
   protected abstract callMain(args: RequestArgs): void;
-
-  /** 汎用ポート生成。subclass からは await this.openPort(args) と呼ぶだけ */
-  protected openPort(args: RequestArgs): Promise<MessagePort> {
-    return new Promise((resolve) => {
-      const handler = (e: MessageEvent) => {
-        if (e.data?.type === "node-port" && e.data.id === args.id) {
-          window.removeEventListener("message", handler);
-          const [port] = e.ports;
-          port.start();
-          resolve(port);
-        }
-      };
-      window.addEventListener("message", handler);
-      this.callMain(args); // ← サブクラス実装を呼ぶ
-    });
-  }
 }
