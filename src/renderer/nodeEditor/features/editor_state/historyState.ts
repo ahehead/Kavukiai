@@ -1,12 +1,13 @@
 import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
-import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
-import { serializeGraph } from "../serializeGraph/serializeGraph";
-import { loadGraphFromJson } from "../loadGraphFromJson/loadGraphFromJson";
 import { AreaExtensions } from "rete-area-plugin";
-import type { AreaExtra, Schemes } from "../../types/Schemes";
+import type { ControlFlowEngine } from "rete-engine";
+import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
 import type { GraphJsonData } from "shared/JsonType";
+import type { AreaExtra, Schemes } from "../../types/Schemes";
+import { loadGraphFromJson } from "../loadGraphFromJson/loadGraphFromJson";
+import type { SafeDataflowEngine } from "../safe-dataflow/SafeDataflowEngine";
+import { serializeGraph } from "../serializeGraph/serializeGraph";
 
 export interface NodeEditorState {
   graph: GraphJsonData;
@@ -57,7 +58,7 @@ interface ResetEditorStateParams {
   payload: NodeEditorState;
   editor: NodeEditor<Schemes>;
   area: AreaPlugin<Schemes, AreaExtra>;
-  dataflow: DataflowEngine<Schemes>;
+  dataflow: SafeDataflowEngine<Schemes>;
   controlflow: ControlFlowEngine<Schemes>;
   history: HistoryPlugin<Schemes, HistoryActions<Schemes>>;
 }
