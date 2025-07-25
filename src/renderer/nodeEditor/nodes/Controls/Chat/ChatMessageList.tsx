@@ -7,15 +7,11 @@ import {
   type ControlOptions,
   useControlValue,
 } from 'renderer/nodeEditor/types'
-import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/ChatMessageItem"
-import type {
-  EasyInputMessage,
-  ResponseInputContent,
-  ResponseInputFile,
-  ResponseInputImage,
-  ResponseInputMessageContentList,
-  ResponseInputText,
-} from 'renderer/nodeEditor/types/Schemas/openai/InputSchemas'
+import {
+  type ChatMessageItem,
+  isEasyChatMessage,
+  isInputTextContent,
+} from 'renderer/nodeEditor/types/Schemas/ChatMessageItem'
 import { Drag } from 'rete-react-plugin'
 
 export interface ChatMessageListControlParams
@@ -88,7 +84,7 @@ export class ChatMessageListControl extends BaseControl<
     this.messageTemp += deltaString
     const message = this.messages[index]
     if (message && message.role === 'assistant') {
-      (message as EasyInputMessage).content = this.messageTemp
+      message.content = this.messageTemp
       this.messages = [...this.messages]
     }
     this.notify()
@@ -98,7 +94,7 @@ export class ChatMessageListControl extends BaseControl<
     this.messageTemp = ''
     const message = this.messages[index]
     if (message && message.role === 'assistant') {
-      (message as EasyInputMessage).content = text
+      message.content = text
       this.messages = [...this.messages]
       this.addHistory(this.messages, this.messages)
       this.opts.onChange?.(this.messages)
@@ -148,6 +144,63 @@ export class ChatMessageListControl extends BaseControl<
     return [systemMessage, ...this.messages]
   }
 
+  startAssistantStream(initial?: Partial<ChatMessageItem>) {
+    const base: ChatMessageItem = {
+      ...initial,
+      role: 'assistant',
+      type: 'message',
+      content: '',
+    }
+
+    const prev = [...this.messages]
+    // 追加（history は finish まで遅延）
+    const index = this.messages.length
+    this.messages = [...this.messages, base]
+    this.notify()
+
+    let buffer = '' // このストリーム専用バッファ
+    let finished = false
+
+    const getMsg: () => ChatMessageItem | undefined = () => this.messages[index]
+
+    return {
+      index,
+      /** id が後から分かったとき */
+      setId: (id: string) => {
+        const msg = getMsg()
+        if (!msg) return
+        msg.id = id
+        this.messages = [...this.messages]
+        this.notify()
+      },
+      /** delta を追加 */
+      push: (delta: string) => {
+        const msg = getMsg()
+        if (!msg || msg.role !== 'assistant') return
+        buffer += delta
+        msg.content = buffer
+        this.messages = [...this.messages]
+        this.notify()
+      },
+      /** 正常終了（history + onChange 発火） */
+      finish: () => {
+        if (finished) return
+        finished = true
+        const next = [...this.messages]
+        this.addHistory(prev, next)
+        this.opts.onChange?.(next)
+        this.notify()
+      },
+      /** 中断してメッセージを削除 */
+      cancel: () => {
+        if (finished) return
+        finished = true
+        const next = [...prev] // 追加前状態に戻す
+        this.messages = next
+        this.notify()
+      },
+    }
+  }
 }
 
 export function ChatMesaageListControlView(props: {
@@ -183,7 +236,7 @@ export function ChatMesaageListControlView(props: {
     if (Array.isArray(msg.content) && msg.content.length > 0) {
       // Join all text content in the message
       text = msg.content
-        .filter(isContentText)
+        .filter(isInputTextContent)
         .map(c => c.text)
         .join('\n')
     } else if (msg.role === 'assistant' && typeof msg.content === 'string') {
@@ -200,10 +253,10 @@ export function ChatMesaageListControlView(props: {
 
     const updated = {
       ...msg,
-      content: isContentString(msg.content)
+      content: isEasyChatMessage(msg)
         ? editText
         : [{ type: 'input_text', text: editText }],
-    } as EasyInputMessage as ChatMessageItem
+    } as ChatMessageItem
 
     control.modifyChatMessage(editIndex, updated)
     setEditIndex(null)
@@ -260,7 +313,7 @@ export function ChatMesaageListControlView(props: {
               ) : (
                 // Normal View
                 <div className="break-all">
-                  {isContentString(msg.content) && (
+                  {isEasyChatMessage(msg) && (
                     <Markdown remarkPlugins={[remarkGfm]}>
                       {msg.content}
                     </Markdown>
@@ -272,12 +325,12 @@ export function ChatMesaageListControlView(props: {
                           key={`${contentItem.type}-${idx}`}
                           className="mb-1"
                         >
-                          {isContentText(contentItem) && (
+                          {isInputTextContent(contentItem) && (
                             <Markdown remarkPlugins={[remarkGfm]}>
                               {contentItem.text}
                             </Markdown>
                           )}
-                          {isContentImage(contentItem) &&
+                          {/* {isContentImage(contentItem) &&
                             contentItem.image_url && (
                               <img
                                 src={contentItem.image_url}
@@ -292,7 +345,7 @@ export function ChatMesaageListControlView(props: {
                               >
                                 {contentItem.filename}
                               </a>
-                            )}
+                            )} */}
                         </div>
                       )
                     })}
@@ -346,22 +399,4 @@ function ToolButton({
       {icon}
     </button>
   )
-}
-
-function isContentText(item: ResponseInputContent): item is ResponseInputText {
-  return item.type === 'input_text'
-}
-function isContentImage(
-  item: ResponseInputContent
-): item is ResponseInputImage {
-  return item.type === 'input_image'
-}
-function isContentFile(item: ResponseInputContent): item is ResponseInputFile {
-  return item.type === 'input_file'
-}
-
-function isContentString(
-  content: string | ResponseInputMessageContentList
-): content is string {
-  return typeof content === 'string'
 }
