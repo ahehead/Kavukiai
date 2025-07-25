@@ -104,10 +104,10 @@ export class ChatMessageListNode
     out: ChatMessageItemList;
   }> {
     const systemPrompt = inputs?.systemPrompt?.[0] || "";
-    const systemPromptMessage =
-      this.controls.chatContext.createSystemPromptMessage(systemPrompt);
-    const messages = this.controls.chatContext.getValue();
-    return { out: [systemPromptMessage, ...messages] };
+    const result = systemPrompt
+      ? this.controls.chatContext.getMessagesWithSystemPrompt(systemPrompt)
+      : this.controls.chatContext.getValue();
+    return { out: result };
   }
 
   async execute(
