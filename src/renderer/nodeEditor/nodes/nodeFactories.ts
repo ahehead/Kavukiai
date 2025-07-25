@@ -1,7 +1,8 @@
 import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
+import type { SafeDataflowEngine } from "../features/safe-dataflow/SafeDataflowEngine";
 import type {
   AreaExtra,
   NodeTypeKey,
@@ -54,7 +55,7 @@ import { ListNode } from "./Node/Primitive/ListNode";
 export type NodeDeps = {
   editor: NodeEditor<Schemes>;
   area: AreaPlugin<Schemes, AreaExtra>;
-  dataflow: DataflowEngine<Schemes>;
+  dataflow: SafeDataflowEngine<Schemes>;
   controlflow: ControlFlowEngine<Schemes>;
   history: HistoryPlugin<Schemes, HistoryActions<Schemes>>;
 };
