@@ -15,7 +15,7 @@ import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schem
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
-import { ChatMessageListControl } from "../../Controls/Chat/ResponseInputMessage";
+import { ChatMessageListControl } from "../../Controls/Chat/ChatMessageList";
 import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 // open ai用のchat message list Node

@@ -1,36 +1,39 @@
-import { ContextMenuPlugin } from "rete-context-menu-plugin";
-import type { NodeEditor } from "rete";
-import type { Schemes, AreaExtra, NodeInterface } from "../../../types/Schemes";
-
-import { contextMenuStructure, type NodeDeps } from "../../../nodes/nodeFactories";
-import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine, ControlFlowEngine } from "rete-engine";
-import type { HistoryPlugin, HistoryActions } from "rete-history-plugin";
-import { createReteContextMenuItems } from "./items/createContextMenu";
+import type { NodeEditor } from 'rete'
+import type { AreaPlugin } from 'rete-area-plugin'
+import { ContextMenuPlugin } from 'rete-context-menu-plugin'
+import type { Item } from 'rete-context-menu-plugin/_types/types'
+import type { ControlFlowEngine } from 'rete-engine'
+import type { HistoryActions, HistoryPlugin } from 'rete-history-plugin'
+import {
+  contextMenuStructure,
+  type NodeDeps,
+} from '../../../nodes/nodeFactories'
+import type { AreaExtra, NodeInterface, Schemes } from '../../../types/Schemes'
+import type { SafeDataflowEngine } from '../../safe-dataflow/SafeDataflowEngine'
+import { createReteContextMenuItems } from './items/createContextMenu'
+import { createDeleteConnectionItem } from './items/createDeleteConnectionItem'
+import { createDeleteNodeItem } from './items/createDeleteNodeItem'
 import {
   createToggleInputControlMenuItem,
   filterInputControls,
-} from "./items/createToggleInputControlMenuItem";
-import type { Item } from "rete-context-menu-plugin/_types/types";
-import { createDeleteConnectionItem } from "./items/createDeleteConnectionItem";
-import { createDeleteNodeItem } from "./items/createDeleteNodeItem";
+} from './items/createToggleInputControlMenuItem'
 
 type ContextMenuDependencies = {
-  editor: NodeEditor<Schemes>;
-  area: AreaPlugin<Schemes, AreaExtra>;
-  dataflow: DataflowEngine<Schemes>;
-  controlflow: ControlFlowEngine<Schemes>;
-  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>;
-};
+  editor: NodeEditor<Schemes>
+  area: AreaPlugin<Schemes, AreaExtra>
+  dataflow: SafeDataflowEngine<Schemes>
+  controlflow: ControlFlowEngine<Schemes>
+  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
+}
 
 function isConnection(
   ctx: any
 ): ctx is { id: string; source: string; target: string } {
-  return ctx && typeof ctx === "object" && "source" in ctx && "target" in ctx;
+  return ctx && typeof ctx === 'object' && 'source' in ctx && 'target' in ctx
 }
 
 function isNode(ctx: any): ctx is NodeInterface {
-  return ctx && typeof ctx === "object" && "id" in ctx && "inputs" in ctx;
+  return ctx && typeof ctx === 'object' && 'id' in ctx && 'inputs' in ctx
 }
 
 export function setupContextMenu({
@@ -40,13 +43,13 @@ export function setupContextMenu({
   controlflow,
   history,
 }: ContextMenuDependencies) {
-  const nodeDeps: NodeDeps = { editor, area, dataflow, controlflow, history };
+  const nodeDeps: NodeDeps = { editor, area, dataflow, controlflow, history }
 
   return new ContextMenuPlugin<Schemes>({
-    items: (context) => {
+    items: context => {
       // 右クリックを押されたときの場所。
-      const pointer = area.area.pointer;
-      if (context === "root") {
+      const pointer = area.area.pointer
+      if (context === 'root') {
         return {
           searchBar: true,
           list: createReteContextMenuItems(
@@ -55,14 +58,14 @@ export function setupContextMenu({
             nodeDeps,
             pointer
           ),
-        };
+        }
       }
 
-      const listItems: Item[] = [];
+      const listItems: Item[] = []
 
       if (isNode(context)) {
         // node のinputにcontrolがある場合、showControlをtoggleするメニューを追加
-        const inputlist = filterInputControls(context.inputs);
+        const inputlist = filterInputControls(context.inputs)
         if (inputlist.length > 0) {
           listItems.push(
             createToggleInputControlMenuItem(
@@ -72,20 +75,20 @@ export function setupContextMenu({
               dataflow,
               inputlist
             )
-          );
+          )
         }
       }
 
       if (isConnection(context)) {
         // 接続削除機能
-        listItems.push(createDeleteConnectionItem(context, editor));
+        listItems.push(createDeleteConnectionItem(context, editor))
       }
       // node削除機能
-      listItems.push(createDeleteNodeItem(context, editor));
+      listItems.push(createDeleteNodeItem(context, editor))
       return {
         searchBar: false,
         list: listItems,
-      };
+      }
     },
-  });
+  })
 }

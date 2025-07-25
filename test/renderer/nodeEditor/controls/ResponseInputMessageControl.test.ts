@@ -1,4 +1,4 @@
-import { ChatMessageListControl } from "renderer/nodeEditor/nodes/Controls/Chat/ResponseInputMessage";
+import { ChatMessageListControl } from "renderer/nodeEditor/nodes/Controls/Chat/ChatMessageList";
 import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/ChatMessageItem";
 import { expect, test } from "vitest";
 

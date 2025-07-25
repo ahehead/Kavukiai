@@ -2,17 +2,18 @@ import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchem
 import type { AreaExtra, Schemes } from "renderer/nodeEditor/types/Schemes";
 import { ClassicPreset, type NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
 import type { GraphJsonData, InputPortJson } from "shared/JsonType";
 import { nodeFactories } from "../../nodes/nodeFactories";
+import type { SafeDataflowEngine } from "../safe-dataflow/SafeDataflowEngine";
 
 // JSON からノードを生成してエディタに登録
 export async function loadGraphFromJson(
   graphJsonData: GraphJsonData,
   area: AreaPlugin<Schemes, AreaExtra>,
   editor: NodeEditor<Schemes>,
-  dataflow: DataflowEngine<Schemes>,
+  dataflow: SafeDataflowEngine<Schemes>,
   controlflow: ControlFlowEngine<Schemes>,
   history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
 ): Promise<void> {

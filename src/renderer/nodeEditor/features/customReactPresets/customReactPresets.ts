@@ -51,7 +51,7 @@ import { type ReactArea2D, Presets as ReactPresets } from "rete-react-plugin";
 import {
   ChatMesaageListControlView,
   ChatMessageListControl,
-} from "../../nodes/Controls/Chat/ResponseInputMessage";
+} from "../../nodes/Controls/Chat/ChatMessageList";
 import {
   ConsoleControl,
   ConsoleControlView,
