@@ -10,13 +10,15 @@ export class Cancelled extends Error {
 export type Cancellable<T> = Promise<T> & { cancel?: () => void };
 type S<A, B> = (data: A) => B | PromiseLike<B>;
 
-function createCancellblePromise<A, B>(
+function createCancellablePromise<A, B>(
   ...sequence: [S<void, A>, S<A, B>]
 ): Cancellable<B>;
-function createCancellblePromise<A, B, C>(
+function createCancellablePromise<A, B, C>(
   ...sequence: [S<void, A>, S<A, B>, S<B, C>]
 ): Cancellable<C>;
-function createCancellblePromise(...sequence: S<any, any>[]): Cancellable<any> {
+function createCancellablePromise(
+  ...sequence: S<any, any>[]
+): Cancellable<any> {
   let cancelled = false;
 
   function commit<R>(value: R): R {
@@ -48,4 +50,4 @@ function createCancellblePromise(...sequence: S<any, any>[]): Cancellable<any> {
   return n;
 }
 
-export { createCancellblePromise };
+export { createCancellablePromise };
