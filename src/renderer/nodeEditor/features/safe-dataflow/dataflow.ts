@@ -136,7 +136,9 @@ export class Dataflow<Schemes extends ClassicScheme> {
       if (!result) throw new Error("node is not initialized");
 
       const outputKeys = result.outputs();
-      const data = await result.data(() => this.fetchInputs(stack, nodeId));
+      const data = await result.data(<K extends string>(keys?: readonly K[]) =>
+        this.fetchInputs(stack, nodeId, keys as any)
+      );
 
       const returningKeys = Object.keys(data) as (string | number | symbol)[];
 
