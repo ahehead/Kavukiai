@@ -15,7 +15,10 @@ import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schem
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
-import { ChatMessageListControl } from "../../Controls/Chat/ChatMessageList";
+import {
+  ChatMessageListControl,
+  type DeltaFunctions,
+} from "../../Controls/Chat/ChatMessageList";
 
 // open ai用のchat message list Node
 export class ChatMessageListNode
@@ -33,8 +36,7 @@ export class ChatMessageListNode
   >
   implements SerializableDataNode
 {
-  // 処理中messageのindex
-  processingMessageIndex = 0;
+  deltaFunc: DeltaFunctions;
 
   constructor(
     initial: ChatMessageItem[],
@@ -84,18 +86,18 @@ export class ChatMessageListNode
         typeName: "ChatMessageItemList",
       },
     ]);
-    this.addControl(
-      "chatContext",
-      new ChatMessageListControl({
-        value: initial,
-        editable: true,
-        history: history,
-        area: area,
-        onChange: () => {
-          dataflow.reset(this.id);
-        },
-      })
-    );
+    const control = new ChatMessageListControl({
+      value: initial,
+      editable: true,
+      history: history,
+      area: area,
+      onChange: () => {
+        dataflow.reset(this.id);
+      },
+    });
+    this.deltaFunc = control.setupDeltaFunctions();
+
+    this.addControl("chatContext", control);
   }
 
   // dataflowで流す
@@ -145,33 +147,29 @@ export class ChatMessageListNode
     if (response === null) return;
     // レスポンスがイベント形式の場合
     if ("type" in response) {
-      if (response.type === "response.created") {
-        this.processingMessageIndex = this.controls.chatContext.addTempMessage({
-          content: "",
-          role: "assistant",
-          type: "message",
-          model: response.response.model,
-          created_at: response.response.created_at,
-        } as EasyInputMessage as ChatMessageItem);
-      } else if (response.type === "response.output_item.added") {
-        if (response.item.type !== "message") return;
-        this.controls.chatContext.setTempMessageId(
-          this.processingMessageIndex,
-          response.item.id
-        );
-      } else if (response.type === "response.output_text.delta") {
-        this.controls.chatContext.modifyMessageTextDelta(
-          this.processingMessageIndex,
-          response.delta
-        );
-      } else if (response.type === "response.output_text.done") {
-        this.controls.chatContext.modifyMessageTextDone(
-          this.processingMessageIndex,
-          response.text
-        );
-        this.processingMessageIndex = 0; // 処理中のメッセージインデックスをリセット
+      switch (response.type) {
+        case "response.created":
+          this.deltaFunc.start({
+            model: response.response.model,
+            created_at: response.response.created_at,
+          });
+          break;
+        case "response.output_item.added":
+          if (response.item.type !== "message") return;
+          this.deltaFunc.setId(response.item.id);
+          break;
+        case "response.output_text.delta":
+          this.deltaFunc.pushDelta(response.delta);
+          break;
+        case "response.output_text.done":
+          this.deltaFunc.finish(response.text);
+          break;
+        default:
+          break;
       }
     } else {
+      // レスポンスが直接返ってきた場合
+
       // outputは複数ある場合がある
       for (const item of response.output) {
         if (item.type === "message") {
@@ -190,17 +188,6 @@ export class ChatMessageListNode
           }
         }
       }
-
-      // レスポンスが直接返ってきた場合
-      this.controls.chatContext.addMessage({
-        id: response.id,
-        content: [{ type: "input_text", text: response.output_text }],
-        role: "assistant",
-        type: "message",
-        model: response.model,
-        created_at: response.created_at,
-        tokensCount: response.usage?.output_tokens,
-      });
     }
   }
 
