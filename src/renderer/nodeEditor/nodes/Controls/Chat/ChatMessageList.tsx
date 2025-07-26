@@ -14,6 +14,14 @@ import {
 } from 'renderer/nodeEditor/types/Schemas/ChatMessageItem'
 import { Drag } from 'rete-react-plugin'
 
+export interface DeltaFunctions {
+  start(initial?: Partial<ChatMessageItem>): void;
+  setId(id: string): void;
+  setInfo(info: Partial<ChatMessageItem>): void;
+  pushDelta(delta: string): void;
+  finish(finalText?: string): void;
+}
+
 export interface ChatMessageListControlParams
   extends ControlOptions<ChatMessageItem[]> {
   value: ChatMessageItem[]
@@ -58,14 +66,14 @@ export class ChatMessageListControl extends BaseControl<
     this.notify()
   }
 
-  // delta用
+  // delta event用
   // 一時的にMessageを追加して、indexを返す
   addTempMessage(msg: ChatMessageItem): number {
     this.messages = [...this.messages, msg]
     return this.messages.length - 1
   }
 
-  // delta用
+  // delta event用
   // 一時messageのidを設定する
   setTempMessageId(index: number, id: string): void {
     const message = this.messages[index]
@@ -78,7 +86,7 @@ export class ChatMessageListControl extends BaseControl<
     }
   }
 
-  // delta用
+  // delta event用
   // indexのメッセージの内容をdeltaで書き換えていく
   modifyMessageTextDelta(index: number, deltaString: string): void {
     this.messageTemp += deltaString
@@ -89,6 +97,8 @@ export class ChatMessageListControl extends BaseControl<
     }
     this.notify()
   }
+
+  // delta event用
   // indexのメッセージの内容をtextで確定する
   modifyMessageTextDone(index: number, text: string): void {
     this.messageTemp = ''
@@ -144,27 +154,32 @@ export class ChatMessageListControl extends BaseControl<
     return [systemMessage, ...this.messages]
   }
 
-  startAssistantStream(initial?: Partial<ChatMessageItem>) {
-    const base: ChatMessageItem = {
-      ...initial,
-      role: 'assistant',
-      type: 'message',
-      content: '',
-    }
-
-    const prev = [...this.messages]
-    // 追加（history は finish まで遅延）
-    const index = this.messages.length
-    this.messages = [...this.messages, base]
-    this.notify()
-
+  setupDeltaFunctions(): DeltaFunctions {
+    let index = -1;
+    let prev: ChatMessageItem[] = [];
     let buffer = '' // このストリーム専用バッファ
-    let finished = false
-
+    let inFlight = false;
     const getMsg: () => ChatMessageItem | undefined = () => this.messages[index]
 
     return {
-      index,
+      start: (initial?: Partial<ChatMessageItem>) => {
+        if (inFlight) {
+          console.warn('Delta stream already started');
+          return;
+        }
+        inFlight = true
+        buffer = ''
+        const base: ChatMessageItem = {
+          ...initial,
+          role: 'assistant',
+          type: 'message',
+          content: '',
+        }
+        prev = [...this.messages] // 追加（history は finish まで遅延）
+        index = this.messages.length
+        this.messages = [...this.messages, base]
+        this.notify()
+      },
       /** id が後から分かったとき */
       setId: (id: string) => {
         const msg = getMsg()
@@ -173,8 +188,17 @@ export class ChatMessageListControl extends BaseControl<
         this.messages = [...this.messages]
         this.notify()
       },
+      /** 他の情報がわかったとき */
+      setInfo: (info: Partial<ChatMessageItem>) => {
+        const msg = getMsg()
+        if (!msg) return
+        Object.assign(msg, info)
+        this.messages = [...this.messages]
+        this.notify()
+      },
       /** delta を追加 */
-      push: (delta: string) => {
+      pushDelta: (delta: string) => {
+        if (!inFlight) return;
         const msg = getMsg()
         if (!msg || msg.role !== 'assistant') return
         buffer += delta
@@ -182,21 +206,17 @@ export class ChatMessageListControl extends BaseControl<
         this.messages = [...this.messages]
         this.notify()
       },
-      /** 正常終了（history + onChange 発火） */
-      finish: () => {
-        if (finished) return
-        finished = true
+      /** 終了（history + onChange 発火,エラー時もそのまま残したいのでこれを呼ぶ */
+      finish: (text?: string) => {
+        if (!inFlight) return;
+        inFlight = false;
+        const msg = getMsg()
+        if (!msg) return
+        msg.content = text ?? buffer
         const next = [...this.messages]
+        this.messages = next
         this.addHistory(prev, next)
         this.opts.onChange?.(next)
-        this.notify()
-      },
-      /** 中断してメッセージを削除 */
-      cancel: () => {
-        if (finished) return
-        finished = true
-        const next = [...prev] // 追加前状態に戻す
-        this.messages = next
         this.notify()
       },
     }
