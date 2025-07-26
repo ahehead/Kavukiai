@@ -8,7 +8,10 @@ import {
 
 import { type ClassicScheme, Dataflow } from "./dataflow";
 import { Cache } from "./utils/cache";
-import { type Cancellable, createCancellblePromise } from "./utils/cancellable";
+import {
+  type Cancellable,
+  createCancellablePromise,
+} from "./utils/cancellable";
 
 export type DataflowNode = {
   data(
@@ -88,9 +91,17 @@ export class DataflowEngine<Schemes extends DataflowEngineScheme> extends Scope<
 
         if (cache) return cache;
 
-        const cancellable = createCancellblePromise(
-          () => fetchInputs(),
-          (inputs) => node.data(inputs)
+        const cancellable = createCancellablePromise(
+          () => fetchInputs, // prepare: Dataflow から渡された fetchInputs をそのまま次段へ
+          async (fetch) => {
+            if (this.hasDataWithFetch(node)) {
+              // 新API: 必要なキーだけを取得できる
+              return await node.dataWithFetch(fetch);
+            }
+            // 従来互換: 先に全部取ってから data を呼ぶ
+            const inputs = await fetch();
+            return await node.data(inputs);
+          }
         );
 
         this.cache.add(node.id, cancellable);
@@ -227,5 +238,15 @@ export class DataflowEngine<Schemes extends DataflowEngineScheme> extends Scope<
       return Array.isArray(arr) && arr.length > 0 ? arr[0] : null;
     });
     return result as any;
+  }
+
+  hasDataWithFetch(node: any): node is {
+    dataWithFetch: (
+      fetchInputs: <K extends string>(
+        keys?: readonly K[]
+      ) => Promise<Record<string, any>>
+    ) => Promise<Record<string, any>> | Record<string, any>;
+  } {
+    return typeof node?.dataWithFetch === "function";
   }
 }
