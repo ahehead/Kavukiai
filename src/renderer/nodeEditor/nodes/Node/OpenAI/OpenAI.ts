@@ -77,7 +77,14 @@ export class OpenAINode extends MessagePortNode<
     return { id: this.id, param: param[0] };
   }
 
-  data(): { response: OpenAIClientResponse | null } {
+  data() {
+    console.warn("OpenAINode.data() is not used. Use dataWithFetch instead.");
+    return { response: this.response };
+  }
+
+  async dataWithFetch(
+    _fetchInputs: (keys?: readonly string[]) => Promise<Record<string, any>>
+  ): Promise<{ response: OpenAIClientResponse | null }> {
     return { response: this.response };
   }
 
