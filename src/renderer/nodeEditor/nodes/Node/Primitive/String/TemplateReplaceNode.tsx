@@ -22,7 +22,7 @@ export class TemplateReplaceNode extends SerializableInputsNode<
       {
         key: 'exec',
         typeName: 'exec',
-        label: 'In',
+        label: 'Run',
         onClick: () => {
           this.controlflow.execute(this.id, 'exec')
         },
@@ -32,7 +32,7 @@ export class TemplateReplaceNode extends SerializableInputsNode<
     ])
     this.addOutputPort([
       { key: 'exec', typeName: 'exec', label: 'Out' },
-      { key: 'out', typeName: 'string', label: 'out' },
+      { key: 'out', typeName: 'string', label: 'Result' },
     ])
   }
 
