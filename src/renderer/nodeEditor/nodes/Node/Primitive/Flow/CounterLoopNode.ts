@@ -1,4 +1,4 @@
-import type { SafeDataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/SafeDataflowEngine";
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import { getInputValue } from "renderer/nodeEditor/nodes/util/getInput";
 import type {
   AreaExtra,
@@ -11,7 +11,6 @@ import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
 import { InputValueControl } from "../../../Controls/input/InputValue";
-import { resetCacheDataflow } from "../../../util/resetCacheDataflow";
 
 export class CounterLoopNode
   extends SerializableInputsNode<
@@ -35,7 +34,7 @@ export class CounterLoopNode
     initial: number,
     history: HistoryPlugin<Schemes>,
     area: AreaPlugin<Schemes, AreaExtra>,
-    private dataflow: SafeDataflowEngine<Schemes>,
+    private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("CounterLoop");
@@ -87,7 +86,7 @@ export class CounterLoopNode
           area,
           onChange: (value: number) => {
             this.counter = value;
-            resetCacheDataflow(this.dataflow, this.id);
+            this.dataflow.reset(this.id);
             this.controls.count.setValue(value);
           },
         }),
@@ -107,7 +106,7 @@ export class CounterLoopNode
         editable: false,
         history,
         area,
-        onChange: () => resetCacheDataflow(this.dataflow, this.id),
+        onChange: () => this.dataflow.reset(this.id),
       })
     );
 
@@ -129,7 +128,7 @@ export class CounterLoopNode
       const value = getInputValue(this.inputs, "count", inputs) || 0;
       this.counter = value;
       this.controls.count.setValue(value);
-      resetCacheDataflow(this.dataflow, this.id);
+      this.dataflow.reset(this.id);
       return;
     }
 
@@ -139,7 +138,7 @@ export class CounterLoopNode
       }
       this.counter -= 1;
       this.controls.count.setValue(this.counter);
-      resetCacheDataflow(this.dataflow, this.id);
+      this.dataflow.reset(this.id);
       forward("exec");
       return;
     }
@@ -147,7 +146,7 @@ export class CounterLoopNode
     if (input === "stop") {
       this.counter = 0;
       this.controls.count.setValue(0);
-      resetCacheDataflow(this.dataflow, this.id);
+      this.dataflow.reset(this.id);
       return;
     }
 
@@ -165,14 +164,14 @@ export class CounterLoopNode
       if (this.counter <= 0) {
         this.counter = 0;
         this.controls.count.setValue(0);
-        resetCacheDataflow(this.dataflow, this.id);
+        this.dataflow.reset(this.id);
         return;
       }
 
       if (this.counter > 0) {
         this.counter -= 1;
         this.controls.count.setValue(this.counter);
-        resetCacheDataflow(this.dataflow, this.id);
+        this.dataflow.reset(this.id);
         forward("exec");
       }
     }

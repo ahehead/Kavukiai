@@ -1,5 +1,6 @@
 import { type TSchema, Type } from "@sinclair/typebox";
 import type OpenAI from "openai";
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import type {
   AreaExtra,
   Schemes,
@@ -9,13 +10,11 @@ import type { DynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSc
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import { ResponseCreateParamsBase } from "renderer/nodeEditor/types/Schemas/openai/RequestSchemas";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
 import { CheckBoxControl } from "../../Controls/input/CheckBox";
 import { InputValueControl } from "../../Controls/input/InputValue";
 import { SelectControl } from "../../Controls/input/Select";
 import { getInputValue } from "../../util/getInput";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 type OpenAIParamKeys = keyof ResponseCreateParamsBase;
 // Run ノード
@@ -39,7 +38,7 @@ export class ResponseCreateParamsBaseNode
       history,
       area,
       editable: true,
-      onChange: () => resetCacheDataflow(dataflow, this.id),
+      onChange: () => dataflow.reset(this.id),
     };
 
     this.addInputPort([

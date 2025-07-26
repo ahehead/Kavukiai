@@ -1,3 +1,4 @@
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import { SwitchControl } from "renderer/nodeEditor/nodes/Controls/input/Switch";
 import type {
   AreaExtra,
@@ -6,9 +7,7 @@ import type {
 } from "renderer/nodeEditor/types";
 import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
-import { resetCacheDataflow } from "../../../util/resetCacheDataflow";
 
 // IF ノード
 export class IFNode extends BaseNode<
@@ -37,7 +36,7 @@ export class IFNode extends BaseNode<
           value: true,
           history,
           area,
-          onChange: () => resetCacheDataflow(dataflow, this.id),
+          onChange: () => dataflow.reset(this.id),
         }),
       },
     ]);

@@ -1,115 +1,116 @@
-import { Type } from "@sinclair/typebox";
-import type { Schemes, TypedSocket } from "renderer/nodeEditor/types";
-import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
+import { Type } from '@sinclair/typebox'
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
+import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
+import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
 import {
   LLMPredictionConfig,
   type LLMPredictionConfig as LLMPredictionConfigType,
-} from "renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas";
-import type { DataflowEngine } from "rete-engine";
-import { InputValueControl } from "../../Controls/input/InputValue";
-import { SelectControl } from "../../Controls/input/Select";
-import { getInputValue } from "../../util/getInput";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
+} from 'renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas'
+import { InputValueControl } from '../../Controls/input/InputValue'
+import { SelectControl } from '../../Controls/input/Select'
+import { getInputValue } from '../../util/getInput'
 
 // Node that builds LLMPredictionConfig object for LMStudio
 export class LLMPredictionConfigNode extends SerializableInputsNode<
-  "LLMPredictionConfig",
+  'LLMPredictionConfig',
   Record<LLMPredictionConfigKey, TypedSocket>,
   { config: TypedSocket },
   object
 > {
   constructor(private dataflow: DataflowEngine<Schemes>) {
-    super("LLMPredictionConfig");
+    super('LLMPredictionConfig')
 
     const opts = {
       editable: true,
-      onChange: () => resetCacheDataflow(this.dataflow, this.id),
-    };
+      onChange: () => this.dataflow.reset(this.id),
+    }
 
     this.addInputPort([
       {
-        key: "maxTokens",
-        typeName: "number",
-        schema: Type.Index(LLMPredictionConfig, ["maxTokens"]),
-        label: "maxTokens",
+        key: 'maxTokens',
+        typeName: 'number',
+        schema: Type.Index(LLMPredictionConfig, ['maxTokens']),
+        label: 'maxTokens',
         showControl: false,
         control: new InputValueControl<number>({
           value: 4096,
-          type: "number",
-          label: "maxTokens",
+          type: 'number',
+          label: 'maxTokens',
           ...opts,
         }),
       },
       {
-        key: "temperature",
-        typeName: "number",
-        schema: Type.Index(LLMPredictionConfig, ["temperature"]),
-        label: "temperature",
+        key: 'temperature',
+        typeName: 'number',
+        schema: Type.Index(LLMPredictionConfig, ['temperature']),
+        label: 'temperature',
         showControl: false,
         control: new InputValueControl<number>({
           value: 1,
-          type: "number",
+          type: 'number',
           step: 0.01,
-          label: "temperature",
+          label: 'temperature',
           ...opts,
         }),
       },
       {
-        key: "stopStrings",
-        typeName: "StringArray",
-        schema: Type.Index(LLMPredictionConfig, ["stopStrings"]),
-        label: "stopStrings",
+        key: 'stopStrings',
+        typeName: 'StringArray',
+        schema: Type.Index(LLMPredictionConfig, ['stopStrings']),
+        label: 'stopStrings',
       },
       {
-        key: "toolCallStopStrings",
-        typeName: "StringArray",
-        schema: Type.Index(LLMPredictionConfig, ["toolCallStopStrings"]),
-        label: "toolCallStopStrings",
+        key: 'toolCallStopStrings',
+        typeName: 'StringArray',
+        schema: Type.Index(LLMPredictionConfig, ['toolCallStopStrings']),
+        label: 'toolCallStopStrings',
       },
       {
-        key: "contextOverflowPolicy",
-        typeName: "contextOverflowPolicy",
-        schema: Type.Index(LLMPredictionConfig, ["contextOverflowPolicy"]),
-        label: "contextOverflowPolicy",
+        key: 'contextOverflowPolicy',
+        typeName: 'contextOverflowPolicy',
+        schema: Type.Index(LLMPredictionConfig, ['contextOverflowPolicy']),
+        label: 'contextOverflowPolicy',
         showControl: false,
-        control: new SelectControl<"stopAtLimit" | "truncateMiddle" | "rollingWindow">({
-          value: "stopAtLimit",
+        control: new SelectControl<
+          'stopAtLimit' | 'truncateMiddle' | 'rollingWindow'
+        >({
+          value: 'stopAtLimit',
           optionsList: [
-            { label: "stopAtLimit", value: "stopAtLimit" },
-            { label: "truncateMiddle", value: "truncateMiddle" },
-            { label: "rollingWindow", value: "rollingWindow" },
+            { label: 'stopAtLimit', value: 'stopAtLimit' },
+            { label: 'truncateMiddle', value: 'truncateMiddle' },
+            { label: 'rollingWindow', value: 'rollingWindow' },
           ],
-          label: "contextOverflowPolicy",
+          label: 'contextOverflowPolicy',
           ...opts,
         }),
       },
       {
-        key: "structured",
-        typeName: "any",
-        schema: Type.Index(LLMPredictionConfig, ["structured"]),
-        label: "structured",
+        key: 'structured',
+        typeName: 'any',
+        schema: Type.Index(LLMPredictionConfig, ['structured']),
+        label: 'structured',
       },
-    ]);
+    ])
 
     this.addOutputPort({
-      key: "config",
-      typeName: "LLMPredictionConfig",
+      key: 'config',
+      typeName: 'LLMPredictionConfig',
       schema: LLMPredictionConfig,
-    });
+    })
   }
 
-  data(
-    inputs: Partial<Record<LLMPredictionConfigKey, unknown[]>>
-  ): { config: LLMPredictionConfig } {
-    const cfg: Partial<LLMPredictionConfig> = {};
+  data(inputs: Partial<Record<LLMPredictionConfigKey, unknown[]>>): {
+    config: LLMPredictionConfig
+  } {
+    const cfg: Partial<LLMPredictionConfig> = {}
     for (const key of Object.keys(this.inputs) as LLMPredictionConfigKey[]) {
-      const val = getInputValue(this.inputs, key, inputs);
-      if (val !== undefined) cfg[key] = val as any;
+      const val = getInputValue(this.inputs, key, inputs)
+      if (val !== undefined) cfg[key] = val as any
     }
-    return { config: cfg as LLMPredictionConfig };
+    return { config: cfg as LLMPredictionConfig }
   }
 
   async execute(): Promise<void> { }
 }
 
-type LLMPredictionConfigKey = keyof LLMPredictionConfigType;
+type LLMPredictionConfigKey = keyof LLMPredictionConfigType

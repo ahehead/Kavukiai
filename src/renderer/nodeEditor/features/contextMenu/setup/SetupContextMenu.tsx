@@ -9,7 +9,7 @@ import {
   type NodeDeps,
 } from '../../../nodes/nodeFactories'
 import type { AreaExtra, NodeInterface, Schemes } from '../../../types/Schemes'
-import type { SafeDataflowEngine } from '../../safe-dataflow/SafeDataflowEngine'
+import type { DataflowEngine } from '../../safe-dataflow/dataflowEngin'
 import { createReteContextMenuItems } from './items/createContextMenu'
 import { createDeleteConnectionItem } from './items/createDeleteConnectionItem'
 import { createDeleteNodeItem } from './items/createDeleteNodeItem'
@@ -21,7 +21,7 @@ import {
 type ContextMenuDependencies = {
   editor: NodeEditor<Schemes>
   area: AreaPlugin<Schemes, AreaExtra>
-  dataflow: SafeDataflowEngine<Schemes>
+  dataflow: DataflowEngine<Schemes>
   controlflow: ControlFlowEngine<Schemes>
   history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
 }

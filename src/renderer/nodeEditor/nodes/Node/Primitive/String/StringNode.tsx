@@ -1,18 +1,18 @@
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { InputValueControl } from 'renderer/nodeEditor/nodes/Controls/input/InputValue'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
 import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { DataflowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
-import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 // 短い文字列入力ノード
-export class StringNode extends BaseNode<
-  'String',
-  object,
-  { out: TypedSocket },
-  { textInput: InputValueControl<string> }
->
+export class StringNode
+  extends BaseNode<
+    'String',
+    object,
+    { out: TypedSocket },
+    { textInput: InputValueControl<string> }
+  >
   implements SerializableDataNode {
   constructor(
     initial: string,
@@ -36,7 +36,7 @@ export class StringNode extends BaseNode<
         history: history,
         area: area,
         onChange: (_v: string) => {
-          resetCacheDataflow(dataflow, this.id)
+          dataflow.reset(this.id)
         },
       })
     )

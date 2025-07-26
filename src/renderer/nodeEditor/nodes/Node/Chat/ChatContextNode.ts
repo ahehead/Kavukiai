@@ -1,4 +1,4 @@
-import type { SafeDataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/SafeDataflowEngine";
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import type {
   AreaExtra,
   Schemes,
@@ -16,7 +16,6 @@ import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
 import { ChatMessageListControl } from "../../Controls/Chat/ChatMessageList";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 // open ai用のchat message list Node
 export class ChatMessageListNode
@@ -41,7 +40,7 @@ export class ChatMessageListNode
     initial: ChatMessageItem[],
     history: HistoryPlugin<Schemes>,
     area: AreaPlugin<Schemes, AreaExtra>,
-    private dataflow: SafeDataflowEngine<Schemes>,
+    private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("ChatMessageList");
@@ -93,7 +92,7 @@ export class ChatMessageListNode
         history: history,
         area: area,
         onChange: () => {
-          resetCacheDataflow(dataflow, this.id);
+          dataflow.reset(this.id);
         },
       })
     );

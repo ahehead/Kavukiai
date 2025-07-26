@@ -1,4 +1,5 @@
 import { type TSchema, Type } from '@sinclair/typebox'
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import {
   type AreaExtra,
   BaseNode,
@@ -10,16 +11,15 @@ import type {
   DynamicSchemaNode,
 } from 'renderer/nodeEditor/types/Node/DynamicSchemaNode'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { DataflowEngine } from 'rete-engine'
-import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 
 // ObjectPickNode: オブジェクトの各キーを個別の出力として返す
 export class ObjectPickNode
   extends BaseNode<
-    "ObjectPick",
+    'ObjectPick',
     { obj: TypedSocket },
     Record<string, TypedSocket>,
-    object>
+    object
+  >
   implements DynamicSchemaNode {
   constructor(
     private area: AreaPlugin<Schemes, AreaExtra>,
@@ -39,7 +39,7 @@ export class ObjectPickNode
     isConnected,
     source,
   }: ConnectionParams): Promise<string[]> {
-    resetCacheDataflow(this.dataflow, this.id)
+    this.dataflow.reset(this.id)
     if (isConnected) {
       await this.inputs.obj?.socket.setSchema(
         source.getName(),

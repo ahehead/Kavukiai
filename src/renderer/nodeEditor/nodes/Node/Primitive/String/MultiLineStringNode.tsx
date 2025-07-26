@@ -1,10 +1,9 @@
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { MultiLineControl } from 'renderer/nodeEditor/nodes/Controls/input/MultiLine'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { DataflowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
-import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 
 // 長文文字列入力ノード
 export class MultiLineStringNode extends BaseNode<
@@ -31,7 +30,7 @@ export class MultiLineStringNode extends BaseNode<
         history,
         area,
         onChange: (_v: string) => {
-          resetCacheDataflow(dataflow, this.id) // この階層じゃないとなぜかnodeIdがおかしくなる
+          dataflow.reset(this.id) // この階層じゃないとなぜかnodeIdがおかしくなる
         },
       })
     )

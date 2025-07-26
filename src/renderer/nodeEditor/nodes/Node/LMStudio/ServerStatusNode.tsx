@@ -1,12 +1,12 @@
 import { electronApiService } from 'renderer/features/services/appService'
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
 import type { ServerStatusInfo } from 'renderer/nodeEditor/types/Schemas/lmstudio/StatusSchemas'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
+import type { ControlFlowEngine } from 'rete-engine'
 import { ConsoleControl } from '../../Controls/Console'
-import { resetCacheDataflow } from '../../util/resetCacheDataflow'
 
 export class ServerStatusNode extends SerializableInputsNode<
   'ServerStatus',
@@ -48,7 +48,7 @@ export class ServerStatusNode extends SerializableInputsNode<
     const result = await electronApiService.getServerStatus()
     if (result.status === 'success') {
       this.info = result.data
-      resetCacheDataflow(this.dataflow, this.id)
+      this.dataflow.reset(this.id)
       this.controls.console.addValue(JSON.stringify(result.data))
       await this.setStatus(this.area, NodeStatus.COMPLETED)
     } else {

@@ -1,3 +1,4 @@
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import type {
   AreaExtra,
   Schemes,
@@ -7,11 +8,9 @@ import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 import type { Role } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
 import type { SelectOption } from "../../Controls/input/Select";
 import { SelectControl } from "../../Controls/input/Select";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 // Role選択ノード
 export class RoleNode
@@ -50,7 +49,7 @@ export class RoleNode
         history,
         area,
         onChange: (_v: Role) => {
-          resetCacheDataflow(dataflow, this.id);
+          dataflow.reset(this.id);
         },
       })
     );

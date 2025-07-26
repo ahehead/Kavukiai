@@ -1,9 +1,9 @@
-import { test, expect, vi } from 'vitest';
-import { IFNode } from 'renderer/nodeEditor/nodes/Node/Primitive/Flow/IFNode';
-import type { HistoryPlugin } from 'rete-history-plugin';
-import type { AreaPlugin } from 'rete-area-plugin';
-import type { DataflowEngine } from 'rete-engine';
-import type { Schemes } from 'renderer/nodeEditor/types';
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
+import { IFNode } from "renderer/nodeEditor/nodes/Node/Primitive/Flow/IFNode";
+import type { Schemes } from "renderer/nodeEditor/types";
+import type { AreaPlugin } from "rete-area-plugin";
+import type { HistoryPlugin } from "rete-history-plugin";
+import { expect, test, vi } from "vitest";
 
 const history = {} as HistoryPlugin<Schemes>;
 const area = {} as AreaPlugin<Schemes, any>;
@@ -17,12 +17,12 @@ test('IFNode.execute forwards to "exec" when condition is true', async () => {
   const node = createNode(async () => ({ boolData: [true] }));
   const forward = vi.fn();
   await node.execute(undefined as never, forward);
-  expect(forward).toHaveBeenCalledWith('exec');
+  expect(forward).toHaveBeenCalledWith("exec");
 });
 
 test('IFNode.execute forwards to "exec2" when condition is false', async () => {
   const node = createNode(async () => ({ boolData: [false] }));
   const forward = vi.fn();
   await node.execute(undefined as never, forward);
-  expect(forward).toHaveBeenCalledWith('exec2');
+  expect(forward).toHaveBeenCalledWith("exec2");
 });

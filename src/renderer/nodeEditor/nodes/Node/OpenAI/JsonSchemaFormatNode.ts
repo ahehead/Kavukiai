@@ -1,3 +1,4 @@
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import type {
   AreaExtra,
   Schemes,
@@ -6,12 +7,10 @@ import type {
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
 import { JsonSchemaFormat } from "renderer/nodeEditor/types/Schemas/openai/RequestSchemas";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
 import { CheckBoxControl } from "../../Controls/input/CheckBox";
 import { InputValueControl } from "../../Controls/input/InputValue";
 import { getInputValue } from "../../util/getInput";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 type JsonSchemaFormatKeys = keyof JsonSchemaFormat;
 export class JsonSchemaFormatNode extends SerializableInputsNode<
@@ -29,7 +28,7 @@ export class JsonSchemaFormatNode extends SerializableInputsNode<
     const opts = {
       history: this.history,
       area: this.area,
-      onChange: () => resetCacheDataflow(dataflow, this.id),
+      onChange: () => dataflow.reset(this.id),
     };
     this.addInputPort([
       {

@@ -1,8 +1,9 @@
 import { electronApiService } from 'renderer/features/services/appService'
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { MessagePortNode } from 'renderer/nodeEditor/types/Node/MessagePortNode'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
+import type { ControlFlowEngine } from 'rete-engine'
 import type { LMStudioLoadRequestArgs, LMStudioPortEvent } from 'shared/ApiType'
 import { ConsoleControl } from '../../Controls/Console'
 import { ProgressControl } from '../../Controls/view/ProgressControl'
@@ -15,7 +16,6 @@ export class LMStudioLoadModelNode extends MessagePortNode<
   LMStudioPortEvent,
   LMStudioLoadRequestArgs
 > {
-
   constructor(
     area: AreaPlugin<Schemes, AreaExtra>,
     dataflow: DataflowEngine<Schemes>,
@@ -49,8 +49,8 @@ export class LMStudioLoadModelNode extends MessagePortNode<
     const { modelKey } = (await this.dataflow.fetchInputs(this.id)) as {
       modelKey?: string[]
     }
-    if (!modelKey || modelKey.length === 0) return null;
-    return { id: this.id, modelKey: modelKey[0] };
+    if (!modelKey || modelKey.length === 0) return null
+    return { id: this.id, modelKey: modelKey[0] }
   }
 
   protected callMain(args: LMStudioLoadRequestArgs): void {

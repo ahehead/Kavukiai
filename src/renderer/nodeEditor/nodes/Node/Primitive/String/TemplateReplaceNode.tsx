@@ -1,12 +1,12 @@
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { NodeStatus } from 'renderer/nodeEditor/types'
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
-import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
+import type { ControlFlowEngine } from 'rete-engine'
 
 export class TemplateReplaceNode extends SerializableInputsNode<
-  "TemplateReplace",
+  'TemplateReplace',
   { exec: TypedSocket; template: TypedSocket; obj: TypedSocket },
   { exec: TypedSocket; out: TypedSocket },
   object
@@ -56,7 +56,7 @@ export class TemplateReplaceNode extends SerializableInputsNode<
       missing = true
       return ''
     })
-    resetCacheDataflow(this.dataflow, this.id)
+    this.dataflow.reset(this.id)
     await this.setStatus(
       this.area,
       missing ? NodeStatus.WARNING : NodeStatus.IDLE

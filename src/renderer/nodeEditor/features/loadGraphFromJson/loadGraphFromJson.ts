@@ -1,19 +1,23 @@
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
-import type { AreaExtra, Schemes } from "renderer/nodeEditor/types/Schemes";
+import type {
+  AreaExtra,
+  NodeTypes,
+  Schemes,
+} from "renderer/nodeEditor/types/Schemes";
 import { ClassicPreset, type NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
 import type { GraphJsonData, InputPortJson } from "shared/JsonType";
 import { nodeFactories } from "../../nodes/nodeFactories";
-import type { SafeDataflowEngine } from "../safe-dataflow/SafeDataflowEngine";
+import type { DataflowEngine } from "../safe-dataflow/dataflowEngin";
 
 // JSON からノードを生成してエディタに登録
 export async function loadGraphFromJson(
   graphJsonData: GraphJsonData,
   area: AreaPlugin<Schemes, AreaExtra>,
   editor: NodeEditor<Schemes>,
-  dataflow: SafeDataflowEngine<Schemes>,
+  dataflow: DataflowEngine<Schemes>,
   controlflow: ControlFlowEngine<Schemes>,
   history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
 ): Promise<void> {
@@ -26,21 +30,35 @@ export async function loadGraphFromJson(
     data,
     inputs,
   } of graphJsonData.nodes) {
-    // ノードごとのファクトリを取得
-    let factory = nodeFactories[type];
-    if (!factory) {
-      factory = nodeFactories.Unknown;
-      console.warn(`Unknown node type: ${type}. Using UnknownNode.`);
-    }
-
-    // ノードのインスタンスを生成
-    const node = factory({
+    const nodeDeps = {
       editor,
       area,
       dataflow,
       controlflow,
       history,
-    });
+    };
+    // ノードごとのファクトリを取得
+    const factory = nodeFactories[type];
+    let node: NodeTypes | null = null;
+
+    if (!factory) {
+      console.warn(`Unknown node type: ${type}. Using UnknownNode.`);
+      node = nodeFactories.Unknown({
+        ...nodeDeps,
+        message: `Unknown node type: ${type}`,
+      });
+    } else {
+      // ノードのインスタンスを生成
+      node = factory(nodeDeps);
+    }
+    // ノードの基本設定を設定
+    node.id = id;
+    await editor.addNode(node);
+    node.setSize(size.width, size.height);
+    if (size.width && size.height) {
+      await area.resize(id, size.width, size.height);
+    }
+    await area.translate(id, position);
 
     // ノードにdeserializeControlValueがあり、データがある場合はデータをセット
     if ("deserializeControlValue" in node && data) {
@@ -56,14 +74,6 @@ export async function loadGraphFromJson(
     if (isDynamicSchemaNode(node)) {
       await node.setupSchema();
     }
-
-    node.id = id;
-    await editor.addNode(node);
-    node.setSize(size.width, size.height);
-    if (size.width && size.height) {
-      await area.resize(id, size.width, size.height);
-    }
-    await area.translate(id, position);
   }
 
   // ノードの接続を作成

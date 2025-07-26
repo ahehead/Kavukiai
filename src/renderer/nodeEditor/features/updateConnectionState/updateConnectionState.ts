@@ -1,19 +1,18 @@
+import { getConnectionsByOutputPortKey } from "renderer/nodeEditor/nodes/util/removeNode";
+import {
+  type Connection,
+  ExecList,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
+import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { Schemes, AreaExtra, NodeInterface } from "../../types/Schemes";
+import type { AreaExtra, NodeInterface, Schemes } from "../../types/Schemes";
+import type { DataflowEngine } from "../safe-dataflow/dataflowEngin";
 import {
   canConnect,
   getConnectionSockets,
 } from "../socket_type_restriction/canCreateConnection";
-import type { DataflowEngine } from "rete-engine";
-import { resetCacheDataflow } from "renderer/nodeEditor/nodes/util/resetCacheDataflow";
-import {
-  ExecList,
-  type Connection,
-  type TypedSocket,
-} from "renderer/nodeEditor/types";
-import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
-import { getConnectionsByOutputPortKey } from "renderer/nodeEditor/nodes/util/removeNode";
 
 /**
  * ソケットの接続／切断イベントに応じて
@@ -39,7 +38,7 @@ export function registerConnectionPipeline(
         const { source, target } = getConnectionSockets(editor, ctx.data);
         if (!source || !target) return ctx;
 
-        resetCacheDataflow(dataflow, ctx.data.target);
+        dataflow.reset(ctx.data.target);
         await syncSocketState(area, ctx.data, isConnected, source, target);
         await updateDynamicSchemaNode(
           editor,

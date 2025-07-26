@@ -1,5 +1,6 @@
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine } from "rete-engine";
 import type { AreaExtra, Schemes } from "../Schemes";
 import type { TypedSocket } from "../TypedSocket";
 import { NodeStatus } from "./BaseNode";

@@ -1,4 +1,5 @@
 import { type TSchema, Type } from '@sinclair/typebox'
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type {
   AreaExtra,
   Schemes,
@@ -11,8 +12,6 @@ import type {
 } from 'renderer/nodeEditor/types/Node/DynamicSchemaNode'
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { DataflowEngine } from 'rete-engine'
-import { resetCacheDataflow } from '../../util/resetCacheDataflow'
 
 // リストノード: 6つの入力をリスト化し返す
 export class ListNode
@@ -55,7 +54,7 @@ export class ListNode
     isConnected,
     source,
   }: ConnectionParams): Promise<string[]> {
-    resetCacheDataflow(this.dataflow, this.id)
+    this.dataflow.reset(this.id)
     // console.log('ListNode onConnectionChangedSchema', isConnected, source, target);
     if (isConnected) {
       if (this.isConnectedFirst(this.inputs)) {

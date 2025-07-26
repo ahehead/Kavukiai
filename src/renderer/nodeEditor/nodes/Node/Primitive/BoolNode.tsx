@@ -1,10 +1,9 @@
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { DataflowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { SwitchControl } from '../../Controls/input/Switch'
-import { resetCacheDataflow } from '../../util/resetCacheDataflow'
 
 // Boolean入力ノード
 export class BoolNode extends BaseNode<
@@ -23,7 +22,7 @@ export class BoolNode extends BaseNode<
       history,
       area,
       editable: true,
-      onChange: () => resetCacheDataflow(dataflow, this.id),
+      onChange: () => dataflow.reset(this.id),
     }
     this.addOutputPort({
       key: 'out',

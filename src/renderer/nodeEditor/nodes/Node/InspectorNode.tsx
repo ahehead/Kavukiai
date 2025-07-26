@@ -1,4 +1,5 @@
 import { type TSchema, Type } from '@sinclair/typebox'
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import type {
   ConnectionParams,
@@ -6,7 +7,7 @@ import type {
 } from 'renderer/nodeEditor/types/Node/DynamicSchemaNode'
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
+import type { ControlFlowEngine } from 'rete-engine'
 import { MultiLineControl } from '../Controls/input/MultiLine'
 import { formatValue } from '../util/formatValue'
 

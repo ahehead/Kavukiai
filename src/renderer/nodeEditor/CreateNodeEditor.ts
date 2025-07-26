@@ -30,7 +30,7 @@ import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
 import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
 import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
 import { selectableNodes, selector } from "./features/nodeSelection/selectable";
-import { SafeDataflowEngine } from "./features/safe-dataflow/SafeDataflowEngine";
+import { DataflowEngine } from "./features/safe-dataflow/dataflowEngin";
 import { registerConnectionPipeline } from "./features/updateConnectionState/updateConnectionState";
 import { type AreaExtra, ExecList, type Schemes } from "./types";
 
@@ -38,7 +38,7 @@ export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
 
   // エンジンのインスタンス化
-  const dataflow = new SafeDataflowEngine<Schemes>(({ inputs, outputs }) => {
+  const dataflow = new DataflowEngine<Schemes>(({ inputs, outputs }) => {
     return {
       inputs: (): string[] =>
         Object.keys(inputs).filter(

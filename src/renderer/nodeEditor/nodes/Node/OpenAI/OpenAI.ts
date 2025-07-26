@@ -1,5 +1,6 @@
 import type OpenAI from "openai";
 import { electronApiService } from "renderer/features/services/appService";
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import type {
   AreaExtra,
   Schemes,
@@ -8,11 +9,10 @@ import type {
 import { MessagePortNode } from "renderer/nodeEditor/types/Node/MessagePortNode";
 import type { OpenAIClientResponse } from "renderer/nodeEditor/types/Schemas/Util";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine } from "rete-engine";
 import type { OpenAIRequestArgs, PortEventType } from "shared/ApiType";
 import type { ControlJson } from "shared/JsonType";
 import { ConsoleControl } from "../../Controls/Console";
-import { resetCacheDataflow } from "../../util/resetCacheDataflow";
 
 // Run ノード
 export class OpenAINode extends MessagePortNode<
@@ -66,7 +66,7 @@ export class OpenAINode extends MessagePortNode<
 
   setResponse(response: OpenAIClientResponse): void {
     this.response = response;
-    resetCacheDataflow(this.dataflow, this.id);
+    this.dataflow.reset(this.id);
   }
 
   protected async buildRequestArgs(): Promise<OpenAIRequestArgs | null> {

@@ -1,9 +1,9 @@
-import { test, expect } from "vitest";
-import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine } from "rete-engine";
-import type { Schemes } from "renderer/nodeEditor/types";
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import { JsonSchemaFormatNode } from "renderer/nodeEditor/nodes/Node/OpenAI/JsonSchemaFormatNode";
+import type { Schemes } from "renderer/nodeEditor/types";
+import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
+import { expect, test } from "vitest";
 
 const history = { add: vi.fn() } as unknown as HistoryPlugin<Schemes>;
 const area = {} as AreaPlugin<Schemes, any>;

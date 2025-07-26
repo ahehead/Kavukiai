@@ -1,10 +1,9 @@
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { DataflowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { InputValueControl } from '../../Controls/input/InputValue'
-import { resetCacheDataflow } from '../../util/resetCacheDataflow'
 
 // 数値入力ノード
 export class NumberNode extends BaseNode<
@@ -35,7 +34,7 @@ export class NumberNode extends BaseNode<
         history,
         area,
         onChange: () => {
-          resetCacheDataflow(dataflow, this.id)
+          dataflow.reset(this.id)
         },
       })
     )

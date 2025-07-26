@@ -1,15 +1,14 @@
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { ImageControl } from 'renderer/nodeEditor/nodes/Controls/Image'
 import { ImageFileInputControl } from 'renderer/nodeEditor/nodes/Controls/input/ImageFileInput'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
-import type { Image } from "renderer/nodeEditor/types/Schemas/Util"
+import type { Image } from 'renderer/nodeEditor/types/Schemas/Util'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { DataflowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
-import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 
 export class LoadImageNode extends BaseNode<
-  "LoadImage",
+  'LoadImage',
   object,
   { out: TypedSocket },
   { file: ImageFileInputControl; view: ImageControl }
@@ -29,7 +28,7 @@ export class LoadImageNode extends BaseNode<
         area,
         onChange: img => {
           this.controls.view.setValue(img)
-          resetCacheDataflow(dataflow, this.id)
+          dataflow.reset(this.id)
         },
       })
     )

@@ -4,14 +4,18 @@ vi.mock("renderer/features/services/appService", () => ({
   electronApiService: { sendChatGptMessage: vi.fn() },
 }));
 
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import { OpenAINode } from "renderer/nodeEditor/nodes/Node/OpenAI/OpenAI";
 import type { Schemes } from "renderer/nodeEditor/types";
 import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine } from "rete-engine";
 
 const area = { update: vi.fn() } as unknown as AreaPlugin<Schemes, any>;
-const dataflow = { fetchInputs: vi.fn() } as unknown as DataflowEngine<Schemes>;
+const dataflow = {
+  fetchInputs: vi.fn(),
+  reset: vi.fn(),
+} as unknown as DataflowEngine<Schemes>;
 const controlflow = {} as ControlFlowEngine<Schemes>;
 
 function createNode() {

@@ -1,15 +1,15 @@
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { MultiLineControl } from 'renderer/nodeEditor/nodes/Controls/input/MultiLine'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
+import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
-import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 
 // フォーム入力用文字列ノード
 export class StringFormNode extends BaseNode<
   'StringForm',
-  { exec: TypedSocket; },
+  { exec: TypedSocket },
   { out: TypedSocket },
   { textArea: MultiLineControl }
 > {
@@ -27,7 +27,9 @@ export class StringFormNode extends BaseNode<
       key: 'exec',
       typeName: 'exec',
       label: 'clear',
-      onClick: async () => { this.controlFlow.execute(this.id, 'exec') }
+      onClick: async () => {
+        this.controlFlow.execute(this.id, 'exec')
+      },
     })
 
     // 出力文字列
@@ -44,7 +46,7 @@ export class StringFormNode extends BaseNode<
         history,
         area,
         onChange: (_v: string) => {
-          resetCacheDataflow(dataflow, this.id)
+          dataflow.reset(this.id)
         },
       })
     )
@@ -56,7 +58,7 @@ export class StringFormNode extends BaseNode<
 
   async execute(): Promise<void> {
     this.controls.textArea.setValue('')
-    resetCacheDataflow(this.dataflow, this.id)
+    this.dataflow.reset(this.id)
   }
   serializeControlValue(): { data: { value: string } } {
     return {

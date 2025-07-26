@@ -1,16 +1,15 @@
-import type { NodeEditor, ClassicPreset } from "rete";
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
+import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
+import type { TypedSocket } from "renderer/nodeEditor/types/TypedSocket";
+import type { ClassicPreset, NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { DataflowEngine } from "rete-engine";
+import type { Item } from "rete-context-menu-plugin/_types/types";
+import { removeLinkedSockets } from "../../../../nodes/util/removeNode";
 import type {
-  Schemes,
   AreaExtra,
   NodeInterface,
+  Schemes,
 } from "../../../../types/Schemes";
-import type { TypedSocket } from "renderer/nodeEditor/types/TypedSocket";
-import { removeLinkedSockets } from "../../../../nodes/util/removeNode";
-import { resetCacheDataflow } from "renderer/nodeEditor/nodes/util/resetCacheDataflow";
-import type { Item } from "rete-context-menu-plugin/_types/types";
-import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 
 export function createToggleInputControlMenuItem(
   context: NodeInterface,
@@ -34,7 +33,7 @@ export function createToggleInputControlMenuItem(
         // 接続されているコネクションを削除
         await removeLinkedSockets(editor, context.id, key);
         // dataflowをリセット
-        resetCacheDataflow(dataflow, context.id);
+        dataflow.reset(context.id);
 
         // DynamicSchemaNodeはoutputのSchemaを更新
         if (isDynamicSchemaNode(context)) {

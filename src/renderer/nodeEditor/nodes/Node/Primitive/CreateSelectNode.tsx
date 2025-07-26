@@ -1,9 +1,9 @@
 import { Type } from '@sinclair/typebox'
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
-import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
+import type { ControlFlowEngine } from 'rete-engine'
 import { SelectControl } from '../../Controls/input/Select'
-import { resetCacheDataflow } from '../../util/resetCacheDataflow'
 
 export class CreateSelectNode extends SerializableInputsNode<
   'CreateSelect',
@@ -67,7 +67,7 @@ export class CreateSelectNode extends SerializableInputsNode<
       options[0] ?? '',
       options.map(v => ({ label: v, value: v }))
     )
-    resetCacheDataflow(this.dataflow, this.id)
+    this.dataflow.reset(this.id)
     forward('exec')
   }
 

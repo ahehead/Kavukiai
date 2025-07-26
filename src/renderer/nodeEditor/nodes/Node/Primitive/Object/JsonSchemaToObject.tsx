@@ -1,4 +1,5 @@
 import { type TSchema, Type } from '@sinclair/typebox'
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { restoreKind } from 'renderer/nodeEditor/nodes/util/restoreKind'
 import type {
   AreaExtra,
@@ -11,17 +12,16 @@ import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/Serializa
 import type { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema'
 import type { NodeEditor } from 'rete'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { ControlFlowEngine, DataflowEngine } from 'rete-engine'
+import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { InputValueControl } from '../../../Controls/input/InputValue'
 import { SwitchControl } from '../../../Controls/input/Switch'
 import { getInputValue } from '../../../util/getInput'
 import { removeLinkedSockets } from '../../../util/removeNode'
-import { resetCacheDataflow } from '../../../util/resetCacheDataflow'
 
 export class JsonSchemaToObjectNode
   extends SerializableInputsNode<
-    "JsonSchemaToObject",
+    'JsonSchemaToObject',
     { exec: TypedSocket; schema: TypedSocket } & Record<string, TypedSocket>,
     { out: TypedSocket },
     object
@@ -82,7 +82,7 @@ export class JsonSchemaToObjectNode
     const { schema } = (await this.dataflow.fetchInputs(this.id)) as {
       schema?: TSchema[]
     }
-    resetCacheDataflow(this.dataflow, this.id)
+    this.dataflow.reset(this.id)
     await this.removeDynamicPorts()
     if (!schema || schema.length === 0 || !schema?.[0]) {
       this.setSchema(null)
@@ -142,7 +142,7 @@ export class JsonSchemaToObjectNode
       history: this.history,
       area: this.area,
       editable: true,
-      onChange: () => resetCacheDataflow(this.dataflow, this.id),
+      onChange: () => this.dataflow.reset(this.id),
     }
     if (typeName === 'boolean') {
       return new SwitchControl({ value: false, ...opts })
