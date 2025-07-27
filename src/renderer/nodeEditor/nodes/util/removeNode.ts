@@ -15,7 +15,20 @@ export async function removeNodeWithConnections(
       await editor.removeConnection(item.id);
     }
   }
+  const node = editor.getNode(nodeId);
+  if (node && "destroy" in node) node.destroy();
   await editor.removeNode(nodeId);
+}
+
+//すべてのノードのdestroyメソッドを呼び出す
+export async function destroyAllNodes(
+  editor: NodeEditor<Schemes>
+): Promise<void> {
+  for (const node of editor.getNodes()) {
+    if ("destroy" in node) {
+      node.destroy();
+    }
+  }
 }
 
 /**
