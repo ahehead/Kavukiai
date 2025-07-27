@@ -1,4 +1,5 @@
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
+import { destroyAllNodes } from "renderer/nodeEditor/nodes/util/removeNode";
 import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import { AreaExtensions } from "rete-area-plugin";
@@ -82,6 +83,9 @@ export async function resetEditorState({
       console.warn("Connection info:", conn);
     }
   }
+  // ノードのdestroyメソッドを呼び出す
+  await destroyAllNodes(editor);
+  // エディタをクリアしてからノードを再読み込み
   await editor.clear();
   history.clear();
   dataflow.reset();
