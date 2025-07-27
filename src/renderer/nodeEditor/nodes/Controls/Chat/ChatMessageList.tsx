@@ -66,52 +66,6 @@ export class ChatMessageListControl extends BaseControl<
     this.notify()
   }
 
-  // delta event用
-  // 一時的にMessageを追加して、indexを返す
-  addTempMessage(msg: ChatMessageItem): number {
-    this.messages = [...this.messages, msg]
-    return this.messages.length - 1
-  }
-
-  // delta event用
-  // 一時messageのidを設定する
-  setTempMessageId(index: number, id: string): void {
-    const message = this.messages[index]
-    if (message) {
-      message.id = id
-      this.messages = [...this.messages]
-      this.notify()
-    } else {
-      console.error(`Message at index ${index} not found.`)
-    }
-  }
-
-  // delta event用
-  // indexのメッセージの内容をdeltaで書き換えていく
-  modifyMessageTextDelta(index: number, deltaString: string): void {
-    this.messageTemp += deltaString
-    const message = this.messages[index]
-    if (message && message.role === 'assistant') {
-      message.content = this.messageTemp
-      this.messages = [...this.messages]
-    }
-    this.notify()
-  }
-
-  // delta event用
-  // indexのメッセージの内容をtextで確定する
-  modifyMessageTextDone(index: number, text: string): void {
-    this.messageTemp = ''
-    const message = this.messages[index]
-    if (message && message.role === 'assistant') {
-      message.content = text
-      this.messages = [...this.messages]
-      this.addHistory(this.messages, this.messages)
-      this.opts.onChange?.(this.messages)
-      this.notify()
-    }
-  }
-
   modifyChatMessage(index: number, msg: ChatMessageItem): void {
     const prev = [...this.messages]
     const next = [...this.messages]
