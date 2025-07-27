@@ -67,7 +67,7 @@ export function isNormalChatMessage(
   return Array.isArray(item.content);
 }
 
-// chat用type
+// chat用type EasyChatMessage | NormalChatMessage
 export const ChatMessageItem = Type.Union([EasyChatMessage, NormalChatMessage]);
 export type ChatMessageItem = Static<typeof ChatMessageItem>;
 
@@ -75,8 +75,9 @@ export type ChatMessageItem = Static<typeof ChatMessageItem>;
 export const ChatMessageItemList = Type.Array(ChatMessageItem);
 export type ChatMessageItemList = Static<typeof ChatMessageItemList>;
 
+// openaiのResponseInputに変換する関数
 export function chatMessagesToResponseInput(
-  messages: ChatMessageItem[]
+  messages: ChatMessageItemList
 ): ResponseInput {
   return messages.map(
     ({ model, created_at, tokensCount, tokensPerSecond, ...rest }) => rest
