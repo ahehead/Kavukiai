@@ -6,6 +6,9 @@ import type {
   BoolNode,
   ChatMessageListNode,
   ChatMessageListToOpenAIInput,
+  ChatMessageListToStringNode,
+  GetLastMessageNode,
+  ReverseUserAssistantRoleNode,
   ChatMessageNode,
   CodeFenceNode,
   CounterLoopNode,
@@ -68,6 +71,9 @@ export type NodeTypes =
   | ResponseCreateParamsBaseNode
   | ChatMessageListNode
   | ChatMessageListToOpenAIInput
+  | ChatMessageListToStringNode
+  | GetLastMessageNode
+  | ReverseUserAssistantRoleNode
   | ChatMessageNode
   | RoleNode
   | BoolNode

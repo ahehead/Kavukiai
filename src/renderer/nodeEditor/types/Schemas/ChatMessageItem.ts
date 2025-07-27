@@ -83,3 +83,14 @@ export function chatMessagesToResponseInput(
     ({ model, created_at, tokensCount, tokensPerSecond, ...rest }) => rest
   );
 }
+
+export function chatMessageToString(msg: ChatMessageItem): string {
+  if (isEasyChatMessage(msg)) return msg.content;
+  if (isNormalChatMessage(msg)) {
+    return msg.content
+      .filter(isInputTextContent)
+      .map((c) => c.text)
+      .join("\n");
+  }
+  return "";
+}
