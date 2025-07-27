@@ -27,5 +27,5 @@ export function getContextMenuPath(factoryKey: NodeTypeKey): string {
 
   const fullPath = findPath(contextMenuStructure, []);
   if (!fullPath || fullPath.length === 0) return "";
-  return fullPath.join("/") + "/";
+  return `${fullPath.join("/")}/`;
 }
