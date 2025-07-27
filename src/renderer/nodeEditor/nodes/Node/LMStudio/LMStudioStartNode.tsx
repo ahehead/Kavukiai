@@ -35,10 +35,9 @@ export class LMStudioStartNode extends SerializableInputsNode<
     _input: 'exec',
     forward: (output: 'exec') => void
   ): Promise<void> {
-    if (this.status === NodeStatus.RUNNING) {
-      return
-    }
-    this.setStatus(NodeStatus.RUNNING)
+    if (this.status === NodeStatus.RUNNING) return
+
+    await this.changeStatus(this.area, NodeStatus.RUNNING)
     const result = await electronApiService.startServer()
     if (result.status === 'success') {
       this.controls.console.addValue(result.data)

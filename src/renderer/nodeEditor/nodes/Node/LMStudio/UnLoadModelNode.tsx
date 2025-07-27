@@ -36,7 +36,7 @@ export class UnLoadModelNode extends SerializableInputsNode<
     forward: (output: 'exec') => void
   ): Promise<void> {
     if (this.status === NodeStatus.RUNNING) return
-    this.setStatus(NodeStatus.RUNNING)
+    await this.changeStatus(this.area, NodeStatus.RUNNING)
     const result = await electronApiService.unloadAllModels()
     if (result.status === 'success') {
       this.controls.console.addValue('unloaded')
