@@ -109,6 +109,14 @@ export abstract class MessagePortNode<
     });
   }
 
+  destroy() {
+    if (this.port) {
+      this.port.postMessage({ type: "abort" });
+      this.port.close();
+      this.port = null;
+    }
+  }
+
   /* ========= サブクラスが実装するフック ========= */
 
   /** window から渡って来る PortEvent をどう解釈するか */
