@@ -49,6 +49,9 @@ import {
 } from "./Node";
 import { ChatMessageListNode } from "./Node/Chat/ChatContextNode";
 import { ChatMessageListToOpenAIInput } from "./Node/Chat/ChatMessageListToOpenAIInput";
+import { ChatMessageListToStringNode } from "./Node/Chat/ChatMessageListToStringNode";
+import { GetLastMessageNode } from "./Node/Chat/GetLastMessageNode";
+import { ReverseUserAssistantRoleNode } from "./Node/Chat/ReverseUserAssistantRoleNode";
 import { IFNode } from "./Node/Primitive/Flow/IFNode";
 import { ListNode } from "./Node/Primitive/ListNode";
 
@@ -120,6 +123,9 @@ export const nodeFactories = {
 
   // chat
   ChatMessageListToOpenAIInput: () => new ChatMessageListToOpenAIInput(),
+  ChatMessageListToString: () => new ChatMessageListToStringNode(),
+  GetLastMessage: () => new GetLastMessageNode(),
+  ReverseUserAssistantRole: () => new ReverseUserAssistantRoleNode(),
   ChatMessageList: ({ history, area, dataflow, controlflow }) =>
     new ChatMessageListNode([], history, area, dataflow, controlflow),
   ChatMessage: () => new ChatMessageNode(),
@@ -216,6 +222,15 @@ const rawMenu: RawMenuItem[] = [
       {
         label: "ChatMessageListToOpenAIInput",
         factoryKey: "ChatMessageListToOpenAIInput",
+      },
+      {
+        label: "ChatMessageListToString",
+        factoryKey: "ChatMessageListToString",
+      },
+      { label: "GetLastMessage", factoryKey: "GetLastMessage" },
+      {
+        label: "ReverseUserAssistantRole",
+        factoryKey: "ReverseUserAssistantRole",
       },
       { label: "Role", factoryKey: "Role" },
     ],
