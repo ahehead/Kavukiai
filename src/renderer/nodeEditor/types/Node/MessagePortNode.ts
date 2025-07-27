@@ -43,10 +43,10 @@ export abstract class MessagePortNode<
       this.port.postMessage({ type: "abort" });
       this.port.close();
       this.port = null;
-      await this.setStatus(this.area, NodeStatus.IDLE);
+      await this.changeStatus(this.area, NodeStatus.IDLE);
       this.onLog("Stop");
     } else if (this.status === NodeStatus.RUNNING) {
-      await this.setStatus(this.area, NodeStatus.IDLE);
+      await this.changeStatus(this.area, NodeStatus.IDLE);
     } else {
       this.onLog("Already stopped");
     }
@@ -58,7 +58,7 @@ export abstract class MessagePortNode<
       this.onLog("Already running");
       return;
     }
-    await this.setStatus(this.area, NodeStatus.RUNNING);
+    await this.changeStatus(this.area, NodeStatus.RUNNING);
 
     const maybeArgs = await this.buildRequestArgs();
     if (!maybeArgs) {
@@ -86,7 +86,7 @@ export abstract class MessagePortNode<
       this.port = null;
     }
     this.onLog(`${kind === "error" ? "Error" : "Done"}: ${message}`);
-    await this.setStatus(
+    await this.changeStatus(
       this.area,
       kind === "error" ? NodeStatus.ERROR : NodeStatus.COMPLETED
     );

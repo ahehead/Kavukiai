@@ -57,7 +57,7 @@ export class TemplateReplaceNode extends SerializableInputsNode<
       return ''
     })
     this.dataflow.reset(this.id)
-    await this.setStatus(
+    await this.changeStatus(
       this.area,
       missing ? NodeStatus.WARNING : NodeStatus.IDLE
     )

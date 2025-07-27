@@ -44,16 +44,16 @@ export class ServerStatusNode extends SerializableInputsNode<
     forward: (output: 'exec') => void
   ): Promise<void> {
     if (this.status === NodeStatus.RUNNING) return
-    await this.setStatus(this.area, NodeStatus.RUNNING)
+    await this.changeStatus(this.area, NodeStatus.RUNNING)
     const result = await electronApiService.getServerStatus()
     if (result.status === 'success') {
       this.info = result.data
       this.dataflow.reset(this.id)
       this.controls.console.addValue(JSON.stringify(result.data))
-      await this.setStatus(this.area, NodeStatus.COMPLETED)
+      await this.changeStatus(this.area, NodeStatus.COMPLETED)
     } else {
       this.controls.console.addValue(`Error: ${result.message}`)
-      await this.setStatus(this.area, NodeStatus.ERROR)
+      await this.changeStatus(this.area, NodeStatus.ERROR)
     }
     await this.area.update('node', this.id)
     forward('exec')
