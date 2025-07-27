@@ -56,6 +56,10 @@ export abstract class BaseNode<
     this.height = undefined;
   }
 
+  setStatus(status: NodeStatus) {
+    this.status = status;
+  }
+
   async changeStatus(area: AreaPlugin<Schemes, AreaExtra>, status: NodeStatus) {
     this.status = status;
     await area.update("node", this.id);
