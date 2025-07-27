@@ -43,8 +43,8 @@ export abstract class MessagePortNode<
       this.port.postMessage({ type: "abort" });
       this.port.close();
       this.port = null;
-      await this.changeStatus(this.area, NodeStatus.IDLE);
       this.onLog("Stop");
+      await this.changeStatus(this.area, NodeStatus.IDLE);
     } else if (this.status === NodeStatus.RUNNING) {
       await this.changeStatus(this.area, NodeStatus.IDLE);
     } else {

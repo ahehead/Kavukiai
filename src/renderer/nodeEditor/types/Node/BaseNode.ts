@@ -60,6 +60,10 @@ export abstract class BaseNode<
     this._status = status;
   }
 
+  set status(status: NodeStatus) {
+    this._status = status;
+  }
+
   async changeStatus(area: AreaPlugin<Schemes, AreaExtra>, status: NodeStatus) {
     this._status = status;
     await area.update("node", this.id);

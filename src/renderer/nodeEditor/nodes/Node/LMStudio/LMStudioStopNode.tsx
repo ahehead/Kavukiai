@@ -38,14 +38,14 @@ export class LMStudioStopNode extends SerializableInputsNode<
     if (this.status === NodeStatus.RUNNING) {
       return
     }
-    await this.changeStatus(this.area, NodeStatus.RUNNING)
+    this.setStatus(NodeStatus.RUNNING)
     const result = await electronApiService.stopServer()
     if (result.status === 'success') {
       this.controls.console.addValue(result.data)
-      await this.changeStatus(this.area, NodeStatus.COMPLETED)
+      this.setStatus(NodeStatus.COMPLETED)
     } else {
       this.controls.console.addValue(`Error: ${result.message}`)
-      await this.changeStatus(this.area, NodeStatus.ERROR)
+      this.setStatus(NodeStatus.ERROR)
     }
     await this.area.update('node', this.id)
     forward('exec')

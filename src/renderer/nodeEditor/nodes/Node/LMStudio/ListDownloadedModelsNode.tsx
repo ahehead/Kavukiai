@@ -46,17 +46,17 @@ export class ListDownloadedModelsNode extends SerializableInputsNode<
     if (this.status === NodeStatus.RUNNING) {
       return // Prevent re-execution if already running
     }
-    await this.changeStatus(this.area, NodeStatus.RUNNING)
+    this.setStatus(NodeStatus.RUNNING)
     const result = await electronApiService.listDownloadedModels()
     if (result.status === 'success') {
       this.models = result.data
       this.dataflow.reset(this.id)
       this.controls.console.addValue(`Downloaded models: ${this.models}`)
-      await this.changeStatus(this.area, NodeStatus.COMPLETED)
+      this.setStatus(NodeStatus.COMPLETED)
     } else {
       this.models = []
       this.controls.console.addValue(`Error: ${result.message}`)
-      await this.changeStatus(this.area, NodeStatus.ERROR)
+      this.setStatus(NodeStatus.ERROR)
     }
     await this.area.update('node', this.id)
     forward('exec')

@@ -1,4 +1,5 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
+import { ConsoleControl } from 'renderer/nodeEditor/nodes/Controls/Console'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { NodeStatus } from 'renderer/nodeEditor/types'
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
@@ -9,7 +10,7 @@ export class TemplateReplaceNode extends SerializableInputsNode<
   'TemplateReplace',
   { exec: TypedSocket; template: TypedSocket; obj: TypedSocket },
   { exec: TypedSocket; out: TypedSocket },
-  object
+  { console: ConsoleControl }
 > {
   private result = ''
   constructor(
@@ -34,6 +35,7 @@ export class TemplateReplaceNode extends SerializableInputsNode<
       { key: 'exec', typeName: 'exec', label: 'Out' },
       { key: 'out', typeName: 'string', label: 'Result' },
     ])
+    this.addControl('console', new ConsoleControl({ isOpen: true }))
   }
 
   data(): { out: string } {
@@ -56,12 +58,14 @@ export class TemplateReplaceNode extends SerializableInputsNode<
       missing = true
       return ''
     })
+    this.controls.console.addValue(
+      `Deserialized result: ${this.result}`
+    )
     this.dataflow.reset(this.id)
     await this.changeStatus(
       this.area,
       missing ? NodeStatus.WARNING : NodeStatus.IDLE
     )
-    await this.area.update('node', this.id)
     forward('exec')
   }
 
@@ -75,5 +79,6 @@ export class TemplateReplaceNode extends SerializableInputsNode<
 
   deserializeControlValue(data: { result: string }): void {
     this.result = data.result
+    this.controls.console.addValue(`Deserialized result: ${this.result}`)
   }
 }

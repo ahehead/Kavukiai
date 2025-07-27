@@ -9,7 +9,7 @@ import { ConsoleControl } from '../../Controls/Console'
 export class UnLoadModelNode extends SerializableInputsNode<
   'UnLoadModel',
   { exec: TypedSocket },
-  object,
+  { exec: TypedSocket },
   { console: ConsoleControl }
 > {
   constructor(
@@ -23,6 +23,7 @@ export class UnLoadModelNode extends SerializableInputsNode<
       label: 'Unload',
       onClick: () => this.controlflow.execute(this.id, 'exec'),
     })
+    this.addOutputPort({ key: 'exec', typeName: 'exec', label: 'Out' })
     this.addControl('console', new ConsoleControl({ isOpen: true }))
   }
 
@@ -30,20 +31,22 @@ export class UnLoadModelNode extends SerializableInputsNode<
     return {}
   }
 
-  async execute(): Promise<void> {
-    if (this.status === NodeStatus.RUNNING) {
-      return
-    }
-    await this.changeStatus(this.area, NodeStatus.RUNNING)
+  async execute(
+    _input: 'exec',
+    forward: (output: 'exec') => void
+  ): Promise<void> {
+    if (this.status === NodeStatus.RUNNING) return
+    this.setStatus(NodeStatus.RUNNING)
     const result = await electronApiService.unloadAllModels()
     if (result.status === 'success') {
       this.controls.console.addValue('unloaded')
-      await this.changeStatus(this.area, NodeStatus.COMPLETED)
+      this.setStatus(NodeStatus.COMPLETED)
     } else {
       this.controls.console.addValue(`Error: ${result.message}`)
-      await this.changeStatus(this.area, NodeStatus.ERROR)
+      this.setStatus(NodeStatus.ERROR)
     }
     await this.area.update('node', this.id)
+    forward('exec')
   }
 
   serializeControlValue() {
