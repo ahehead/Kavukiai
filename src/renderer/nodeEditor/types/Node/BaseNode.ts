@@ -19,13 +19,13 @@ export abstract class BaseNode<
 > extends NodeIO<Inputs, Outputs, Controls> {
   public width?: number;
   public height?: number;
-  public status: NodeStatus;
+  private _status: NodeStatus;
 
   declare readonly label: L;
 
   protected constructor(label: L, initialStatus: NodeStatus = NodeStatus.IDLE) {
     super(label);
-    this.status = initialStatus;
+    this._status = initialStatus;
   }
 
   addControlByKey<K extends keyof Controls>({
@@ -57,15 +57,15 @@ export abstract class BaseNode<
   }
 
   setStatus(status: NodeStatus) {
-    this.status = status;
+    this._status = status;
   }
 
   async changeStatus(area: AreaPlugin<Schemes, AreaExtra>, status: NodeStatus) {
-    this.status = status;
+    this._status = status;
     await area.update("node", this.id);
   }
 
-  getStatus(): NodeStatus {
-    return this.status;
+  get status(): NodeStatus {
+    return this._status;
   }
 }
