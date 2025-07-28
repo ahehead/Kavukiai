@@ -117,9 +117,8 @@
     }
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx,css,json,md}": [
-      "biome lint --write",
-      "git add"
+    "*.{ts,tsx,js,jsx,css,json}": [
+      "biome lint --write"
     ]
   }
 }
