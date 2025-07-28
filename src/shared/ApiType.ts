@@ -1,4 +1,9 @@
+import type { ModelInfo } from "@lmstudio/sdk";
 import type OpenAI from "openai";
+import type {
+  ChatHistoryData,
+  LLMPredictionStats,
+} from "renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas";
 import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/openai/EventsSchemas";
 import type { Response } from "renderer/nodeEditor/types/Schemas/openai/ResponseSchemas";
 import type { GraphJsonData } from "./JsonType";
@@ -29,22 +34,9 @@ export enum IpcChannel {
   GetLMStudioStatus = "get-lmstudio-status",
   PortLMStudioLoadModel = "port-lmstudio-load-model",
   UnloadLMStudioModels = "unload-lmstudio-models",
+  LMStudioChatRequest = "lmstudio-chat-request",
+  PortLMStudioChat = "port-lmstudio-chat",
 }
-
-export type OpenAIParams = any;
-
-export type OpenAIResponse = {
-  choices: Array<{
-    message: {
-      content: string;
-    };
-  }>;
-  usage?: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-};
 
 // ファイルを閉じる確認dialogの返答
 export enum CloseFileDialogResponse {
@@ -76,6 +68,25 @@ export type LMStudioPortEvent =
   | { type: "done" }
   | { type: "error"; message: string }
   | { type: "abort" };
+
+export type LMStudioChatRequestArgs = {
+  id: string;
+  modelKey: string;
+  chatHistoryData: ChatHistoryData;
+};
+
+export type LMStudioChatPortEvent =
+  | { type: "error"; message: string }
+  | { type: "stream"; delta: string }
+  | {
+      type: "done";
+      result: {
+        content: string;
+        reasoningContent: string;
+        status: LLMPredictionStats;
+        modelInfo: ModelInfo;
+      };
+    };
 
 export type LMStudioStatusInfo = {
   server: "ON" | "OFF";
