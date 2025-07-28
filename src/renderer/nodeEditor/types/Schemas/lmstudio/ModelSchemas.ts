@@ -1,5 +1,5 @@
-import { Type } from "@sinclair/typebox";
 import type { Static } from "@sinclair/typebox";
+import { Type } from "@sinclair/typebox";
 
 // The format of the model.
 export const ModelCompatibilityType = Type.Union(
