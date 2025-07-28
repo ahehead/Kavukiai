@@ -1,5 +1,10 @@
-import { ipcRenderer } from 'electron'
-import { IpcChannel, type IpcResult, type LMStudioLoadRequestArgs } from 'shared/ApiType'
+import { ipcRenderer } from "electron";
+import {
+  IpcChannel,
+  type IpcResult,
+  type LMStudioChatRequestArgs,
+  type LMStudioLoadRequestArgs,
+} from "shared/ApiType";
 
 export const lmstudioApi = {
   listDownloadedModels: (): Promise<IpcResult<any[]>> =>
@@ -13,13 +18,25 @@ export const lmstudioApi = {
   unloadAllModels: (): Promise<IpcResult<string>> =>
     ipcRenderer.invoke(IpcChannel.UnloadLMStudioModels),
   loadModel: ({ id, modelKey }: LMStudioLoadRequestArgs) => {
-    const { port1, port2 } = new MessageChannel()
+    const { port1, port2 } = new MessageChannel();
     ipcRenderer.postMessage(
       IpcChannel.PortLMStudioLoadModel,
       { id, modelKey },
       [port2]
-    )
-    window.postMessage({ type: 'node-port', id }, '*', [port1])
+    );
+    window.postMessage({ type: "node-port", id }, "*", [port1]);
   },
-}
-
+  sendChatMessage: ({
+    id,
+    modelKey,
+    chatHistoryData,
+  }: LMStudioChatRequestArgs) => {
+    const { port1, port2 } = new MessageChannel();
+    ipcRenderer.postMessage(
+      IpcChannel.LMStudioChatRequest,
+      { id, modelKey, chatHistoryData },
+      [port2]
+    );
+    window.postMessage({ type: "node-port", id }, "*", [port1]);
+  },
+};
