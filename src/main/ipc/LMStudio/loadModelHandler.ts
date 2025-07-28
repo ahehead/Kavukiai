@@ -4,7 +4,7 @@ import {
   type LMStudioLoadRequestArgs,
   type LMStudioPortEvent,
 } from "shared/ApiType";
-import { getLoadedModel } from "./client";
+import { getLoadedModel } from "./modelClient";
 
 export function registerLMStudioLoadModelHandler(): void {
   ipcMain.on(IpcChannel.PortLMStudioLoadModel, handleLoadModel);

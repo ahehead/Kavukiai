@@ -1,5 +1,5 @@
-import type { StatusInfo } from "./service";
-import { getStatusViaCli } from "./service";
+import type { StatusInfo } from "./cliService";
+import { getStatusViaCli } from "./cliService";
 
 async function main() {
   try {

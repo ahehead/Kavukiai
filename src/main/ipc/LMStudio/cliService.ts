@@ -16,7 +16,7 @@ export async function listModelsViaCli(): Promise<ModelInfo[] | null> {
     });
     return JSON.parse(stdout) as ModelInfo[];
   } catch {
-    return null; // CLI not found or failed
+    return null;
   }
 }
 
@@ -27,7 +27,7 @@ export async function startServerViaCli(): Promise<string> {
   const { stdout, stderr } = await execFileAsync("lms", ["server", "start"], {
     encoding: "utf8",
   });
-  return (stderr || stdout).trim(); // stderr preferred
+  return (stderr || stdout).trim();
 }
 
 /**

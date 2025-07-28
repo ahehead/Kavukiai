@@ -28,6 +28,23 @@ async function isServerRunningViaCli(): Promise<boolean> {
 let client: LMStudioClient | null = null;
 
 /**
+ * Returns a singleton LMStudioClient instance after ensuring the server is running.
+ */
+export async function getLMStudioClient(): Promise<LMStudioClient> {
+  // Check server status before instantiating client
+  const running = await isServerRunningViaCli();
+  if (!running) {
+    throw new Error(
+      "LMStudio server is not running. Please start it via 'lms server start'."
+    );
+  }
+  if (!client) {
+    client = new LMStudioClient();
+  }
+  return client;
+}
+
+/**
  * Retrieves the list of currently loaded models.
  */
 export async function listLoadedModels(): Promise<LLM[]> {
@@ -43,23 +60,6 @@ export async function findLoadedModel(
 ): Promise<LLM | undefined> {
   const models = await listLoadedModels();
   return models.find((m) => m.modelKey === modelKey);
-}
-
-/**
- * Returns a singleton LMStudioClient instance after ensuring the server is running.
- */
-export async function getLMStudioClient(): Promise<LMStudioClient> {
-  // Check server status before instantiating client
-  const running = await isServerRunningViaCli();
-  if (!running) {
-    throw new Error(
-      "LMStudio server is not running. Please start it via 'lms server start'."
-    );
-  }
-  if (!client) {
-    client = new LMStudioClient();
-  }
-  return client;
 }
 
 /**
@@ -80,7 +80,7 @@ export async function getLoadedModel(
 /**
  * Unloads a specific model by its key.
  */
-export async function unload(modelKey: string): Promise<void> {
+export async function unloadModel(modelKey: string): Promise<void> {
   const model = await findLoadedModel(modelKey);
   if (!model) {
     throw new Error(`Model ${modelKey} is not loaded.`);

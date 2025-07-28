@@ -1,11 +1,11 @@
-import { registerSnapshotHandlers } from "./snapshot";
+import { registerApiKeysHandlers } from "./apikeys";
+import { registerCloseConfirmHandler } from "./close-confirm";
+import { registerLMStudioHandlers } from "./LMStudio/ipcHandlers";
+import { registerLMStudioLoadModelHandler } from "./LMStudio/loadModelHandler";
+import { registerLoadFileHandler } from "./load-file";
 import { registerOpenAIHandlers } from "./openai";
 import { registerSaveHandlers } from "./save";
-import { registerCloseConfirmHandler } from "./close-confirm";
-import { registerLoadFileHandler } from "./load-file";
-import { registerApiKeysHandlers } from "./apikeys";
-import { registerLMStudioHandlers } from "./LMStudio/lmstudio";
-import { registerLMStudioLoadModelHandler } from "./LMStudio/loadModel";
+import { registerSnapshotHandlers } from "./snapshot";
 // import { registerOtherServiceHandlers } from "./otherService";
 
 export function registerIpcHandlers(): void {

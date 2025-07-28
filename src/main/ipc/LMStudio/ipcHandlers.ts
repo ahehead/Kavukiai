@@ -5,18 +5,18 @@ import {
   type IpcResult,
   type LMStudioStatusInfo,
 } from "shared/ApiType";
-import { unloadAllModels } from "./client";
 import {
+  getStatusViaCli,
   listModelsViaCli,
   startServerViaCli,
   stopServerViaCli,
-  getStatusViaCli,
-} from "./service";
+} from "./cliService";
+import { unloadAllModels } from "./modelClient";
 
 export function registerLMStudioHandlers(): void {
   ipcMain.handle(
     IpcChannel.ListLMStudioModels,
-    async (): Promise<IpcResult<Array<ModelInfo>>> => {
+    async (): Promise<IpcResult<ModelInfo[]>> => {
       try {
         const models = await listModelsViaCli();
         if (models === null) {
@@ -65,7 +65,10 @@ export function registerLMStudioHandlers(): void {
       try {
         const info = await getStatusViaCli();
         if (info === null) {
-          return { status: "error", message: "CLI not found or failed to execute." };
+          return {
+            status: "error",
+            message: "CLI not found or failed to execute.",
+          };
         }
         return { status: "success", data: info };
       } catch (err: any) {
