@@ -168,37 +168,37 @@ const IncompleteStatus = Type.Union([
 
 const StringOrNull = Type.Union([Type.String(), Type.Null()]);
 
-export const ResponseOutputRefusal = Type.Object({
-  refusal: Type.String(),
-  type: Type.Literal("refusal"),
-});
-export type ResponseOutputRefusal = Static<typeof ResponseOutputRefusal>;
+// export const ResponseOutputRefusal = Type.Object({
+//   refusal: Type.String(),
+//   type: Type.Literal("refusal"),
+// });
+// export type ResponseOutputRefusal = Static<typeof ResponseOutputRefusal>;
 
-export const ResponseOutputText = Type.Object({
-  text: Type.String(),
-  type: Type.Literal("text"),
-});
-export type ResponseOutputText = Static<typeof ResponseOutputText>;
+// export const ResponseOutputText = Type.Object({
+//   text: Type.String(),
+//   type: Type.Literal("text"),
+// });
+// export type ResponseOutputText = Static<typeof ResponseOutputText>;
 
-export const ResponseOutputMessage = Type.Object({
-  id: Type.String(),
-  content: Type.Array(Type.Union([ResponseOutputText, ResponseOutputRefusal])),
-  role: Type.Literal("assistant"),
-  status: IncompleteStatus,
-  type: Type.Literal("message"),
-});
-export type ResponseOutputMessage = Static<typeof ResponseOutputMessage>;
+// export const ResponseOutputMessage = Type.Object({
+//   id: Type.String(),
+//   content: Type.Array(Type.Union([ResponseOutputText, ResponseOutputRefusal])),
+//   role: Type.Literal("assistant"),
+//   status: IncompleteStatus,
+//   type: Type.Literal("message"),
+// });
+// export type ResponseOutputMessage = Static<typeof ResponseOutputMessage>;
 
-export const ResponseFileSearchToolCall = Type.Object({
-  id: Type.String(),
-  query: Type.String(),
-  status: IncompleteStatus,
-  type: Type.Literal("file_search_call"),
-  results: Type.Optional(Type.Array(Type.Unknown())),
-});
-export type ResponseFileSearchToolCall = Static<
-  typeof ResponseFileSearchToolCall
->;
+// export const ResponseFileSearchToolCall = Type.Object({
+//   id: Type.String(),
+//   query: Type.String(),
+//   status: IncompleteStatus,
+//   type: Type.Literal("file_search_call"),
+//   results: Type.Optional(Type.Array(Type.Unknown())),
+// });
+// export type ResponseFileSearchToolCall = Static<
+//   typeof ResponseFileSearchToolCall
+// >;
 
 export const ResponseComputerToolCallOutputScreenshot = Type.Object({
   type: Type.Literal("image"),
@@ -209,15 +209,15 @@ export type ResponseComputerToolCallOutputScreenshot = Static<
   typeof ResponseComputerToolCallOutputScreenshot
 >;
 
-export const ResponseComputerToolCall = Type.Object({
-  id: Type.String(),
-  call_id: Type.String(),
-  output: ResponseComputerToolCallOutputScreenshot,
-  type: Type.Literal("computer_call_output"),
-  acknowledged_safety_checks: Type.Optional(Type.Array(Type.Unknown())),
-  status: Type.Optional(IncompleteStatus),
-});
-export type ResponseComputerToolCall = Static<typeof ResponseComputerToolCall>;
+// export const ResponseComputerToolCall = Type.Object({
+//   id: Type.String(),
+//   call_id: Type.String(),
+//   output: ResponseComputerToolCallOutputScreenshot,
+//   type: Type.Literal("computer_call_output"),
+//   acknowledged_safety_checks: Type.Optional(Type.Array(Type.Unknown())),
+//   status: Type.Optional(IncompleteStatus),
+// });
+// export type ResponseComputerToolCall = Static<typeof ResponseComputerToolCall>;
 
 export const ComputerCallOutput = Type.Object({
   call_id: Type.String(),
@@ -239,14 +239,14 @@ export type ResponseFunctionWebSearch = Static<
   typeof ResponseFunctionWebSearch
 >;
 
-export const ResponseFunctionToolCall = Type.Object({
-  id: Type.String(),
-  arguments: Type.String(),
-  name: Type.String(),
-  type: Type.Literal("function_tool_call"),
-  output: Type.Optional(StringOrNull),
-});
-export type ResponseFunctionToolCall = Static<typeof ResponseFunctionToolCall>;
+// export const ResponseFunctionToolCall = Type.Object({
+//   id: Type.String(),
+//   arguments: Type.String(),
+//   name: Type.String(),
+//   type: Type.Literal("function_tool_call"),
+//   output: Type.Optional(StringOrNull),
+// });
+// export type ResponseFunctionToolCall = Static<typeof ResponseFunctionToolCall>;
 
 export const FunctionCallOutput = Type.Object({
   call_id: Type.String(),
@@ -287,15 +287,15 @@ export const ImageGenerationCall = Type.Object({
 });
 export type ImageGenerationCall = Static<typeof ImageGenerationCall>;
 
-export const ResponseCodeInterpreterToolCall = Type.Object({
-  id: Type.String(),
-  code: Type.String(),
-  type: Type.Literal("code_interpreter_call"),
-  outputs: Type.Optional(Type.Array(Type.Unknown())),
-});
-export type ResponseCodeInterpreterToolCall = Static<
-  typeof ResponseCodeInterpreterToolCall
->;
+// export const ResponseCodeInterpreterToolCall = Type.Object({
+//   id: Type.String(),
+//   code: Type.String(),
+//   type: Type.Literal("code_interpreter_call"),
+//   outputs: Type.Optional(Type.Array(Type.Unknown())),
+// });
+// export type ResponseCodeInterpreterToolCall = Static<
+//   typeof ResponseCodeInterpreterToolCall
+// >;
 
 export const LocalShellCallAction = Type.Object({
   command: Type.Array(Type.String()),
@@ -417,16 +417,16 @@ export const ResponseInputItem = Type.Union(
   [
     EasyInputMessage,
     ResponseInputMessageItem,
-    ResponseOutputMessage,
-    ResponseFileSearchToolCall,
-    ResponseComputerToolCall,
+    // ResponseOutputMessage,
+    // ResponseFileSearchToolCall,
+    // ResponseComputerToolCall,
     ComputerCallOutput,
     ResponseFunctionWebSearch,
-    ResponseFunctionToolCall,
+    // ResponseFunctionToolCall,
     FunctionCallOutput,
     ResponseReasoningItem,
     ImageGenerationCall,
-    ResponseCodeInterpreterToolCall,
+    // ResponseCodeInterpreterToolCall,
     LocalShellCall,
     LocalShellCallOutput,
     McpListTools,
@@ -457,9 +457,9 @@ export type ResponseInput = Static<typeof ResponseInput>;
  */
 export const ResponseItem = Type.Union([
   ResponseInputMessageItem,
-  ResponseOutputMessage,
-  ResponseFileSearchToolCall,
-  ResponseComputerToolCall,
+  // ResponseOutputMessage,
+  // ResponseFileSearchToolCall,
+  // ResponseComputerToolCall,
   ResponseComputerToolCallOutputItem,
   ResponseFunctionWebSearch,
   ResponseFunctionToolCallItem,
