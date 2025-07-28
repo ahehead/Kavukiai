@@ -100,15 +100,26 @@ export class ChatMessageListNode
     this.addControl("chatContext", control);
   }
 
-  // dataflowで流す
-  async data(inputs?: { systemPrompt?: string[] }): Promise<{
+  // dataWithFetchが優先される
+  data() {
+    return {};
+  }
+
+  // systemPrompt入力からのみfetchする
+  async dataWithFetch(
+    fetchInputs: (
+      keys?: readonly string[]
+    ) => Promise<{ systemPrompt?: string[] }>
+  ): Promise<{
     out: ChatMessageItemList;
   }> {
-    const systemPrompt = inputs?.systemPrompt?.[0] || "";
-    const result = systemPrompt
-      ? this.controls.chatContext.getMessagesWithSystemPrompt(systemPrompt)
-      : this.controls.chatContext.getValue();
-    return { out: result };
+    const result = await fetchInputs(["systemPrompt"]);
+    const systemPrompt = result?.systemPrompt?.[0] || "";
+    return {
+      out: systemPrompt
+        ? this.controls.chatContext.getMessagesWithSystemPrompt(systemPrompt)
+        : this.controls.chatContext.getValue(),
+    };
   }
 
   async execute(
