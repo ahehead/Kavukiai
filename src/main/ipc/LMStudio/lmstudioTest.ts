@@ -1,6 +1,7 @@
 import { Chat } from "@lmstudio/sdk";
 import { findLoadedModel, getLMStudioClient } from "./modelClient";
-(async () => {
+
+export async function runLMStudioTest() {
   try {
     const client = await getLMStudioClient();
     const modelKey = "qwen2.5-7b-instruct";
@@ -31,4 +32,4 @@ import { findLoadedModel, getLMStudioClient } from "./modelClient";
   } finally {
     process.exit(0);
   }
-})();
+}
