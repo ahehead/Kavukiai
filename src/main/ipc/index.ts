@@ -1,5 +1,6 @@
 import { registerApiKeysHandlers } from "./apikeys";
 import { registerCloseConfirmHandler } from "./close-confirm";
+import { registerLMStudioChatHandler } from "./LMStudio/chatHandler";
 import { registerLMStudioHandlers } from "./LMStudio/ipcHandlers";
 import { registerLMStudioLoadModelHandler } from "./LMStudio/loadModelHandler";
 import { registerLoadFileHandler } from "./load-file";
@@ -17,5 +18,6 @@ export function registerIpcHandlers(): void {
   registerApiKeysHandlers();
   registerLMStudioHandlers();
   registerLMStudioLoadModelHandler();
+  registerLMStudioChatHandler();
   // registerOtherServiceHandlers();
 }
