@@ -10,16 +10,16 @@ import {
 import {
   type ChatMessageItem,
   isEasyChatMessage,
-  isInputTextContent,
+  isOutputMessage,
+  isTextContent,
 } from 'renderer/nodeEditor/types/Schemas/ChatMessageItem'
 import { Drag } from 'rete-react-plugin'
 
 export interface DeltaFunctions {
-  start(initial?: Partial<ChatMessageItem>): void;
-  setId(id: string): void;
-  setInfo(info: Partial<ChatMessageItem>): void;
-  pushDelta(delta: string): void;
-  finish(finalText?: string): void;
+  start(initial?: Partial<ChatMessageItem>): void
+  setInfo(info: Partial<ChatMessageItem>): void
+  pushDelta(delta: string): void
+  finish(finalText?: string): void
 }
 
 export interface ChatMessageListControlParams
@@ -109,37 +109,31 @@ export class ChatMessageListControl extends BaseControl<
   }
 
   setupDeltaFunctions(): DeltaFunctions {
-    let index = -1;
-    let prev: ChatMessageItem[] = [];
+    let index = -1
+    let prev: ChatMessageItem[] = []
     let buffer = '' // このストリーム専用バッファ
-    let inFlight = false;
+    let inFlight = false
     const getMsg: () => ChatMessageItem | undefined = () => this.messages[index]
 
     return {
       start: (initial?: Partial<ChatMessageItem>) => {
         if (inFlight) {
-          console.warn('Delta stream already started');
-          return;
+          console.warn('Delta stream already started')
+          return
         }
         inFlight = true
         buffer = ''
-        const base: ChatMessageItem = {
-          ...initial,
+        const base = {
+          id: '',
+          status: 'in_progress',
           role: 'assistant',
           type: 'message',
-          content: '',
-        }
+          content: [{ type: 'output_text', annotations: [], text: '' }],
+          ...initial,
+        } as ChatMessageItem
         prev = [...this.messages] // 追加（history は finish まで遅延）
         index = this.messages.length
         this.messages = [...this.messages, base]
-        this.notify()
-      },
-      /** id が後から分かったとき */
-      setId: (id: string) => {
-        const msg = getMsg()
-        if (!msg) return
-        msg.id = id
-        this.messages = [...this.messages]
         this.notify()
       },
       /** 他の情報がわかったとき */
@@ -152,21 +146,23 @@ export class ChatMessageListControl extends BaseControl<
       },
       /** delta を追加 */
       pushDelta: (delta: string) => {
-        if (!inFlight) return;
+        if (!inFlight) return
         const msg = getMsg()
         if (!msg || msg.role !== 'assistant') return
         buffer += delta
-        msg.content = buffer
+        msg.content = [{ type: 'output_text', annotations: [], text: buffer }]
         this.messages = [...this.messages]
         this.notify()
       },
       /** 終了（history + onChange 発火,エラー時もそのまま残したいのでこれを呼ぶ */
       finish: (text?: string) => {
-        if (!inFlight) return;
-        inFlight = false;
+        if (!inFlight) return
+        inFlight = false
         const msg = getMsg()
         if (!msg) return
-        msg.content = text ?? buffer
+        msg.content = [
+          { type: 'output_text', annotations: [], text: text ?? buffer },
+        ]
         const next = [...this.messages]
         this.messages = next
         this.addHistory(prev, next)
@@ -210,10 +206,10 @@ export function ChatMesaageListControlView(props: {
     if (Array.isArray(msg.content) && msg.content.length > 0) {
       // Join all text content in the message
       text = msg.content
-        .filter(isInputTextContent)
+        .filter(isTextContent)
         .map(c => c.text)
         .join('\n')
-    } else if (msg.role === 'assistant' && typeof msg.content === 'string') {
+    } else if (typeof msg.content === 'string') {
       text = msg.content
     }
     setEditText(text)
@@ -229,7 +225,12 @@ export function ChatMesaageListControlView(props: {
       ...msg,
       content: isEasyChatMessage(msg)
         ? editText
-        : [{ type: 'input_text', text: editText }],
+        : isOutputMessage(msg)
+          ? [
+            { type: 'output_text', text: editText },
+            ...msg.content.filter(c => c.type !== 'output_text'),
+          ]
+          : [{ type: 'input_text', text: editText }],
     } as ChatMessageItem
 
     control.modifyChatMessage(editIndex, updated)
@@ -299,7 +300,7 @@ export function ChatMesaageListControlView(props: {
                           key={`${contentItem.type}-${idx}`}
                           className="mb-1"
                         >
-                          {isInputTextContent(contentItem) && (
+                          {isTextContent(contentItem) && (
                             <Markdown remarkPlugins={[remarkGfm]}>
                               {contentItem.text}
                             </Markdown>
