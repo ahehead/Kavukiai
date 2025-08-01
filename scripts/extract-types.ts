@@ -1,11 +1,11 @@
-import {
-  Project,
-  Node,
-  SyntaxKind,
-  type Symbol as MorphSymbol,
-} from "ts-morph";
-import path from "node:path";
 import fs from "node:fs";
+import path from "node:path";
+import {
+  type Symbol as MorphSymbol,
+  Node,
+  Project,
+  SyntaxKind,
+} from "ts-morph";
 import ts from "typescript";
 
 const args = process.argv.slice(2);
