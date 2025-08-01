@@ -1,4 +1,5 @@
 import type { TSchema } from "@sinclair/typebox";
+import { ChatCommandEvent, ChatCommandEventOrNull } from "./ChatCommandEvent";
 import { ChatMessageItem, ChatMessageItemList } from "./ChatMessageItem";
 import * as DefaultSchema from "./DefaultSchema";
 import * as ModelInfoSchemas from "./lmstudio/ModelSchemas";
@@ -31,6 +32,8 @@ const registry = {
 
   ...ModelInfoSchemas,
   ...StatusSchemas,
+  ChatCommandEvent,
+  ChatCommandEventOrNull,
 } satisfies Record<string, TSchema>;
 
 export type SchemaKey = keyof typeof registry;
