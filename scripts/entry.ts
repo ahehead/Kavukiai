@@ -1,1 +1,3 @@
-import { ResponseInputItem } from "openai/resources/responses/responses.js";
+import type { ResponseInputItem } from "openai/resources/responses/responses.js";
+
+export type { ResponseInputItem };
