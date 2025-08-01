@@ -6,12 +6,11 @@ import type {
 } from "renderer/nodeEditor/types";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
+import type { ChatCommandEventOrNull } from "renderer/nodeEditor/types/Schemas/ChatCommandEvent";
 import type {
   ChatMessageItem,
   ChatMessageItemList,
 } from "renderer/nodeEditor/types/Schemas/ChatMessageItem";
-import type { EasyInputMessage } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
-import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schemas/Util";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
@@ -29,9 +28,9 @@ export class ChatMessageListNode
       exec: TypedSocket;
       newMessage: TypedSocket;
       exec2: TypedSocket;
-      responseData: TypedSocket;
+      event: TypedSocket;
     },
-    { exec: TypedSocket; out: TypedSocket },
+    { exec: TypedSocket; out: TypedSocket; exec2: TypedSocket },
     { chatContext: ChatMessageListControl }
   >
   implements SerializableDataNode
@@ -47,32 +46,21 @@ export class ChatMessageListNode
   ) {
     super("ChatMessageList");
     this.addInputPort([
-      {
-        key: "systemPrompt",
-        typeName: "string",
-        label: "System Prompt",
-      },
+      { key: "systemPrompt", typeName: "string", label: "System Prompt" },
       {
         key: "exec",
         typeName: "exec",
         label: "push",
         onClick: () => this.controlflow.execute(this.id, "exec"),
       },
-      {
-        key: "newMessage",
-        typeName: "ChatMessageItem",
-        label: "New Message",
-      },
+      { key: "newMessage", typeName: "ChatMessageItem", label: "New Message" },
       {
         key: "exec2",
         typeName: "exec",
         label: "response",
+        onClick: () => this.controlflow.execute(this.id, "exec2"),
       },
-      {
-        key: "responseData",
-        typeName: "OpenAIClientResponseOrNull",
-        label: "Response",
-      },
+      { key: "event", typeName: "ChatCommandEventOrNull", label: "Event" },
     ]);
     this.addOutputPort([
       {
@@ -80,10 +68,14 @@ export class ChatMessageListNode
         typeName: "exec",
         label: "pushed",
       },
-
       {
         key: "out",
         typeName: "ChatMessageItemList",
+      },
+      {
+        key: "exec2",
+        typeName: "exec",
+        label: "responsed",
       },
     ]);
     const control = new ChatMessageListControl({
@@ -124,12 +116,12 @@ export class ChatMessageListNode
 
   async execute(
     input: "exec" | "exec2",
-    forward: (output: "exec") => void
+    forward: (output: "exec" | "exec2") => void
   ): Promise<void> {
     if (input === "exec") {
       await this.addMessageToContext(forward);
     } else if (input === "exec2") {
-      await this.executeChatResponseHandling();
+      await this.handleCommandEvent(forward);
     }
   }
 
@@ -148,57 +140,40 @@ export class ChatMessageListNode
     forward("exec");
   }
 
-  // openai clientのレスポンスを処理する
-  private async executeChatResponseHandling(): Promise<void> {
-    const response =
-      await this.dataflow.fetchInputSingle<OpenAIClientResponseOrNull>(
-        this.id,
-        "responseData"
-      );
-    if (response === null) return;
-    // レスポンスがイベント形式の場合
-    if ("type" in response) {
-      switch (response.type) {
-        case "response.created":
-          this.deltaFunc.start({
-            model: response.response.model,
-            created_at: response.response.created_at,
-          });
-          break;
-        case "response.output_item.added":
-          if (response.item.type !== "message") return;
-          this.deltaFunc.setId(response.item.id);
-          break;
-        case "response.output_text.delta":
-          this.deltaFunc.pushDelta(response.delta);
-          break;
-        case "response.output_text.done":
-          this.deltaFunc.finish(response.text);
-          break;
-        default:
-          break;
-      }
-    } else {
-      // レスポンスが直接返ってきた場合
-
-      // outputは複数ある場合がある
-      for (const item of response.output) {
-        if (item.type === "message") {
-          for (const content of item.content) {
-            if (content.type === "output_text") {
-              this.controls.chatContext.addMessage({
-                id: item.id,
-                content: content.text,
-                role: item.role,
-                type: "message",
-                model: response.model,
-                created_at: response.created_at,
-                tokensCount: response.usage?.output_tokens,
-              } as EasyInputMessage as ChatMessageItem);
-            }
-          }
+  // ChatCommandEvent を処理
+  private async handleCommandEvent(
+    forward: (output: "exec2") => void
+  ): Promise<void> {
+    const event = await this.dataflow.fetchInputSingle<ChatCommandEventOrNull>(
+      this.id,
+      "event"
+    );
+    if (!event) {
+      return;
+    }
+    switch (event.type) {
+      case "start":
+        this.deltaFunc.start(event.message);
+        break;
+      case "setInfo":
+        this.deltaFunc.setInfo(event.message);
+        break;
+      case "delta":
+        this.deltaFunc.pushDelta(event.delta);
+        break;
+      case "done":
+        this.deltaFunc.finish(event.text);
+        forward("exec2");
+        break;
+      case "error":
+        this.deltaFunc.finish();
+        break;
+      case "response":
+        for (const msg of event.messages) {
+          this.controls.chatContext.addMessage(msg);
         }
-      }
+        forward("exec2");
+        break;
     }
   }
 
