@@ -1,4 +1,9 @@
-import { Project, Node, SyntaxKind, type Symbol as MorphSymbol } from "ts-morph";
+import {
+  Project,
+  Node,
+  SyntaxKind,
+  type Symbol as MorphSymbol,
+} from "ts-morph";
 import path from "node:path";
 import fs from "node:fs";
 import ts from "typescript";
@@ -11,7 +16,7 @@ const [typeName, entryFile, outFile] = args;
 
 if (!typeName || !entryFile || !outFile) {
   console.error(
-    "Usage: tsx scripts/extract-types.ts <TypeName> <EntryFile> <OutFile> [--no-comments]",
+    "Usage: tsx scripts/extract-types.ts <TypeName> <EntryFile> <OutFile> [--no-comments]"
   );
   process.exit(1);
 }
@@ -58,15 +63,13 @@ function addSymbol(sym: MorphSymbol) {
   if (visited.has(key)) return;
   visited.add(key);
 
-  const decls = sym
-    .getDeclarations()
-    .filter((d) => {
-      const file = d.getSourceFile().getFilePath();
-      return (
-        !file.includes("node_modules/typescript/lib") &&
-        !file.includes("node_modules/@types/")
-      );
-    });
+  const decls = sym.getDeclarations().filter((d) => {
+    const file = d.getSourceFile().getFilePath();
+    return (
+      !file.includes("node_modules/typescript/lib") &&
+      !file.includes("node_modules/@types/")
+    );
+  });
   if (decls.length === 0) return;
 
   for (const decl of decls) {
@@ -74,7 +77,7 @@ function addSymbol(sym: MorphSymbol) {
       ? printer.printNode(
           ts.EmitHint.Unspecified,
           decl.compilerNode,
-          decl.getSourceFile().compilerNode,
+          decl.getSourceFile().compilerNode
         )
       : decl.getText();
     output.push(text);
