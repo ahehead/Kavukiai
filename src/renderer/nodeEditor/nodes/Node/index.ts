@@ -2,9 +2,10 @@
 
 export { ChatMessageListNode } from "./Chat/ChatContextNode";
 export { ChatMessageListToOpenAIInput } from "./Chat/ChatMessageListToOpenAIInput";
+export { ChatMessageListToStringNode } from "./Chat/ChatMessageListToStringNode";
 export { ChatMessageNode } from "./Chat/ChatMessageNode";
 export { GetLastMessageNode } from "./Chat/GetLastMessageNode";
-export { ChatMessageListToStringNode } from "./Chat/ChatMessageListToStringNode";
+export { OpenAIToChatEventNode } from "./Chat/OpenAIToChatEventNode";
 export { ReverseUserAssistantRoleNode } from "./Chat/ReverseUserAssistantRoleNode";
 export { RoleNode } from "./Chat/RoleNode";
 export { TestNode } from "./Debug/TestNode";
