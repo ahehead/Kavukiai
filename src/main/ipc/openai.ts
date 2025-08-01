@@ -1,13 +1,13 @@
-import { ipcMain, type IpcMainEvent } from "electron";
+import { type IpcMainEvent, ipcMain } from "electron";
+import { ApiKeyConf, getApiKeyConf } from "main/features/file/conf";
 import OpenAI from "openai";
+import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/openai/EventsSchemas";
+import type { Response } from "renderer/nodeEditor/types/Schemas/openai/ResponseSchemas";
 import {
   IpcChannel,
   type OpenAIRequestArgs,
   type PortEventType,
 } from "shared/ApiType";
-import { ApiKeyConf, getApiKeyConf } from "main/features/file/conf";
-import type { Response } from "renderer/nodeEditor/types/Schemas/openai/ResponseSchemas";
-import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/openai/EventsSchemas";
 
 // openaiリクエストを処理するハンドラを登録
 export function registerOpenAIHandlers(): void {
