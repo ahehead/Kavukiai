@@ -2,6 +2,11 @@ import { type Static, Type } from "@sinclair/typebox";
 import { Timestamp } from "./openai/BaseSchemas";
 import type { ResponseInput } from "./openai/InputSchemas";
 import { Role } from "./openai/InputSchemas";
+import {
+  ResponseOutputMessage,
+  type ResponseOutputRefusal,
+  type ResponseOutputText,
+} from "./openai/ResponseSchemas";
 
 // Chatメッセージの追加情報
 // モデル名、作成日時、トークン数、トークン/秒
@@ -23,10 +28,11 @@ export const ChatMessageItemContent = Type.Union([
 ]);
 
 export type ChatMessageItemContent = Static<typeof ChatMessageItemContent>;
-export function isInputTextContent(
-  content: ChatMessageItemContent
-): content is { type: "input_text"; text: string } {
-  return content.type === "input_text";
+
+export function isTextContent(
+  content: ChatMessageItemContent | ResponseOutputText | ResponseOutputRefusal
+) {
+  return content.type === "input_text" || content.type === "output_text";
 }
 
 // 簡易チャットメッセージ
@@ -42,10 +48,27 @@ export const EasyChatMessage = Type.Intersect([
 ]);
 
 export type EasyChatMessage = Static<typeof EasyChatMessage>;
+
 export function isEasyChatMessage(
   item: ChatMessageItem
 ): item is EasyChatMessage {
   return typeof item.content === "string";
+}
+
+// openaiのoutputのメッセージ、roleはassistantで特有のoutput
+export const OutputMessage = Type.Intersect([
+  ResponseOutputMessage,
+  ChatMessageExtraData,
+]);
+
+export function isOutputMessage(
+  item: ChatMessageItem
+): item is Static<typeof OutputMessage> {
+  return (
+    item.role === "assistant" &&
+    Array.isArray(item.content) &&
+    item.content.some((c) => c.type === "output_text")
+  );
 }
 
 // 通常のチャットメッセージ
@@ -61,14 +84,19 @@ export const NormalChatMessage = Type.Intersect([
 ]);
 
 export type NormalChatMessage = Static<typeof NormalChatMessage>;
+
 export function isNormalChatMessage(
   item: ChatMessageItem
 ): item is NormalChatMessage {
   return Array.isArray(item.content);
 }
 
-// chat用type EasyChatMessage | NormalChatMessage
-export const ChatMessageItem = Type.Union([EasyChatMessage, NormalChatMessage]);
+// chat用type EasyChatMessage | NormalChatMessage | OutputMessage
+export const ChatMessageItem = Type.Union([
+  EasyChatMessage,
+  NormalChatMessage,
+  OutputMessage,
+]);
 export type ChatMessageItem = Static<typeof ChatMessageItem>;
 
 // チャットメッセージのリスト
@@ -81,14 +109,14 @@ export function chatMessagesToResponseInput(
 ): ResponseInput {
   return messages.map(
     ({ model, created_at, tokensCount, tokensPerSecond, ...rest }) => rest
-  );
+  ) as ResponseInput;
 }
 
 export function chatMessageToString(msg: ChatMessageItem): string {
   if (isEasyChatMessage(msg)) return msg.content;
   if (isNormalChatMessage(msg)) {
     return msg.content
-      .filter(isInputTextContent)
+      .filter(isTextContent)
       .map((c) => c.text)
       .join("\n");
   }
