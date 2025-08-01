@@ -27,8 +27,8 @@
     "make:release": "tsx ./src/lib/electron-app/release/modules/release.ts",
     "release": "electron-builder --publish always",
     "clean:dev": "rimraf ./node_modules/.dev",
-    "lint": "biome lint --no-errors-on-unmatched",
-    "lint:fix": "biome lint --write --no-errors-on-unmatched",
+    "lint": "biome lint --no-errors-on-unmatched --max-diagnostics 500",
+    "lint:fix": "biome lint --write --no-errors-on-unmatched --max-diagnostics 500",
     "prepare": "husky",
     "test": "vitest",
     "extract-types": "tsx scripts/extract-types.ts"
@@ -115,12 +115,8 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.1.2"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
+    "**/scripts/*.data.ts": [],
     "*.{ts,tsx,js,jsx,css,json}": [
       "biome lint --write"
     ]
