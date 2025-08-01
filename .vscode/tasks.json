@@ -6,11 +6,18 @@
       "type": "shell",
       "command": "pnpm",
       "args": [
+        "run",
         "extract-types",
         "ResponseInputItem",
         "scripts/entry.ts",
-        "ResponseInputItem.data.ts"
+        "scripts/ResponseInputItem.data.ts"
       ],
+      "options": {
+        "shell": {
+          "executable": "pwsh.exe",
+          "args": ["-NoProfile", "-Command"]
+        }
+      },
       "problemMatcher": []
     }
   ]
