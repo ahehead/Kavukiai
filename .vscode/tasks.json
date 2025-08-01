@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "extract ResponseInputItem types",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "extract-types",
+        "ResponseInputItem",
+        "scripts/entry.ts",
+        "ResponseInputItem.data.ts"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

@@ -207,3 +207,14 @@ https://github.com/retejs/react-plugin/tree/next/src/presets/classic/components
 
 データベース側、開発時では固まるまで直接jsonを編集する。
 "C:\Users\{{userName}}\AppData\Roaming\my-electron-app\config.json"などのjsonを直接クリアするなどして、開発する。
+
+## 開発用スクリプト
+
+OpenAI の型定義を再帰的に抽出する `extract-types` スクリプトを利用できます。
+
+```bash
+pnpm extract-types ResponseInputItem scripts/entry.ts ResponseInputItem.data.ts
+```
+
+上記コマンドは VSCode タスク `extract ResponseInputItem types` からも実行できます。
+`--no-comments` オプションを付けるとコメントを除外した型定義を出力します。配列や Promise などの基本型は自動的に除外されます。
