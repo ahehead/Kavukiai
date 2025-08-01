@@ -62,13 +62,19 @@ export class IFNode extends BaseNode<
     _: never,
     forward: (output: "exec" | "exec2") => void
   ): Promise<void> {
-    const { boolData } = (await this.dataflow.fetchInputs(this.id)) as {
-      boolData?: boolean[];
-    };
-    if (boolData?.[0]) {
-      forward("exec");
-      return;
+    let boolData = await this.dataflow.fetchInputSingle<boolean>(
+      this.id,
+      "boolData"
+    );
+    // inputにcontrolがあれば値を取得
+    if (
+      boolData === null &&
+      this.inputs.boolData?.control &&
+      this.inputs.boolData?.showControl
+    ) {
+      boolData = this.inputs.boolData.control.getValue();
     }
-    forward("exec2");
+    // 真なら"exec"、偽またはnullなら"exec2"
+    forward(boolData ? "exec" : "exec2");
   }
 }

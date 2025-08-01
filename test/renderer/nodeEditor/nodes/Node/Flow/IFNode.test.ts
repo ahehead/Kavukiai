@@ -8,20 +8,20 @@ import { expect, test, vi } from "vitest";
 const history = {} as HistoryPlugin<Schemes>;
 const area = {} as AreaPlugin<Schemes, any>;
 
-function createNode(fetchInputs: () => Promise<any>) {
-  const dataflow = { fetchInputs } as unknown as DataflowEngine<Schemes>;
+function createNode(fetchInputSingle: () => Promise<any>) {
+  const dataflow = { fetchInputSingle } as unknown as DataflowEngine<Schemes>;
   return new IFNode(history, area, dataflow);
 }
 
 test('IFNode.execute forwards to "exec" when condition is true', async () => {
-  const node = createNode(async () => ({ boolData: [true] }));
+  const node = createNode(async () => true);
   const forward = vi.fn();
   await node.execute(undefined as never, forward);
   expect(forward).toHaveBeenCalledWith("exec");
 });
 
 test('IFNode.execute forwards to "exec2" when condition is false', async () => {
-  const node = createNode(async () => ({ boolData: [false] }));
+  const node = createNode(async () => false);
   const forward = vi.fn();
   await node.execute(undefined as never, forward);
   expect(forward).toHaveBeenCalledWith("exec2");
