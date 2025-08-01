@@ -38,16 +38,12 @@ export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
 
   // エンジンのインスタンス化
-  const dataflow = new DataflowEngine<Schemes>(({ inputs, outputs }) => {
-    return {
-      inputs: (): string[] =>
-        Object.keys(inputs).filter(
-          (name) => name !== "exec" && name !== "exec2"
-        ),
-      outputs: (): string[] =>
-        Object.keys(outputs).filter((name) => name !== "exec"),
-    };
-  });
+  const dataflow = new DataflowEngine<Schemes>(({ inputs, outputs }) => ({
+    inputs: (): string[] =>
+      Object.keys(inputs).filter((name) => !ExecList.includes(name)),
+    outputs: (): string[] =>
+      Object.keys(outputs).filter((name) => !ExecList.includes(name)),
+  }));
   const controlflow = new ControlFlowEngine<Schemes>(() => {
     return {
       inputs: (): typeof ExecList => ExecList,
