@@ -7,12 +7,11 @@ import type {
   ChatMessageListNode,
   ChatMessageListToOpenAIInput,
   ChatMessageListToStringNode,
-  GetLastMessageNode,
-  ReverseUserAssistantRoleNode,
   ChatMessageNode,
   CodeFenceNode,
   CounterLoopNode,
   CreateSelectNode,
+  GetLastMessageNode,
   IFNode,
   ImageNode,
   InspectorNode,
@@ -35,8 +34,10 @@ import type {
   ObjectToStringNode,
   ObjectToYAMLStringNode,
   OpenAINode,
+  OpenAIToChatEventNode,
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
+  ReverseUserAssistantRoleNode,
   RoleNode,
   RunNode,
   ServerStatusNode,
@@ -102,7 +103,8 @@ export type NodeTypes =
   | LMStudioLoadModelNode
   | ServerStatusNode
   | UnLoadModelNode
-  | LLMPredictionConfigNode;
+  | LLMPredictionConfigNode
+  | OpenAIToChatEventNode;
 
 export type NodeTypeKey = NodeTypes["label"];
 
