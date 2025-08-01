@@ -51,6 +51,7 @@ import { ChatMessageListNode } from "./Node/Chat/ChatContextNode";
 import { ChatMessageListToOpenAIInput } from "./Node/Chat/ChatMessageListToOpenAIInput";
 import { ChatMessageListToStringNode } from "./Node/Chat/ChatMessageListToStringNode";
 import { GetLastMessageNode } from "./Node/Chat/GetLastMessageNode";
+import { OpenAIToChatEventNode } from "./Node/Chat/OpenAIToChatEventNode";
 import { ReverseUserAssistantRoleNode } from "./Node/Chat/ReverseUserAssistantRoleNode";
 import { IFNode } from "./Node/Primitive/Flow/IFNode";
 import { ListNode } from "./Node/Primitive/ListNode";
@@ -126,6 +127,7 @@ export const nodeFactories = {
   ChatMessageListToString: () => new ChatMessageListToStringNode(),
   GetLastMessage: () => new GetLastMessageNode(),
   ReverseUserAssistantRole: () => new ReverseUserAssistantRoleNode(),
+  OpenAIToChatEvent: () => new OpenAIToChatEventNode(),
   ChatMessageList: ({ history, area, dataflow, controlflow }) =>
     new ChatMessageListNode([], history, area, dataflow, controlflow),
   ChatMessage: () => new ChatMessageNode(),
@@ -233,6 +235,7 @@ const rawMenu: RawMenuItem[] = [
         factoryKey: "ReverseUserAssistantRole",
       },
       { label: "Role", factoryKey: "Role" },
+      { label: "OpenAIToChatEvent", factoryKey: "OpenAIToChatEvent" },
     ],
   },
   { label: "Inspector", factoryKey: "Inspector" },
