@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "extract ResponseInputItem types",
+      "label": "extract OpenAI types (entry.ts)",
       "type": "shell",
       "command": "pnpm",
       "args": [
@@ -11,6 +11,65 @@
         "ResponseInputItem",
         "scripts/entry.ts",
         "scripts/ResponseInputItem.data.ts"
+      ],
+      "options": {
+        "shell": {
+          "executable": "pwsh.exe",
+          "args": ["-NoProfile", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "extract OpenAI types (entry.ts, no comments)",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "extract-types",
+        "ResponseInputItem",
+        "scripts/entry.ts",
+        "scripts/ResponseInputItem.data.ts",
+        "--no-comments"
+      ],
+      "options": {
+        "shell": {
+          "executable": "pwsh.exe",
+          "args": ["-NoProfile", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "extract LMStudio types (entry2.ts)",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "extract-types",
+        "ChatLike",
+        "scripts/entry2.ts",
+        "scripts/ChatLike.data.ts"
+      ],
+      "options": {
+        "shell": {
+          "executable": "pwsh.exe",
+          "args": ["-NoProfile", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "extract LMStudio types (entry2.ts, no comments)",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "extract-types",
+        "ChatLike",
+        "scripts/entry2.ts",
+        "scripts/ChatLike.data.ts",
+        "--no-comments"
       ],
       "options": {
         "shell": {
