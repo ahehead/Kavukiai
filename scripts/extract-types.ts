@@ -1,11 +1,23 @@
-import { Project, Node, SyntaxKind, type Symbol as MorphSymbol } from "ts-morph";
+import {
+  Project,
+  Node,
+  SyntaxKind,
+  type Symbol as MorphSymbol,
+} from "ts-morph";
 import path from "node:path";
 import fs from "node:fs";
+import ts from "typescript";
 
-const [typeName, entryFile, outFile] = process.argv.slice(2);
+const args = process.argv.slice(2);
+const stripComments = args.includes("--no-comments");
+if (stripComments) args.splice(args.indexOf("--no-comments"), 1);
+
+const [typeName, entryFile, outFile] = args;
 
 if (!typeName || !entryFile || !outFile) {
-  console.error("Usage: tsx scripts/extract-types.ts <TypeName> <EntryFile> <OutFile>");
+  console.error(
+    "Usage: tsx scripts/extract-types.ts <TypeName> <EntryFile> <OutFile> [--no-comments]"
+  );
   process.exit(1);
 }
 
@@ -35,6 +47,7 @@ if (aliased) symbol = aliased;
 
 const visited = new Set<string>();
 const output: string[] = [];
+const printer = ts.createPrinter({ removeComments: stripComments });
 
 function isTypeDeclaration(node: Node) {
   return (
@@ -50,8 +63,24 @@ function addSymbol(sym: MorphSymbol) {
   if (visited.has(key)) return;
   visited.add(key);
 
-  for (const decl of sym.getDeclarations()) {
-    output.push(decl.getText());
+  const decls = sym.getDeclarations().filter((d) => {
+    const file = d.getSourceFile().getFilePath();
+    return (
+      !file.includes("node_modules/typescript/lib") &&
+      !file.includes("node_modules/@types/")
+    );
+  });
+  if (decls.length === 0) return;
+
+  for (const decl of decls) {
+    const text = stripComments
+      ? printer.printNode(
+          ts.EmitHint.Unspecified,
+          decl.compilerNode,
+          decl.getSourceFile().compilerNode
+        )
+      : decl.getText();
+    output.push(text);
     decl.forEachDescendant((n) => {
       if (Node.isIdentifier(n)) {
         const s = n.getSymbol();
