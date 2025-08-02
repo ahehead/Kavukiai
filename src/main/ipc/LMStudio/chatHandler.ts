@@ -15,7 +15,8 @@ export function registerLMStudioChatHandler(): void {
 }
 
 async function handleChat(evt: IpcMainEvent, data: unknown): Promise<void> {
-  const { id, modelKey, chatHistoryData } = data as LMStudioChatRequestArgs;
+  const { id, modelKey, chatHistoryData, config } =
+    data as LMStudioChatRequestArgs;
   const port = evt.ports[0];
   const controller = new AbortController();
   port.start();
@@ -31,14 +32,19 @@ async function handleChat(evt: IpcMainEvent, data: unknown): Promise<void> {
     let model = await findLoadedModel(modelKey);
     if (!model) {
       console.log(`Model ${modelKey} not loaded. Loading...`);
-      model = await client.llm.load(modelKey, { signal: controller.signal });
+      model = await client.llm.load(modelKey, {
+        signal: controller.signal,
+      });
       console.log(`Model loaded: ${model.modelKey}`);
     }
 
     const chat = Chat.from(chatHistoryData);
 
     // Stream response events
-    const prediction = model.respond(chat, { signal: controller.signal });
+    const prediction = model.respond(chat, {
+      ...config,
+      signal: controller.signal,
+    });
     for await (const { content } of prediction) {
       const event: LMStudioChatPortEvent = { type: "stream", delta: content };
       port.postMessage(event);

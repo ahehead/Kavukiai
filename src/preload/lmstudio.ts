@@ -30,11 +30,12 @@ export const lmstudioApi = {
     id,
     modelKey,
     chatHistoryData,
+    config,
   }: LMStudioChatRequestArgs) => {
     const { port1, port2 } = new MessageChannel();
     ipcRenderer.postMessage(
       IpcChannel.LMStudioChatRequest,
-      { id, modelKey, chatHistoryData },
+      { id, modelKey, chatHistoryData, config },
       [port2]
     );
     window.postMessage({ type: "node-port", id }, "*", [port1]);
