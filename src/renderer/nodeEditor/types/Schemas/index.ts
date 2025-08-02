@@ -12,6 +12,17 @@ import * as InputSchemas from "./openai/InputSchemas";
 import * as RequestSchemas from "./openai/RequestSchemas";
 import * as ResponseSchemas from "./openai/ResponseSchemas";
 import {
+  UChatCommandEvent,
+  UChatCommandEventOrNull,
+} from "./UChat/UChatCommand";
+import {
+  UChat,
+  UChatMessage,
+  UChatRole,
+  UFileRef,
+  UPart,
+} from "./UChat/UChatMessage";
+import {
   Image,
   OpenAIClientResponse,
   OpenAIClientResponseOrNull,
@@ -29,6 +40,13 @@ const registry = {
   ChatMessageItem,
   ChatMessageItemList,
   Image,
+  UChatRole,
+  UFileRef,
+  UPart,
+  UChatMessage,
+  UChat,
+  UChatCommandEvent,
+  UChatCommandEventOrNull,
 
   ...ModelInfoSchemas,
   ...StatusSchemas,
