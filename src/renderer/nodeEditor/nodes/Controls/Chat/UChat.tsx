@@ -206,7 +206,7 @@ export function UChatMessageListControlView(props: {
     <Drag.NoDrag>
       <div
         ref={scrollContainerRef}
-        className="flex-1 w-full h-full min-h-0 overflow-y-auto pb-2"
+        className="flex-1 w-full h-full min-h-0 overflow-y-auto pb-2 border-t border-gray-200"
       >
         {messages.length === 0 && (
           <div className="w-full flex items-center justify-center ">
@@ -216,7 +216,14 @@ export function UChatMessageListControlView(props: {
         {messages.map((msg, index) => (
           <div key={index} className="rounded group">
             <div className="group-hover:bg-node-header/30 py-1.5 px-3">
-              <strong className="block mb-1">{msg.role}</strong>
+              <strong className="block mb-1">
+                {msg.role}
+                {msg.model && (
+                  <span className="ml-2 text-xs text-gray-400 font-light">
+                    {msg.model}
+                  </span>
+                )}
+              </strong>
               {editIndex === index ? (
                 <div>
                   <textarea
@@ -266,6 +273,11 @@ export function UChatMessageListControlView(props: {
                 <div
                   className={`flex gap-1 text-xs ${index !== messages.length - 1 ? 'opacity-0 group-hover:opacity-100 transition-opacity duration-200' : ''}`}
                 >
+                  {msg.tokensPerSecond != null && (
+                    <span className="text-xs text-gray-500 mr-1">
+                      {msg.tokensPerSecond} tps
+                    </span>
+                  )}
                   <ToolButton
                     icon={<GitBranch size={14} />}
                     onClick={() => { }}
