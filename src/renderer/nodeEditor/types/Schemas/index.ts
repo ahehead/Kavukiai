@@ -21,6 +21,7 @@ import {
   UChatRole,
   UFileRef,
   UPart,
+  UPartArray,
 } from "./UChat/UChatMessage";
 import {
   Image,
@@ -43,6 +44,7 @@ const registry = {
   UChatRole,
   UFileRef,
   UPart,
+  UPartArray,
   UChatMessage,
   UChat,
   UChatCommandEvent,

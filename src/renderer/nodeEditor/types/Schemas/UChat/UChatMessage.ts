@@ -48,6 +48,9 @@ export const UPart = Type.Union([
 ]);
 export type UPart = Static<typeof UPart>;
 
+export const UPartArray = Type.Array(UPart);
+export type UPartArray = Static<typeof UPartArray>;
+
 /** UChatMessage schema */
 export const UChatMessage = Type.Object({
   role: UChatRole,
