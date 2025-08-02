@@ -10,15 +10,17 @@ applyTo: '**/*.{ts,tsx,js,jsx,css}'
 - **Rete 2.0.5**   
 - **shadcn/ui & lucide-react & Class Variance Authority**
 - **Zustand**   
+- **TypeBox**
 
 ## **生成時の指針**  
 - コメントはなるべく残す。
-- ノードエディタ関連コードは Rete v2 API に準拠。  
-- 状態管理は `zustand` を前提に設計。  
+- ノードエディタ関連コードは Rete v2 API に準拠。 
 - Class Variance Authority を使用してマークアップ（レイアウト部分）だけを presentational componentに切り出し、ロジックコンポーネントと分ける。
-- なるべく`#fetch`を使用してから答える。
 
 ## tools
 Use the `#githubRepo` tool with `retejs/retejs.org` to find relevant documentation for Rete.js. 
 Use the `#githubRepo` tool with `retejs/rete` to answer questions about how Rete.js core is implemented.
-Use the `#githubRepo` tool with `retejs/react-plugin` to answer questions about the Rete.js React plugin implementation.
+
+## mcp
+技術スタックの最新のドキュメントが必要な場合は、`#context7`を使用して、最新のドキュメントを取得してください。
+自動操作・UIテスト・検証・スクリーンショット撮影には`#playwright`を使用してください。
