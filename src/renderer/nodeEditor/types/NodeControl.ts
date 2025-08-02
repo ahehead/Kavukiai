@@ -1,6 +1,6 @@
 import type { ButtonControl } from "../nodes/Controls/Button";
 import type { ChatMessageListControl } from "../nodes/Controls/Chat/ChatMessageList";
-import type { MessageInputControl } from "../nodes/Controls/Chat/MessageInput";
+import type { UChatControl } from "../nodes/Controls/Chat/UChat";
 import type { ConsoleControl } from "../nodes/Controls/Console";
 import type { ImageControl } from "../nodes/Controls/Image";
 import type { CheckBoxControl } from "../nodes/Controls/input/CheckBox";
@@ -13,8 +13,8 @@ import type { SelectControl } from "../nodes/Controls/input/Select";
 import type { SliderControl } from "../nodes/Controls/input/Slider";
 import type { SwitchControl } from "../nodes/Controls/input/Switch";
 import type { RunButtonControl } from "../nodes/Controls/RunButton";
-
 import type { ProgressControl } from "../nodes/Controls/view/ProgressControl";
+
 export type NodeControl =
   | RunButtonControl
   | MultiLineControl
@@ -22,7 +22,6 @@ export type NodeControl =
   | InputValueControl<string>
   | InputValueControl<number>
   | ChatMessageListControl
-  | MessageInputControl
   | CheckBoxControl
   | ButtonControl
   | SelectControl<any>
@@ -30,7 +29,7 @@ export type NodeControl =
   | SwitchControl
   | SliderControl
   | PropertyInputControl
-  | MessageInputControl
   | ImageControl
   | ImageFileInputControl
-  | ProgressControl;
+  | ProgressControl
+  | UChatControl;

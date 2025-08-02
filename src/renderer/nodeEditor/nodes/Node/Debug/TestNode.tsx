@@ -1,5 +1,6 @@
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
 import { ButtonControl } from '../../Controls/Button'
+import { UChatControl } from '../../Controls/Chat/UChat'
 import { ImageControl } from '../../Controls/Image'
 import { CheckBoxControl } from '../../Controls/input/CheckBox'
 import { ImageFileInputControl } from '../../Controls/input/ImageFileInput'
@@ -27,6 +28,7 @@ export class TestNode extends BaseNode<
     image: ImageControl
     imageFileInput: ImageFileInputControl
     progress: ProgressControl
+    uChat: UChatControl
     // コントロールを作った場合まずここに追加
   }
 > {
@@ -92,6 +94,9 @@ export class TestNode extends BaseNode<
         label: 'Progress',
       })
     )
+
+    // Add UChatControl for testing
+    this.addControl('uChat', new UChatControl({ value: [], label: 'UChat' }))
 
     // ここに新しいコントロールを追加していく
   }
