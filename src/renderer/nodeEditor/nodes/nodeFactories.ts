@@ -44,6 +44,7 @@ import {
   StringNode,
   TemplateReplaceNode,
   TestNode,
+  UChatNode,
   UnknownNode,
   UnLoadModelNode,
 } from "./Node";
@@ -133,6 +134,8 @@ export const nodeFactories = {
   ChatMessage: () => new ChatMessageNode(),
   Role: ({ history, area, dataflow }) =>
     new RoleNode("user", history, area, dataflow),
+  UChat: ({ history, area, dataflow, controlflow }) =>
+    new UChatNode([], history, area, dataflow, controlflow),
 
   ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
   JsonSchemaToObject: ({ editor, history, area, dataflow, controlflow }) =>
@@ -236,6 +239,7 @@ const rawMenu: RawMenuItem[] = [
       },
       { label: "Role", factoryKey: "Role" },
       { label: "OpenAIToChatEvent", factoryKey: "OpenAIToChatEvent" },
+      { label: "UChat", factoryKey: "UChat" },
     ],
   },
   { label: "Inspector", factoryKey: "Inspector" },

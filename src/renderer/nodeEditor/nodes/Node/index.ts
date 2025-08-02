@@ -8,6 +8,7 @@ export { GetLastMessageNode } from "./Chat/GetLastMessageNode";
 export { OpenAIToChatEventNode } from "./Chat/OpenAIToChatEventNode";
 export { ReverseUserAssistantRoleNode } from "./Chat/ReverseUserAssistantRoleNode";
 export { RoleNode } from "./Chat/RoleNode";
+export { UChatNode } from "./Chat/UChatNode";
 export { TestNode } from "./Debug/TestNode";
 export { UnknownNode } from "./Debug/UnknownNode";
 export { InspectorNode } from "./InspectorNode";

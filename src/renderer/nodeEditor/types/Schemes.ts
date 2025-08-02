@@ -45,6 +45,7 @@ import type {
   StringNode,
   TemplateReplaceNode,
   TestNode,
+  UChatNode,
   UnknownNode,
   UnLoadModelNode,
 } from "../nodes/Node";
@@ -104,7 +105,8 @@ export type NodeTypes =
   | ServerStatusNode
   | UnLoadModelNode
   | LLMPredictionConfigNode
-  | OpenAIToChatEventNode;
+  | OpenAIToChatEventNode
+  | UChatNode;
 
 export type NodeTypeKey = NodeTypes["label"];
 
