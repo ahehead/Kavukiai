@@ -2,6 +2,7 @@ import type { ModelInfo } from "@lmstudio/sdk";
 import type OpenAI from "openai";
 import type {
   ChatHistoryData,
+  LLMPredictionConfig,
   LLMPredictionStats,
 } from "renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas";
 import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/openai/EventsSchemas";
@@ -73,6 +74,7 @@ export type LMStudioChatRequestArgs = {
   id: string;
   modelKey: string;
   chatHistoryData: ChatHistoryData;
+  config: LLMPredictionConfig;
 };
 
 export type LMStudioChatPortEvent =
