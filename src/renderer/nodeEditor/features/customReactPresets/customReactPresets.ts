@@ -3,9 +3,9 @@ import {
   ButtonControlView,
 } from "renderer/nodeEditor/nodes/Controls/Button";
 import {
-  MessageInputControl,
-  MessageInputControlView,
-} from "renderer/nodeEditor/nodes/Controls/Chat/MessageInput";
+  UChatControl,
+  UChatMessageListControlView,
+} from "renderer/nodeEditor/nodes/Controls/Chat/UChat";
 import {
   ImageControl,
   ImageControlView,
@@ -89,7 +89,7 @@ const controlViews = new Map<Ctor, any>([
   [SwitchControl, SwitchControlView],
   [SliderControl, SliderControlView],
   [PropertyInputControl, PropertyInputControlView],
-  [MessageInputControl, MessageInputControlView],
+  [UChatControl, UChatMessageListControlView],
   [ImageControl, ImageControlView],
   [ImageFileInputControl, ImageFileInputControlView],
   [ProgressControl, ProgressControlView],
