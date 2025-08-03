@@ -214,20 +214,14 @@ export class DataflowEngine<Schemes extends DataflowEngineScheme> extends Scope<
   /**
    * Fetch the first input value for each specified key.
    * Returns a tuple of values (or null) matching the order of inputKeys.
+   * @example
+   * // 明示的に型を指定する場合
+   * const [text, count] = await engine.fetchInputMultiple<[string, number]>(node, ["text", "count"]);
    */
-  async fetchInputMultiple<
-    N extends Node,
-    Keys extends readonly (keyof Parameters<N["data"]>[0] & string)[]
-  >(
-    node: NodeId | N,
-    inputKeys: Keys
-  ): Promise<{
-    [I in keyof Keys]: Keys[I] extends keyof Parameters<N["data"]>[0]
-      ? Parameters<N["data"]>[0][Keys[I]] extends Array<infer U>
-        ? U | null
-        : null
-      : null;
-  }> {
+  async fetchInputMultiple<T extends any[]>(
+    node: NodeId | Node,
+    inputKeys: string[]
+  ): Promise<{ [I in keyof T]: T[I] | null }> {
     const id = typeof node === "object" ? node.id : node;
     const inputs = (await this.fetchInputs(id, inputKeys)) as Record<
       string,
@@ -237,7 +231,7 @@ export class DataflowEngine<Schemes extends DataflowEngineScheme> extends Scope<
       const arr = inputs[key];
       return Array.isArray(arr) && arr.length > 0 ? arr[0] : null;
     });
-    return result as any;
+    return result as { [I in keyof T]: T[I] | null };
   }
 
   hasDataWithFetch(node: any): node is {
