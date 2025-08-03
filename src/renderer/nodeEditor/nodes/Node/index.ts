@@ -14,6 +14,7 @@ export { UnknownNode } from "./Debug/UnknownNode";
 export { InspectorNode } from "./InspectorNode";
 export { ListDownloadedModelsNode } from "./LMStudio/ListDownloadedModelsNode";
 export { LLMPredictionConfigNode } from "./LMStudio/LLMPredictionConfigNode";
+export { LMStudioChatNode } from "./LMStudio/LMStudioChatNode";
 export { LMStudioLoadModelNode } from "./LMStudio/LMStudioLoadModelNode";
 export { LMStudioStartNode } from "./LMStudio/LMStudioStartNode";
 export { LMStudioStopNode } from "./LMStudio/LMStudioStopNode";
