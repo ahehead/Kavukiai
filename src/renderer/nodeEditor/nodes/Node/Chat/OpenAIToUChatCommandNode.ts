@@ -54,7 +54,10 @@ export class OpenAIToUChatCommandNode extends BaseNode<
           if (response.item.type === "message") {
             event = {
               type: "setInfo",
-              message: { id: response.item.id, role: response.item.role, content: [] },
+              message: {
+                role: response.item.role,
+                content: [],
+              },
             } as UChatCommandEvent;
           }
           break;
@@ -75,14 +78,13 @@ export class OpenAIToUChatCommandNode extends BaseNode<
         if (item.type === "message") {
           const parts: UPart[] = [];
           for (const c of item.content) {
-            if (c.type === "output_text" || c.type === "input_text") {
+            if (c.type === "output_text") {
               parts.push({ type: "text", text: c.text });
             }
           }
           messages.push({
-            id: item.id,
             role: item.role as any,
-            type: undefined,
+            type: "message",
             content: parts,
             model: response.model,
             created_at: response.created_at,
@@ -97,4 +99,3 @@ export class OpenAIToUChatCommandNode extends BaseNode<
 
   execute(): void {}
 }
-
