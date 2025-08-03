@@ -2,19 +2,19 @@ import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { MessagePortNode } from 'renderer/nodeEditor/types/Node/MessagePortNode'
+import {
+  type ChatHistoryData,
+  ChatHistoryData as ChatHistoryDataSchema,
+  type LLMPredictionConfig,
+  LLMPredictionConfig as LLMPredictionConfigSchema,
+} from 'renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
-import { ConsoleControl } from '../../Controls/Console'
-import {
-  ChatHistoryData as ChatHistoryDataSchema,
-  LLMPredictionConfig as LLMPredictionConfigSchema,
-  type ChatHistoryData,
-  type LLMPredictionConfig,
-} from 'renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas'
 import type {
   LMStudioChatPortEvent,
   LMStudioChatRequestArgs,
 } from 'shared/ApiType'
+import { ConsoleControl } from '../../Controls/Console'
 
 export class LMStudioChatNode extends MessagePortNode<
   'LMStudioChat',
@@ -39,7 +39,10 @@ export class LMStudioChatNode extends MessagePortNode<
     controlflow: ControlFlowEngine<Schemes>
   ) {
     super('LMStudioChat', area, dataflow, controlflow)
-    this.addInputPortPattern({ type: 'RunButton', controlflow: this.controlflow })
+    this.addInputPortPattern({
+      type: 'RunButton',
+      controlflow: this.controlflow,
+    })
     this.addInputPort([
       { key: 'modelKey', typeName: 'string', tooltip: 'Model key' },
       {
@@ -67,13 +70,12 @@ export class LMStudioChatNode extends MessagePortNode<
   }
 
   protected async buildRequestArgs(): Promise<LMStudioChatRequestArgs | null> {
-    const { modelKey, chatHistoryData, config } = (await this.dataflow.fetchInputs(
-      this.id
-    )) as {
-      modelKey?: string[]
-      chatHistoryData?: ChatHistoryData[]
-      config?: LLMPredictionConfig[]
-    }
+    const { modelKey, chatHistoryData, config } =
+      (await this.dataflow.fetchInputs(this.id)) as {
+        modelKey?: string[]
+        chatHistoryData?: ChatHistoryData[]
+        config?: LLMPredictionConfig[]
+      }
     if (!modelKey?.[0] || !chatHistoryData?.[0] || !config?.[0]) return null
     return {
       id: this.id,
@@ -123,4 +125,3 @@ export class LMStudioChatNode extends MessagePortNode<
     this.controls.console.setFromJSON({ data })
   }
 }
-
