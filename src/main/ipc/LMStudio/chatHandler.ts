@@ -29,13 +29,21 @@ async function handleChat(evt: IpcMainEvent, data: unknown): Promise<void> {
 
   try {
     const client = await getLMStudioClient();
-    let model = await findLoadedModel(modelKey);
-    if (!model) {
+    let model = modelKey
+      ? await findLoadedModel(modelKey)
+      : await client.llm.model();
+    if (!modelKey && !model) {
+      throw new Error("No model loaded or specified");
+    }
+    if (!model && modelKey) {
       console.log(`Model ${modelKey} not loaded. Loading...`);
       model = await client.llm.load(modelKey, {
         signal: controller.signal,
       });
       console.log(`Model loaded: ${model.modelKey}`);
+    }
+    if (!model) {
+      throw new Error("Model not found or could not be loaded");
     }
 
     const chat = Chat.from(chatHistoryData);
