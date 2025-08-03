@@ -22,6 +22,7 @@ import type {
   ListDownloadedModelsNode,
   ListNode,
   LLMPredictionConfigNode,
+  LMStudioChatNode,
   LMStudioLoadModelNode,
   LMStudioStartNode,
   LMStudioStopNode,
@@ -116,7 +117,8 @@ export type NodeTypes =
   | OpenAIToUChatCommandNode
   | UChatToOpenAINode
   | UChatNode
-  | UChatRoleNode;
+  | UChatRoleNode
+  | LMStudioChatNode;
 
 export type NodeTypeKey = NodeTypes["label"];
 

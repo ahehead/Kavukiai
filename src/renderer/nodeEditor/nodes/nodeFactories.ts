@@ -23,6 +23,7 @@ import {
   JsonSchemaToObjectNode,
   ListDownloadedModelsNode,
   LLMPredictionConfigNode,
+  LMStudioChatNode,
   LMStudioLoadModelNode,
   LMStudioStartNode,
   LMStudioStopNode,
@@ -107,6 +108,8 @@ export const nodeFactories = {
   ListDownloadedModels: ({ area, dataflow, controlflow }) =>
     new ListDownloadedModelsNode(area, dataflow, controlflow),
   ModelInfoToModelList: () => new ModelInfoToModelListNode(),
+  LMStudioChat: ({ area, dataflow, controlflow }) =>
+    new LMStudioChatNode(area, dataflow, controlflow),
   LMStudioStart: ({ area, controlflow }) =>
     new LMStudioStartNode(area, controlflow),
   LMStudioStop: ({ area, controlflow }) =>
@@ -265,6 +268,7 @@ const rawMenu: RawMenuItem[] = [
     subitems: [
       { label: "ListDownloadedModels", factoryKey: "ListDownloadedModels" },
       { label: "ModelInfoToModelList", factoryKey: "ModelInfoToModelList" },
+      { label: "LMStudioChat", factoryKey: "LMStudioChat" },
       { label: "LMStudioStart", factoryKey: "LMStudioStart" },
       { label: "LMStudioStop", factoryKey: "LMStudioStop" },
       { label: "LMStudioLoadModel", factoryKey: "LMStudioLoadModel" },
