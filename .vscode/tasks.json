@@ -78,6 +78,26 @@
         }
       },
       "problemMatcher": []
+    },
+    {
+      "label": "extract LMStudio types (entry_result.ts, no comments)",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "extract-types",
+        "PredictionResult",
+        "scripts/entry_result.ts",
+        "scripts/PredictionResult.data.ts",
+        "--no-comments"
+      ],
+      "options": {
+        "shell": {
+          "executable": "pwsh.exe",
+          "args": ["-NoProfile", "-Command"]
+        }
+      },
+      "problemMatcher": []
     }
   ]
 }
