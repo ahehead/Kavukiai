@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority'
-import { ChevronRight } from 'lucide-react'
+import { BrushCleaning, ChevronRight } from 'lucide-react'
 import { type JSX, useLayoutEffect, useRef, useSyncExternalStore } from 'react'
 import {
   BaseControl,
@@ -76,27 +76,43 @@ export function ConsoleControlView(props: {
   }, [value])
 
   const toggle = () => props.data.toggle()
+  // valueをクリアする関数
+  const clearValue = () => {
+    props.data.setValue('')
+  }
 
   return (
     <Drag.NoDrag>
       <div className="flex flex-col w-full">
-        <button
-          type="button"
-          className="flex items-center cursor-pointer"
-          onClick={toggle}
-        >
-          <ChevronRight
-            className={cva('transition-transform', {
-              variants: {
-                open: {
-                  true: 'rotate-90',
+        <div className="flex items-center">
+          <button
+            type="button"
+            className="flex items-center cursor-pointer"
+            onClick={toggle}
+          >
+            <ChevronRight
+              className={cva('transition-transform', {
+                variants: {
+                  open: {
+                    true: 'rotate-90',
+                  },
                 },
-              },
-            })({ open: isOpen })}
-            size={16}
-          />
-          <span className="text-sm ml-1">Console</span>
-        </button>
+              })({ open: isOpen })}
+              size={16}
+            />
+            <span className="text-sm ml-1">Console</span>
+          </button>
+          <div className='flex-1'></div>
+          <button
+            type="button"
+            className="ml-2 p-1 rounded bg-node-bg text-gray-500 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:text-gray-700 dark:text-gray-200 transition flex items-center justify-center"
+            onClick={clearValue}
+            aria-label="コンソールをクリア"
+            title="コンソールをクリア"
+          >
+            <BrushCleaning size={14} />
+          </button>
+        </div>
         {isOpen && (
           <textarea
             ref={textareaRef}
