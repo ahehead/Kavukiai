@@ -2,13 +2,13 @@ import type { TSchema } from "@sinclair/typebox";
 import { ChatCommandEvent, ChatCommandEventOrNull } from "./ChatCommandEvent";
 import { ChatMessageItem, ChatMessageItemList } from "./ChatMessageItem";
 import * as DefaultSchema from "./DefaultSchema";
+import { LMStudioChatPortEventOrNull } from "./LMStudioChatPortEventOrNull";
+import { ChatHistoryData } from "./lmstudio/LMStudioSchemas";
 import * as ModelInfoSchemas from "./lmstudio/ModelSchemas";
 import * as StatusSchemas from "./lmstudio/StatusSchemas";
 import * as BaseSchemas from "./openai/BaseSchemas";
-
 import * as EventsSchemas from "./openai/EventsSchemas";
 import * as InputSchemas from "./openai/InputSchemas";
-
 import * as RequestSchemas from "./openai/RequestSchemas";
 import * as ResponseSchemas from "./openai/ResponseSchemas";
 import {
@@ -49,11 +49,12 @@ const registry = {
   UChat,
   UChatCommandEvent,
   UChatCommandEventOrNull,
-
+  ChatHistoryData,
   ...ModelInfoSchemas,
   ...StatusSchemas,
   ChatCommandEvent,
   ChatCommandEventOrNull,
+  LMStudioChatPortEventOrNull,
 } satisfies Record<string, TSchema>;
 
 export type SchemaKey = keyof typeof registry;
