@@ -66,12 +66,67 @@ export const LLMPromptTemplateSchema = Type.Object(
 );
 export type LLMPromptTemplate = Static<typeof LLMPromptTemplateSchema>;
 
+/** Model compatibility type enum. */
+export const ModelCompatibilityTypeSchema = Type.Union([
+  Type.Literal("gguf"),
+  Type.Literal("safetensors"),
+  Type.Literal("onnx"),
+  Type.Literal("ggml"),
+  Type.Literal("mlx_placeholder"),
+  Type.Literal("torch_safetensors"),
+]);
+export type ModelCompatibilityType = Static<
+  typeof ModelCompatibilityTypeSchema
+>;
+
+/** Base model information. */
+export const ModelInfoBaseSchema = Type.Object({
+  modelKey: Type.String(),
+  format: ModelCompatibilityTypeSchema,
+  displayName: Type.String(),
+  path: Type.String(),
+  sizeBytes: Type.Number(),
+  paramsString: Type.Optional(Type.String()),
+  architecture: Type.Optional(Type.String()),
+});
+export type ModelInfoBase = Static<typeof ModelInfoBaseSchema>;
+
+/** Base model instance information. */
+export const ModelInstanceInfoBaseSchema = Type.Intersect([
+  ModelInfoBaseSchema,
+  Type.Object({
+    identifier: Type.String(),
+    instanceReference: Type.String(),
+  }),
+]);
+export type ModelInstanceInfoBase = Static<typeof ModelInstanceInfoBaseSchema>;
+
+/** Additional LLM information. */
+export const LLMAdditionalInfoSchema = Type.Object({
+  vision: Type.Boolean(),
+  trainedForToolUse: Type.Boolean(),
+  maxContextLength: Type.Number(),
+});
+export type LLMAdditionalInfo = Static<typeof LLMAdditionalInfoSchema>;
+
+/** Additional LLM instance information. */
+export const LLMInstanceAdditionalInfoSchema = Type.Object({
+  contextLength: Type.Number(),
+});
+export type LLMInstanceAdditionalInfo = Static<
+  typeof LLMInstanceAdditionalInfoSchema
+>;
+
 /** Info of a loaded LLM instance. */
-export const LLMInstanceInfoSchema = Type.Object(
-  {
-    type: Type.Literal("llm"),
-    // ...existing ModelInstanceInfoBase fields...
-  },
+export const LLMInstanceInfoSchema = Type.Intersect(
+  [
+    Type.Object({
+      type: Type.Literal("llm"),
+    }),
+    ModelInstanceInfoBaseSchema,
+    LLMAdditionalInfoSchema,
+    LLMInstanceAdditionalInfoSchema,
+  ],
   { description: "Loaded LLM instance information" }
 );
 export type LLMInstanceInfo = Static<typeof LLMInstanceInfoSchema>;
