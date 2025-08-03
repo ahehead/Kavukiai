@@ -35,6 +35,7 @@ import type {
   ObjectToYAMLStringNode,
   OpenAINode,
   OpenAIToChatEventNode,
+  OpenAIToUChatCommandNode,
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
   ReverseUserAssistantRoleNode,
@@ -43,10 +44,13 @@ import type {
   ServerStatusNode,
   StringFormNode,
   StringNode,
+  UChatMessageNode,
   TemplateReplaceNode,
+  UChatToOpenAINode,
   TestNode,
   UChatNode,
   UnknownNode,
+  UPartTextNode,
   UnLoadModelNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
@@ -78,6 +82,8 @@ export type NodeTypes =
   | ReverseUserAssistantRoleNode
   | ChatMessageNode
   | RoleNode
+  | UChatMessageNode
+  | UPartTextNode
   | BoolNode
   | IFNode
   | CounterLoopNode
@@ -106,6 +112,8 @@ export type NodeTypes =
   | UnLoadModelNode
   | LLMPredictionConfigNode
   | OpenAIToChatEventNode
+  | OpenAIToUChatCommandNode
+  | UChatToOpenAINode
   | UChatNode;
 
 export type NodeTypeKey = NodeTypes["label"];

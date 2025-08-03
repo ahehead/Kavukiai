@@ -53,6 +53,10 @@ import { ChatMessageListToOpenAIInput } from "./Node/Chat/ChatMessageListToOpenA
 import { ChatMessageListToStringNode } from "./Node/Chat/ChatMessageListToStringNode";
 import { GetLastMessageNode } from "./Node/Chat/GetLastMessageNode";
 import { OpenAIToChatEventNode } from "./Node/Chat/OpenAIToChatEventNode";
+import { OpenAIToUChatCommandNode } from "./Node/Chat/OpenAIToUChatCommandNode";
+import { UChatMessageNode } from "./Node/Chat/UChatMessageNode";
+import { UChatToOpenAINode } from "./Node/Chat/UChatToOpenAINode";
+import { UPartTextNode } from "./Node/Chat/UPartTextNode";
 import { ReverseUserAssistantRoleNode } from "./Node/Chat/ReverseUserAssistantRoleNode";
 import { IFNode } from "./Node/Primitive/Flow/IFNode";
 import { ListNode } from "./Node/Primitive/ListNode";
@@ -129,11 +133,16 @@ export const nodeFactories = {
   GetLastMessage: () => new GetLastMessageNode(),
   ReverseUserAssistantRole: () => new ReverseUserAssistantRoleNode(),
   OpenAIToChatEvent: () => new OpenAIToChatEventNode(),
+  OpenAIToUChatCommand: () => new OpenAIToUChatCommandNode(),
   ChatMessageList: ({ history, area, dataflow, controlflow }) =>
     new ChatMessageListNode([], history, area, dataflow, controlflow),
   ChatMessage: () => new ChatMessageNode(),
+  UChatMessage: () => new UChatMessageNode(),
+  UPartText: ({ history, area, dataflow }) =>
+    new UPartTextNode("", history, area, dataflow),
   Role: ({ history, area, dataflow }) =>
     new RoleNode("user", history, area, dataflow),
+  UChatToOpenAI: () => new UChatToOpenAINode(),
   UChat: ({ history, area, dataflow, controlflow }) =>
     new UChatNode([], history, area, dataflow, controlflow),
 
@@ -239,6 +248,10 @@ const rawMenu: RawMenuItem[] = [
       },
       { label: "Role", factoryKey: "Role" },
       { label: "OpenAIToChatEvent", factoryKey: "OpenAIToChatEvent" },
+      { label: "OpenAIToUChatCommand", factoryKey: "OpenAIToUChatCommand" },
+      { label: "UPartText", factoryKey: "UPartText" },
+      { label: "UChatMessage", factoryKey: "UChatMessage" },
+      { label: "UChatToOpenAI", factoryKey: "UChatToOpenAI" },
       { label: "UChat", factoryKey: "UChat" },
     ],
   },
