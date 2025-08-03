@@ -1,9 +1,7 @@
-import type { ModelInfo } from "@lmstudio/sdk";
 import type OpenAI from "openai";
 import type {
   ChatHistoryData,
   LLMPredictionConfig,
-  LLMPredictionStats,
 } from "renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas";
 import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/openai/EventsSchemas";
 import type { Response } from "renderer/nodeEditor/types/Schemas/openai/ResponseSchemas";
@@ -72,29 +70,18 @@ export type LMStudioPortEvent =
 
 export type LMStudioChatRequestArgs = {
   id: string;
-  modelKey: string;
+  modelKey?: string;
   chatHistoryData: ChatHistoryData;
-  config: LLMPredictionConfig;
+  config?: LLMPredictionConfig;
 };
-
-export type LMStudioChatPortEvent =
-  | { type: "error"; message: string }
-  | { type: "stream"; delta: string }
-  | {
-      type: "done";
-      result: {
-        content: string;
-        reasoningContent: string;
-        status: LLMPredictionStats;
-        modelInfo: ModelInfo;
-      };
-    };
 
 export type LMStudioStatusInfo = {
   server: "ON" | "OFF";
   port?: number;
   loadedModels: string[];
 };
+
+export type { LMStudioChatPortEvent } from "renderer/nodeEditor/types/Schemas/LMStudioChatPortEventOrNull";
 
 export type IpcResult<T> =
   | { status: "success"; data: T }
