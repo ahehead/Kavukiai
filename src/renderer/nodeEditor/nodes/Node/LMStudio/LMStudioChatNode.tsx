@@ -2,6 +2,7 @@ import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { MessagePortNode } from 'renderer/nodeEditor/types/Node/MessagePortNode'
+import type { LMStudioChatPortEventOrNull } from "renderer/nodeEditor/types/Schemas/LMStudioChatPortEventOrNull"
 import {
   type ChatHistoryData,
   ChatHistoryData as ChatHistoryDataSchema,
@@ -31,7 +32,7 @@ export class LMStudioChatNode extends MessagePortNode<
   'exec',
   'exec'
 > {
-  eventOrStatus: LMStudioChatPortEvent | null = null
+  eventOrStatus: LMStudioChatPortEventOrNull = null
 
   constructor(
     area: AreaPlugin<Schemes, AreaExtra>,
@@ -60,28 +61,30 @@ export class LMStudioChatNode extends MessagePortNode<
     ])
     this.addOutputPort([
       { key: 'exec', typeName: 'exec', label: 'Out' },
-      { key: 'eventOrStatus', typeName: 'any', label: 'Event' },
+      {
+        key: 'eventOrStatus',
+        typeName: 'LMStudioChatPortEventOrNull',
+        label: 'Event',
+      },
     ])
     this.addControl('console', new ConsoleControl({}))
   }
 
-  data() {
+  async data() { return {} };
+
+  async dataWithFetch(_fetchInputs: any) {
     return { eventOrStatus: this.eventOrStatus }
   }
 
   protected async buildRequestArgs(): Promise<LMStudioChatRequestArgs | null> {
-    const { modelKey, chatHistoryData, config } =
-      (await this.dataflow.fetchInputs(this.id)) as {
-        modelKey?: string[]
-        chatHistoryData?: ChatHistoryData[]
-        config?: LLMPredictionConfig[]
-      }
-    if (!modelKey?.[0] || !chatHistoryData?.[0] || !config?.[0]) return null
+    const [modelKey, chatHistoryData, config] =
+      await this.dataflow.fetchInputMultiple<[string, ChatHistoryData, LLMPredictionConfig]>(this.id, ["modelKey", "chatHistoryData", "config"])
+    if (!chatHistoryData) return null
     return {
       id: this.id,
-      modelKey: modelKey[0],
-      chatHistoryData: chatHistoryData[0],
-      config: config[0],
+      modelKey: modelKey ? modelKey : undefined,
+      chatHistoryData,
+      config: config ? config : undefined,
     }
   }
 
