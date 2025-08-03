@@ -6,9 +6,13 @@ export { ChatMessageListToStringNode } from "./Chat/ChatMessageListToStringNode"
 export { ChatMessageNode } from "./Chat/ChatMessageNode";
 export { GetLastMessageNode } from "./Chat/GetLastMessageNode";
 export { OpenAIToChatEventNode } from "./Chat/OpenAIToChatEventNode";
+export { OpenAIToUChatCommandNode } from "./Chat/OpenAIToUChatCommandNode";
 export { ReverseUserAssistantRoleNode } from "./Chat/ReverseUserAssistantRoleNode";
 export { RoleNode } from "./Chat/RoleNode";
+export { UChatMessageNode } from "./Chat/UChatMessageNode";
 export { UChatNode } from "./Chat/UChatNode";
+export { UChatToOpenAINode } from "./Chat/UChatToOpenAINode";
+export { UPartTextNode } from "./Chat/UPartTextNode";
 export { TestNode } from "./Debug/TestNode";
 export { UnknownNode } from "./Debug/UnknownNode";
 export { InspectorNode } from "./InspectorNode";
