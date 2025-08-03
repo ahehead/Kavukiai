@@ -54,10 +54,11 @@ import { ChatMessageListToStringNode } from "./Node/Chat/ChatMessageListToString
 import { GetLastMessageNode } from "./Node/Chat/GetLastMessageNode";
 import { OpenAIToChatEventNode } from "./Node/Chat/OpenAIToChatEventNode";
 import { OpenAIToUChatCommandNode } from "./Node/Chat/OpenAIToUChatCommandNode";
+import { ReverseUserAssistantRoleNode } from "./Node/Chat/ReverseUserAssistantRoleNode";
 import { UChatMessageNode } from "./Node/Chat/UChatMessageNode";
+import { UChatRoleNode } from "./Node/Chat/UChatRoleNode";
 import { UChatToOpenAINode } from "./Node/Chat/UChatToOpenAINode";
 import { UPartTextNode } from "./Node/Chat/UPartTextNode";
-import { ReverseUserAssistantRoleNode } from "./Node/Chat/ReverseUserAssistantRoleNode";
 import { IFNode } from "./Node/Primitive/Flow/IFNode";
 import { ListNode } from "./Node/Primitive/ListNode";
 
@@ -145,6 +146,8 @@ export const nodeFactories = {
   UChatToOpenAI: () => new UChatToOpenAINode(),
   UChat: ({ history, area, dataflow, controlflow }) =>
     new UChatNode([], history, area, dataflow, controlflow),
+  UChatRole: ({ history, area, dataflow }) =>
+    new UChatRoleNode("user", history, area, dataflow),
 
   ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
   JsonSchemaToObject: ({ editor, history, area, dataflow, controlflow }) =>
@@ -253,6 +256,7 @@ const rawMenu: RawMenuItem[] = [
       { label: "UChatMessage", factoryKey: "UChatMessage" },
       { label: "UChatToOpenAI", factoryKey: "UChatToOpenAI" },
       { label: "UChat", factoryKey: "UChat" },
+      { label: "UChatRole", factoryKey: "UChatRole" },
     ],
   },
   { label: "Inspector", factoryKey: "Inspector" },

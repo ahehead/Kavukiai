@@ -44,14 +44,15 @@ import type {
   ServerStatusNode,
   StringFormNode,
   StringNode,
-  UChatMessageNode,
   TemplateReplaceNode,
-  UChatToOpenAINode,
   TestNode,
+  UChatMessageNode,
   UChatNode,
+  UChatRoleNode,
+  UChatToOpenAINode,
   UnknownNode,
-  UPartTextNode,
   UnLoadModelNode,
+  UPartTextNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./Node/BaseNode";
@@ -114,7 +115,8 @@ export type NodeTypes =
   | OpenAIToChatEventNode
   | OpenAIToUChatCommandNode
   | UChatToOpenAINode
-  | UChatNode;
+  | UChatNode
+  | UChatRoleNode;
 
 export type NodeTypeKey = NodeTypes["label"];
 

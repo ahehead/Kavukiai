@@ -11,6 +11,7 @@ export { ReverseUserAssistantRoleNode } from "./Chat/ReverseUserAssistantRoleNod
 export { RoleNode } from "./Chat/RoleNode";
 export { UChatMessageNode } from "./Chat/UChatMessageNode";
 export { UChatNode } from "./Chat/UChatNode";
+export { UChatRoleNode } from "./Chat/UChatRoleNode";
 export { UChatToOpenAINode } from "./Chat/UChatToOpenAINode";
 export { UPartTextNode } from "./Chat/UPartTextNode";
 export { TestNode } from "./Debug/TestNode";
