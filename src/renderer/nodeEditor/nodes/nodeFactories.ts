@@ -53,11 +53,13 @@ import { ChatMessageListNode } from "./Node/Chat/ChatContextNode";
 import { ChatMessageListToOpenAIInput } from "./Node/Chat/ChatMessageListToOpenAIInput";
 import { ChatMessageListToStringNode } from "./Node/Chat/ChatMessageListToStringNode";
 import { GetLastMessageNode } from "./Node/Chat/GetLastMessageNode";
+import { LMStudioToUChatCommandNode } from "./Node/Chat/LMStudioToUChatCommandNode";
 import { OpenAIToChatEventNode } from "./Node/Chat/OpenAIToChatEventNode";
 import { OpenAIToUChatCommandNode } from "./Node/Chat/OpenAIToUChatCommandNode";
 import { ReverseUserAssistantRoleNode } from "./Node/Chat/ReverseUserAssistantRoleNode";
 import { UChatMessageNode } from "./Node/Chat/UChatMessageNode";
 import { UChatRoleNode } from "./Node/Chat/UChatRoleNode";
+import { UChatToLMStudioNode } from "./Node/Chat/UChatToLMStudioNode";
 import { UChatToOpenAINode } from "./Node/Chat/UChatToOpenAINode";
 import { UPartTextNode } from "./Node/Chat/UPartTextNode";
 import { IFNode } from "./Node/Primitive/Flow/IFNode";
@@ -138,6 +140,7 @@ export const nodeFactories = {
   ReverseUserAssistantRole: () => new ReverseUserAssistantRoleNode(),
   OpenAIToChatEvent: () => new OpenAIToChatEventNode(),
   OpenAIToUChatCommand: () => new OpenAIToUChatCommandNode(),
+  LMStudioToUChatCommand: () => new LMStudioToUChatCommandNode(),
   ChatMessageList: ({ history, area, dataflow, controlflow }) =>
     new ChatMessageListNode([], history, area, dataflow, controlflow),
   ChatMessage: () => new ChatMessageNode(),
@@ -147,6 +150,7 @@ export const nodeFactories = {
   Role: ({ history, area, dataflow }) =>
     new RoleNode("user", history, area, dataflow),
   UChatToOpenAI: () => new UChatToOpenAINode(),
+  UChatToLMStudio: () => new UChatToLMStudioNode(),
   UChat: ({ history, area, dataflow, controlflow }) =>
     new UChatNode([], history, area, dataflow, controlflow),
   UChatRole: ({ history, area, dataflow }) =>
@@ -255,9 +259,11 @@ const rawMenu: RawMenuItem[] = [
       { label: "Role", factoryKey: "Role" },
       { label: "OpenAIToChatEvent", factoryKey: "OpenAIToChatEvent" },
       { label: "OpenAIToUChatCommand", factoryKey: "OpenAIToUChatCommand" },
+      { label: "LMStudioToUChatCommand", factoryKey: "LMStudioToUChatCommand" },
       { label: "UPartText", factoryKey: "UPartText" },
       { label: "UChatMessage", factoryKey: "UChatMessage" },
       { label: "UChatToOpenAI", factoryKey: "UChatToOpenAI" },
+      { label: "UChatToLMStudio", factoryKey: "UChatToLMStudio" },
       { label: "UChat", factoryKey: "UChat" },
       { label: "UChatRole", factoryKey: "UChatRole" },
     ],

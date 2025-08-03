@@ -26,6 +26,7 @@ import type {
   LMStudioLoadModelNode,
   LMStudioStartNode,
   LMStudioStopNode,
+  LMStudioToUChatCommandNode,
   LoadImageNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
@@ -50,6 +51,7 @@ import type {
   UChatMessageNode,
   UChatNode,
   UChatRoleNode,
+  UChatToLMStudioNode,
   UChatToOpenAINode,
   UnknownNode,
   UnLoadModelNode,
@@ -110,12 +112,14 @@ export type NodeTypes =
   | LMStudioStartNode
   | LMStudioStopNode
   | LMStudioLoadModelNode
+  | LMStudioToUChatCommandNode
   | ServerStatusNode
   | UnLoadModelNode
   | LLMPredictionConfigNode
   | OpenAIToChatEventNode
   | OpenAIToUChatCommandNode
   | UChatToOpenAINode
+  | UChatToLMStudioNode
   | UChatNode
   | UChatRoleNode
   | LMStudioChatNode;
