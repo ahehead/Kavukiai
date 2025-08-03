@@ -182,10 +182,27 @@ export function UChatMessageListControlView(props: {
     }
   }, [messages.length])
 
+  // メッセージからテキストコンテンツを抽出して連結する関数
+  const extractTextContent = (msg: UChatMessage): string => {
+    return msg.content
+      .filter(part => part.type === 'text')
+      .map(part => part.text)
+      .join('\n');
+  }
+
+  // テキストをクリップボードにコピーする関数
+  const copyMessageToClipboard = (index: number): void => {
+    const msg = messages[index];
+    if (!msg) return;
+
+    navigator.clipboard.writeText(extractTextContent(msg))
+      .then(() => console.log('Message copied to clipboard'))
+      .catch(err => console.error('Failed to copy: ', err));
+  }
+
   const startEdit = (index: number) => {
     const msg = messages[index]
-    const texts = msg.content.filter(c => c.type === 'text').map(c => c.text).join('\n')
-    setEditText(texts)
+    setEditText(extractTextContent(msg))
     setEditIndex(index)
   }
 
@@ -282,7 +299,10 @@ export function UChatMessageListControlView(props: {
                     icon={<GitBranch size={14} />}
                     onClick={() => { }}
                   />
-                  <ToolButton icon={<Copy size={14} />} onClick={() => { }} />
+                  <ToolButton
+                    icon={<Copy size={14} />}
+                    onClick={() => copyMessageToClipboard(index)}
+                  />
                   <ToolButton
                     icon={<Pencil size={14} />}
                     onClick={() => startEdit(index)}
