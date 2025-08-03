@@ -13,30 +13,10 @@ export function serializeGraph(
   // ノード情報を整形
   const nodes: NodeJson[] = [];
   for (const node of editor.getNodes()) {
-    // positionを取得するために nodeViewからnodeを取得
-    const nodeView = area.nodeViews.get(node.id);
-    if (!nodeView) {
-      console.error(`Node with id ${node.id} not found in area.`);
-      continue;
+    const nodeJson = convertNodeToJson(node, area);
+    if (nodeJson) {
+      nodes.push(nodeJson);
     }
-
-    const baseData = createNodeBaseData(node, nodeView);
-
-    let nodeData = {};
-    if ("serializeControlValue" in node) {
-      nodeData = node.serializeControlValue();
-    }
-
-    let inputsData = {};
-    if ("serializeInputs" in node) {
-      inputsData = node.serializeInputs();
-    }
-
-    nodes.push({
-      ...baseData,
-      ...nodeData,
-      ...inputsData,
-    });
   }
 
   // コネクション情報を整形
@@ -55,7 +35,40 @@ export function serializeGraph(
   };
 }
 
-function createNodeBaseData(node: NodeTypes, nodeView: NodeView) {
+/**
+ * ノードを NodeJson 形式に変換する
+ */
+function convertNodeToJson(
+  node: NodeTypes,
+  area: AreaPlugin<Schemes, AreaExtra>
+): NodeJson | null {
+  // positionを取得するために nodeViewからnodeを取得
+  const nodeView = area.nodeViews.get(node.id);
+  if (!nodeView) {
+    console.error(`Node with id ${node.id} not found in area.`);
+    return null;
+  }
+
+  const baseData = buildNodeBaseData(node, nodeView);
+
+  let nodeData = {};
+  if ("serializeControlValue" in node) {
+    nodeData = node.serializeControlValue();
+  }
+
+  let inputsData = {};
+  if ("serializeInputs" in node) {
+    inputsData = node.serializeInputs();
+  }
+
+  return {
+    ...baseData,
+    ...nodeData,
+    ...inputsData,
+  };
+}
+
+function buildNodeBaseData(node: NodeTypes, nodeView: NodeView): NodeJson {
   return {
     id: node.id,
     type: node.label,
