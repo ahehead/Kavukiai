@@ -36,6 +36,29 @@ describe('lmstudioApi', () => {
     expect(winPost).toHaveBeenCalled()
   })
 
+  test('sendChatMessage posts message with port', async () => {
+    const { lmstudioApi } = await import('preload/lmstudio')
+    const { ipcRenderer } = await import('electron') as any
+    const postMessage = vi.fn()
+    const winPost = vi.fn()
+    ;(global as any).window = { postMessage: winPost }
+    ipcRenderer.postMessage = postMessage
+    const channel = IpcChannel.LMStudioChatRequest
+    const args = {
+      id: '1',
+      modelKey: 'test',
+      chatHistoryData: { messages: [] },
+      config: {} as any,
+    }
+    lmstudioApi.sendChatMessage(args)
+    expect(postMessage).toHaveBeenCalled()
+    const [calledChannel, data, ports] = postMessage.mock.calls[0]
+    expect(calledChannel).toBe(channel)
+    expect(data).toEqual(args)
+    expect(ports.length).toBe(1)
+    expect(winPost).toHaveBeenCalled()
+  })
+
   test('unloadAllModels invokes ipcRenderer with correct channel', async () => {
     const { lmstudioApi } = await import('preload/lmstudio')
     const { ipcRenderer } = await import('electron') as any
