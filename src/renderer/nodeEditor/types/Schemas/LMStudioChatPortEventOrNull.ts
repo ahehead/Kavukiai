@@ -1,7 +1,7 @@
 import { type Static, Type } from "@sinclair/typebox";
 import { LLMInstanceInfoSchema, LLMPredictionStatsSchema } from "./lmstudio";
 
-/** Represents LMStudio chat port events. */
+/** main側のLMStudioとやり取りするためのイベント型 */
 export const LMStudioChatPortEventSchema = Type.Union(
   [
     Type.Object(
