@@ -20,7 +20,8 @@ import { ConsoleControl } from '../../Controls/Console'
 export class LMStudioChatNode extends MessagePortNode<
   'LMStudioChat',
   {
-    exec: TypedSocket
+    exec: TypedSocket,
+    exec2: TypedSocket
     modelKey: TypedSocket
     chatHistoryData: TypedSocket
     config: TypedSocket
@@ -28,9 +29,7 @@ export class LMStudioChatNode extends MessagePortNode<
   { exec: TypedSocket; eventOrStatus: TypedSocket },
   { console: ConsoleControl },
   LMStudioChatPortEvent,
-  LMStudioChatRequestArgs,
-  'exec',
-  'exec'
+  LMStudioChatRequestArgs
 > {
   eventOrStatus: LMStudioChatPortEventOrNull = null
 
@@ -45,6 +44,10 @@ export class LMStudioChatNode extends MessagePortNode<
       controlflow: this.controlflow,
     })
     this.addInputPort([
+      {
+        key: 'exec2', typeName: 'exec', label: 'Stop',
+        onClick: () => this.controlflow.execute(this.id, 'exec2'),
+      },
       { key: 'modelKey', typeName: 'string', tooltip: 'Model key' },
       {
         key: 'chatHistoryData',
@@ -97,15 +100,21 @@ export class LMStudioChatNode extends MessagePortNode<
     forward: (output: 'exec') => void
   ): Promise<void> {
     switch (evt.type) {
+      case 'start':
+        this.eventOrStatus = evt
+        this.controls.console.addValue(`Event: ${evt.type}`)
+        this.dataflow.reset(this.id)
+        forward('exec')
+        break
       case 'stream':
         this.eventOrStatus = evt
-        this.controls.console.addValue(evt.delta)
+        this.controls.console.addValue(`Event: ${evt.type}`)
         this.dataflow.reset(this.id)
         forward('exec')
         break
       case 'done':
         this.eventOrStatus = evt
-        this.controls.console.addValue('Done')
+        this.controls.console.addValue(`Event: ${evt.type}`)
         this.dataflow.reset(this.id)
         await this.logAndTerminate('done', 'done', forward)
         break
