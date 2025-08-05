@@ -6,11 +6,11 @@ import { UChatMessage } from "./UChatMessage";
 export const UChatCommandEvent = Type.Union([
   Type.Object({
     type: Type.Literal("start"),
-    message: UChatMessage,
+    message: Type.Optional(UChatMessage),
   }),
   Type.Object({
     type: Type.Literal("setInfo"),
-    message: UChatMessage,
+    message: Type.Partial(UChatMessage),
   }),
   Type.Object({
     type: Type.Literal("delta"),
