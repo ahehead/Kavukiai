@@ -173,7 +173,7 @@ export class ChatMessageListControl extends BaseControl<
   }
 }
 
-export function ChatMesaageListControlView(props: {
+export function ChatMessageListControlView(props: {
   data: ChatMessageListControl
 }): JSX.Element {
   const control = props.data
