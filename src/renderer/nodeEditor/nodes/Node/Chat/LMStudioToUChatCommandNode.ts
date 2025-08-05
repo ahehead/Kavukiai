@@ -36,6 +36,11 @@ export class LMStudioToUChatCommandNode extends BaseNode<
     let command: UChatCommandEvent;
 
     switch (event.type) {
+      case "start":
+        command = {
+          type: "start",
+        };
+        break;
       case "error":
         command = {
           type: "error",
