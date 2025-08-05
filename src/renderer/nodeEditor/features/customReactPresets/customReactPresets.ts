@@ -2,22 +2,47 @@ import {
   ButtonControl,
   ButtonControlView,
 } from "renderer/nodeEditor/nodes/Controls/Button";
+// ChatMessageList
+import {
+  ChatMessageListControl,
+  ChatMessageListControlView,
+} from "renderer/nodeEditor/nodes/Controls/Chat/ChatMessageList";
 import {
   UChatControl,
   UChatMessageListControlView,
 } from "renderer/nodeEditor/nodes/Controls/Chat/UChat";
+// Console
+import {
+  ConsoleControl,
+  ConsoleControlView,
+} from "renderer/nodeEditor/nodes/Controls/Console";
 import {
   ImageControl,
   ImageControlView,
 } from "renderer/nodeEditor/nodes/Controls/Image";
+// CheckBox
+import {
+  CheckBoxControl,
+  CheckBoxControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/CheckBox";
 import {
   ImageFileInputControl,
   ImageFileInputControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/ImageFileInput";
+// InputValue
+import {
+  InputValueControl,
+  InputValueControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/InputValue";
 import {
   ListControl,
   ListControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/List";
+// MultiLine
+import {
+  MultiLineControl,
+  TextAreaControllView,
+} from "renderer/nodeEditor/nodes/Controls/input/MultiLine";
 import {
   PropertyInputControl,
   PropertyInputControlView,
@@ -34,6 +59,11 @@ import {
   SwitchControl,
   SwitchControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Switch";
+// RunButton
+import {
+  RunButtonControl,
+  RunButtonControlView,
+} from "renderer/nodeEditor/nodes/Controls/RunButton";
 // Progress control
 import {
   ProgressControl,
@@ -47,41 +77,19 @@ import {
 import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
-import { type ReactArea2D, Presets as ReactPresets } from "rete-react-plugin";
-import {
-  ChatMesaageListControlView,
-  ChatMessageListControl,
-} from "../../nodes/Controls/Chat/ChatMessageList";
-import {
-  ConsoleControl,
-  ConsoleControlView,
-} from "../../nodes/Controls/Console";
-import {
-  CheckBoxControl,
-  CheckBoxControlView,
-} from "../../nodes/Controls/input/CheckBox";
-import {
-  InputValueControl,
-  InputValueControlView,
-} from "../../nodes/Controls/input/InputValue";
-import {
-  MultiLineControl,
-  TextAreaControllView,
-} from "../../nodes/Controls/input/MultiLine";
-import {
-  RunButtonControl,
-  RunButtonControlView,
-} from "../../nodes/Controls/RunButton";
+import { Presets as ReactPresets } from "rete-react-plugin";
 
 type Ctor<T = unknown> = new (...a: any[]) => T;
+// React コンポーネント型を明確に定義
+type ControlViewComponent = React.ComponentType<any>;
 
 // control の View をコントロール クラスをキーにマッピング
-const controlViews = new Map<Ctor, any>([
+const controlViews = new Map<Ctor, ControlViewComponent>([
   [RunButtonControl, RunButtonControlView],
   [MultiLineControl, TextAreaControllView],
   [ConsoleControl, ConsoleControlView],
   [InputValueControl, InputValueControlView],
-  [ChatMessageListControl, ChatMesaageListControlView],
+  [ChatMessageListControl, ChatMessageListControlView],
   [CheckBoxControl, CheckBoxControlView],
   [ButtonControl, ButtonControlView],
   [SelectControl, SelectControlView],
@@ -100,20 +108,17 @@ export function customReactPresets(
   history: HistoryPlugin<Schemes>,
   getZoom: () => number
 ) {
-  return ReactPresets.classic.setup<Schemes, ReactArea2D<Schemes>>({
+  // Use any-cast to bypass complex TS types for Rete React Presets
+  return (ReactPresets.classic as any).setup({
     customize: {
-      socket(data) {
-        if (data.payload.isExec) {
-          return CustomExecSocket;
-        }
-        return CustomSocket;
+      socket: (data: any) => {
+        return data.payload?.isExec ? CustomExecSocket : CustomSocket;
       },
-      control(data) {
-        return controlViews.get((data.payload as any).constructor) ?? null;
+      control: (data: any) => {
+        const payload = data.payload as { constructor: Ctor };
+        return controlViews.get(payload.constructor) ?? null;
       },
-      node() {
-        return createCustomNode(area, history, getZoom);
-      },
+      node: () => createCustomNode(area, history, getZoom),
     },
   });
 }
