@@ -6,6 +6,12 @@ export const LMStudioChatPortEventSchema = Type.Union(
   [
     Type.Object(
       {
+        type: Type.Literal("start"),
+      },
+      { description: "Start event" }
+    ),
+    Type.Object(
+      {
         type: Type.Literal("error"),
         message: Type.String({ description: "Error message" }),
       },
@@ -34,6 +40,12 @@ export const LMStudioChatPortEventSchema = Type.Union(
         ),
       },
       { description: "Completion event with result" }
+    ),
+    Type.Object(
+      {
+        type: Type.Literal("abort"),
+      },
+      { description: "Abort event" }
     ),
   ],
   { description: "LMStudio chat port event types" }
