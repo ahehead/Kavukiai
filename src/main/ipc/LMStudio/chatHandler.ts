@@ -53,21 +53,24 @@ async function handleChat(evt: IpcMainEvent, data: unknown): Promise<void> {
       ...config,
       signal: controller.signal,
     });
+    port.postMessage({ type: "start" } as LMStudioChatPortEvent);
     for await (const { content } of prediction) {
-      const event: LMStudioChatPortEvent = { type: "stream", delta: content };
-      port.postMessage(event);
+      port.postMessage({
+        type: "stream",
+        delta: content,
+      } as LMStudioChatPortEvent);
     }
 
     // Final prediction result
     const sdkResult = await prediction;
+    // とりあえず、必要な分だけ
     // Map SDK prediction to LMStudioChatPortEvent result shape
     const { content, reasoningContent, stats, modelInfo } = sdkResult;
     const portResult = { content, reasoningContent, status: stats, modelInfo };
-    const doneEvent: LMStudioChatPortEvent = {
+    port.postMessage({
       type: "done",
       result: portResult,
-    };
-    port.postMessage(doneEvent);
+    });
   } catch (error: any) {
     console.error("LMStudio chat error:", error);
     const message = error.message ?? String(error);
