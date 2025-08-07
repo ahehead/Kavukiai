@@ -92,7 +92,7 @@ export type IpcResultDialog<T> =
   | { status: "cancel" }
   | { status: "error"; message: string; code?: string };
 
-export type PortEventType =
-  | { type: "error"; message: string }
+export type OpenAIPortEventType =
   | { type: "abort" }
-  | { type: "openai"; data: ResponseStreamEvent | Response };
+  | { type: "openai"; data: ResponseStreamEvent | Response }
+  | { type: "error"; message: string };

@@ -10,7 +10,7 @@ import { MessagePortNode } from "renderer/nodeEditor/types/Node/MessagePortNode"
 import type { OpenAIClientResponse } from "renderer/nodeEditor/types/Schemas/Util";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
-import type { OpenAIRequestArgs, PortEventType } from "shared/ApiType";
+import type { OpenAIPortEventType, OpenAIRequestArgs } from "shared/ApiType";
 import type { ControlJson } from "shared/JsonType";
 import { ConsoleControl } from "../../Controls/Console";
 
@@ -20,7 +20,7 @@ export class OpenAINode extends MessagePortNode<
   { exec: TypedSocket; exec2: TypedSocket; param: TypedSocket },
   { exec: TypedSocket; response: TypedSocket },
   { console: ConsoleControl },
-  PortEventType,
+  OpenAIPortEventType,
   OpenAIRequestArgs
 > {
   // OpenAi Clientのレスポンスを保持する
@@ -89,7 +89,7 @@ export class OpenAINode extends MessagePortNode<
   }
 
   protected async onPortEvent(
-    evt: PortEventType,
+    evt: OpenAIPortEventType,
     forward: (output: "exec") => void
   ): Promise<void> {
     // エラーは即終了

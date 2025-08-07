@@ -5,8 +5,8 @@ import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/open
 import type { Response } from "renderer/nodeEditor/types/Schemas/openai/ResponseSchemas";
 import {
   IpcChannel,
+  type OpenAIPortEventType,
   type OpenAIRequestArgs,
-  type PortEventType,
 } from "shared/ApiType";
 
 // openaiリクエストを処理するハンドラを登録
@@ -94,7 +94,7 @@ async function handleStreamingResponse(
 
 function postMessageToPort(
   port: Electron.MessagePortMain,
-  msg: PortEventType
+  msg: OpenAIPortEventType
 ): void {
   port.postMessage(msg);
   if (msg.type === "error") console.error("PortChatGPT Error:", msg.message);
