@@ -10,10 +10,11 @@ import {
   type ControlOptions,
   useControlValue,
 } from 'renderer/nodeEditor/types'
-import type {
-  UChat,
-  UChatMessage,
-  UPart,
+import {
+  extractTextContent,
+  type UChat,
+  type UChatMessage,
+  type UPart,
 } from 'renderer/nodeEditor/types/Schemas/UChat/UChatMessage'
 import { Drag } from 'rete-react-plugin'
 
@@ -183,14 +184,6 @@ export function UChatMessageListControlView(props: {
         scrollContainerRef.current.scrollHeight
     }
   }, [messages.length])
-
-  // メッセージからテキストコンテンツを抽出して連結する関数
-  const extractTextContent = (msg: UChatMessage): string => {
-    return msg.content
-      .filter(part => part.type === 'text')
-      .map(part => part.text)
-      .join('\n');
-  }
 
   // テキストをクリップボードにコピーする関数
   const copyMessageToClipboard = (index: number): void => {
