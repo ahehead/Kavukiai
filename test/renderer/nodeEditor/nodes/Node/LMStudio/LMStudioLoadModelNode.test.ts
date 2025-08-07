@@ -4,14 +4,20 @@ vi.mock("renderer/features/services/appService", () => ({
   electronApiService: { loadModel: vi.fn() },
 }));
 
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import { LMStudioLoadModelNode } from "renderer/nodeEditor/nodes/Node/LMStudio/LMStudioLoadModelNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine } from "rete-engine";
 
 const area = { update: vi.fn() } as unknown as AreaPlugin<Schemes, any>;
-const dataflow = { fetchInputs: vi.fn() } as unknown as DataflowEngine<Schemes>;
+const dataflow = {
+  fetchInputs: vi.fn(),
+  fetchInputSingle: vi.fn(),
+  fetchInputMultiple: vi.fn(),
+  hasDataWithFetch: vi.fn(),
+} as unknown as DataflowEngine<Schemes>;
 const controlflow = {} as ControlFlowEngine<Schemes>;
 
 function createNode() {
@@ -40,7 +46,7 @@ test("onPortEvent processes events", async () => {
   node.status = NodeStatus.RUNNING;
   await (node as any).onPortEvent({ type: "progress", progress: 0.5 }, forward);
   expect(node.status).toBe(NodeStatus.RUNNING);
-  await (node as any).onPortEvent({ type: "done" } as MessageEvent, forward);
+  await (node as any).onPortEvent({ type: "finish" } as MessageEvent, forward);
   expect(node.status).toBe(NodeStatus.COMPLETED);
   expect(forward).toHaveBeenCalledWith("exec");
   expect(close).toHaveBeenCalled();
