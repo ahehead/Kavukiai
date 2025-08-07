@@ -1,0 +1,31 @@
+import type { TypedSocket } from "renderer/nodeEditor/types";
+import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
+import type {
+  UChat,
+  UChatMessage,
+} from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
+
+export class ReverseRoleNode extends BaseNode<
+  "ReverseRole",
+  { list: TypedSocket },
+  { list: TypedSocket },
+  object
+> {
+  constructor() {
+    super("ReverseRole");
+    this.addInputPort({ key: "list", typeName: "UChat", label: "list" });
+    this.addOutputPort({ key: "list", typeName: "UChat", label: "list" });
+  }
+
+  data(inputs?: { list?: UChat[] }): { list: UChat } {
+    const messages = inputs?.list?.[0] ?? [];
+    const out = messages.map((m) => {
+      if (m.role === "user") return { ...m, role: "assistant" } as UChatMessage;
+      if (m.role === "assistant") return { ...m, role: "user" } as UChatMessage;
+      return m;
+    });
+    return { list: out };
+  }
+
+  async execute(): Promise<void> {}
+}
