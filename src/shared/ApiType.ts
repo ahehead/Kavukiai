@@ -64,7 +64,7 @@ export type LMStudioLoadRequestArgs = {
 export type LMStudioPortEvent =
   | { type: "start" }
   | { type: "progress"; progress: number }
-  | { type: "done" }
+  | { type: "finish" }
   | { type: "error"; message: string }
   | { type: "abort" };
 
