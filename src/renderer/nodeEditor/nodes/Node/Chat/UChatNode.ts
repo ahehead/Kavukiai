@@ -29,6 +29,8 @@ export class UChatNode
       newMessage: TypedSocket;
       exec2: TypedSocket;
       event: TypedSocket;
+      exec3: TypedSocket;
+      newValue: TypedSocket;
     },
     { exec: TypedSocket; out: TypedSocket; exec2: TypedSocket },
     { chatContext: UChatControl }
@@ -61,6 +63,13 @@ export class UChatNode
         onClick: () => this.controlflow.execute(this.id, "exec2"),
       },
       { key: "event", typeName: "UChatCommandEventOrNull", label: "Event" },
+      {
+        key: "exec3",
+        typeName: "exec",
+        label: "reset",
+        onClick: () => this.controlflow.execute(this.id, "exec3"),
+      },
+      { key: "newValue", typeName: "UChat", label: "New Value" },
     ]);
     this.addOutputPort([
       {
@@ -115,13 +124,15 @@ export class UChatNode
   }
 
   async execute(
-    input: "exec" | "exec2",
+    input: "exec" | "exec2" | "exec3",
     forward: (output: "exec" | "exec2") => void
   ): Promise<void> {
     if (input === "exec") {
       await this.addMessageToContext(forward);
     } else if (input === "exec2") {
       await this.handleCommandEvent(forward);
+    } else if (input === "exec3") {
+      await this.resetChatValue();
     }
   }
 
@@ -174,6 +185,20 @@ export class UChatNode
         }
         forward("exec2");
         break;
+    }
+  }
+
+  // チャットの値をリセット
+  private async resetChatValue(): Promise<void> {
+    this.controls.chatContext.clear();
+    const newValue = await this.dataflow.fetchInputSingle<UChat>(
+      this.id,
+      "newValue"
+    );
+    if (newValue !== null) {
+      this.controls.chatContext.setValue(
+        newValue.filter((m) => m.role !== "system")
+      );
     }
   }
 
