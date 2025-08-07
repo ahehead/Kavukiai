@@ -1,6 +1,5 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { InputValueControl } from 'renderer/nodeEditor/nodes/Controls/input/InputValue'
-import { getInputValue } from 'renderer/nodeEditor/nodes/util/getInput'
 import { unescapeSeparator } from 'renderer/nodeEditor/nodes/util/unescapeSeparator'
 import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
@@ -36,7 +35,7 @@ export class JoinNode extends SerializableInputsNode<
 
   data(inputs: { list?: string[][]; separator?: string[] }): { out: string } {
     const arr = inputs.list?.[0] ?? []
-    const rawSep = getInputValue(this.inputs, 'separator', inputs)
+    const rawSep = this.getInputValue<string>(inputs, 'separator') || ','
     const sep = unescapeSeparator(rawSep)
     return { out: Array.isArray(arr) ? arr.join(sep) : '' }
   }
