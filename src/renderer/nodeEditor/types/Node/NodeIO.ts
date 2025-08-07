@@ -1,10 +1,11 @@
 import type { TSchema } from "@sinclair/typebox";
+import { ButtonControl } from "renderer/nodeEditor/nodes/Controls/Button";
 import { ClassicPreset } from "rete";
-import type { BaseControl } from "../BaseControl";
 import type { ControlFlowEngine } from "rete-engine";
 import { type NodeControl, type Schemes, TooltipInput, TypedSocket } from "..";
+import type { BaseControl } from "../BaseControl";
 import { getSchema, type SchemaKey } from "../Schemas";
-import { ButtonControl } from "renderer/nodeEditor/nodes/Controls/Button";
+
 const { Output } = ClassicPreset;
 
 export type InputPortConfig<K> =
@@ -120,12 +121,12 @@ export abstract class NodeIO<
           },
         })
       );
-      input.showControl = showControl ?? false;
+      input.showControl = showControl ?? true; // controlはデフォルトで表示する
     }
 
     if (control) {
       input.addControl(control);
-      input.showControl = showControl ?? false;
+      input.showControl = showControl ?? true; // controlはデフォルトで表示する
     }
   }
 
