@@ -48,7 +48,7 @@ export class LMStudioChatNode extends MessagePortNode<
         key: 'exec2', typeName: 'exec', label: 'Stop',
         onClick: () => this.controlflow.execute(this.id, 'exec2'),
       },
-      { key: 'modelKey', typeName: 'string', tooltip: 'Model key' },
+      { key: 'modelKey', typeName: 'string', label: 'modelKey', tooltip: 'Model key to use for the chat' },
       {
         key: 'chatHistoryData',
         typeName: 'ChatHistoryData',
