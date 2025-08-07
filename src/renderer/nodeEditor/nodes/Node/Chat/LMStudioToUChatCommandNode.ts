@@ -55,7 +55,7 @@ export class LMStudioToUChatCommandNode extends BaseNode<
         };
         break;
 
-      case "done": {
+      case "finish": {
         // LMStudioの完了イベントをUChatCommandEventに変換
         const message: UChatMessage = {
           role: "assistant",
@@ -66,8 +66,9 @@ export class LMStudioToUChatCommandNode extends BaseNode<
         };
 
         command = {
-          type: "response",
-          messages: [message],
+          type: "finish",
+          text: event.result.content,
+          message: message,
         };
         break;
       }
