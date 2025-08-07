@@ -5,7 +5,7 @@ description: Nodeの登録
 ---
 # プロンプト: Nodeの登録
 
-以下のステップに従って、新しいNodeの実装と登録手順を生成し実行してください。
+以下のステップに従って、新しいNodeの実装と登録を実行してください。
 
 ### ステップ
 1. `src/renderer/nodeEditor/nodes/Node/index.ts` のバニラインポートに追加
