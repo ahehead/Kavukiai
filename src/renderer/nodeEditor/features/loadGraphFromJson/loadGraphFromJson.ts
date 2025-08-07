@@ -51,14 +51,6 @@ export async function loadGraphFromJson(
       // ノードのインスタンスを生成
       node = factory(nodeDeps);
     }
-    // ノードの基本設定を設定
-    node.id = id;
-    await editor.addNode(node);
-    node.setSize(size.width, size.height);
-    if (size.width && size.height) {
-      await area.resize(id, size.width, size.height);
-    }
-    await area.translate(id, position);
 
     // ノードにdeserializeControlValueがあり、データがある場合はデータをセット
     if ("deserializeControlValue" in node && data) {
@@ -74,6 +66,15 @@ export async function loadGraphFromJson(
     if (isDynamicSchemaNode(node)) {
       await node.setupSchema();
     }
+
+    // 最後にノードの基本設定を設定、描画の変更
+    node.id = id;
+    await editor.addNode(node);
+    node.setSize(size.width, size.height);
+    if (size.width && size.height) {
+      await area.resize(id, size.width, size.height);
+    }
+    await area.translate(id, position);
   }
 
   // ノードの接続を作成
