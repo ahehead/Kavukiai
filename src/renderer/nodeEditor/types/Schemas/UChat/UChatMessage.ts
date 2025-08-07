@@ -66,6 +66,13 @@ export const UChatMessage = Type.Object({
 });
 export type UChatMessage = Static<typeof UChatMessage>;
 
+export const extractTextContent = (msg: UChatMessage): string => {
+  return msg.content
+    .filter((part) => part.type === "text")
+    .map((part) => part.text)
+    .join("\n");
+};
+
 /** UChat schema */
 export const UChat = Type.Array(UChatMessage);
 export type UChat = Static<typeof UChat>;
