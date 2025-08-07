@@ -1,6 +1,6 @@
 import { ClassicPreset } from "rete";
-import type { TypedSocket } from "./TypedSocket";
 import type { NodeControl } from ".";
+import type { TypedSocket } from "./TypedSocket";
 
 export class TooltipInput<
   S extends TypedSocket
@@ -24,5 +24,10 @@ export class TooltipInput<
 
   setSocket(socket: S) {
     this.socket = socket;
+  }
+
+  getShowValue<T>(): T | null {
+    if (!this.control || !this.showControl) return null;
+    return this.control.getValue() as T;
   }
 }

@@ -53,4 +53,19 @@ export class SerializableInputsNode<
       }
     }
   }
+
+  /**
+   * inputのcontrolの値、dataflowの値の順の優先で入力ポートの値を取得
+   * @param dataflowInputs データフローエンジンからの入力値
+   * @param key 入力ポートのキー
+   * @returns 入力ポートの値 | null
+   */
+  getInputValue<T>(
+    dataflowInputs: Partial<Record<keyof Inputs, unknown[]>>,
+    key: keyof Inputs
+  ): T | null {
+    const input = this.inputs[key as keyof Inputs];
+    const dataflowInput = dataflowInputs[key as keyof Inputs]?.[0] as T;
+    return input?.getShowValue<T>() ?? dataflowInput ?? null;
+  }
 }
