@@ -13,10 +13,10 @@ import type {
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
 import type { AreaPlugin } from 'rete-area-plugin'
 
-// リストノード: 6つの入力をリスト化し返す
-export class ListNode
+// 配列ノード: 6つの入力を配列化し返す
+export class ArrayNode
   extends SerializableInputsNode<
-    'List',
+    'Array',
     Record<string, TypedSocket>,
     { out: TypedSocket },
     object
@@ -28,7 +28,7 @@ export class ListNode
     private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>
   ) {
-    super('List')
+    super('Array')
 
     this.addInputPort(
       Array.from({ length: 6 }, (_, i) => ({
