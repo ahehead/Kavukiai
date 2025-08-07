@@ -72,14 +72,10 @@ export class InspectorNode
     _input: 'exec',
     forward: (output: 'exec') => void
   ): Promise<void> {
-    const { inputAny } = (await this.dataflow.fetchInputs(this.id)) as {
-      inputAny?: any[]
-    }
+    const inputAny = (await this.dataflow.fetchInputSingle<any>(this.id, "inputAny"))
+    if (inputAny === null) return
 
-    // inputがundefinedの場合は何もしない
-    if (!inputAny) return
-
-    this.controls.view.setValue(formatValue(inputAny[0]))
+    this.controls.view.setValue(formatValue(inputAny))
 
     await this.area.update('control', this.controls.view.id)
 
