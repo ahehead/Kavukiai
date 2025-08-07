@@ -49,21 +49,21 @@ import {
   UnknownNode,
   UnLoadModelNode,
 } from "./Node";
-import { ChatMessageListNode } from "./Node/Chat/ChatContextNode";
-import { ChatMessageListToOpenAIInput } from "./Node/Chat/ChatMessageListToOpenAIInput";
-import { ChatMessageListToStringNode } from "./Node/Chat/ChatMessageListToStringNode";
-import { GetLastMessageNode } from "./Node/Chat/GetLastMessageNode";
 import { LMStudioToUChatCommandNode } from "./Node/Chat/LMStudioToUChatCommandNode";
-import { OpenAIToChatEventNode } from "./Node/Chat/OpenAIToChatEventNode";
 import { OpenAIToUChatCommandNode } from "./Node/Chat/OpenAIToUChatCommandNode";
-import { ReverseUserAssistantRoleNode } from "./Node/Chat/ReverseUserAssistantRoleNode";
+import { ReverseRoleNode } from "./Node/Chat/ReverseRoleNode";
+import { UChatGetLastMessageNode } from "./Node/Chat/UChatGetLastMessageNode";
 import { UChatMessageNode } from "./Node/Chat/UChatMessageNode";
 import { UChatRoleNode } from "./Node/Chat/UChatRoleNode";
 import { UChatToLMStudioNode } from "./Node/Chat/UChatToLMStudioNode";
 import { UChatToOpenAINode } from "./Node/Chat/UChatToOpenAINode";
+import { UChatToStringNode } from "./Node/Chat/UChatToStringNode";
 import { UPartTextNode } from "./Node/Chat/UPartTextNode";
+import { ChatMessageListNode } from "./Node/OpenAI/Chat/ChatContextNode";
+import { GetLastMessageNode } from "./Node/OpenAI/Chat/GetLastMessageNode";
+import { OpenAIToChatEventNode } from "./Node/OpenAI/Chat/OpenAIToChatEventNode";
+import { ArrayNode } from "./Node/Primitive/ArrayNode";
 import { IFNode } from "./Node/Primitive/Flow/IFNode";
-import { ListNode } from "./Node/Primitive/ListNode";
 
 export type NodeDeps = {
   editor: NodeEditor<Schemes>;
@@ -98,7 +98,7 @@ export const nodeFactories = {
     new NumberNode(0, history, area, dataflow),
   Bool: ({ history, area, dataflow }) => new BoolNode(history, area, dataflow),
 
-  List: ({ area, dataflow }) => new ListNode(area, dataflow),
+  Array: ({ area, dataflow }) => new ArrayNode(area, dataflow),
   CreateSelect: ({ dataflow, controlflow }) =>
     new CreateSelectNode(dataflow, controlflow),
   LoadImage: ({ history, area, dataflow }) =>
@@ -134,10 +134,9 @@ export const nodeFactories = {
   ResponseTextConfig: () => new ResponseTextConfigNode(),
 
   // chat
-  ChatMessageListToOpenAIInput: () => new ChatMessageListToOpenAIInput(),
-  ChatMessageListToString: () => new ChatMessageListToStringNode(),
+  UChatToString: () => new UChatToStringNode(),
+  UChatGetLastMessage: () => new UChatGetLastMessageNode(),
   GetLastMessage: () => new GetLastMessageNode(),
-  ReverseUserAssistantRole: () => new ReverseUserAssistantRoleNode(),
   OpenAIToChatEvent: () => new OpenAIToChatEventNode(),
   OpenAIToUChatCommand: () => new OpenAIToUChatCommandNode(),
   LMStudioToUChatCommand: () => new LMStudioToUChatCommandNode(),
@@ -155,6 +154,7 @@ export const nodeFactories = {
     new UChatNode([], history, area, dataflow, controlflow),
   UChatRole: ({ history, area, dataflow }) =>
     new UChatRoleNode("user", history, area, dataflow),
+  ReverseRole: () => new ReverseRoleNode(),
 
   ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
   JsonSchemaToObject: ({ editor, history, area, dataflow, controlflow }) =>
@@ -194,7 +194,7 @@ const rawMenu: RawMenuItem[] = [
     subitems: [
       { label: "Bool", factoryKey: "Bool" },
       { label: "CreateSelect", factoryKey: "CreateSelect" },
-      { label: "List", factoryKey: "List" },
+      { label: "Array", factoryKey: "Array" },
       { label: "Number", factoryKey: "Number" },
       {
         label: "String",
@@ -238,34 +238,17 @@ const rawMenu: RawMenuItem[] = [
   {
     label: "Chat",
     subitems: [
-      {
-        label: "ChatMessage",
-        factoryKey: "ChatMessage",
-      },
-      { label: "ChatMessageList", factoryKey: "ChatMessageList" },
-      {
-        label: "ChatMessageListToOpenAIInput",
-        factoryKey: "ChatMessageListToOpenAIInput",
-      },
-      {
-        label: "ChatMessageListToString",
-        factoryKey: "ChatMessageListToString",
-      },
-      { label: "GetLastMessage", factoryKey: "GetLastMessage" },
-      {
-        label: "ReverseUserAssistantRole",
-        factoryKey: "ReverseUserAssistantRole",
-      },
-      { label: "Role", factoryKey: "Role" },
-      { label: "OpenAIToChatEvent", factoryKey: "OpenAIToChatEvent" },
-      { label: "OpenAIToUChatCommand", factoryKey: "OpenAIToUChatCommand" },
-      { label: "LMStudioToUChatCommand", factoryKey: "LMStudioToUChatCommand" },
-      { label: "UPartText", factoryKey: "UPartText" },
+      { label: "UChat", factoryKey: "UChat" },
       { label: "UChatMessage", factoryKey: "UChatMessage" },
+      { label: "UChatRole", factoryKey: "UChatRole" },
+      { label: "UPartText", factoryKey: "UPartText" },
+      { label: "UChatToString", factoryKey: "UChatToString" },
+      { label: "UChatGetLastMessage", factoryKey: "UChatGetLastMessage" },
       { label: "UChatToOpenAI", factoryKey: "UChatToOpenAI" },
       { label: "UChatToLMStudio", factoryKey: "UChatToLMStudio" },
-      { label: "UChat", factoryKey: "UChat" },
-      { label: "UChatRole", factoryKey: "UChatRole" },
+      { label: "OpenAIToUChatCommand", factoryKey: "OpenAIToUChatCommand" },
+      { label: "LMStudioToUChatCommand", factoryKey: "LMStudioToUChatCommand" },
+      { label: "ReverseRole", factoryKey: "ReverseRole" },
     ],
   },
   { label: "Inspector", factoryKey: "Inspector" },
