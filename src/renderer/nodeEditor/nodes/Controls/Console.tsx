@@ -18,6 +18,8 @@ export interface ConsoleControlParams extends ControlOptions<any> {
 export class ConsoleControl extends BaseControl<any, ConsoleControlParams> {
   value: string
   isOpen: boolean
+  private lastMessage: string | null = null
+  private repeatCount = 1
 
   constructor(public params: ConsoleControlParams) {
     super(params)
@@ -35,12 +37,27 @@ export class ConsoleControl extends BaseControl<any, ConsoleControlParams> {
   }
 
   addValue: (addValue: string) => void = addValue => {
-    this.value += addValue
-    this.value += '\n-----------\n'
+    if (!addValue) return
+
+    if (addValue === this.lastMessage) {
+      this.repeatCount++
+      // valueの最後のメッセージブロックを更新
+      const blocks = this.value.split('\n-----------\n')
+      // 最後のブロックは空文字列なので、その前を更新
+      const lastBlockIndex = blocks.length - 2
+      blocks[lastBlockIndex] = `${this.lastMessage} (x${this.repeatCount})`
+      this.value = blocks.join('\n-----------\n')
+    } else {
+      this.lastMessage = addValue
+      this.repeatCount = 1
+      this.value += `${addValue}\n-----------\n`
+    }
     this.notify()
   }
   setValue(value: string) {
     this.value = value
+    this.lastMessage = null
+    this.repeatCount = 1
     this.notify()
   }
   getValue(): string {
@@ -51,13 +68,17 @@ export class ConsoleControl extends BaseControl<any, ConsoleControlParams> {
       data: {
         value: this.value,
         isOpen: this.isOpen,
+        lastMessage: this.lastMessage,
+        repeatCount: this.repeatCount,
       },
     }
   }
   override setFromJSON({ data }: ControlJson): void {
-    const { value, isOpen } = data as any
-    this.value = value
-    this.isOpen = isOpen
+    const { value, isOpen, lastMessage, repeatCount } = data as any
+    this.value = value ?? ''
+    this.isOpen = isOpen ?? false
+    this.lastMessage = lastMessage ?? null
+    this.repeatCount = repeatCount ?? 1
   }
 }
 
