@@ -18,25 +18,35 @@ export class SerializableInputsNode<
     [key in string]?: NodeControl;
   }
 > extends BaseNode<L, Inputs, Outputs, Controls> {
+  /**
+   * 入力ポートのシリアライズ
+   * @returns シリアライズされた入力ポートのJSON
+   */
   serializeInputs(): { inputs: Record<string, InputPortJson> } {
     const inputsJson: Record<string, InputPortJson> = {};
     for (const [key, input] of Object.entries(this.inputs)) {
-      if (!input) continue;
-      const controlJson = input.control?.toJSON();
+      if (!input || !input.control) continue;
+
+      const controlJson = input.control.toJSON();
       inputsJson[key] = {
         isShowControl: input.showControl,
-        ...(controlJson !== undefined ? { control: controlJson } : {}),
+        control: controlJson,
       };
     }
     return { inputs: inputsJson };
   }
 
+  /**
+   * 入力ポートのデシリアライズ
+   * @param inputsJson シリアライズされた入力ポートのJSON
+   */
   deserializeInputs(inputsJson: Record<string, InputPortJson>): void {
     for (const [key, inputJson] of Object.entries(inputsJson)) {
       const input = this.inputs[key as keyof Inputs];
-      if (!input) continue;
+      if (!input || !input.control) continue;
+
       input.showControl = inputJson.isShowControl;
-      if (inputJson.control && input.control) {
+      if (inputJson.control) {
         (input.control as unknown as SerializableControl).setFromJSON(
           inputJson.control
         );
