@@ -83,6 +83,7 @@ export class LMStudioChatNode extends MessagePortNode<
     const [modelKey, chatHistoryData, config] =
       await this.dataflow.fetchInputMultiple<[string, ChatHistoryData, LLMPredictionConfig]>(this.id, ["modelKey", "chatHistoryData", "config"])
     if (!chatHistoryData) return null
+    this.controls.console.setValue(`modelKey: ${modelKey} \n config: ${JSON.stringify(config)} \n chatHistoryData: ${JSON.stringify(chatHistoryData)} `)
     return {
       id: this.id,
       modelKey: modelKey ? modelKey : undefined,
