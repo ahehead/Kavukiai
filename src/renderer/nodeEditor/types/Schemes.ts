@@ -3,10 +3,9 @@ import type { ContextMenuExtra } from "rete-context-menu-plugin";
 import type { ReactArea2D } from "rete-react-plugin";
 
 import type {
+  ArrayNode,
   BoolNode,
   ChatMessageListNode,
-  ChatMessageListToOpenAIInput,
-  ChatMessageListToStringNode,
   ChatMessageNode,
   CodeFenceNode,
   CounterLoopNode,
@@ -20,7 +19,6 @@ import type {
   JsonSchemaNode,
   JsonSchemaToObjectNode,
   ListDownloadedModelsNode,
-  ListNode,
   LLMPredictionConfigNode,
   LMStudioChatNode,
   LMStudioLoadModelNode,
@@ -40,7 +38,7 @@ import type {
   OpenAIToUChatCommandNode,
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
-  ReverseUserAssistantRoleNode,
+  ReverseRoleNode,
   RoleNode,
   RunNode,
   ServerStatusNode,
@@ -48,11 +46,13 @@ import type {
   StringNode,
   TemplateReplaceNode,
   TestNode,
+  UChatGetLastMessageNode,
   UChatMessageNode,
   UChatNode,
   UChatRoleNode,
   UChatToLMStudioNode,
   UChatToOpenAINode,
+  UChatToStringNode,
   UnknownNode,
   UnLoadModelNode,
   UPartTextNode,
@@ -80,10 +80,9 @@ export type NodeTypes =
   | OpenAINode
   | ResponseCreateParamsBaseNode
   | ChatMessageListNode
-  | ChatMessageListToOpenAIInput
-  | ChatMessageListToStringNode
+  | UChatToStringNode
+  | UChatGetLastMessageNode
   | GetLastMessageNode
-  | ReverseUserAssistantRoleNode
   | ChatMessageNode
   | RoleNode
   | UChatMessageNode
@@ -91,7 +90,7 @@ export type NodeTypes =
   | BoolNode
   | IFNode
   | CounterLoopNode
-  | ListNode
+  | ArrayNode
   | ObjectPickNode
   | JsonSchemaToObjectNode
   | JsonSchemaNode
@@ -122,7 +121,8 @@ export type NodeTypes =
   | UChatToLMStudioNode
   | UChatNode
   | UChatRoleNode
-  | LMStudioChatNode;
+  | LMStudioChatNode
+  | ReverseRoleNode;
 
 export type NodeTypeKey = NodeTypes["label"];
 

@@ -78,10 +78,7 @@ export class OpenAIToChatEventNode extends BaseNode<
             role: item.role,
             type: "message",
             content: item.content,
-            model: response.model,
             status: item.status,
-            created_at: response.created_at,
-            tokensCount: response.usage?.output_tokens,
           });
         }
       }

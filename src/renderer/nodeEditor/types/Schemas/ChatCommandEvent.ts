@@ -6,10 +6,12 @@ import { ChatMessageItem } from "./ChatMessageItem";
 export const ChatCommandEvent = Type.Union([
   Type.Object({
     type: Type.Literal("start"),
-    message: Type.Object({
-      model: Type.String(),
-      created_at: Type.Number(),
-    }),
+    message: Type.Optional(
+      Type.Object({
+        model: Type.String(),
+        created_at: Type.Number(),
+      })
+    ),
   }),
   Type.Object({
     type: Type.Literal("setInfo"),

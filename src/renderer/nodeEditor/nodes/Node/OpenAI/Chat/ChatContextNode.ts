@@ -17,7 +17,7 @@ import type { HistoryPlugin } from "rete-history-plugin";
 import {
   ChatMessageListControl,
   type DeltaFunctions,
-} from "../../Controls/Chat/ChatMessageList";
+} from "../../../Controls/Chat/ChatMessageList";
 
 // open ai用のchat message list Node
 export class ChatMessageListNode
@@ -153,7 +153,7 @@ export class ChatMessageListNode
     }
     switch (event.type) {
       case "start":
-        this.deltaFunc.start(event.message);
+        this.deltaFunc.start();
         break;
       case "setInfo":
         this.deltaFunc.setInfo(event.message);

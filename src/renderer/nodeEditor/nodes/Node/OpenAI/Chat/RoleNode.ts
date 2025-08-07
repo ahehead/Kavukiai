@@ -1,4 +1,8 @@
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
+import {
+  SelectControl,
+  type SelectOption,
+} from "renderer/nodeEditor/nodes/Controls/input/Select";
 import type {
   AreaExtra,
   Schemes,
@@ -9,8 +13,6 @@ import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/Serial
 import type { Role } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
-import type { SelectOption } from "../../Controls/input/Select";
-import { SelectControl } from "../../Controls/input/Select";
 
 // Role選択ノード
 export class RoleNode
