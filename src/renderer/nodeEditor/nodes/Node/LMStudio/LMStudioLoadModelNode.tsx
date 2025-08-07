@@ -68,7 +68,7 @@ export class LMStudioLoadModelNode extends MessagePortNode<
       case 'progress':
         this.controls.progress.setValue(evt.progress * 100)
         break
-      case 'done':
+      case 'finish':
         // set progress to 100% on completion
         this.controls.progress.setValue(100)
         await this.logAndTerminate('done', 'loaded', forward)

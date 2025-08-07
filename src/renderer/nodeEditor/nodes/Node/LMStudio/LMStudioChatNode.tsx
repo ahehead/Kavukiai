@@ -112,7 +112,7 @@ export class LMStudioChatNode extends MessagePortNode<
         this.dataflow.reset(this.id)
         forward('exec')
         break
-      case 'done':
+      case 'finish':
         this.eventOrStatus = evt
         this.controls.console.addValue(`Event: ${evt.type}`)
         this.dataflow.reset(this.id)

@@ -60,7 +60,7 @@ export class OpenAIToChatEventNode extends BaseNode<
           event = { type: "delta", delta: response.delta };
           break;
         case "response.output_text.done":
-          event = { type: "done", text: response.text };
+          event = { type: "finish", text: response.text };
           break;
         case "error":
         case "response.failed":

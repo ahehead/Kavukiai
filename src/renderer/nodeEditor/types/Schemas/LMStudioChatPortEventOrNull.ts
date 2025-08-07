@@ -26,7 +26,7 @@ export const LMStudioChatPortEventSchema = Type.Union(
     ),
     Type.Object(
       {
-        type: Type.Literal("done"),
+        type: Type.Literal("finish"),
         result: Type.Object(
           {
             content: Type.String({ description: "Complete generated content" }),

@@ -20,7 +20,7 @@ export const ChatCommandEvent = Type.Union([
     delta: Type.String(),
   }),
   Type.Object({
-    type: Type.Literal("done"),
+    type: Type.Literal("finish"),
     text: Type.String(),
   }),
   Type.Object({

@@ -161,7 +161,7 @@ export class ChatMessageListNode
       case "delta":
         this.deltaFunc.pushDelta(event.delta);
         break;
-      case "done":
+      case "finish":
         this.deltaFunc.finish(event.text);
         forward("exec2");
         break;

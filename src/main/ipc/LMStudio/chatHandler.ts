@@ -33,7 +33,7 @@ async function handleChat(evt: IpcMainEvent, data: unknown): Promise<void> {
       ? await findLoadedModel(modelKey)
       : await client.llm.model();
     if (!modelKey && !model) {
-      throw new Error("No model loaded or specified");
+      throw new Error("No modelNameKey and no default model loaded");
     }
     if (!model && modelKey) {
       console.log(`Model ${modelKey} not loaded. Loading...`);
@@ -53,6 +53,7 @@ async function handleChat(evt: IpcMainEvent, data: unknown): Promise<void> {
       ...config,
       signal: controller.signal,
     });
+    // Start Streaming
     port.postMessage({ type: "start" } as LMStudioChatPortEvent);
     for await (const { content } of prediction) {
       port.postMessage({
@@ -68,14 +69,15 @@ async function handleChat(evt: IpcMainEvent, data: unknown): Promise<void> {
     const { content, reasoningContent, stats, modelInfo } = sdkResult;
     const portResult = { content, reasoningContent, status: stats, modelInfo };
     port.postMessage({
-      type: "done",
+      type: "finish",
       result: portResult,
-    });
+    } as LMStudioChatPortEvent);
   } catch (error: any) {
     console.error("LMStudio chat error:", error);
-    const message = error.message ?? String(error);
-    const errorEvent: LMStudioChatPortEvent = { type: "error", message };
-    port.postMessage(errorEvent);
+    port.postMessage({
+      type: "error",
+      message: error.message ?? String(error),
+    } as LMStudioChatPortEvent);
   } finally {
     port.close();
   }

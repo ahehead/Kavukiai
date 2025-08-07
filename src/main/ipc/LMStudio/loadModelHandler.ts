@@ -28,7 +28,7 @@ async function handleLoadModel(
       signal: controller.signal,
       onProgress: (p) => port.postMessage({ type: "progress", progress: p }),
     });
-    port.postMessage({ type: "done" } as LMStudioPortEvent);
+    port.postMessage({ type: "finish" } as LMStudioPortEvent);
   } catch (err: any) {
     port.postMessage({ type: "error", message: String(err?.message ?? err) });
   } finally {

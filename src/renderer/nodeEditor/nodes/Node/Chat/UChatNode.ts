@@ -161,8 +161,8 @@ export class UChatNode
       case "delta":
         this.deltaFunc.pushDelta(event.delta);
         break;
-      case "done":
-        this.deltaFunc.finish(event.text);
+      case "finish":
+        this.deltaFunc.finish(event.text, event.message);
         forward("exec2");
         break;
       case "error":
