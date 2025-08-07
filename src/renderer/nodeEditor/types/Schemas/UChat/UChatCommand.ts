@@ -17,8 +17,9 @@ export const UChatCommandEvent = Type.Union([
     delta: Type.String(),
   }),
   Type.Object({
-    type: Type.Literal("done"),
+    type: Type.Literal("finish"),
     text: Type.String(),
+    message: Type.Optional(Type.Partial(UChatMessage)),
   }),
   Type.Object({
     type: Type.Literal("error"),
