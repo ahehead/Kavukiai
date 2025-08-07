@@ -21,7 +21,7 @@ export interface DeltaStreamFunctions {
   start(initial?: Partial<UChatMessage>): void
   setInfo(info: Partial<UChatMessage>): void
   pushDelta(delta: string): void
-  finish(finalText?: string): void
+  finish(finalText?: string, message?: Partial<UChatMessage>): void
 }
 
 export interface UChatControlParams
@@ -141,11 +141,13 @@ export class UChatControl extends BaseControl<
         this.messages = [...this.messages]
         this.notify()
       },
-      finish: (text?: string) => {
+      finish: (text?: string, message?: UChatMessage) => {
         if (!inFlight) return
         inFlight = false
         const msg = getMsg()
         if (!msg) return
+        index = -1
+        Object.assign(msg, message)
         msg.content = [{ type: 'text', text: text ?? this.streamBuffer }]
         const next = [...this.messages]
         this.messages = next
