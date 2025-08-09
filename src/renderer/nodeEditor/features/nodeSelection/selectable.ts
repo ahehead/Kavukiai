@@ -1,3 +1,4 @@
+// 公式Selectorをコピー改変
 import type { Schemes } from "renderer/nodeEditor/types";
 import { NodeEditor, type NodeId } from "rete";
 import type { BaseArea, BaseAreaPlugin } from "rete-area-plugin";
