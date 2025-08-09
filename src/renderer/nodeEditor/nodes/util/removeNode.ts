@@ -32,7 +32,7 @@ export async function destroyAllNodes(
 }
 
 /**
- * socket keyがtargetになっているコネクションを全て削除する
+ * 指定したノードの、ソケットkeyにつながるコネクションを全て削除する
  */
 export async function removeLinkedSockets(
   editor: NodeEditor<Schemes>,
@@ -47,7 +47,7 @@ export async function removeLinkedSockets(
 }
 
 /**
- * 指定したノードの出力ポートに接続されているコネクションを取得する
+ * 指定したノードの、出力ポートkeyに接続されているコネクションを全て取得する
  */
 export function getConnectionsByOutputPortKey(
   editor: NodeEditor<Schemes>,
