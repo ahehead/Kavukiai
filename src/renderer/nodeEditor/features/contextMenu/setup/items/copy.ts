@@ -3,7 +3,7 @@ import {
   getConnectionsForNodes,
 } from "renderer/nodeEditor/features/serializeGraph/serializeGraph";
 import type { NodeEditor } from "rete";
-import type { AreaPlugin } from "rete-area-plugin";
+import { AreaExtensions, type AreaPlugin } from "rete-area-plugin";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 import type {
   ConnectionJson,
@@ -28,11 +28,20 @@ export function createCopyItem(
           .filter((node) => node.selected && node.id !== context.id),
       ];
 
-      // ノードをJSON化（IDは変えない）
+      const { left, top } = AreaExtensions.getBoundingBox(area, targetNodes);
+
+      // ノードをJSON化
       const jsonNodes: NodeJson[] = [];
       for (const node of targetNodes) {
         const nodeJson = convertNodeToJson(node, area);
         if (!nodeJson) continue; // 位置が取れない等の場合はスキップ
+        // ノードの位置を相対位置に変換
+        nodeJson.position = {
+          // boundingBox 左上を原点(0,0)とした相対位置にする
+          // 例: node(110, 130), bbox.left/top(100, 120) -> (10, 10)
+          x: nodeJson.position.x - left,
+          y: nodeJson.position.y - top,
+        };
         jsonNodes.push(nodeJson);
       }
 

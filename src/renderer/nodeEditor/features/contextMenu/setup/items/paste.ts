@@ -8,13 +8,16 @@ import type {
   NodeJson,
 } from "../../../../../../shared/JsonType";
 
-export function createPasteItem(nodeDeps: NodeDeps): Item {
+export function createPasteItem(
+  pointerPosition: { x: number; y: number },
+  nodeDeps: NodeDeps
+): Item {
   return {
     label: "ノードをペースト",
     key: "paste-nodes",
     handler: async () => {
-      // クリップボードから JSON を取得して貼り付け実行
-      await pasteGraphFromClipboard(nodeDeps);
+      // クリップボードから JSON を取得してidとpositionを変更して貼り付け実行
+      await pasteGraphFromClipboard(pointerPosition, nodeDeps);
     },
   };
 }
@@ -56,12 +59,20 @@ function buildNodeIdMap(nodes: NodeJson[]): Map<string, string> {
 }
 
 /**
- * ノードIDの再割り当て
+ * ノードIDと位置の再割り当て
  */
-function remapNodes(nodes: NodeJson[], idMap: Map<string, string>): NodeJson[] {
+function remapNodes(
+  pointerPosition: { x: number; y: number },
+  nodes: NodeJson[],
+  idMap: Map<string, string>
+): NodeJson[] {
   return nodes.map((n) => ({
     ...n,
     id: idMap.get(n.id) ?? n.id,
+    position: {
+      x: n.position.x + pointerPosition.x,
+      y: n.position.y + pointerPosition.y,
+    },
   }));
 }
 
@@ -86,12 +97,13 @@ function remapConnections(
  * 置換済みグラフを生成
  */
 function createRemappedGraph(
-  jsonData: GraphJsonData,
-  idMap: Map<string, string>
+  pointerPosition: { x: number; y: number },
+  idMap: Map<string, string>,
+  jsonData: GraphJsonData
 ): GraphJsonData {
   return {
     version: jsonData.version ?? "1.0",
-    nodes: remapNodes(jsonData.nodes, idMap),
+    nodes: remapNodes(pointerPosition, jsonData.nodes, idMap),
     connections: remapConnections(jsonData.connections, idMap),
   };
 }
@@ -99,13 +111,17 @@ function createRemappedGraph(
 /**
  * クリップボードからのペースト一連処理
  */
-async function pasteGraphFromClipboard(nodeDeps: NodeDeps) {
+async function pasteGraphFromClipboard(
+  pointerPosition: { x: number; y: number },
+  nodeDeps: NodeDeps
+) {
   const jsonData = await parseClipboardGraphJson();
   if (!jsonData) return;
 
   const remapped = createRemappedGraph(
-    jsonData,
-    buildNodeIdMap(jsonData.nodes)
+    pointerPosition,
+    buildNodeIdMap(jsonData.nodes),
+    jsonData
   );
   await loadGraphFromJson({ graphJsonData: remapped, ...nodeDeps });
 }
