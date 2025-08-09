@@ -1,9 +1,8 @@
-import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
+import type { NodeDeps } from "renderer/nodeEditor/nodes/nodeFactories";
 import { destroyAllNodes } from "renderer/nodeEditor/nodes/util/removeNode";
 import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import { AreaExtensions } from "rete-area-plugin";
-import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
 import type { GraphJsonData } from "shared/JsonType";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
@@ -55,14 +54,9 @@ export function getCurrentEditorState(
   };
 }
 
-interface ResetEditorStateParams {
+export type ResetEditorStateParams = {
   payload: NodeEditorState;
-  editor: NodeEditor<Schemes>;
-  area: AreaPlugin<Schemes, AreaExtra>;
-  dataflow: DataflowEngine<Schemes>;
-  controlflow: ControlFlowEngine<Schemes>;
-  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>;
-}
+} & NodeDeps;
 
 export async function resetEditorState({
   payload,
@@ -89,14 +83,14 @@ export async function resetEditorState({
   await editor.clear();
   history.clear();
   dataflow.reset();
-  await loadGraphFromJson(
-    payload.graph,
+  await loadGraphFromJson({
+    graphJsonData: payload.graph,
     area,
     editor,
     dataflow,
     controlflow,
-    history
-  );
+    history,
+  });
   updateHistoryState(history, payload);
   await AreaExtensions.zoomAt(area, editor.getNodes());
 }

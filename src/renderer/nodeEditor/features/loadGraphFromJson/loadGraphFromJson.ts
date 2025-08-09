@@ -1,26 +1,19 @@
+import type { NodeTypes } from "renderer/nodeEditor/types";
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
-import type {
-  AreaExtra,
-  NodeTypes,
-  Schemes,
-} from "renderer/nodeEditor/types/Schemes";
-import { ClassicPreset, type NodeEditor } from "rete";
-import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine } from "rete-engine";
-import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
+import { ClassicPreset } from "rete";
 import type { GraphJsonData, InputPortJson } from "shared/JsonType";
-import { nodeFactories } from "../../nodes/nodeFactories";
-import type { DataflowEngine } from "../safe-dataflow/dataflowEngin";
+import { type NodeDeps, nodeFactories } from "../../nodes/nodeFactories";
 
 // JSON からノードを生成してエディタに登録
-export async function loadGraphFromJson(
-  graphJsonData: GraphJsonData,
-  area: AreaPlugin<Schemes, AreaExtra>,
-  editor: NodeEditor<Schemes>,
-  dataflow: DataflowEngine<Schemes>,
-  controlflow: ControlFlowEngine<Schemes>,
-  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
-): Promise<void> {
+export type LoadGraphFromJsonArgs = NodeDeps & { graphJsonData: GraphJsonData };
+export async function loadGraphFromJson({
+  graphJsonData,
+  area,
+  editor,
+  dataflow,
+  controlflow,
+  history,
+}: LoadGraphFromJsonArgs): Promise<void> {
   // ノードの登録
   for (const {
     id,
@@ -30,7 +23,7 @@ export async function loadGraphFromJson(
     data,
     inputs,
   } of graphJsonData.nodes) {
-    const nodeDeps = {
+    const nodeDeps: NodeDeps = {
       editor,
       area,
       dataflow,
