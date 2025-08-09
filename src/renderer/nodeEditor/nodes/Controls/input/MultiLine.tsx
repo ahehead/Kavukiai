@@ -72,6 +72,8 @@ export function TextAreaControllView(props: {
       ref={ref}
       value={uiText}
       readOnly={!control.opts.editable}
+      // controlをクリック時に、右クリックメニューを閉じるために発火。dataは間違えている。
+      onPointerDown={(_e) => control.opts.area?.emit({ type: "nodepicked", data: { id: control.id } })}
       onChange={control.opts.editable ? onChangeHandle : undefined}
       className={textAreaStyles({ editable: control.opts.editable })}
       placeholder="..."
