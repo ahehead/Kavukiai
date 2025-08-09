@@ -7,8 +7,15 @@ import {
 } from "../../../../nodes/nodeFactories";
 import type { NodeTypeKey, Schemes } from "../../../../types/Schemes";
 
-// Helper function to generate context menu items
-export function createReteContextMenuItems(
+/**
+ * nodeFactoryを使い、各Node用生成MenuItemを作成する
+ * @param definitions - Menu item definitions
+ * @param editor - Node editor instance
+ * @param nodeDepsArgs - Node dependencies
+ * @param pointer - Pointer position
+ * @returns Array of context menu items
+ */
+export function createNodeFactoryMenuItems(
   definitions: MenuItemDefinition[],
   editor: NodeEditor<Schemes>,
   nodeDepsArgs: NodeDeps,
@@ -24,7 +31,7 @@ export function createReteContextMenuItems(
     };
 
     if (itemDef.subitems && itemDef.subitems.length > 0) {
-      menuItem.subitems = createReteContextMenuItems(
+      menuItem.subitems = createNodeFactoryMenuItems(
         itemDef.subitems,
         editor,
         nodeDepsArgs,
