@@ -48,7 +48,7 @@ export const NodeContainer = React.forwardRef<
 ))
 NodeContainer.displayName = 'NodeContainer'
 
-const nodeHeaderStyles = cva(['rounded-t-md flex flex-row items-center w-full'], {
+const nodeHeaderStyles = cva(['flex flex-row items-center rounded-t-md w-full'], {
   variants: {
     status: {
       IDLE: 'bg-gradient-to-r from-node-header/90 to-node-header',
@@ -116,7 +116,7 @@ export function NodeHeader({
 
 const nodeTitleStyles = cva(
   [
-    'node-title-size leading-none py-2 tracking-tight font-semibold inline-block max-w-full truncate',
+    'flex-1 node-title-size leading-none py-2 tracking-tight font-semibold inline-block max-w-full truncate',
   ],
   {
     variants: {
