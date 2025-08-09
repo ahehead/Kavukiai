@@ -1,6 +1,11 @@
+import { getNodePosition } from "renderer/nodeEditor/nodes/util/getNodePosition";
 import type { NodeEditor } from "rete";
-import type { AreaPlugin, NodeView } from "rete-area-plugin";
-import type { GraphJsonData, NodeJson } from "../../../../shared/JsonType";
+import type { AreaPlugin } from "rete-area-plugin";
+import type {
+  ConnectionJson,
+  GraphJsonData,
+  NodeJson,
+} from "../../../../shared/JsonType";
 import type { AreaExtra, NodeTypes, Schemes } from "../../types/Schemes";
 
 /**
@@ -40,30 +45,15 @@ export function serializeGraph(
  */
 export function serializeSubgraph(
   nodes: NodeTypes[],
-  editor: NodeEditor<Schemes>,
+  connections: ConnectionJson[],
   area: AreaPlugin<Schemes, AreaExtra>
 ): GraphJsonData {
-  // ノードIDのセットを用意
-  const nodeIdSet = new Set(nodes.map((n) => n.id));
-
   // ノード情報を整形（与えられたノードのみ）
   const nodeJsonList: NodeJson[] = [];
   for (const node of nodes) {
     const nodeJson = convertNodeToJson(node, area);
     if (nodeJson) nodeJsonList.push(nodeJson);
   }
-
-  // コネクションは両端がセット内のノードに限る
-  const connections = editor
-    .getConnections()
-    .filter((conn) => nodeIdSet.has(conn.source) && nodeIdSet.has(conn.target))
-    .map((conn) => ({
-      id: conn.id,
-      source: conn.source,
-      sourcePort: conn.sourceOutput,
-      target: conn.target,
-      targetPort: conn.targetInput,
-    }));
 
   return {
     version: "1.0",
@@ -73,15 +63,35 @@ export function serializeSubgraph(
 }
 
 /**
+ * 指定ノード集合間の接続(ConnectionJson[])を Editor から抽出して返す
+ */
+export function getConnectionsForNodes(
+  nodes: NodeTypes[],
+  editor: NodeEditor<Schemes>
+): ConnectionJson[] {
+  const nodeIdSet = new Set(nodes.map((n) => n.id));
+  return editor
+    .getConnections()
+    .filter((conn) => nodeIdSet.has(conn.source) && nodeIdSet.has(conn.target))
+    .map((conn) => ({
+      id: conn.id,
+      source: conn.source,
+      sourcePort: conn.sourceOutput,
+      target: conn.target,
+      targetPort: conn.targetInput,
+    }));
+}
+
+/**
  * ノードを NodeJson 形式に変換する
  */
-function convertNodeToJson(
+export function convertNodeToJson(
   node: NodeTypes,
   area: AreaPlugin<Schemes, AreaExtra>
 ): NodeJson | null {
-  // positionを取得するために nodeViewからnodeを取得
-  const nodeView = area.nodeViews.get(node.id);
-  if (!nodeView) {
+  // ノードの位置を取得
+  const position = getNodePosition(area, node);
+  if (!position) {
     console.error(`Node with id ${node.id} not found in area.`);
     return null;
   }
@@ -97,17 +107,23 @@ function convertNodeToJson(
   }
 
   return {
-    ...buildNodeBaseData(node, nodeView),
+    ...buildNodeBaseData(node, position),
     ...nodeData,
     ...inputsData,
   };
 }
 
-function buildNodeBaseData(node: NodeTypes, nodeView: NodeView): NodeJson {
+/**
+ * ノードのベース情報（id/type/position/size）を作成
+ */
+function buildNodeBaseData(
+  node: NodeTypes,
+  position: { x: number; y: number }
+): NodeJson {
   return {
     id: node.id,
     type: node.label,
-    position: { x: nodeView.position.x, y: nodeView.position.y },
+    position: { x: position.x, y: position.y },
     size: { width: node.width, height: node.height },
   };
 }
