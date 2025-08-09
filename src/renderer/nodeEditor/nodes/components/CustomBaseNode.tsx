@@ -1,3 +1,4 @@
+import { X } from 'lucide-react'
 import { useRef } from 'react'
 import { ControlLabel } from 'renderer/nodeEditor/nodes/components/common/NodeControlParts'
 import {
@@ -14,11 +15,13 @@ import {
   NodeSocketsWrapper,
   NodeSocketTypeLabel,
 } from 'renderer/nodeEditor/nodes/components/common/NodeSocketParts'
+import { NodeEditor } from 'rete'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { Presets, type RenderEmit } from 'rete-react-plugin'
 import type { AreaExtra, NodeInterface, Schemes } from '../../types/Schemes'
 import { getContextMenuPath } from '../util/getContextMenuPath'
+import { removeNodeWithConnections } from '../util/removeNode'
 import { withTooltip } from './common/TooltipSetting'
 import { useNodeResize } from './hooks/useNodeResize'
 
@@ -64,6 +67,16 @@ export function createCustomNode(
       await clearNodeSize()
     }
 
+    const handleDeleteNode = async (e: React.MouseEvent) => {
+      e.stopPropagation()
+      try {
+        const editor = area.parentScope<NodeEditor<Schemes>>(NodeEditor)
+        await removeNodeWithConnections(editor, id)
+      } catch {
+        // noop: editor が未初期化の場合など
+      }
+    }
+
     return (
       <NodeContainer
         ref={panelRef}
@@ -77,6 +90,16 @@ export function createCustomNode(
       >
         <NodeHeader status={data.status} nodeType={label}>
           <NodeTitle status={data.status}>{label}</NodeTitle>
+          <button
+            aria-label="ノードを削除"
+            title="ノードを削除"
+            className="mr-1.5 inline-flex h-6 w-6 items-center justify-center rounded text-node-header-fg/25 hover:text-node-header-fg/90 hover:bg-node-header-fg/10 transition"
+            onPointerDown={e => e.stopPropagation()}
+            onClick={handleDeleteNode}
+            data-testid="delete-node-button"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
         </NodeHeader>
         {/* Hierarchy ribbon above title, extends from header and left-aligned */}
         {hierarchyPath && (
