@@ -60,6 +60,7 @@ export async function createNodeEditor(container: HTMLElement) {
   AreaExtensions.simpleNodesOrder(area);
   const connection = new ConnectionPlugin<Schemes, AreaExtra>();
   const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
+  // 右クリックメニュー
   const contextMenu = setupContextMenu({
     editor,
     area,
