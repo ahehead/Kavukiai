@@ -36,7 +36,28 @@ export const MenuItem: FC<MenuItemProps> = memo(
           aria-haspopup={hasChildren ? 'menu' : undefined}
           aria-expanded={hasChildren ? isOpen : undefined}
           className={menuItemButton()}
-          onClick={() => {
+          // Block earlier-phase events so underlying canvas/editor won't react
+          onPointerDown={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
+          onMouseDown={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
+          onKeyDown={(e) => {
+            // Prevent leaking Enter/Space handling to parent listeners
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation()
+            }
+          }}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
             item.handler()
             if (!hasChildren) onHide()
           }}
