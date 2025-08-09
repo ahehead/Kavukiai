@@ -1,8 +1,8 @@
-import { Scope, type NodeEditor, type Root } from "rete";
+import { type NodeEditor, type Root, Scope } from "rete";
 import {
+  type Area2D,
   AreaPlugin,
   type BaseArea,
-  type Area2D,
   type NodeView,
 } from "rete-area-plugin";
 import type { AreaExtra, Schemes } from "../../types";
