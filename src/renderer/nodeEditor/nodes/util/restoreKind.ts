@@ -2,6 +2,7 @@
 import { Kind } from "@sinclair/typebox";
 
 /**
+ * json schemaをtypeboxSchemaに戻すための関数
  * 与えられた JSON Schema (TypeBox 由来) を再帰的に走査し、
  * `type` などの情報から失われた `[Kind]` メタを付け直す。
  *
