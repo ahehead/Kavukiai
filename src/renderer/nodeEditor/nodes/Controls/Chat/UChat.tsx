@@ -218,7 +218,7 @@ export function UChatMessageListControlView(props: {
     <Drag.NoDrag>
       <div
         ref={scrollContainerRef}
-        className="flex-1 w-full h-full min-h-0 overflow-y-auto pb-2 border-t border-gray-200"
+        className="flex-1 w-full h-full min-h-0 overflow-y-auto pb-2 border-t border-gray-200 select-all"
       >
         {messages.length === 0 && (
           <div className="w-full flex items-center justify-center ">
