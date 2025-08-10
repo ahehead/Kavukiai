@@ -13,7 +13,7 @@ export const nodeContainer = cva(
   {
     variants: {
       selected: {
-        true: ['ring-2 ring-node-primary/60'],
+        true: ['ring-2 ring-node-primary/60 ring-offset-2'],
         false: ['hover:ring-2 hover:ring-accent/70'],
       },
       status: {
