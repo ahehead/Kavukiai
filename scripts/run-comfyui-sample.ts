@@ -1,7 +1,12 @@
 /**
  * Ad-hoc runner for ComfyUI sample that waits until finished,
  * with rich console diagnostics and progress reporting.
+ *
+ * 追加機能:
+ * - API 接続に失敗した場合、ComfyUI デスクトップ版（Electron）を自動起動
+ * - サーバが立ち上がるまで待機してから再試行
  */
+
 import {
   CallWrapper,
   ComfyApi,
@@ -10,6 +15,7 @@ import {
   type TSchedulerName,
 } from "@saintno/comfyui-sdk";
 import Workflow_2 from "../src/resources/build/icons/sample/workflow_2.json";
+import { launchComfyDesktop } from "./comfyDesktop";
 
 const COMFYUI_URL = "http://localhost:8000";
 export const randomInt = (min: number, max: number) => {
@@ -20,6 +26,7 @@ const seed = () => randomInt(10000000000, 999999999999);
 async function main() {
   const api = new ComfyApi(COMFYUI_URL);
 
+  // ワークフロー構築（api.osType を利用）
   const workflow = new PromptBuilder(
     Workflow_2,
     [
@@ -69,61 +76,66 @@ async function main() {
     return node?._meta?.title ?? node?.class_type ?? nodeId;
   };
 
-  const runner = await new CallWrapper(api, workflow)
-    .onPending((promptId?: string) => {
-      console.info(`⏳ Pending`, { promptId });
-    })
-    .onStart((promptId?: string) => {
-      console.info(`🟢 Started`, { promptId });
-    })
-    .onPreview((blob) => {
-      console.info(`🖼️ Preview`, {
-        type: typeof blob,
-      });
-    })
-    .onOutput((key: any, data: any, promptId?: string) => {
-      console.info(`📤 Output`, {
-        promptId,
-        key,
-        data,
-      });
-    })
-    .onProgress((info, promptId) =>
-      console.log(
-        "Processing node",
-        info.node,
-        `${info.value}/${info.max} promptId: ${promptId}`
-      )
-    )
-    .onFinished((data: any, promptId?: string) => {
-      const images = data?.images?.images ?? [];
-      const paths = images.map((img: any) => api.getPathImage(img));
-      console.info(`✅ Finished`, {
-        promptId,
-        paths,
-      });
-    })
-    .onFailed((err) => {
-      console.log(err);
-      // err.data には execution_error の payload がそのまま入る
-      const { node_id, node_type, exception_message } = (err as any).data;
-      console.error(
-        `❌ Node ${getNodeName(
-          node_id
-        )} (${node_type}) \n failed: ${exception_message}`
-      );
-    });
+  try {
+    await api.pollStatus();
+  } catch (_error) {
+    await launchComfyDesktop();
+  }
 
   try {
-    await api.pollStatus(); // 接続できないとここでエラーになる
     api.init();
+
+    const runner = await new CallWrapper(api, workflow)
+      .onPending((promptId?: string) => {
+        console.info(`⏳ Pending`, { promptId });
+      })
+      .onStart((promptId?: string) => {
+        console.info(`🟢 Started`, { promptId });
+      })
+      .onPreview((blob) => {
+        console.info(`🖼️ Preview`, {
+          type: typeof blob,
+        });
+      })
+      .onOutput((key: any, data: any, promptId?: string) => {
+        console.info(`📤 Output`, {
+          promptId,
+          key,
+          data,
+        });
+      })
+      .onProgress((info, promptId) =>
+        console.log(
+          "Processing node",
+          info.node,
+          `${info.value}/${info.max} promptId: ${promptId}`
+        )
+      )
+      .onFinished((data: any, promptId?: string) => {
+        const images = data?.images?.images ?? [];
+        const paths = images.map((img: any) => api.getPathImage(img));
+        console.info(`✅ Finished`, {
+          promptId,
+          paths,
+        });
+      })
+      .onFailed((err) => {
+        console.log(err);
+        const { node_id, node_type, exception_message } = (err as any).data;
+        console.error(
+          `❌ Node ${getNodeName(
+            node_id
+          )} (${node_type}) \n failed: ${exception_message}`
+        );
+      });
+
     const result = await runner.run();
     console.log(`result=${result}`);
   } catch (error) {
-    console.error(`Error occurred: ${error}`);
+    console.error(`❌ Error occurred: ${error}`);
   } finally {
-    api.freeMemory(true, true);
-    (api as any).socket?.close();
+    await api.freeMemory(true, true);
+    api.destroy();
   }
 }
 
