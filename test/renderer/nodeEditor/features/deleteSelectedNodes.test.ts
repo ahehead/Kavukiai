@@ -1,8 +1,8 @@
-import { test, expect, vi, type Mock } from "vitest";
-import type { NodeEditor } from "rete";
-import type { Schemes } from "renderer/nodeEditor/types";
 import { setupDeleteSelectedNodes } from "renderer/nodeEditor/features/deleteSelectedNodes/deleteSelectedNodes";
 import { removeNodeWithConnections } from "renderer/nodeEditor/nodes/util/removeNode";
+import type { Schemes } from "renderer/nodeEditor/types";
+import type { NodeEditor } from "rete";
+import { expect, type Mock, test, vi } from "vitest";
 
 vi.mock("renderer/nodeEditor/nodes/util/removeNode", () => ({
   removeNodeWithConnections: vi.fn(),
@@ -18,7 +18,8 @@ test("setupDeleteSelectedNodes removes selected nodes on Delete key press", asyn
     getNodes: () => nodes,
   } as unknown as NodeEditor<Schemes>;
 
-  const listeners: Record<string, (e: any) => void> = {};
+  // 非同期ハンドラ（Promiseを返す）を待機できるようにanyにしておく
+  const listeners: Record<string, (e: any) => any> = {};
   (global as any).window = {
     addEventListener: (type: string, cb: (e: any) => void) => {
       listeners[type] = cb;
@@ -27,7 +28,8 @@ test("setupDeleteSelectedNodes removes selected nodes on Delete key press", asyn
   };
 
   const cleanup = setupDeleteSelectedNodes(editor);
-  listeners.keydown({ key: "Delete" });
+  // ハンドラはasyncでawaitを含むため、完了を待つ
+  await listeners.keydown({ key: "Delete" });
 
   const fn = removeNodeWithConnections as unknown as Mock;
   expect(fn).toHaveBeenCalledTimes(2);
