@@ -1,7 +1,7 @@
 export type PromptRecipe<
-  T extends object,
-  I extends string,
-  O extends string
+  T extends object = Record<string, unknown>,
+  I extends string = string,
+  O extends string = string
 > = {
   endpoint: string;
   workflow: T;

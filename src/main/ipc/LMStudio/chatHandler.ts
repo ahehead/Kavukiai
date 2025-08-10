@@ -1,10 +1,10 @@
 import { Chat } from "@lmstudio/sdk";
 import { type IpcMainEvent, ipcMain } from "electron";
-import {
-  IpcChannel,
-  type LMStudioChatPortEvent,
-  type LMStudioChatRequestArgs,
-} from "shared/ApiType";
+import { IpcChannel } from "shared/ApiType";
+import type {
+  LMStudioChatPortEvent,
+  LMStudioChatRequestArgs,
+} from "shared/LMStudioType";
 import { findLoadedModel, getLMStudioClient } from "./modelClient";
 
 /**

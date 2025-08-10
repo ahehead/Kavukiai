@@ -2,7 +2,7 @@ import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { MessagePortNode } from 'renderer/nodeEditor/types/Node/MessagePortNode'
-import type { LMStudioChatPortEventOrNull } from "renderer/nodeEditor/types/Schemas/LMStudioChatPortEventOrNull"
+import type { LMStudioChatPortEvent, LMStudioChatPortEventOrNull } from "renderer/nodeEditor/types/Schemas/LMStudioChatPortEventOrNull"
 import {
   type ChatHistoryData,
   ChatHistoryData as ChatHistoryDataSchema,
@@ -11,10 +11,7 @@ import {
 } from 'renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
-import type {
-  LMStudioChatPortEvent,
-  LMStudioChatRequestArgs,
-} from 'shared/ApiType'
+import type { LMStudioChatRequestArgs } from "shared/LMStudioType"
 import { ConsoleControl } from '../../Controls/Console'
 
 export class LMStudioChatNode extends MessagePortNode<

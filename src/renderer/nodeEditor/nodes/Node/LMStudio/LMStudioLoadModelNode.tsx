@@ -4,7 +4,7 @@ import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { MessagePortNode } from 'renderer/nodeEditor/types/Node/MessagePortNode'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
-import type { LMStudioLoadRequestArgs, LMStudioPortEvent } from 'shared/ApiType'
+import type { LMStudioLoadRequestArgs, LMStudioPortEvent } from "shared/LMStudioType"
 import { ConsoleControl } from '../../Controls/Console'
 import { ProgressControl } from '../../Controls/view/ProgressControl'
 

@@ -5,7 +5,7 @@ import fs from "node:fs";
 import http from "node:http";
 import os from "node:os";
 import path from "node:path";
-import { app, dialog } from "electron";
+import { dialog } from "electron";
 
 type LaunchOpts = {
   /** ユーザーが選んだ .exe / .app の絶対パス。未指定なら既定場所を探索 */

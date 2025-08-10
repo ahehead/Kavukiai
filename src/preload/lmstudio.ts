@@ -1,10 +1,9 @@
 import { ipcRenderer } from "electron";
-import {
-  IpcChannel,
-  type IpcResult,
-  type LMStudioChatRequestArgs,
-  type LMStudioLoadRequestArgs,
-} from "shared/ApiType";
+import { IpcChannel, type IpcResult } from "shared/ApiType";
+import type {
+  LMStudioChatRequestArgs,
+  LMStudioLoadRequestArgs,
+} from "shared/LMStudioType";
 
 export const lmstudioApi = {
   listDownloadedModels: (): Promise<IpcResult<any[]>> =>
