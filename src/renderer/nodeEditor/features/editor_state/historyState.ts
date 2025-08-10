@@ -6,7 +6,7 @@ import { AreaExtensions } from "rete-area-plugin";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
 import type { GraphJsonData } from "shared/JsonType";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
-import { loadGraphFromJson } from "../loadGraphFromJson/loadGraphFromJson";
+import { deserializeGraphIntoEditor } from "../deserializeGraph/deserializeGraph";
 import { serializeGraph } from "../serializeGraph/serializeGraph";
 
 export interface NodeEditorState {
@@ -83,7 +83,7 @@ export async function resetEditorState({
   await editor.clear();
   history.clear();
   dataflow.reset();
-  await loadGraphFromJson({
+  await deserializeGraphIntoEditor({
     graphJsonData: payload.graph,
     area,
     editor,

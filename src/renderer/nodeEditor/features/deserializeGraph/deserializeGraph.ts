@@ -5,15 +5,15 @@ import type { GraphJsonData, InputPortJson } from "shared/JsonType";
 import { type NodeDeps, nodeFactories } from "../../nodes/nodeFactories";
 
 // JSON からノードを生成してエディタに登録
-export type LoadGraphFromJsonArgs = NodeDeps & { graphJsonData: GraphJsonData };
-export async function loadGraphFromJson({
+export type DeserializeGraphArgs = NodeDeps & { graphJsonData: GraphJsonData };
+export async function deserializeGraphIntoEditor({
   graphJsonData,
   area,
   editor,
   dataflow,
   controlflow,
   history,
-}: LoadGraphFromJsonArgs): Promise<void> {
+}: DeserializeGraphArgs): Promise<void> {
   // ノードの登録
   for (const {
     id,

@@ -1,4 +1,4 @@
-import { loadGraphFromJson } from "renderer/nodeEditor/features/loadGraphFromJson/loadGraphFromJson";
+import { deserializeGraphIntoEditor } from "renderer/nodeEditor/features/deserializeGraph/deserializeGraph";
 import type { NodeDeps } from "renderer/nodeEditor/nodes/nodeFactories";
 import { getUID } from "rete";
 import type { Item } from "rete-context-menu-plugin/_types/types";
@@ -123,5 +123,5 @@ async function pasteGraphFromClipboard(
     buildNodeIdMap(jsonData.nodes),
     jsonData
   );
-  await loadGraphFromJson({ graphJsonData: remapped, ...nodeDeps });
+  await deserializeGraphIntoEditor({ graphJsonData: remapped, ...nodeDeps });
 }
