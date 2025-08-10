@@ -6,7 +6,6 @@ import type { NodeEditor } from "rete";
 import { AreaExtensions, type AreaPlugin } from "rete-area-plugin";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 import type {
-  ConnectionJson,
   GraphJsonData,
   NodeJson,
 } from "../../../../../../shared/JsonType";
@@ -45,17 +44,11 @@ export function createCopyItem(
         jsonNodes.push(nodeJson);
       }
 
-      // 対象ノード間の接続のみ取得（IDや参照は変えない）
-      const jsonConnections: ConnectionJson[] = getConnectionsForNodes(
-        targetNodes,
-        editor
-      );
-
       // GraphJsonData としてクリップボードへ
       const jsonData: GraphJsonData = {
         version: "1.0",
         nodes: jsonNodes,
-        connections: jsonConnections,
+        connections: getConnectionsForNodes(targetNodes, editor), // 対象ノード間の接続を取得
       };
       navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2));
     },
