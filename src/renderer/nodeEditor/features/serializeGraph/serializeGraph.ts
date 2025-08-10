@@ -1,6 +1,6 @@
 import { getNodePosition } from "renderer/nodeEditor/nodes/util/getNodePosition";
 import type { NodeEditor } from "rete";
-import type { AreaPlugin } from "rete-area-plugin";
+import { AreaExtensions, type AreaPlugin } from "rete-area-plugin";
 import type {
   ConnectionJson,
   GraphJsonData,
@@ -28,28 +28,6 @@ export function serializeGraph(
     version: "1.0", // バージョン情報
     nodes,
     connections: editor.getConnections(),
-  };
-}
-
-/**
- * 指定したノード集合と、その間のみの接続を GraphJsonData にシリアライズして返す
- */
-export function serializeSubgraph(
-  nodes: NodeTypes[],
-  connections: ConnectionJson[],
-  area: AreaPlugin<Schemes, AreaExtra>
-): GraphJsonData {
-  // ノード情報を整形（与えられたノードのみ）
-  const nodeJsonList: NodeJson[] = [];
-  for (const node of nodes) {
-    const nodeJson = convertNodeToJson(node, area);
-    if (nodeJson) nodeJsonList.push(nodeJson);
-  }
-
-  return {
-    version: "1.0",
-    nodes: nodeJsonList,
-    connections,
   };
 }
 
@@ -109,5 +87,36 @@ function buildNodeBaseData(
     type: node.label,
     position: { x: position.x, y: position.y },
     size: { width: node.width, height: node.height },
+  };
+}
+
+/**
+ * コピー用に GraphJsonData を生成するヘルパー
+ * - 対象ノード群の boundingBox 左上を原点とした相対位置へ変換
+ * - 対象ノード間の接続のみを含める
+ */
+export function buildGraphJsonForCopy(
+  targetNodes: NodeTypes[],
+  editor: NodeEditor<Schemes>,
+  area: AreaPlugin<Schemes, AreaExtra>
+): GraphJsonData {
+  const { left, top } = AreaExtensions.getBoundingBox(area, targetNodes);
+
+  const jsonNodes: NodeJson[] = [];
+  for (const node of targetNodes) {
+    const nodeJson = convertNodeToJson(node, area);
+    if (!nodeJson) continue; // 位置が取れない等の場合はスキップ
+    // 相対位置へ変換
+    nodeJson.position = {
+      x: nodeJson.position.x - left,
+      y: nodeJson.position.y - top,
+    };
+    jsonNodes.push(nodeJson);
+  }
+
+  return {
+    version: "1.0",
+    nodes: jsonNodes,
+    connections: getConnectionsForNodes(targetNodes, editor),
   };
 }

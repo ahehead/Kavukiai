@@ -1,14 +1,8 @@
-import {
-  convertNodeToJson,
-  getConnectionsForNodes,
-} from "renderer/nodeEditor/features/serializeGraph/serializeGraph";
+import { buildGraphJsonForCopy } from "renderer/nodeEditor/features/serializeGraph/serializeGraph";
 import type { NodeEditor } from "rete";
-import { AreaExtensions, type AreaPlugin } from "rete-area-plugin";
+import type { AreaPlugin } from "rete-area-plugin";
 import type { Item } from "rete-context-menu-plugin/_types/types";
-import type {
-  GraphJsonData,
-  NodeJson,
-} from "../../../../../../shared/JsonType";
+import type { GraphJsonData } from "../../../../../../shared/JsonType";
 import type { AreaExtra, NodeTypes, Schemes } from "../../../../types/Schemes";
 export function createCopyItem(
   context: NodeTypes,
@@ -18,7 +12,7 @@ export function createCopyItem(
   return {
     label: "ノードをコピー",
     key: "copy-nodes",
-    handler: () => {
+    handler: async () => {
       // 選択中のノード（右クリック対象を必ず含む）を収集
       const targetNodes = [
         context,
@@ -27,30 +21,18 @@ export function createCopyItem(
           .filter((node) => node.selected && node.id !== context.id),
       ];
 
-      const { left, top } = AreaExtensions.getBoundingBox(area, targetNodes);
+      // 共通関数で GraphJsonData を生成
+      const jsonData: GraphJsonData = buildGraphJsonForCopy(
+        targetNodes,
+        editor,
+        area
+      );
 
-      // ノードをJSON化
-      const jsonNodes: NodeJson[] = [];
-      for (const node of targetNodes) {
-        const nodeJson = convertNodeToJson(node, area);
-        if (!nodeJson) continue; // 位置が取れない等の場合はスキップ
-        // ノードの位置を相対位置に変換
-        nodeJson.position = {
-          // boundingBox 左上を原点(0,0)とした相対位置にする
-          // 例: node(110, 130), bbox.left/top(100, 120) -> (10, 10)
-          x: nodeJson.position.x - left,
-          y: nodeJson.position.y - top,
-        };
-        jsonNodes.push(nodeJson);
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2));
+      } catch (error) {
+        console.error("Failed to copy to clipboard:", error);
       }
-
-      // GraphJsonData としてクリップボードへ
-      const jsonData: GraphJsonData = {
-        version: "1.0",
-        nodes: jsonNodes,
-        connections: getConnectionsForNodes(targetNodes, editor), // 対象ノード間の接続を取得
-      };
-      navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2));
     },
   };
 }
