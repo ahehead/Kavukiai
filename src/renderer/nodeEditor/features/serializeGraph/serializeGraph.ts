@@ -118,5 +118,8 @@ export function buildGraphJsonForCopy(
     version: "1.0",
     nodes: jsonNodes,
     connections: getConnectionsForNodes(targetNodes, editor),
+    metadata: {
+      createdAt: new Date().toISOString(),
+    },
   };
 }

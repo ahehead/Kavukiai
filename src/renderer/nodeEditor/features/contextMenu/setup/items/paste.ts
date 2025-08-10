@@ -52,7 +52,7 @@ function isGraphJsonData(data: unknown): data is GraphJsonData {
 /**
  * 旧 -> 新 ノードIDの対応表を作成（ペースト時にIDを再割り当て）
  */
-function buildNodeIdMap(nodes: NodeJson[]): Map<string, string> {
+function buildNewNodeIdMap(nodes: NodeJson[]): Map<string, string> {
   const idMap = new Map<string, string>();
   for (const n of nodes) idMap.set(n.id, getUID());
   return idMap;
@@ -120,8 +120,13 @@ async function pasteGraphFromClipboard(
 
   const remapped = createRemappedGraph(
     pointerPosition,
-    buildNodeIdMap(jsonData.nodes),
+    buildNewNodeIdMap(jsonData.nodes),
     jsonData
   );
-  await deserializeGraphIntoEditor({ graphJsonData: remapped, ...nodeDeps });
+
+  // ノードをエディタに登録
+  await deserializeGraphIntoEditor({
+    graphJsonData: remapped,
+    ...nodeDeps,
+  });
 }

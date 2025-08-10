@@ -5,7 +5,9 @@ import type { GraphJsonData, InputPortJson } from "shared/JsonType";
 import { type NodeDeps, nodeFactories } from "../../nodes/nodeFactories";
 
 // JSON からノードを生成してエディタに登録
-export type DeserializeGraphArgs = NodeDeps & { graphJsonData: GraphJsonData };
+export type DeserializeGraphArgs = NodeDeps & {
+  graphJsonData: GraphJsonData;
+};
 export async function deserializeGraphIntoEditor({
   graphJsonData,
   area,
