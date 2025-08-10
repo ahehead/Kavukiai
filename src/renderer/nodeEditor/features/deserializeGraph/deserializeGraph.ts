@@ -74,9 +74,9 @@ export async function deserializeGraphIntoEditor({
   for (const {
     id,
     source,
-    sourcePort,
+    sourceOutput,
     target,
-    targetPort,
+    targetInput,
   } of graphJsonData.connections || []) {
     try {
       // 接続元と接続先のノードを取得
@@ -89,20 +89,20 @@ export async function deserializeGraphIntoEditor({
 
       // 接続元と接続先のノードに、portが存在するか確認
       // allow dynamic string keys on outputs/inputs
-      const sourcePortExists = (sourceNode.outputs as any)[sourcePort];
-      const targetPortExists = (targetNode.inputs as any)[targetPort];
+      const sourcePortExists = (sourceNode.outputs as any)[sourceOutput];
+      const targetPortExists = (targetNode.inputs as any)[targetInput];
       if (!sourcePortExists || !targetPortExists) {
         console.warn(
-          `Port not found for connection: ${sourcePort} -> ${targetPort}`
+          `Port not found for connection: ${sourceOutput} -> ${targetInput}`
         );
         continue;
       }
 
       const conn = new ClassicPreset.Connection(
         sourceNode,
-        sourcePort as never,
+        sourceOutput as never,
         targetNode,
-        targetPort as never
+        targetInput as never
       );
       conn.id = id;
       await editor.addConnection(conn);

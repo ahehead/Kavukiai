@@ -31,7 +31,7 @@ export type ControlJson = {
 export type ConnectionJson = {
   id: string;
   source: string; // 接続元ノードID
-  sourcePort: string; // 接続元outputsのkey名
+  sourceOutput: string; // 接続元outputsのkey名
   target: string; // 接続先ノードID
-  targetPort: string; // 接続先inputsのkey名
+  targetInput: string; // 接続先inputsのkey名
 };

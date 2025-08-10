@@ -87,9 +87,9 @@ function remapConnections(
     ...c,
     id: getUID(),
     source: idMap.get(c.source) ?? c.source,
-    sourcePort: c.sourcePort,
+    sourcePort: c.sourceOutput,
     target: idMap.get(c.target) ?? c.target,
-    targetPort: c.targetPort,
+    targetPort: c.targetInput,
   }));
 }
 

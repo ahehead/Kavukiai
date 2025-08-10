@@ -24,19 +24,10 @@ export function serializeGraph(
     }
   }
 
-  // コネクション情報を整形
-  const connections = editor.getConnections().map((conn) => ({
-    id: conn.id,
-    source: conn.source,
-    sourcePort: conn.sourceOutput,
-    target: conn.target,
-    targetPort: conn.targetInput,
-  }));
-
   return {
     version: "1.0", // バージョン情報
     nodes,
-    connections,
+    connections: editor.getConnections(),
   };
 }
 
@@ -72,14 +63,7 @@ export function getConnectionsForNodes(
   const nodeIdSet = new Set(nodes.map((n) => n.id));
   return editor
     .getConnections()
-    .filter((conn) => nodeIdSet.has(conn.source) && nodeIdSet.has(conn.target))
-    .map((conn) => ({
-      id: conn.id,
-      source: conn.source,
-      sourcePort: conn.sourceOutput,
-      target: conn.target,
-      targetPort: conn.targetInput,
-    }));
+    .filter((conn) => nodeIdSet.has(conn.source) && nodeIdSet.has(conn.target));
 }
 
 /**
