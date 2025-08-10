@@ -1,3 +1,4 @@
+import { getSelectedNodes } from "renderer/nodeEditor/nodes/util/getSelectedNodes";
 import type { NodeEditor } from "rete";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 import { removeNodeWithConnections } from "../../../../nodes/util/removeNode";
@@ -12,7 +13,7 @@ export function createDeleteNodeItem(
     key: "delete-node",
     async handler() {
       await removeNodeWithConnections(editor, context.id);
-      for (const node of editor.getNodes().filter((node) => node.selected)) {
+      for (const node of getSelectedNodes(editor)) {
         await removeNodeWithConnections(editor, node.id);
       }
     },
