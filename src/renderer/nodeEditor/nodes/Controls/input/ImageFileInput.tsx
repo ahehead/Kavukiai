@@ -3,41 +3,32 @@ import {
   type ControlOptions,
   useControlValue,
 } from 'renderer/nodeEditor/types'
-import type { Image } from "renderer/nodeEditor/types/Schemas/Util"
+import { createNodeImageFromBlob, type NodeImage } from 'renderer/nodeEditor/types/Schemas/NodeImage'
 import { Drag } from 'rete-react-plugin'
 import type { ControlJson } from 'shared/JsonType'
 
 export interface ImageFileInputControlOptions
-  extends ControlOptions<Image | null> {
-  value?: Image | null
-  useBase64?: boolean // option to use base64 for image URL
+  extends ControlOptions<NodeImage | null> {
+  value?: NodeImage | null
 }
 
 export class ImageFileInputControl extends BaseControl<
-  Image | null,
+  NodeImage | null,
   ImageFileInputControlOptions
 > {
-  value: Image | null
-  private useBase64: boolean
+  value: NodeImage | null
   constructor(options: ImageFileInputControlOptions = {}) {
     super(options)
     this.value = options.value ?? null
-    this.useBase64 = options.useBase64 ?? false
   }
 
-  /** Get whether to use base64 for image URL */
-  public getUseBase64(): boolean {
-    return this.useBase64
-  }
-
-
-  setValue(value: Image | null) {
+  setValue(value: NodeImage | null) {
     this.value = value
     this.opts.onChange?.(value)
     this.notify()
   }
 
-  getValue(): Image | null {
+  getValue(): NodeImage | null {
     return this.value
   }
 
@@ -62,22 +53,8 @@ export function ImageFileInputControlView(props: {
       control.setValue(null)
       return
     }
-    // Base64 mode reading
-    if (control.getUseBase64()) {
-      const reader = new FileReader()
-      reader.onload = () => {
-        const url = reader.result as string
-        const image: Image = { url, alt: file.name }
-        control.addHistory(value, image)
-        control.setValue(image)
-      }
-      reader.readAsDataURL(file)
-    } else {
-      const url = URL.createObjectURL(file)
-      const image: Image = { url, alt: file.name }
-      control.addHistory(value, image)
-      control.setValue(image)
-    }
+    const nodeImage = createNodeImageFromBlob(file)
+    control.setValue(nodeImage)
   }
 
   return (
