@@ -24,7 +24,6 @@ import type {
   LMStudioStartNode,
   LMStudioStopNode,
   LMStudioToUChatCommandNode,
-  LoadImageNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
   NumberNode,
@@ -40,6 +39,7 @@ import type {
   ReverseRoleNode,
   RoleNode,
   RunNode,
+  SelectImageNode,
   ServerStatusNode,
   ShowImageNode,
   StringFormNode,
@@ -105,7 +105,7 @@ export type NodeTypes =
   | CodeFenceNode
   | CreateSelectNode
   | ShowImageNode
-  | LoadImageNode
+  | SelectImageNode
   | ListDownloadedModelsNode
   | ModelInfoToModelListNode
   | LMStudioStartNode

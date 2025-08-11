@@ -38,7 +38,7 @@ export { CreateSelectNode } from "./Primitive/CreateSelectNode";
 export { CounterLoopNode } from "./Primitive/Flow/CounterLoopNode";
 export { IFNode } from "./Primitive/Flow/IFNode";
 export { RunNode } from "./Primitive/Flow/RunNode";
-export { LoadImageNode } from "./Primitive/Image/LoadImageNode";
+export { SelectImageNode } from "./Primitive/Image/SelectImageNode";
 export { ShowImageNode } from "./Primitive/Image/ShowImageNode";
 export { NumberNode } from "./Primitive/NumberNode";
 export { JsonSchemaNode } from "./Primitive/Object/JsonSchemaNode";

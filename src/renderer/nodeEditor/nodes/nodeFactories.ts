@@ -26,7 +26,6 @@ import {
   LMStudioLoadModelNode,
   LMStudioStartNode,
   LMStudioStopNode,
-  LoadImageNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
   NumberNode,
@@ -39,6 +38,7 @@ import {
   ResponseTextConfigNode,
   RoleNode,
   RunNode,
+  SelectImageNode,
   ServerStatusNode,
   ShowImageNode,
   StringFormNode,
@@ -101,8 +101,8 @@ export const nodeFactories = {
   Array: ({ area, dataflow }) => new ArrayNode(area, dataflow),
   CreateSelect: ({ dataflow, controlflow }) =>
     new CreateSelectNode(dataflow, controlflow),
-  LoadImage: ({ history, area, dataflow }) =>
-    new LoadImageNode(history, area, dataflow),
+  SelectImage: ({ history, area, dataflow }) =>
+    new SelectImageNode(history, area, dataflow),
   ShowImage: ({ area, dataflow, controlflow }) =>
     new ShowImageNode(area, dataflow, controlflow),
 
@@ -229,7 +229,7 @@ const rawMenu: RawMenuItem[] = [
       {
         label: "Image",
         subitems: [
-          { label: "LoadImage", factoryKey: "LoadImage" },
+          { label: "SelectImage", factoryKey: "SelectImage" },
           { label: "ShowImage", factoryKey: "ShowImage" },
         ],
       },

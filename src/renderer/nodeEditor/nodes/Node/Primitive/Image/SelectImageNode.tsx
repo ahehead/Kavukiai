@@ -3,16 +3,12 @@ import { ImageControl } from 'renderer/nodeEditor/nodes/Controls/Image'
 import { ImageFileInputControl } from 'renderer/nodeEditor/nodes/Controls/input/ImageFileInput'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
-import {
-  createNodeImageFromUrl,
-  type NodeImage,
-} from 'renderer/nodeEditor/types/Schemas/NodeImage'
-import type { Image } from 'renderer/nodeEditor/types/Schemas/Util'
+import type { NodeImage } from 'renderer/nodeEditor/types/Schemas/NodeImage'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'
 
-export class LoadImageNode extends BaseNode<
-  'LoadImage',
+export class SelectImageNode extends BaseNode<
+  'SelectImage',
   object,
   { out: TypedSocket },
   { file: ImageFileInputControl; view: ImageControl }
@@ -22,7 +18,7 @@ export class LoadImageNode extends BaseNode<
     area: AreaPlugin<Schemes, AreaExtra>,
     dataflow: DataflowEngine<Schemes>
   ) {
-    super('LoadImage')
+    super('SelectImage')
     this.addOutputPort({ key: 'out', typeName: 'NodeImage', label: 'Image' })
 
     this.addControl(
@@ -31,8 +27,7 @@ export class LoadImageNode extends BaseNode<
         history,
         area,
         onChange: img => {
-          const ni = img ? createNodeImageFromUrl(img.url, img.alt) : null
-          this.controls.view.setValue(ni ? [ni] : [])
+          this.controls.view.setValue(img ? [img] : [])
           dataflow.reset(this.id)
         },
       })
@@ -41,25 +36,8 @@ export class LoadImageNode extends BaseNode<
   }
 
   data(): { out: NodeImage | null } {
-    const f = this.controls.file.getValue()
-    return { out: f ? createNodeImageFromUrl(f.url, f.alt) : null }
+    return { out: this.controls.file.getValue() ?? null }
   }
 
   async execute(): Promise<void> { }
-
-  serializeControlValue() {
-    return {
-      data: {
-        file: this.controls.file.getValue(),
-      },
-    }
-  }
-
-  deserializeControlValue(data: { file: Image | null }) {
-    this.controls.file.setValue(data.file)
-    const ni = data.file
-      ? createNodeImageFromUrl(data.file.url, data.file.alt)
-      : null
-    this.controls.view.setValue(ni ? [ni] : [])
-  }
 }
