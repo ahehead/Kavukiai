@@ -113,3 +113,6 @@ export async function toUPartImage(
   const source = await toUFileRefFromNode(img.source, resolver);
   return { type: "image", source, mime: img.mime } as UPart;
 }
+
+export const ImageArray = Type.Array(NodeImage);
+export type ImageArray = Static<typeof ImageArray>;
