@@ -81,7 +81,7 @@ export class TestNode extends BaseNode<
         value: [{ key: 'example', typeStr: 'string' }],
       })
     )
-    this.addControl('image', new ImageControl({ value: null }))
+    this.addControl('image', new ImageControl({ value: [] }))
     this.addControl(
       'imageFileInput',
       new ImageFileInputControl({ value: null })

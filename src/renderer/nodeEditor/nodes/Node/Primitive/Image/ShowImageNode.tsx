@@ -2,7 +2,7 @@ import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/
 import { ImageControl } from 'renderer/nodeEditor/nodes/Controls/Image'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
-import type { Image } from 'renderer/nodeEditor/types/Schemas/Util'
+import type { NodeImage } from 'renderer/nodeEditor/types/Schemas/NodeImage'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 
@@ -25,9 +25,9 @@ export class ShowImageNode extends BaseNode<
         label: 'Show',
         onClick: () => this.controlflow.execute(this.id, 'exec'),
       },
-      { key: 'image', typeName: 'Image', label: 'Image' },
+      { key: 'image', typeName: 'NodeImage', label: 'Image' },
     ])
-    this.addControl('view', new ImageControl({ value: null }))
+    this.addControl('view', new ImageControl({ value: [] }))
   }
 
   data(): object {
@@ -36,19 +36,21 @@ export class ShowImageNode extends BaseNode<
 
   async execute(): Promise<void> {
     const { image } = (await this.dataflow.fetchInputs(this.id)) as {
-      image?: Image[]
+      image?: NodeImage[]
     }
     if (image?.[0]) {
-      this.controls.view.setValue(image[0])
+      // プレビューを追加
+      this.controls.view.show(image[0])
       await this.area.update('control', this.controls.view.id)
     }
   }
 
   serializeControlValue() {
-    return this.controls.view.toJSON()
+    // このコントロールは状態をシリアライズしない
+    return { data: {} }
   }
 
-  deserializeControlValue(data: any) {
-    this.controls.view.setFromJSON({ data })
+  deserializeControlValue(_data: any) {
+    // 何もしない（コントロール状態の復元は不要）
   }
 }

@@ -20,6 +20,6 @@ test("execute updates image control", async () => {
   const img = { url: "path", alt: "a" } as any;
   (dataflow.fetchInputs as any).mockResolvedValueOnce({ image: [img] });
   await node.execute();
-  expect(node.controls.view.getValue()).toEqual(img);
+  expect(node.controls.view.getValue()).toEqual([img]);
   expect(area.update).toHaveBeenCalledWith("control", node.controls.view.id);
 });

@@ -1,60 +1,118 @@
+import { useEffect, useRef } from 'react'
 import {
   BaseControl,
   type ControlOptions,
   useControlValue,
 } from 'renderer/nodeEditor/types'
-import type { Image } from 'renderer/nodeEditor/types/Schemas/Util'
+import type { NodeImage } from 'renderer/nodeEditor/types/Schemas/NodeImage'
 import { Drag } from 'rete-react-plugin'
-import type { ControlJson } from 'shared/JsonType'
 
-export interface ImageControlOptions extends ControlOptions<Image | null> {
-  value?: Image | null
+// NodeImage[] を保持し、複数プレビューを表示するコントロール
+export interface ImageControlOptions extends ControlOptions<NodeImage[]> {
+  value?: NodeImage[]
 }
 
-export class ImageControl extends BaseControl<
-  Image | null,
-  ImageControlOptions
-> {
-  value: Image | null
+export class ImageControl extends BaseControl<NodeImage[], ImageControlOptions> {
+  // プレビュー用の画像リスト
+  value: NodeImage[]
   constructor(options: ImageControlOptions = {}) {
     super(options)
-    this.value = options.value ?? null
+    this.value = options.value ?? []
   }
 
-  setValue(value: Image | null) {
-    this.value = value
+  // 一括設定（置き換え）
+  setValue(value: NodeImage[]) {
+    this.value = Array.isArray(value) ? value : []
     this.notify()
   }
 
-  getValue(): Image | null {
+  // 取得
+  getValue(): NodeImage[] {
     return this.value
   }
 
-  override toJSON(): ControlJson {
-    return { data: { value: this.value } }
+  // 末尾にプレビューを追加
+  show(img: NodeImage) {
+    this.value = [...this.value, img]
+    this.notify()
   }
 
-  override setFromJSON({ data }: ControlJson): void {
-    this.value = (data as any).value ?? null
+  // クリア
+  clear() {
+    if (this.value.length === 0) return
+    this.value = []
+    this.notify()
   }
 }
 
 export function ImageControlView(props: { data: ImageControl }) {
-  const value = useControlValue(props.data)
-  if (!value)
+  const control = props.data
+  const images = useControlValue(control)
+
+  // blob の ObjectURL をリークしないよう管理（コンポーネント単位）
+  const createdUrlsRef = useRef<Set<string>>(new Set())
+
+  const toSrc = (img: NodeImage): string | null => {
+    const src = img.source
+    switch (src.kind) {
+      case 'url':
+        return src.url
+      case 'path':
+        return `file://${src.path}`
+      case 'data': {
+        const mime = img.mime ?? 'application/octet-stream'
+        if (src.encoding === 'base64') return `data:${mime};base64,${src.data}`
+        return `data:${mime},${encodeURIComponent(src.data)}`
+      }
+      case 'blob': {
+        try {
+          const url = URL.createObjectURL(src.blob as Blob)
+          createdUrlsRef.current.add(url)
+          return url
+        } catch {
+          return null
+        }
+      }
+    }
+    return null
+  }
+
+  // クリーンアップ: 再描画/アンマウント時に作った URL を破棄
+  useEffect(() => {
+    return () => {
+      for (const url of createdUrlsRef.current) URL.revokeObjectURL(url)
+      createdUrlsRef.current.clear()
+    }
+  }, [images])
+
+  if (!images || images.length === 0)
     return (
       <Drag.NoDrag>
         <div className="w-full h-full bg-gray-200" />
       </Drag.NoDrag>
     )
+
   return (
     <Drag.NoDrag>
-      <div className="w-full h-full overflow-hidden flex items-center justify-center">
-        <img
-          src={value.url}
-          alt={value.alt ?? ''}
-          className="object-contain w-full h-full"
-        />
+      <div className="w-full h-full overflow-auto p-1">
+        <div className="grid grid-cols-3 gap-1 auto-rows-fr">
+          {images.map((img, i) => {
+            const src = toSrc(img)
+            return (
+              <div
+                key={i}
+                className="w-full aspect-square bg-gray-100 rounded overflow-hidden flex items-center justify-center"
+                title={img.alt ?? ''}
+              >
+                {src ? (
+                  <img src={src} alt={img.alt ?? ''} className="object-cover w-full h-full" />
+                ) : (
+                  <div className="text-xs text-gray-500">preview error</div>
+                )}
+              </div>
+            )
+          })}
+        </div>
       </div>
     </Drag.NoDrag>
   )

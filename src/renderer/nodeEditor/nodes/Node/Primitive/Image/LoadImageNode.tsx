@@ -3,6 +3,10 @@ import { ImageControl } from 'renderer/nodeEditor/nodes/Controls/Image'
 import { ImageFileInputControl } from 'renderer/nodeEditor/nodes/Controls/input/ImageFileInput'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
+import {
+  createNodeImageFromUrl,
+  type NodeImage,
+} from 'renderer/nodeEditor/types/Schemas/NodeImage'
 import type { Image } from 'renderer/nodeEditor/types/Schemas/Util'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'
@@ -19,7 +23,7 @@ export class LoadImageNode extends BaseNode<
     dataflow: DataflowEngine<Schemes>
   ) {
     super('LoadImage')
-    this.addOutputPort({ key: 'out', typeName: 'Image', label: 'Image' })
+    this.addOutputPort({ key: 'out', typeName: 'NodeImage', label: 'Image' })
 
     this.addControl(
       'file',
@@ -27,16 +31,18 @@ export class LoadImageNode extends BaseNode<
         history,
         area,
         onChange: img => {
-          this.controls.view.setValue(img)
+          const ni = img ? createNodeImageFromUrl(img.url, img.alt) : null
+          this.controls.view.setValue(ni ? [ni] : [])
           dataflow.reset(this.id)
         },
       })
     )
-    this.addControl('view', new ImageControl({ value: null }))
+    this.addControl('view', new ImageControl({ value: [] }))
   }
 
-  data(): { out: Image | null } {
-    return { out: this.controls.file.getValue() }
+  data(): { out: NodeImage | null } {
+    const f = this.controls.file.getValue()
+    return { out: f ? createNodeImageFromUrl(f.url, f.alt) : null }
   }
 
   async execute(): Promise<void> { }
@@ -51,6 +57,9 @@ export class LoadImageNode extends BaseNode<
 
   deserializeControlValue(data: { file: Image | null }) {
     this.controls.file.setValue(data.file)
-    this.controls.view.setValue(data.file)
+    const ni = data.file
+      ? createNodeImageFromUrl(data.file.url, data.file.alt)
+      : null
+    this.controls.view.setValue(ni ? [ni] : [])
   }
 }
