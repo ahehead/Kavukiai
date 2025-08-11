@@ -5,6 +5,7 @@ import { ImageControl } from '../../Controls/Image'
 import { CheckBoxControl } from '../../Controls/input/CheckBox'
 import { ImageFileInputControl } from '../../Controls/input/ImageFileInput'
 import { ListControl } from '../../Controls/input/List'
+import { PathInputControl } from '../../Controls/input/PathInputControl'
 import { PropertyInputControl } from '../../Controls/input/PropertyInput'
 import { SelectControl } from '../../Controls/input/Select'
 import { SliderControl } from '../../Controls/input/Slider'
@@ -29,6 +30,7 @@ export class TestNode extends BaseNode<
     imageFileInput: ImageFileInputControl
     progress: ProgressControl
     uChat: UChatControl
+    pathInput: PathInputControl
     // コントロールを作った場合まずここに追加
   }
 > {
@@ -97,6 +99,17 @@ export class TestNode extends BaseNode<
 
     // Add UChatControl for testing
     this.addControl('uChat', new UChatControl({ value: [], label: 'UChat' }))
+
+    // Add PathInputControl for testing
+    this.addControl(
+      'pathInput',
+      new PathInputControl({
+        value: '',
+        mode: 'file',
+        placeholder: 'ファイルまたはフォルダを選択…',
+        title: 'パスを選択',
+      })
+    )
 
     // ここに新しいコントロールを追加していく
   }

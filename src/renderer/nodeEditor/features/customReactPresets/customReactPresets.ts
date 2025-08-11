@@ -44,6 +44,10 @@ import {
   TextAreaControllView,
 } from "renderer/nodeEditor/nodes/Controls/input/MultiLine";
 import {
+  PathInputControl,
+  PathInputControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/PathInputControl";
+import {
   PropertyInputControl,
   PropertyInputControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/PropertyInput";
@@ -101,6 +105,7 @@ const controlViews = new Map<Ctor, ControlViewComponent>([
   [ImageControl, ImageControlView],
   [ImageFileInputControl, ImageFileInputControlView],
   [ProgressControl, ProgressControlView],
+  [PathInputControl, PathInputControlView],
 ]);
 
 export function customReactPresets(

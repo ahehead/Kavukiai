@@ -8,6 +8,7 @@ import type { ImageFileInputControl } from "../nodes/Controls/input/ImageFileInp
 import type { InputValueControl } from "../nodes/Controls/input/InputValue";
 import type { ListControl } from "../nodes/Controls/input/List";
 import type { MultiLineControl } from "../nodes/Controls/input/MultiLine";
+import type { PathInputControl } from "../nodes/Controls/input/PathInputControl";
 import type { PropertyInputControl } from "../nodes/Controls/input/PropertyInput";
 import type { SelectControl } from "../nodes/Controls/input/Select";
 import type { SliderControl } from "../nodes/Controls/input/Slider";
@@ -32,4 +33,5 @@ export type NodeControl =
   | ImageControl
   | ImageFileInputControl
   | ProgressControl
-  | UChatControl;
+  | UChatControl
+  | PathInputControl;
