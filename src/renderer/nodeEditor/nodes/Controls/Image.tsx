@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo } from 'react'
 import {
   BaseControl,
   type ControlOptions,
@@ -49,41 +49,42 @@ export function ImageControlView(props: { data: ImageControl }) {
   const control = props.data
   const images = useControlValue(control)
 
-  // blob の ObjectURL をリークしないよう管理（コンポーネント単位）
-  const createdUrlsRef = useRef<Set<string>>(new Set())
-
-  const toSrc = (img: NodeImage): string | null => {
-    const src = img.source
-    switch (src.kind) {
-      case 'url':
-        return src.url
-      case 'path':
-        return `file://${src.path}`
-      case 'data': {
-        const mime = img.mime ?? 'application/octet-stream'
-        if (src.encoding === 'base64') return `data:${mime};base64,${src.data}`
-        return `data:${mime},${encodeURIComponent(src.data)}`
-      }
-      case 'blob': {
-        try {
-          const url = URL.createObjectURL(src.blob as Blob)
-          createdUrlsRef.current.add(url)
-          return url
-        } catch {
-          return null
+  // 画像配列ごとに blob URL を生成し、次回変更時/アンマウント時にだけ破棄する
+  const { urls, created } = useMemo(() => {
+    const createdNow: string[] = []
+    const mapToSrc = (img: NodeImage): string | null => {
+      const src = img.source
+      switch (src.kind) {
+        case 'url':
+          return src.url
+        case 'path':
+          return `file://${src.path}`
+        case 'data': {
+          const mime = img.mime ?? 'application/octet-stream'
+          if (src.encoding === 'base64') return `data:${mime};base64,${src.data}`
+          return `data:${mime},${encodeURIComponent(src.data)}`
+        }
+        case 'blob': {
+          try {
+            const url = URL.createObjectURL(src.blob as Blob)
+            createdNow.push(url)
+            return url
+          } catch {
+            return null
+          }
         }
       }
+      return null
     }
-    return null
-  }
+    return { urls: images.map(mapToSrc), created: createdNow }
+  }, [images])
 
-  // クリーンアップ: 再描画/アンマウント時に作った URL を破棄
+  // クリーンアップ: 直前レンダーで生成した URL だけを破棄
   useEffect(() => {
     return () => {
-      for (const url of createdUrlsRef.current) URL.revokeObjectURL(url)
-      createdUrlsRef.current.clear()
+      for (const url of created) URL.revokeObjectURL(url)
     }
-  }, [images])
+  }, [created])
 
   if (!images || images.length === 0)
     return (
@@ -92,12 +93,35 @@ export function ImageControlView(props: { data: ImageControl }) {
       </Drag.NoDrag>
     )
 
+  // 単一画像はコントロール領域いっぱいに表示、複数は3列グリッド
+  if (images.length === 1) {
+    const img = images[0]
+    const src = urls[0]
+    return (
+      <Drag.NoDrag>
+        <div className="w-full h-full overflow-hidden p-1">
+          <div
+            className="w-full h-full bg-gray-100 rounded overflow-hidden flex items-center justify-center"
+            title={img.alt ?? ''}
+          >
+            {src ? (
+              // 画像全体が見えるように object-contain（必要なら object-cover に変更）
+              <img src={src} alt={img.alt ?? ''} className="w-full h-full object-contain" />
+            ) : (
+              <div className="text-xs text-gray-500">preview error</div>
+            )}
+          </div>
+        </div>
+      </Drag.NoDrag>
+    )
+  }
+
   return (
     <Drag.NoDrag>
       <div className="w-full h-full overflow-auto p-1">
         <div className="grid grid-cols-3 gap-1 auto-rows-fr">
           {images.map((img, i) => {
-            const src = toSrc(img)
+            const src = urls[i]
             return (
               <div
                 key={i}
