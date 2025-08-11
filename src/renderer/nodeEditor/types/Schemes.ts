@@ -12,7 +12,6 @@ import type {
   CreateSelectNode,
   GetLastMessageNode,
   IFNode,
-  ImageNode,
   InspectorNode,
   JoinNode,
   JsonSchemaFormatNode,
@@ -42,6 +41,7 @@ import type {
   RoleNode,
   RunNode,
   ServerStatusNode,
+  ShowImageNode,
   StringFormNode,
   StringNode,
   TemplateReplaceNode,
@@ -104,7 +104,7 @@ export type NodeTypes =
   | ObjectToYAMLStringNode
   | CodeFenceNode
   | CreateSelectNode
-  | ImageNode
+  | ShowImageNode
   | LoadImageNode
   | ListDownloadedModelsNode
   | ModelInfoToModelListNode

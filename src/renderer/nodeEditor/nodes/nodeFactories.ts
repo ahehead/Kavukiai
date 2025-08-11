@@ -15,7 +15,6 @@ import {
   CodeFenceNode,
   CounterLoopNode,
   CreateSelectNode,
-  ImageNode,
   InspectorNode,
   JoinNode,
   JsonSchemaFormatNode,
@@ -41,6 +40,7 @@ import {
   RoleNode,
   RunNode,
   ServerStatusNode,
+  ShowImageNode,
   StringFormNode,
   StringNode,
   TemplateReplaceNode,
@@ -103,8 +103,8 @@ export const nodeFactories = {
     new CreateSelectNode(dataflow, controlflow),
   LoadImage: ({ history, area, dataflow }) =>
     new LoadImageNode(history, area, dataflow),
-  Image: ({ area, dataflow, controlflow }) =>
-    new ImageNode(area, dataflow, controlflow),
+  ShowImage: ({ area, dataflow, controlflow }) =>
+    new ShowImageNode(area, dataflow, controlflow),
 
   // lmstudio nodes
   ListDownloadedModels: ({ area, dataflow, controlflow }) =>
@@ -230,7 +230,7 @@ const rawMenu: RawMenuItem[] = [
         label: "Image",
         subitems: [
           { label: "LoadImage", factoryKey: "LoadImage" },
-          { label: "Image", factoryKey: "Image" },
+          { label: "ShowImage", factoryKey: "ShowImage" },
         ],
       },
     ],

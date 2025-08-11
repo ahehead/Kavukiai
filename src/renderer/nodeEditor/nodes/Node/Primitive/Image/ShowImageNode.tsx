@@ -6,8 +6,8 @@ import type { Image } from 'renderer/nodeEditor/types/Schemas/Util'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 
-export class ImageNode extends BaseNode<
-  'Image',
+export class ShowImageNode extends BaseNode<
+  'ShowImage',
   { exec: TypedSocket; image: TypedSocket },
   object,
   { view: ImageControl }
@@ -17,12 +17,12 @@ export class ImageNode extends BaseNode<
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
-    super('Image')
+    super('ShowImage')
     this.addInputPort([
       {
         key: 'exec',
         typeName: 'exec',
-        label: 'In',
+        label: 'Show',
         onClick: () => this.controlflow.execute(this.id, 'exec'),
       },
       { key: 'image', typeName: 'Image', label: 'Image' },
