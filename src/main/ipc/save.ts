@@ -1,12 +1,16 @@
-import { ipcMain, dialog } from "electron";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { IpcChannel, type IpcResultDialog } from "shared/ApiType";
-import type { GraphJsonData } from "shared/JsonType";
-import { hashGraph } from "renderer/features/dirty-check/hash";
-import { getWindow } from "main/features/window";
-import { getDefaultSavePath, setLastDir } from "main/features/file/lastDirPath";
+import { dialog, ipcMain } from "electron";
 import { ApplicationSettingsConf } from "main/features/file/conf";
+import { getDefaultSavePath, setLastDir } from "main/features/file/lastDirPath";
+import { getWindow } from "main/features/window";
+import { hashGraph } from "renderer/features/dirty-check/hash";
+import {
+  IpcChannel,
+  type IpcResultDialog,
+  type OpenPathDialogOptions,
+} from "shared/ApiType";
+import type { GraphJsonData } from "shared/JsonType";
 import writeFileAtomic from "write-file-atomic";
 
 async function isGraphUnchanged(
@@ -51,6 +55,31 @@ export function registerSaveHandlers(): void {
 
     return filePath;
   });
+
+  // パス選択（ファイル/フォルダ）ダイアログ
+  ipcMain.handle(
+    IpcChannel.ShowOpenPathDialog,
+    async (event, opts: OpenPathDialogOptions) => {
+      const conf = ApplicationSettingsConf();
+      const window = getWindow(event.sender);
+      const properties: Electron.OpenDialogOptions["properties"] = [];
+      if (opts.mode === "file") properties.push("openFile");
+      else if (opts.mode === "folder") properties.push("openDirectory");
+      else properties.push("openFile", "openDirectory");
+
+      const { canceled, filePaths } = await dialog.showOpenDialog(window, {
+        title: opts.title,
+        defaultPath: opts.defaultPath ?? getDefaultSavePath(conf, ""),
+        properties,
+        filters: opts.filters,
+      });
+
+      if (canceled || filePaths.length === 0) return null;
+      // 最後に開いたフォルダを保存
+      setLastDir(conf, path.dirname(filePaths[0]));
+      return filePaths[0];
+    }
+  );
 
   // save json data
   ipcMain.handle(

@@ -1,4 +1,5 @@
 import { ipcRenderer } from "electron";
+import type { OpenPathDialogOptions } from "shared/ApiType";
 import {
   type FileData,
   IpcChannel,
@@ -23,6 +24,12 @@ export const fileOperationsApi = {
   // ダイアログを開く
   showSaveDialog: (title: string): Promise<string | null> =>
     ipcRenderer.invoke(IpcChannel.ShowSaveDialog, title),
+
+  // ファイル/フォルダ選択ダイアログ
+  showOpenPathDialog: (
+    options: OpenPathDialogOptions
+  ): Promise<string | null> =>
+    ipcRenderer.invoke(IpcChannel.ShowOpenPathDialog, options),
 
   // グラフを保存
   saveGraphJsonData: (

@@ -15,6 +15,7 @@ export enum IpcChannel {
 
   SaveGraphInitiate = "save-graph-initiate",
   ShowSaveDialog = "show-save-dialog",
+  ShowOpenPathDialog = "show-open-path-dialog",
   SaveJsonGraph = "save-json-graph",
   ShowCloseConfirm = "show-close-confirm",
 
@@ -32,6 +33,19 @@ export enum IpcChannel {
   LMStudioChatRequest = "lmstudio-chat-request",
   PortLMStudioChat = "port-lmstudio-chat",
 }
+
+// 汎用パス選択ダイアログ
+export type FileFilter = { name: string; extensions: string[] };
+export type OpenPathDialogOptions = {
+  /** ファイル選択/フォルダ選択/両方 */
+  mode: "file" | "folder" | "both";
+  /** ダイアログタイトル */
+  title?: string;
+  /** 既定のパス */
+  defaultPath?: string;
+  /** ファイルフィルタ（mode が file/both の場合のみ有効） */
+  filters?: FileFilter[];
+};
 
 // ファイルを閉じる確認dialogの返答
 export enum CloseFileDialogResponse {

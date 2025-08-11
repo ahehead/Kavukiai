@@ -18,7 +18,6 @@ export class ImageFileInputControl extends BaseControl<
   ImageFileInputControlOptions
 > {
   value: Image | null
-  private objectUrl: string | null = null
   private useBase64: boolean
   constructor(options: ImageFileInputControlOptions = {}) {
     super(options)
@@ -31,22 +30,6 @@ export class ImageFileInputControl extends BaseControl<
     return this.useBase64
   }
 
-  /**
-   * Track the current object URL for later revocation
-   */
-  setObjectUrl(url: string | null) {
-    this.objectUrl = url
-  }
-
-  /**
-   * Revoke the current object URL to release resources
-   */
-  revokeUrl() {
-    if (this.objectUrl) {
-      URL.revokeObjectURL(this.objectUrl)
-      this.objectUrl = null
-    }
-  }
 
   setValue(value: Image | null) {
     this.value = value
@@ -76,7 +59,6 @@ export function ImageFileInputControlView(props: {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) {
-      control.revokeUrl()
       control.setValue(null)
       return
     }
@@ -91,10 +73,7 @@ export function ImageFileInputControlView(props: {
       }
       reader.readAsDataURL(file)
     } else {
-      // Blob URL mode
-      control.revokeUrl()
       const url = URL.createObjectURL(file)
-      control.setObjectUrl(url) // 後で失効させるために保存
       const image: Image = { url, alt: file.name }
       control.addHistory(value, image)
       control.setValue(image)
