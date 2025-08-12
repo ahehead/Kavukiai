@@ -2,8 +2,6 @@ import { type Static, Type } from "@sinclair/typebox";
 
 /**
  * PromptRecipe 用の TypeBox スキーマ
- * - 汎用的に使えるように inputs/outputs は Record<string, { path: string; default?: any }/ { path: string }>
- * - workflow は unknown として受け取り（各レシピで具体化）
  */
 export const PromptRecipe = Type.Object(
   {
