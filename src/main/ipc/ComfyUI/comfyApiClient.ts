@@ -6,14 +6,14 @@ let comfyApiInstance: ComfyApi | null = null;
  * ComfyApi クライアントのシングルトンインスタンスを取得
  * @param url ComfyUIサーバーのURL
  */
-export async function getComfyApiClient(
+export function getComfyApiClient(
   url: string,
   opts?: {
     forceWs?: boolean;
     wsTimeout?: number;
     listenTerminal?: boolean;
   }
-): Promise<ComfyApi> {
+): ComfyApi {
   if (!comfyApiInstance) {
     comfyApiInstance = new ComfyApi(url, undefined, opts);
   }
