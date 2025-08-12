@@ -63,6 +63,10 @@ import {
   SwitchControl,
   SwitchControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Switch";
+import {
+  WorkflowSelectControl,
+  WorkflowSelectControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/WorkflowSelectControl";
 // RunButton
 import {
   RunButtonControl,
@@ -106,6 +110,7 @@ const controlViews = new Map<Ctor, ControlViewComponent>([
   [ImageFileInputControl, ImageFileInputControlView],
   [ProgressControl, ProgressControlView],
   [PathInputControl, PathInputControlView],
+  [WorkflowSelectControl, WorkflowSelectControlView],
 ]);
 
 export function customReactPresets(

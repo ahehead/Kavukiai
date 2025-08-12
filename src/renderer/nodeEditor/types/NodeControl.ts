@@ -13,6 +13,7 @@ import type { PropertyInputControl } from "../nodes/Controls/input/PropertyInput
 import type { SelectControl } from "../nodes/Controls/input/Select";
 import type { SliderControl } from "../nodes/Controls/input/Slider";
 import type { SwitchControl } from "../nodes/Controls/input/Switch";
+import type { WorkflowSelectControl } from "../nodes/Controls/input/WorkflowSelectControl";
 import type { RunButtonControl } from "../nodes/Controls/RunButton";
 import type { ProgressControl } from "../nodes/Controls/view/ProgressControl";
 
@@ -34,4 +35,5 @@ export type NodeControl =
   | ImageFileInputControl
   | ProgressControl
   | UChatControl
-  | PathInputControl;
+  | PathInputControl
+  | WorkflowSelectControl;

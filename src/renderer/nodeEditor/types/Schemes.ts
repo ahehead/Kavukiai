@@ -58,6 +58,7 @@ import type {
   UnknownNode,
   UnLoadModelNode,
   UPartTextNode,
+  WorkflowInputsNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./Node/BaseNode";
@@ -119,6 +120,7 @@ export type NodeTypes =
   | LLMPredictionConfigNode
   | ComfyUINode
   | LoadWorkflowNode
+  | WorkflowInputsNode
   | OpenAIToChatEventNode
   | OpenAIToUChatCommandNode
   | UChatToOpenAINode

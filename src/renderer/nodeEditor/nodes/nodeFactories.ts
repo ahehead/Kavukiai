@@ -50,6 +50,7 @@ import {
   UChatNode,
   UnknownNode,
   UnLoadModelNode,
+  WorkflowInputsNode,
 } from "./Node";
 import { LMStudioToUChatCommandNode } from "./Node/Chat/LMStudioToUChatCommandNode";
 import { OpenAIToUChatCommandNode } from "./Node/Chat/OpenAIToUChatCommandNode";
@@ -131,6 +132,8 @@ export const nodeFactories = {
     new ComfyUINode(area, dataflow, controlflow),
   LoadWorkflow: ({ area, dataflow, controlflow }) =>
     new LoadWorkflowNode(area, dataflow, controlflow),
+  WorkflowInputs: ({ history, area, dataflow, controlflow }) =>
+    new WorkflowInputsNode(history, area, dataflow, controlflow),
 
   // OpenAI nodes
   OpenAI: ({ area, dataflow, controlflow }) =>
@@ -292,6 +295,7 @@ const rawMenu: RawMenuItem[] = [
     subitems: [
       { label: "ComfyUI", factoryKey: "ComfyUI" },
       { label: "LoadWorkflow", factoryKey: "LoadWorkflow" },
+      { label: "WorkflowInputs", factoryKey: "WorkflowInputs" },
     ],
   },
   // include Debug category only in development, placed at bottom
