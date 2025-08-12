@@ -1,29 +1,34 @@
-import { useEffect, useState, type JSX } from "react";
-import { Drag } from "rete-react-plugin";
-import { Switch as UISwitch } from "renderer/components/ui/switch";
-import type { ControlJson } from "shared/JsonType";
-import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types";
+import type { JSX } from 'react'
+import { Switch as UISwitch } from 'renderer/components/ui/switch'
+import {
+  BaseControl,
+  type ControlOptions,
+  useControlValue,
+} from 'renderer/nodeEditor/types'
+import { Drag } from 'rete-react-plugin'
+import type { ControlJson } from 'shared/JsonType'
 
 export interface SwitchControlParams extends ControlOptions<boolean> {
-  value: boolean;
+  value?: boolean
 }
 
 // boolean入力用Switchコントロール
 export class SwitchControl extends BaseControl<boolean, SwitchControlParams> {
-  value: boolean;
+  value: boolean
 
   constructor(options: SwitchControlParams) {
-    super(options);
-    this.value = options.value;
+    super(options)
+    this.value = options.value ?? false
   }
 
   setValue(value: boolean) {
-    this.value = value;
-    this.opts.onChange?.(value);
+    this.value = value
+    this.opts.onChange?.(value)
+    this.notify()
   }
 
   getValue(): boolean {
-    return this.value;
+    return this.value
   }
 
   override toJSON(): ControlJson {
@@ -33,34 +38,29 @@ export class SwitchControl extends BaseControl<boolean, SwitchControlParams> {
         label: this.opts.label,
         editable: this.opts.editable,
       },
-    };
+    }
   }
 
   override setFromJSON({ data }: ControlJson): void {
-    const { value, label, editable } = data as any;
-    this.value = value;
-    this.opts.label = label;
-    this.opts.editable = editable;
+    const { value, label, editable } = data as any
+    this.value = value
+    this.opts.label = label
+    this.opts.editable = editable
   }
 }
 
 export function SwitchControlView(props: { data: SwitchControl }): JSX.Element {
-  const control = props.data;
-  const [uiValue, setUiValue] = useState<boolean>(control.getValue());
-
-  useEffect(() => {
-    setUiValue(control.getValue());
-  }, [control.value]);
+  const control = props.data
+  const uiValue = useControlValue(control)
 
   const handleChange = (checked: boolean) => {
-    control.addHistory(uiValue, checked);
-    setUiValue(checked);
-    control.setValue(checked);
-  };
+    control.addHistory(uiValue, checked)
+    control.setValue(checked)
+  }
 
   return (
     <Drag.NoDrag>
-      <div className="grid grid-cols-2 gap-1 place-items-center">
+      <div className="flex items-center gap-2">
         <UISwitch
           id={control.id}
           checked={uiValue}
@@ -70,5 +70,5 @@ export function SwitchControlView(props: { data: SwitchControl }): JSX.Element {
         <div className="text-sm">{uiValue ? 'true' : 'false'}</div>
       </div>
     </Drag.NoDrag>
-  );
+  )
 }
