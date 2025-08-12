@@ -11,6 +11,7 @@ export { UChatToLMStudioNode } from "./Chat/UChatToLMStudioNode";
 export { UChatToOpenAINode } from "./Chat/UChatToOpenAINode";
 export { UChatToStringNode } from "./Chat/UChatToStringNode";
 export { UPartTextNode } from "./Chat/UPartTextNode";
+export { ComfyUINode } from "./ComfyUI/ComfyUINode";
 export { TestNode } from "./Debug/TestNode";
 export { UnknownNode } from "./Debug/UnknownNode";
 export { InspectorNode } from "./InspectorNode";

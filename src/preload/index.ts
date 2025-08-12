@@ -1,9 +1,10 @@
 import { contextBridge } from "electron";
 import { apiKeyApi } from "./apiKeys";
 import { appStateApi } from "./appState";
+import { comfyuiApi } from "./comfyui";
 import { fileOperationsApi } from "./fileOperations";
-import { openAIApi } from "./openAI";
 import { lmstudioApi } from "./lmstudio";
+import { openAIApi } from "./openAI";
 import { settingsApi } from "./settings";
 
 declare global {
@@ -21,6 +22,8 @@ const API = {
   ...openAIApi,
   // LMStudio関連
   ...lmstudioApi,
+  // ComfyUI関連
+  ...comfyuiApi,
   // 設定関連
   ...settingsApi,
   // ファイル操作関連

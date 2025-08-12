@@ -1,0 +1,117 @@
+import { electronApiService } from 'renderer/features/services/appService'
+import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
+import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
+import { MessagePortNode } from 'renderer/nodeEditor/types/Node/MessagePortNode'
+import type { NodeImage } from 'renderer/nodeEditor/types/Schemas/NodeImage'
+import { createNodeImageFromPath } from 'renderer/nodeEditor/types/Schemas/NodeImage'
+import type { AreaPlugin } from 'rete-area-plugin'
+import type { ControlFlowEngine } from 'rete-engine'
+import type { ComfyUIRunRequestArgs, PromptRecipe } from 'shared/ComfyUIType'
+import type { ComfyUIPortEvent } from 'shared/ComfyUIType/port-events'
+import { ConsoleControl } from '../../Controls/Console'
+import { ProgressControl } from '../../Controls/view/ProgressControl'
+
+
+export class ComfyUINode extends MessagePortNode<
+  'ComfyUI',
+  { exec: TypedSocket; exec2: TypedSocket; recipe: TypedSocket },
+  { exec: TypedSocket; image: TypedSocket },
+  { progress: ProgressControl; console: ConsoleControl },
+  ComfyUIPortEvent,
+  ComfyUIRunRequestArgs
+> {
+  private lastImage: NodeImage | null = null
+
+  constructor(
+    area: AreaPlugin<Schemes, AreaExtra>,
+    dataflow: DataflowEngine<Schemes>,
+    protected controlflow: ControlFlowEngine<Schemes>
+  ) {
+    super('ComfyUI', area, dataflow, controlflow)
+    this.addInputPortPattern({
+      type: 'RunButton',
+      controlflow: this.controlflow,
+    })
+    this.addInputPort([
+      {
+        key: 'exec2',
+        typeName: 'exec',
+        label: 'Cancel',
+        onClick: () => this.controlflow.execute(this.id, 'exec2'),
+      },
+      { key: 'recipe', typeName: 'PromptRecipe', label: 'Recipe' },
+    ])
+    this.addOutputPort([
+      { key: 'exec', typeName: 'exec', label: 'Out' },
+      { key: 'image', typeName: 'NodeImage', label: 'Image' },
+    ])
+    this.addControl('progress', new ProgressControl({ value: 0 }))
+    this.addControl('console', new ConsoleControl({}))
+  }
+
+  data(): { image: NodeImage | null } {
+    return { image: this.lastImage }
+  }
+
+  protected async buildRequestArgs(): Promise<ComfyUIRunRequestArgs | null> {
+    const { recipe } = (await this.dataflow.fetchInputs(this.id)) as {
+      recipe?: PromptRecipe[]
+    }
+    if (!recipe || recipe.length === 0) return null
+    return { id: this.id, recipe: recipe[0] }
+  }
+
+  protected callMain(args: ComfyUIRunRequestArgs): void {
+    // preload 経由で postMessage する
+    ; (electronApiService as any).runRecipe(args)
+  }
+
+  protected async onPortEvent(
+    evt: ComfyUIPortEvent,
+    forward: (output: 'exec') => void
+  ): Promise<void> {
+    switch (evt.type) {
+      case 'start':
+        this.controls.console.addValue('Start')
+        this.controls.progress.setValue(0)
+        break
+      case 'pending':
+        this.controls.console.addValue('Pending')
+        break
+      case 'progress':
+        this.controls.progress.setValue(Math.round((evt.progress ?? 0) * 100))
+        if (evt.detail) this.controls.console.addValue(`Node: ${evt.detail}`)
+        break
+      case 'preview':
+        this.controls.console.addValue('Preview received')
+        break
+      case 'output':
+        this.controls.console.addValue(`Output: ${evt.key}`)
+        break
+      case 'finish': {
+        let img: NodeImage | null = null
+        if ('paths' in evt.result) {
+          const path = evt.result.paths[0]
+          if (path) img = createNodeImageFromPath(path)
+        } else if ('buffers' in evt.result) {
+          // Optional: could convert buffers to blob; skipping to keep simple
+        }
+        this.lastImage = img
+        this.dataflow.reset(this.id)
+        this.controls.progress.setValue(100)
+        await this.logAndTerminate('done', 'finished', forward)
+        break
+      }
+      case 'error':
+        await this.logAndTerminate('error', evt.message, forward)
+        break
+      case 'abort':
+        await this.logAndTerminate('error', 'aborted', forward)
+        break
+    }
+  }
+
+  protected onLog(msg: string) {
+    this.controls.console.addValue(msg)
+  }
+}

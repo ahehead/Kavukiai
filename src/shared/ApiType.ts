@@ -32,6 +32,8 @@ export enum IpcChannel {
   UnloadLMStudioModels = "unload-lmstudio-models",
   LMStudioChatRequest = "lmstudio-chat-request",
   PortLMStudioChat = "port-lmstudio-chat",
+  // ComfyUI
+  PortComfyUIRunRecipe = "port-comfyui-run-recipe",
 }
 
 // 汎用パス選択ダイアログ

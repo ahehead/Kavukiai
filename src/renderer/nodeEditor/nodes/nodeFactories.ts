@@ -13,6 +13,7 @@ import {
   BoolNode,
   ChatMessageNode,
   CodeFenceNode,
+  ComfyUINode,
   CounterLoopNode,
   CreateSelectNode,
   InspectorNode,
@@ -123,6 +124,10 @@ export const nodeFactories = {
   UnLoadModel: ({ area, controlflow }) =>
     new UnLoadModelNode(area, controlflow),
   LLMPredictionConfig: ({ dataflow }) => new LLMPredictionConfigNode(dataflow),
+
+  // ComfyUI
+  ComfyUI: ({ area, dataflow, controlflow }) =>
+    new ComfyUINode(area, dataflow, controlflow),
 
   // OpenAI nodes
   OpenAI: ({ area, dataflow, controlflow }) =>
@@ -278,6 +283,10 @@ const rawMenu: RawMenuItem[] = [
 
       { label: "ResponseTextConfig", factoryKey: "ResponseTextConfig" },
     ],
+  },
+  {
+    label: "ComfyUI",
+    subitems: [{ label: "ComfyUI", factoryKey: "ComfyUI" }],
   },
   // include Debug category only in development, placed at bottom
   ...(process.env.NODE_ENV === "development"

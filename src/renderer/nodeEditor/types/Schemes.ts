@@ -8,6 +8,7 @@ import type {
   ChatMessageListNode,
   ChatMessageNode,
   CodeFenceNode,
+  ComfyUINode,
   CounterLoopNode,
   CreateSelectNode,
   GetLastMessageNode,
@@ -115,6 +116,7 @@ export type NodeTypes =
   | ServerStatusNode
   | UnLoadModelNode
   | LLMPredictionConfigNode
+  | ComfyUINode
   | OpenAIToChatEventNode
   | OpenAIToUChatCommandNode
   | UChatToOpenAINode
