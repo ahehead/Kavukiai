@@ -15,7 +15,6 @@ applyTo: '**/*.{ts,tsx,js,jsx,css}'
 ## **生成時の指針**  
 - コメントはなるべく残す。
 - ノードエディタ関連コードは Rete v2 API に準拠。 
-- Class Variance Authority を使用してマークアップ（レイアウト部分）だけを presentational componentに切り出し、ロジックコンポーネントと分ける。
 
 ## tools
 Use the `#githubRepo` tool with `retejs/retejs.org` to find relevant documentation for Rete.js. 

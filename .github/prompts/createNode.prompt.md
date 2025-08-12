@@ -9,7 +9,7 @@ mode: agent
 ```
 ノードの説明:
 作成場所:
-ノードの名前: A extends BaseNode or SerializableInputsNode or PortNode
+ノードの名前: A extends SerializableInputsNode or PortNode
 input:
   key: type
 output:
