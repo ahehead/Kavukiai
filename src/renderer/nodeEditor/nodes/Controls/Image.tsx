@@ -124,7 +124,7 @@ export function ImageControlView(props: { data: ImageControl }) {
             const src = urls[i]
             return (
               <div
-                key={i}
+                key={img.id}
                 className="w-full aspect-square bg-gray-100 rounded overflow-hidden flex items-center justify-center"
                 title={img.alt ?? ''}
               >

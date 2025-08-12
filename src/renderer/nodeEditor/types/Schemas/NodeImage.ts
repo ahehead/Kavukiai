@@ -25,6 +25,7 @@ export type NodeFileRef = Static<typeof NodeFileRef>;
 
 /** ノード間でやり取りする画像データ */
 export const NodeImage = Type.Object({
+  id: Type.String(),
   source: NodeFileRef,
   alt: Type.Optional(Type.String()),
   mime: Type.Optional(Type.String()),
@@ -49,14 +50,14 @@ export function createNodeImageFromUrl(
   alt?: string,
   mime?: string
 ): NodeImage {
-  return { source: { kind: "url", url }, alt, mime };
+  return { id: genNodeImageId(), source: { kind: "url", url }, alt, mime };
 }
 export function createNodeImageFromPath(
   path: string,
   alt?: string,
   mime?: string
 ): NodeImage {
-  return { source: { kind: "path", path }, alt, mime };
+  return { id: genNodeImageId(), source: { kind: "path", path }, alt, mime };
 }
 export function createNodeImageFromData(
   data: string,
@@ -64,7 +65,12 @@ export function createNodeImageFromData(
   alt?: string,
   mime?: string
 ): NodeImage {
-  return { source: { kind: "data", data, encoding }, alt, mime };
+  return {
+    id: genNodeImageId(),
+    source: { kind: "data", data, encoding },
+    alt,
+    mime,
+  };
 }
 export function createNodeImageFromBlob(
   blob: Blob,
@@ -73,6 +79,7 @@ export function createNodeImageFromBlob(
   mime?: string
 ): NodeImage {
   return {
+    id: genNodeImageId(),
     source: { kind: "blob", blob: blob as unknown, name },
     alt,
     mime: mime ?? (blob.type || undefined),
@@ -116,3 +123,19 @@ export async function toUPartImage(
 
 export const ImageArray = Type.Array(NodeImage);
 export type ImageArray = Static<typeof ImageArray>;
+
+/** 内部用: NodeImage の一意IDを生成 */
+function genNodeImageId(): string {
+  try {
+    if (
+      typeof crypto !== "undefined" &&
+      typeof crypto.randomUUID === "function"
+    ) {
+      return crypto.randomUUID();
+    }
+  } catch {
+    // ignore and fallback
+  }
+  // Fallback (not RFC4122): sufficiently unique for UI identity
+  return `${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
+}
