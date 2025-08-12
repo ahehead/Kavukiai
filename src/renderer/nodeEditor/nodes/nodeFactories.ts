@@ -27,6 +27,7 @@ import {
   LMStudioLoadModelNode,
   LMStudioStartNode,
   LMStudioStopNode,
+  LoadWorkflowNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
   NumberNode,
@@ -128,6 +129,8 @@ export const nodeFactories = {
   // ComfyUI
   ComfyUI: ({ area, dataflow, controlflow }) =>
     new ComfyUINode(area, dataflow, controlflow),
+  LoadWorkflow: ({ area, dataflow, controlflow }) =>
+    new LoadWorkflowNode(area, dataflow, controlflow),
 
   // OpenAI nodes
   OpenAI: ({ area, dataflow, controlflow }) =>
@@ -286,7 +289,10 @@ const rawMenu: RawMenuItem[] = [
   },
   {
     label: "ComfyUI",
-    subitems: [{ label: "ComfyUI", factoryKey: "ComfyUI" }],
+    subitems: [
+      { label: "ComfyUI", factoryKey: "ComfyUI" },
+      { label: "LoadWorkflow", factoryKey: "LoadWorkflow" },
+    ],
   },
   // include Debug category only in development, placed at bottom
   ...(process.env.NODE_ENV === "development"

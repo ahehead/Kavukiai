@@ -21,6 +21,7 @@ export enum IpcChannel {
 
   FileLoadedRequest = "file-loaded-request",
   LoadFile = "load-file",
+  ReadJsonByPath = "read-json-by-path",
 
   PortChatGpt = "port-chat-gpt",
 

@@ -25,6 +25,7 @@ import type {
   LMStudioStartNode,
   LMStudioStopNode,
   LMStudioToUChatCommandNode,
+  LoadWorkflowNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
   NumberNode,
@@ -117,6 +118,7 @@ export type NodeTypes =
   | UnLoadModelNode
   | LLMPredictionConfigNode
   | ComfyUINode
+  | LoadWorkflowNode
   | OpenAIToChatEventNode
   | OpenAIToUChatCommandNode
   | UChatToOpenAINode

@@ -70,4 +70,8 @@ export const fileOperationsApi = {
   // ファイルを読み込む
   loadFile: (): Promise<FileData | null> =>
     ipcRenderer.invoke(IpcChannel.LoadFile),
+
+  // 指定パスのJSONを読み込む
+  readJsonByPath: (path: string) =>
+    ipcRenderer.invoke(IpcChannel.ReadJsonByPath, path),
 };
