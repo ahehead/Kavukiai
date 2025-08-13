@@ -39,12 +39,12 @@ export class WorkflowInputsNode extends SerializableInputsNode<
       },
       {
         key: 'workflow',
-        typeName: 'WorkflowInputs',
+        typeName: 'object',
         label: 'Workflow',
       },
     ])
     this.addOutputPort([
-      { key: 'keyPath', typeName: 'object', label: 'Key/Path/Default' },
+      { key: 'keyPath', typeName: 'WorkflowInputs', label: 'Key/Path/Default' },
       { key: 'schema', typeName: 'JsonSchema', label: 'Schema' },
     ])
 
