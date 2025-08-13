@@ -150,4 +150,10 @@ export const ExecList = [
   "stop",
   "reset",
   "continue",
-];
+] as const;
+
+export type ExecKey = (typeof ExecList)[number];
+
+// ExecList に対する型ガード
+export const isExecKey = (name: string): name is ExecKey =>
+  (ExecList as readonly string[]).includes(name);

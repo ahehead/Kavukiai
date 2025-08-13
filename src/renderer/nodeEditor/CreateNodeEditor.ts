@@ -32,22 +32,23 @@ import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
 import { selectableNodes, selector } from "./features/nodeSelection/selectable";
 import { DataflowEngine } from "./features/safe-dataflow/dataflowEngin";
 import { registerConnectionPipeline } from "./features/updateConnectionState/updateConnectionState";
-import { type AreaExtra, ExecList, type Schemes } from "./types";
+import { type AreaExtra, ExecList, isExecKey, type Schemes } from "./types";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
 
   // エンジンのインスタンス化
   const dataflow = new DataflowEngine<Schemes>(({ inputs, outputs }) => ({
+    // exec系（制御フロー）ソケットはデータフローから除外する
     inputs: (): string[] =>
-      Object.keys(inputs).filter((name) => !ExecList.includes(name)),
+      Object.keys(inputs).filter((name) => !isExecKey(name)),
     outputs: (): string[] =>
-      Object.keys(outputs).filter((name) => !ExecList.includes(name)),
+      Object.keys(outputs).filter((name) => !isExecKey(name)),
   }));
   const controlflow = new ControlFlowEngine<Schemes>(() => {
     return {
-      inputs: (): typeof ExecList => ExecList,
-      outputs: (): typeof ExecList => ExecList,
+      inputs: (): string[] => [...ExecList],
+      outputs: (): string[] => [...ExecList],
     };
   });
 
