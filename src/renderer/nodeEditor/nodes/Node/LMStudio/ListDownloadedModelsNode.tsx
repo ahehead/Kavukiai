@@ -30,7 +30,7 @@ export class ListDownloadedModelsNode extends SerializableInputsNode<
     this.addInputPort({
       key: 'exec',
       typeName: 'exec',
-      label: 'In',
+      label: 'Get',
       onClick: () => this.controlflow.execute(this.id, 'exec'),
     })
     this.addOutputPort([
