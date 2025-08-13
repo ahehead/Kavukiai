@@ -247,7 +247,7 @@ const rawMenu: RawMenuItem[] = [
     ],
   },
   {
-    label: "Chat",
+    label: "UChat",
     subitems: [
       { label: "UChat", factoryKey: "UChat" },
       { label: "UChatMessage", factoryKey: "UChatMessage" },

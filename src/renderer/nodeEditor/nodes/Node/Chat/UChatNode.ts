@@ -37,6 +37,8 @@ export class UChatNode
   >
   implements SerializableDataNode
 {
+  override width = 500;
+  override height = 700;
   deltaFunc: DeltaStreamFunctions;
 
   constructor(
@@ -52,24 +54,24 @@ export class UChatNode
       {
         key: "exec",
         typeName: "exec",
-        label: "push",
+        label: "Push Message",
         onClick: () => this.controlflow.execute(this.id, "exec"),
       },
       { key: "newMessage", typeName: "UChatMessage", label: "New Message" },
       {
         key: "exec2",
         typeName: "exec",
-        label: "response",
+        label: "Response",
         onClick: () => this.controlflow.execute(this.id, "exec2"),
       },
       { key: "event", typeName: "UChatCommandEventOrNull", label: "Event" },
       {
         key: "exec3",
         typeName: "exec",
-        label: "reset",
+        label: "Reset",
         onClick: () => this.controlflow.execute(this.id, "exec3"),
       },
-      { key: "newValue", typeName: "UChat", label: "New Value" },
+      { key: "newValue", typeName: "UChat", label: "New UChat Value" },
     ]);
     this.addOutputPort([
       {

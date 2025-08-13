@@ -23,7 +23,7 @@ describe("getContextMenuPath", () => {
     expect(getContextMenuPath("OpenAI")).toBe("OpenAI/");
   });
 
-  it("returns Chat for UChatToString key", () => {
-    expect(getContextMenuPath("UChatToString")).toBe("Chat/");
+  it("returns UChat for UChatToString key", () => {
+    expect(getContextMenuPath("UChatToString")).toBe("UChat/");
   });
 });
