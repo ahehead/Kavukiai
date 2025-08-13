@@ -11,6 +11,7 @@ import { TypedSocket } from "../TypedSocket";
 
 const { Output } = ClassicPreset;
 
+// 自作スキーマTSchemaと、スキーマ呼び出しSchemaKeyと、exec buttonの三通り
 export type InputPortConfig<K> =
   | {
       key: K;
@@ -57,6 +58,7 @@ export type OutputPortConfig<K> =
     };
 export type OutputSpec<K> = OutputPortConfig<K> | OutputPortConfig<K>[];
 
+// input outputをなるべく簡単に作成する関数を持つクラス
 export abstract class NodeIO<
   Inputs extends { [key in string]?: TypedSocket },
   Outputs extends { [key in string]?: TypedSocket },
@@ -114,7 +116,11 @@ export abstract class NodeIO<
       require ?? false
     );
     this.addInput(key, input);
-    if (onClick) {
+    // control と onClick が両方指定された場合は control を優先する
+    if (control) {
+      input.addControl(control);
+      input.showControl = showControl ?? true; // controlはデフォルトで表示する
+    } else if (onClick) {
       input.addControl(
         new ButtonControl({
           label: label ?? "Click",
@@ -124,11 +130,6 @@ export abstract class NodeIO<
           },
         })
       );
-      input.showControl = showControl ?? true; // controlはデフォルトで表示する
-    }
-
-    if (control) {
-      input.addControl(control);
       input.showControl = showControl ?? true; // controlはデフォルトで表示する
     }
   }
