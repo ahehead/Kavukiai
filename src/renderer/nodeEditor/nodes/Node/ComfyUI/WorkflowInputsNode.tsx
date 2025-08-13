@@ -10,6 +10,7 @@ import {
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
+import type { WorkflowInputs } from 'shared/ComfyUIType'
 import {
   WorkflowSelectControl,
   type WorkflowSelectValue,
@@ -38,7 +39,7 @@ export class WorkflowInputsNode extends SerializableInputsNode<
       },
       {
         key: 'workflow',
-        typeName: 'object',
+        typeName: 'WorkflowInputs',
         label: 'Workflow',
       },
     ])
@@ -71,12 +72,12 @@ export class WorkflowInputsNode extends SerializableInputsNode<
   }
 
   data(_inputs: Record<string, unknown>): {
-    keyPath: Record<string, { path: string; default: any }>
+    keyPath: WorkflowInputs
     schema: TSchema
   } {
     const value = this.controls.select.getValue()
 
-    const keyPath: Record<string, { path: string; default: any }> = {}
+    const keyPath: WorkflowInputs = {}
     for (const [key, info] of Object.entries(value.inputs)) {
       keyPath[key] = { path: info.path, default: info.default }
     }

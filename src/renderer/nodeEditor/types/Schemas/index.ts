@@ -1,5 +1,5 @@
 import type { TSchema } from "@sinclair/typebox";
-import { LaunchOpts, PromptRecipe } from "shared/ComfyUIType";
+import * as PromptRecipe from "shared/ComfyUIType";
 import { ChatCommandEvent, ChatCommandEventOrNull } from "./ChatCommandEvent";
 import { ChatMessageItem, ChatMessageItemList } from "./ChatMessageItem";
 import * as DefaultSchema from "./DefaultSchema";
@@ -59,8 +59,7 @@ const registry = {
   LMStudioChatPortEventOrNull,
   NodeImage,
   ImageArray,
-  PromptRecipe,
-  LaunchOpts,
+  ...PromptRecipe,
 } satisfies Record<string, TSchema>;
 
 export type SchemaKey = keyof typeof registry;

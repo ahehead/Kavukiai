@@ -1,5 +1,24 @@
 import { type Static, Type } from "@sinclair/typebox";
 
+export const WorkflowInputs = Type.Record(
+  Type.String(),
+  Type.Object({
+    path: Type.String(),
+    default: Type.Optional(Type.Any()),
+  })
+);
+
+export type WorkflowInputs = Static<typeof WorkflowInputs>;
+
+export const WorkflowOutputs = Type.Record(
+  Type.String(),
+  Type.Object({
+    path: Type.String(),
+  })
+);
+
+export type WorkflowOutputs = Static<typeof WorkflowOutputs>;
+
 /**
  * PromptRecipe 用の TypeBox スキーマ
  */
@@ -18,19 +37,8 @@ export const PromptRecipe = Type.Object(
         { additionalProperties: false }
       )
     ),
-    inputs: Type.Record(
-      Type.String(),
-      Type.Object({
-        path: Type.String(),
-        default: Type.Optional(Type.Any()),
-      })
-    ),
-    outputs: Type.Record(
-      Type.String(),
-      Type.Object({
-        path: Type.String(),
-      })
-    ),
+    inputs: WorkflowInputs,
+    outputs: WorkflowOutputs,
     bypass: Type.Optional(Type.Array(Type.String())),
   },
   { additionalProperties: false, description: "PromptRecipe schema" }
