@@ -22,7 +22,7 @@ export class SerializableInputsNode<
    * 入力ポートのシリアライズ
    * @returns シリアライズされた入力ポートのJSON
    */
-  serializeInputs(): { inputs: Record<string, InputPortJson> } {
+  serializeInputs(): { inputs?: Record<string, InputPortJson> } {
     const inputsJson: Record<string, InputPortJson> = {};
     for (const [key, input] of Object.entries(this.inputs)) {
       if (!input || !input.control) continue;
@@ -33,6 +33,8 @@ export class SerializableInputsNode<
         control: controlJson,
       };
     }
+    // 入力が空の場合は `inputs` プロパティ自体を省略
+    if (Object.keys(inputsJson).length === 0) return {};
     return { inputs: inputsJson };
   }
 
