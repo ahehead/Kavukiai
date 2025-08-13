@@ -4,14 +4,20 @@ vi.mock("renderer/features/services/appService", () => ({
   electronApiService: { listDownloadedModels: vi.fn() },
 }));
 
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import { ListDownloadedModelsNode } from "renderer/nodeEditor/nodes/Node/LMStudio/ListDownloadedModelsNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine } from "rete-engine";
 
 const area = { update: vi.fn() } as unknown as AreaPlugin<Schemes, any>;
-const dataflow = { reset: vi.fn() } as unknown as DataflowEngine<Schemes>;
+const dataflow = {
+  reset: vi.fn(),
+  fetchInputSingle: vi.fn(),
+  fetchInputMultiple: vi.fn(),
+  hasDataWithFetch: vi.fn(),
+} as unknown as DataflowEngine<Schemes>;
 const controlflow = {} as ControlFlowEngine<Schemes>;
 
 function createNode() {

@@ -1,7 +1,8 @@
+import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import { CounterLoopNode } from "renderer/nodeEditor/nodes/Node/Primitive/Flow/CounterLoopNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { ControlFlowEngine, DataflowEngine } from "rete-engine";
+import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
 import { expect, test, vi } from "vitest";
 
