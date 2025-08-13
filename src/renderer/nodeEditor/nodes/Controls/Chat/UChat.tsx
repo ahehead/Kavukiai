@@ -53,12 +53,15 @@ export class UChatControl extends BaseControl<
   }
 
   createSystemPromptMessage(text: string): UChatMessage {
-    return { role: 'system', content: [{ type: 'text', text }] }
+    // id を付与して安定したキーに利用
+    return { id: newId(), role: 'system', content: [{ type: 'text', text }] }
   }
 
   addMessage(msg: UChatMessage): void {
     const prev = [...this.messages]
-    this.messages = [...this.messages, msg]
+    // id が無ければ付与
+    const withId = msg.id ? msg : { ...msg, id: newId() }
+    this.messages = [...this.messages, withId]
     this.addHistory(prev, this.messages)
     this.opts.onChange?.(this.messages)
     this.notify()
@@ -120,6 +123,7 @@ export class UChatControl extends BaseControl<
           role: 'assistant',
           content: [{ type: 'text', text: '' }],
           ...initial,
+          id: initial?.id ?? newId(),
         }
         prev = [...this.messages]
         index = this.messages.length
@@ -226,7 +230,7 @@ export function UChatMessageListControlView(props: {
           </div>
         )}
         {messages.map((msg, index) => (
-          <div key={index} className="rounded group">
+          <div key={messageKey(msg, index)} className="rounded group">
             <div className="group-hover:bg-node-header/30 py-1.5 px-3">
               <strong className="block mb-1">
                 {msg.role}
@@ -263,16 +267,16 @@ export function UChatMessageListControlView(props: {
                   {msg.content.map((part, i) => {
                     if (part.type === 'text') {
                       return (
-                        <Markdown key={i} remarkPlugins={[remarkGfm]}>
+                        <Markdown key={partKey(part, i)} remarkPlugins={[remarkGfm]}>
                           {part.text}
                         </Markdown>
                       )
                     }
                     if (part.type === 'image') {
-                      return renderImagePart(part, i)
+                      return renderImagePart(part, partKey(part, i))
                     }
                     if (part.type === 'file') {
-                      return renderFilePart(part, i)
+                      return renderFilePart(part, partKey(part, i))
                     }
                     return null
                   })}
@@ -338,7 +342,7 @@ function ToolButton({
 
 
 // --- パート別描画ヘルパー ---
-function renderImagePart(part: Extract<UPart, { type: 'image' }>, key: number): JSX.Element | null {
+function renderImagePart(part: Extract<UPart, { type: 'image' }>, key: string | number): JSX.Element | null {
   switch (part.source.kind) {
     case 'url':
       return <img key={key} src={part.source.url} alt="message" />
@@ -353,7 +357,7 @@ function renderImagePart(part: Extract<UPart, { type: 'image' }>, key: number): 
   }
 }
 
-function renderFilePart(part: Extract<UPart, { type: 'file' }>, key: number): JSX.Element | null {
+function renderFilePart(part: Extract<UPart, { type: 'file' }>, key: string | number): JSX.Element | null {
   switch (part.source.kind) {
     case 'data': {
       const href = `data:application/octet-stream;base64,${part.source.data}`
@@ -380,4 +384,47 @@ function renderFilePart(part: Extract<UPart, { type: 'file' }>, key: number): JS
     default:
       return null
   }
+}
+
+// --- key helpers ---
+function newId(): string {
+  try {
+    const g: any = globalThis as any
+    if (g?.crypto && typeof g.crypto.randomUUID === 'function') {
+      return g.crypto.randomUUID()
+    }
+  } catch { }
+  return `m_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
+}
+
+function messageKey(msg: UChatMessage, index: number): string | number {
+  if (msg.id) return msg.id
+  const text = extractTextContent(msg)
+  const head = text.slice(0, 50)
+  // できるだけ安定した情報で合成（idが無い古いデータ向け）
+  const base = `${msg.role}|${msg.model ?? ''}|${msg.created_at ?? ''}|${head}|${text.length}`
+  return base || index
+}
+
+function partKey(part: UPart, index: number): string | number {
+  if (part.type === 'text') {
+    const t = part.text
+    return `t|${t.slice(0, 48)}|${t.length}`
+  }
+  if (part.type === 'image') {
+    const s = part.source
+    if (s.kind === 'url') return `img|url|${s.url}`
+    if (s.kind === 'path') return `img|path|${s.path}`
+    if (s.kind === 'id') return `img|id|${s.id}`
+    if (s.kind === 'data') return `img|data|${s.encoding}|${s.data.length}`
+  }
+  if (part.type === 'file') {
+    const s = part.source
+    const name = part.name ?? ''
+    if (s.kind === 'url') return `file|url|${name}|${s.url}`
+    if (s.kind === 'path') return `file|path|${name}|${s.path}`
+    if (s.kind === 'id') return `file|id|${name}|${s.id}`
+    if (s.kind === 'data') return `file|data|${name}|${s.encoding}|${s.data.length}`
+  }
+  return index
 }
