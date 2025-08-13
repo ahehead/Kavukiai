@@ -1,4 +1,7 @@
-import { BaseNode, type TypedSocket } from "renderer/nodeEditor/types";
+import {
+  SerializableInputsNode,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
 import type { ResponseInput } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
 import {
   type OpenAIFileResolver,
@@ -7,7 +10,7 @@ import {
 } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
 
 // UChat を OpenAI ResponseInput に変換するノード
-export class UChatToOpenAINode extends BaseNode<
+export class UChatToOpenAINode extends SerializableInputsNode<
   "UChatToOpenAI",
   { uChat: TypedSocket },
   { out: TypedSocket },

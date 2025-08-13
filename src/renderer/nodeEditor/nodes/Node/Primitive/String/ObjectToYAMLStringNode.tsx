@@ -1,8 +1,7 @@
-import type { TypedSocket } from 'renderer/nodeEditor/types'
-import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
+import { SerializableInputsNode, type TypedSocket } from 'renderer/nodeEditor/types'
 import YAML from 'yaml'
 
-export class ObjectToYAMLStringNode extends BaseNode<
+export class ObjectToYAMLStringNode extends SerializableInputsNode<
   'ObjectToYAMLString',
   { obj: TypedSocket },
   { out: TypedSocket },

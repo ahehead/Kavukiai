@@ -1,10 +1,13 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { InputValueControl } from 'renderer/nodeEditor/nodes/Controls/input/InputValue'
 import { getInputValue } from 'renderer/nodeEditor/nodes/util/getInput'
-import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
-import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
+import {
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
+} from 'renderer/nodeEditor/types'
 
-export class CodeFenceNode extends BaseNode<
+export class CodeFenceNode extends SerializableInputsNode<
   'CodeFence',
   { input: TypedSocket; lang: TypedSocket },
   { out: TypedSocket },

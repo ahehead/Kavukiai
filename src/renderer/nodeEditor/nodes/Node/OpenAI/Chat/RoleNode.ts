@@ -3,12 +3,13 @@ import {
   SelectControl,
   type SelectOption,
 } from "renderer/nodeEditor/nodes/Controls/input/Select";
-import type {
-  AreaExtra,
-  Schemes,
-  TypedSocket,
+import {
+  type AreaExtra,
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
 } from "renderer/nodeEditor/types";
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
+
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 import type { Role } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
 import type { AreaPlugin } from "rete-area-plugin";
@@ -16,7 +17,7 @@ import type { HistoryPlugin } from "rete-history-plugin";
 
 // Role選択ノード
 export class RoleNode
-  extends BaseNode<
+  extends SerializableInputsNode<
     "Role",
     object,
     { out: TypedSocket },

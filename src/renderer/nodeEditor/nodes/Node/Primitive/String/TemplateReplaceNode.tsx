@@ -1,8 +1,8 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { ConsoleControl } from 'renderer/nodeEditor/nodes/Controls/Console'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
-import { NodeStatus } from 'renderer/nodeEditor/types'
-import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+import { NodeStatus, SerializableInputsNode } from 'renderer/nodeEditor/types'
+
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 

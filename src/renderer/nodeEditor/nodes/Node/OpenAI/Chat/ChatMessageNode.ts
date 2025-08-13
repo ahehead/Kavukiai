@@ -1,4 +1,7 @@
-import { BaseNode, type TypedSocket } from "renderer/nodeEditor/types";
+import {
+  SerializableInputsNode,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
 import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/ChatMessageItem";
 import type { Role } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas";
 
@@ -11,7 +14,7 @@ import type { Role } from "renderer/nodeEditor/types/Schemas/openai/InputSchemas
  * Output:
  *  - message: ChatMessageItem
  */
-export class ChatMessageNode extends BaseNode<
+export class ChatMessageNode extends SerializableInputsNode<
   "ChatMessage",
   { role: TypedSocket; text: TypedSocket },
   { message: TypedSocket },

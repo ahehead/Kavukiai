@@ -1,11 +1,14 @@
-import type { TypedSocket } from "renderer/nodeEditor/types";
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
+import {
+  SerializableInputsNode,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
+
 import type {
   ResponseFormatTextConfig,
   ResponseTextConfig,
 } from "renderer/nodeEditor/types/Schemas/openai/RequestSchemas";
 
-export class ResponseTextConfigNode extends BaseNode<
+export class ResponseTextConfigNode extends SerializableInputsNode<
   "ResponseTextConfig",
   { format: TypedSocket },
   { out: TypedSocket },
@@ -28,7 +31,7 @@ export class ResponseTextConfigNode extends BaseNode<
     out: ResponseTextConfig;
   } {
     const format = inputs.format?.[0];
-    return { out: format ? { format } : {} } as { out: ResponseTextConfig };
+    return { out: format ? { format } : {} };
   }
 
   async execute(): Promise<void> {}

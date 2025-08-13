@@ -1,8 +1,7 @@
 import { formatValue } from 'renderer/nodeEditor/nodes/util/formatValue'
-import type { TypedSocket } from 'renderer/nodeEditor/types'
-import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
+import { SerializableInputsNode, type TypedSocket } from 'renderer/nodeEditor/types'
 
-export class ObjectToStringNode extends BaseNode<
+export class ObjectToStringNode extends SerializableInputsNode<
   'ObjectToString',
   { obj: TypedSocket },
   { out: TypedSocket },

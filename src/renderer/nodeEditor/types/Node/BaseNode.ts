@@ -1,6 +1,7 @@
 import type { AreaPlugin } from "rete-area-plugin";
-import type { AreaExtra, Schemes, TypedSocket } from "..";
 import type { NodeControl } from "../NodeControl";
+import type { AreaExtra, Schemes } from "../Schemes";
+import type { TypedSocket } from "../TypedSocket";
 import { NodeIO } from "./NodeIO";
 
 export enum NodeStatus {

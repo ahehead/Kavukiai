@@ -1,13 +1,17 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { MultiLineControl } from 'renderer/nodeEditor/nodes/Controls/input/MultiLine'
-import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
-import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
+import {
+  type AreaExtra,
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
+} from 'renderer/nodeEditor/types'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
 
 // フォーム入力用文字列ノード
-export class StringFormNode extends BaseNode<
+export class StringFormNode extends SerializableInputsNode<
   'StringForm',
   { exec: TypedSocket },
   { out: TypedSocket },

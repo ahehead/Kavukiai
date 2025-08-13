@@ -1,4 +1,7 @@
-import { BaseNode, type TypedSocket } from "renderer/nodeEditor/types";
+import {
+  SerializableInputsNode,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
 import type { ChatHistoryData } from "renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas";
 import {
   type LMFileResolver,
@@ -8,7 +11,7 @@ import {
 } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
 
 // UChat を LM Studio ChatHistoryData に変換するノード
-export class UChatToLMStudioNode extends BaseNode<
+export class UChatToLMStudioNode extends SerializableInputsNode<
   "UChatToLMStudio",
   { uChat: TypedSocket },
   { chatHistory: TypedSocket },

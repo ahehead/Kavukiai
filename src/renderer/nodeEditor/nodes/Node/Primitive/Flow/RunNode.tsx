@@ -1,11 +1,14 @@
 import { RunButtonControl } from 'renderer/nodeEditor/nodes/Controls/RunButton'
-import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
-import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
+import {
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
+} from 'renderer/nodeEditor/types'
 import type { ControlFlowEngine } from 'rete-engine'
 
 // Run ノード
-export class RunNode extends BaseNode<
-  "Run",
+export class RunNode extends SerializableInputsNode<
+  'Run',
   object,
   { exec: TypedSocket },
   { btn: RunButtonControl }

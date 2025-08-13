@@ -1,4 +1,4 @@
-import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
+import { SerializableInputsNode } from 'renderer/nodeEditor/types'
 import { ButtonControl } from '../../Controls/Button'
 import { UChatControl } from '../../Controls/Chat/UChat'
 import { ImageControl } from '../../Controls/Image'
@@ -14,7 +14,7 @@ import { ProgressControl } from '../../Controls/view/ProgressControl'
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
 // コントロール等の確認と、型チェック回避用のNode。
-export class TestNode extends BaseNode<
+export class TestNode extends SerializableInputsNode<
   'Test',
   object,
   object,

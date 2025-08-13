@@ -1,9 +1,14 @@
 import type { ModelInfo } from '@lmstudio/sdk'
 import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
+import {
+  type AreaExtra,
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
+} from 'renderer/nodeEditor/types'
 import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
-import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import { ConsoleControl } from '../../Controls/Console'

@@ -1,11 +1,13 @@
-import type { TypedSocket } from "renderer/nodeEditor/types";
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
+import {
+  SerializableInputsNode,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
 import type {
   UChat,
   UChatMessage,
 } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
 
-export class ReverseRoleNode extends BaseNode<
+export class ReverseRoleNode extends SerializableInputsNode<
   "ReverseRole",
   { list: TypedSocket },
   { list: TypedSocket },

@@ -1,16 +1,17 @@
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import { SwitchControl } from "renderer/nodeEditor/nodes/Controls/input/Switch";
-import type {
-  AreaExtra,
-  Schemes,
-  TypedSocket,
+import {
+  type AreaExtra,
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
 } from "renderer/nodeEditor/types";
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
+
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
 
 // IF ノード
-export class IFNode extends BaseNode<
+export class IFNode extends SerializableInputsNode<
   "IF",
   { exec: TypedSocket; boolData: TypedSocket },
   { exec: TypedSocket; exec2: TypedSocket },

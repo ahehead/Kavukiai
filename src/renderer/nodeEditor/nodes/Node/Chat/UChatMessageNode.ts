@@ -1,4 +1,7 @@
-import { BaseNode, type TypedSocket } from "renderer/nodeEditor/types";
+import {
+  SerializableInputsNode,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
 import type {
   UChatMessage,
   UChatRole,
@@ -6,7 +9,7 @@ import type {
 } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
 
 // UChatMessageを組み立てるノード
-export class UChatMessageNode extends BaseNode<
+export class UChatMessageNode extends SerializableInputsNode<
   "UChatMessage",
   { role: TypedSocket; list: TypedSocket },
   { out: TypedSocket },
@@ -35,4 +38,3 @@ export class UChatMessageNode extends BaseNode<
 
   async execute(): Promise<void> {}
 }
-

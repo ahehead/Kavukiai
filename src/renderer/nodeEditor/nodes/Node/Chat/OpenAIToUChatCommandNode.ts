@@ -1,4 +1,7 @@
-import { BaseNode, type TypedSocket } from "renderer/nodeEditor/types";
+import {
+  SerializableInputsNode,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
 import type {
   UChatCommandEvent,
   UChatCommandEventOrNull,
@@ -10,7 +13,7 @@ import type {
 import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schemas/Util";
 
 // OpenAIClientResponseOrNull を UChatCommandEvent に変換
-export class OpenAIToUChatCommandNode extends BaseNode<
+export class OpenAIToUChatCommandNode extends SerializableInputsNode<
   "OpenAIToUChatCommand",
   { response: TypedSocket },
   { event: TypedSocket },

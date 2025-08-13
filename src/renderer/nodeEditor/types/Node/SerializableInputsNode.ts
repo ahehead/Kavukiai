@@ -1,6 +1,6 @@
 import type { InputPortJson } from "shared/JsonType";
-import type { NodeControl } from "..";
 import type { SerializableControl } from "../BaseControl";
+import type { NodeControl } from "../NodeControl";
 import type { TypedSocket } from "../TypedSocket";
 import { BaseNode } from "./BaseNode";
 

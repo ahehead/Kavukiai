@@ -1,8 +1,11 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { InputValueControl } from 'renderer/nodeEditor/nodes/Controls/input/InputValue'
 import { unescapeSeparator } from 'renderer/nodeEditor/nodes/util/unescapeSeparator'
-import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
-import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+import {
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
+} from 'renderer/nodeEditor/types'
 
 // JoinNode: 文字列配列を結合して返す
 export class JoinNode extends SerializableInputsNode<

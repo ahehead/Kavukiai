@@ -4,9 +4,10 @@ import {
   type AreaExtra,
   NodeStatus,
   type Schemes,
+  SerializableInputsNode,
   type TypedSocket,
 } from 'renderer/nodeEditor/types'
-import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import { ConsoleControl } from '../../Controls/Console'

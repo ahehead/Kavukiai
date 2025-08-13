@@ -1,4 +1,7 @@
-import { BaseNode, type TypedSocket } from "renderer/nodeEditor/types";
+import {
+  SerializableInputsNode,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
 import type {
   ChatCommandEvent,
   ChatCommandEventOrNull,
@@ -7,7 +10,7 @@ import type { ChatMessageItem } from "renderer/nodeEditor/types/Schemas/ChatMess
 import type { OpenAIClientResponseOrNull } from "renderer/nodeEditor/types/Schemas/Util";
 
 // OpenAIClientResponseOrNull を ChatCommandEvent に変換するノード
-export class OpenAIToChatEventNode extends BaseNode<
+export class OpenAIToChatEventNode extends SerializableInputsNode<
   "OpenAIToChatEvent",
   { responseData: TypedSocket },
   { event: TypedSocket },

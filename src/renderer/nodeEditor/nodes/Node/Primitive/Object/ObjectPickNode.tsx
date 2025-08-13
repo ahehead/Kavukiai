@@ -2,8 +2,8 @@ import { type TSchema, Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import {
   type AreaExtra,
-  BaseNode,
   type Schemes,
+  SerializableInputsNode,
   type TypedSocket,
 } from 'renderer/nodeEditor/types'
 import type {
@@ -14,7 +14,7 @@ import type { AreaPlugin } from 'rete-area-plugin'
 
 // ObjectPickNode: オブジェクトの各キーを個別の出力として返す
 export class ObjectPickNode
-  extends BaseNode<
+  extends SerializableInputsNode<
     'ObjectPick',
     { obj: TypedSocket },
     Record<string, TypedSocket>,

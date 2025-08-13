@@ -1,10 +1,10 @@
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
-import type {
-  AreaExtra,
-  Schemes,
-  TypedSocket,
+import {
+  type AreaExtra,
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
 } from "renderer/nodeEditor/types";
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 import type { UChatRole } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
 import type { AreaPlugin } from "rete-area-plugin";
@@ -14,7 +14,7 @@ import { SelectControl } from "../../Controls/input/Select";
 
 // UChatRole選択ノード
 export class UChatRoleNode
-  extends BaseNode<
+  extends SerializableInputsNode<
     "UChatRole",
     object,
     { out: TypedSocket },

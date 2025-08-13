@@ -1,16 +1,17 @@
 import { type TSchema, Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import type {
-  AreaExtra,
-  Schemes,
-  TooltipInput,
-  TypedSocket,
+import {
+  type AreaExtra,
+  type Schemes,
+  SerializableInputsNode,
+  type TooltipInput,
+  type TypedSocket,
 } from 'renderer/nodeEditor/types'
 import type {
   ConnectionParams,
   DynamicSchemaNode,
 } from 'renderer/nodeEditor/types/Node/DynamicSchemaNode'
-import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+
 import type { AreaPlugin } from 'rete-area-plugin'
 
 // 配列ノード: 6つの入力を配列化し返す

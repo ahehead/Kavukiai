@@ -1,14 +1,15 @@
 import { type TSchema, Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { restoreKind } from 'renderer/nodeEditor/nodes/util/restoreKind'
-import type {
-  AreaExtra,
-  Schemes,
-  TooltipInput,
-  TypedSocket,
+import {
+  type AreaExtra,
+  type Schemes,
+  SerializableInputsNode,
+  type TooltipInput,
+  type TypedSocket,
 } from 'renderer/nodeEditor/types'
 import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode'
-import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+
 import type { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema'
 import type { NodeEditor } from 'rete'
 import type { AreaPlugin } from 'rete-area-plugin'

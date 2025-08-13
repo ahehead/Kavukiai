@@ -1,11 +1,14 @@
-import type { TypedSocket } from "renderer/nodeEditor/types";
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
+import {
+  SerializableInputsNode,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
+
 import {
   type ChatMessageItem,
   chatMessageToString,
 } from "renderer/nodeEditor/types/Schemas/ChatMessageItem";
 
-export class GetLastMessageNode extends BaseNode<
+export class GetLastMessageNode extends SerializableInputsNode<
   "GetLastMessage",
   { list: TypedSocket; isAddRole: TypedSocket; roleString: TypedSocket },
   { out: TypedSocket },

@@ -1,7 +1,11 @@
 import { type TSchema, Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
-import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
+import {
+  type AreaExtra,
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
+} from 'renderer/nodeEditor/types'
 import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode'
 import { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema'
 import type { AreaPlugin } from 'rete-area-plugin'
@@ -13,7 +17,7 @@ import {
 
 // Node to build TSchema objects from property list
 export class JsonSchemaNode
-  extends BaseNode<
+  extends SerializableInputsNode<
     'JsonSchema',
     object,
     { out: TypedSocket },

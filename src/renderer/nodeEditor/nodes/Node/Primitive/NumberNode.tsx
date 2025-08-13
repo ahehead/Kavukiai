@@ -1,12 +1,16 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
-import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
+import {
+  type AreaExtra,
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
+} from 'renderer/nodeEditor/types'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { InputValueControl } from '../../Controls/input/InputValue'
 
 // 数値入力ノード
-export class NumberNode extends BaseNode<
+export class NumberNode extends SerializableInputsNode<
   'Number',
   object,
   { out: TypedSocket },

@@ -1,13 +1,17 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { ImageControl } from 'renderer/nodeEditor/nodes/Controls/Image'
 import { ImageFileInputControl } from 'renderer/nodeEditor/nodes/Controls/input/ImageFileInput'
-import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
-import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode'
+import {
+  type AreaExtra,
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
+} from 'renderer/nodeEditor/types'
 import type { NodeImage } from 'renderer/nodeEditor/types/Schemas/NodeImage'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'
 
-export class SelectImageNode extends BaseNode<
+export class SelectImageNode extends SerializableInputsNode<
   'SelectImage',
   object,
   { out: TypedSocket },

@@ -1,8 +1,8 @@
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
+import { SerializableInputsNode } from "renderer/nodeEditor/types";
 import { MultiLineControl } from "../../Controls/input/MultiLine";
 
 // 名称がわからないノードのときのノード
-export class UnknownNode extends BaseNode<
+export class UnknownNode extends SerializableInputsNode<
   "Unknown",
   object,
   object,

@@ -1,7 +1,12 @@
 import { type TSchema, Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
-import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+import {
+  type AreaExtra,
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
+} from 'renderer/nodeEditor/types'
+
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
@@ -20,7 +25,7 @@ export class WorkflowInputsNode extends SerializableInputsNode<
     private history: HistoryPlugin<Schemes>,
     private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
-    private controlflow: ControlFlowEngine<Schemes>,
+    private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('WorkflowInputs')
 
@@ -89,8 +94,11 @@ export class WorkflowInputsNode extends SerializableInputsNode<
     )
   }
 
-  async execute(_inputs: "exec") {
-    const workflow = await this.dataflow.fetchInputSingle<object>(this.id, 'workflow')
+  async execute(_inputs: 'exec') {
+    const workflow = await this.dataflow.fetchInputSingle<object>(
+      this.id,
+      'workflow'
+    )
     // control に workflow を反映
     this.controls.select.setValue({ workflow, inputs: {} })
   }

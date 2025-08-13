@@ -1,11 +1,14 @@
-import type { TypedSocket } from "renderer/nodeEditor/types";
-import { BaseNode } from "renderer/nodeEditor/types/Node/BaseNode";
+import {
+  SerializableInputsNode,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
+
 import {
   extractTextContent,
   type UChat,
 } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
 
-export class UChatToStringNode extends BaseNode<
+export class UChatToStringNode extends SerializableInputsNode<
   "UChatToString",
   {
     list: TypedSocket;

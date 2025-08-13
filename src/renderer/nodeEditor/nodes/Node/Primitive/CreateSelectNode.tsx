@@ -1,7 +1,11 @@
 import { Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
-import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+import {
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
+} from 'renderer/nodeEditor/types'
+
 import type { ControlFlowEngine } from 'rete-engine'
 import { SelectControl } from '../../Controls/input/Select'
 

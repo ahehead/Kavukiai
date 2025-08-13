@@ -1,4 +1,7 @@
-import { BaseNode, type TypedSocket } from "renderer/nodeEditor/types";
+import {
+  SerializableInputsNode,
+  type TypedSocket,
+} from "renderer/nodeEditor/types";
 import type { LMStudioChatPortEventOrNull } from "renderer/nodeEditor/types/Schemas/LMStudioChatPortEventOrNull";
 import type {
   UChatCommandEvent,
@@ -7,7 +10,7 @@ import type {
 import type { UChatMessage } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
 
 // LMStudioChatPortEventOrNull を UChatCommandEvent に変換
-export class LMStudioToUChatCommandNode extends BaseNode<
+export class LMStudioToUChatCommandNode extends SerializableInputsNode<
   "LMStudioToUChatCommand",
   { event: TypedSocket },
   { command: TypedSocket },

@@ -1,7 +1,6 @@
-import type { TypedSocket } from 'renderer/nodeEditor/types';
-import { BaseNode } from 'renderer/nodeEditor/types/Node/BaseNode';
+import { SerializableInputsNode, type TypedSocket } from 'renderer/nodeEditor/types';
 
-export class NumberToStringNode extends BaseNode<
+export class NumberToStringNode extends SerializableInputsNode<
   'NumberToString',
   { num: TypedSocket },
   { out: TypedSocket },
@@ -18,5 +17,5 @@ export class NumberToStringNode extends BaseNode<
     return { out: n !== undefined ? String(n) : '' };
   }
 
-  async execute(): Promise<void> {}
+  async execute(): Promise<void> { }
 }

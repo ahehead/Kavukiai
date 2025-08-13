@@ -1,11 +1,15 @@
 import { type TSchema, Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
+import {
+  type AreaExtra,
+  type Schemes,
+  SerializableInputsNode,
+  type TypedSocket,
+} from 'renderer/nodeEditor/types'
 import type {
   ConnectionParams,
   DynamicSchemaNode,
 } from 'renderer/nodeEditor/types/Node/DynamicSchemaNode'
-import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import { MultiLineControl } from '../Controls/input/MultiLine'
@@ -72,7 +76,10 @@ export class InspectorNode
     _input: 'exec',
     forward: (output: 'exec') => void
   ): Promise<void> {
-    const inputAny = (await this.dataflow.fetchInputSingle<any>(this.id, "inputAny"))
+    const inputAny = await this.dataflow.fetchInputSingle<any>(
+      this.id,
+      'inputAny'
+    )
     if (inputAny === null) return
 
     this.controls.view.setValue(formatValue(inputAny))
