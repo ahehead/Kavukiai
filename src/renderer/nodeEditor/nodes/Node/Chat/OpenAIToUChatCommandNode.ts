@@ -99,6 +99,4 @@ export class OpenAIToUChatCommandNode extends SerializableInputsNode<
     }
     return { event };
   }
-
-  execute(): void {}
 }

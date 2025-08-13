@@ -88,6 +88,4 @@ export class LMStudioToUChatCommandNode extends SerializableInputsNode<
 
     return { command };
   }
-
-  execute(): void {}
 }

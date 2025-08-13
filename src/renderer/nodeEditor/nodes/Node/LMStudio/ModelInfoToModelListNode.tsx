@@ -26,8 +26,6 @@ export class ModelInfoToModelListNode extends SerializableInputsNode<
     })
   }
 
-  execute() { }
-
   data(inputs?: { list?: ModelInfo[][] }): { list: string[] } {
     const inputList = inputs?.list?.[0] || []
     this.modelKeys = inputList

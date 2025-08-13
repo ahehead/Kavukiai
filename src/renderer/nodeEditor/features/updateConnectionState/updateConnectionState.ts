@@ -1,7 +1,7 @@
 import { getConnectionsByOutputPortKey } from "renderer/nodeEditor/nodes/util/removeNode";
 import {
   type Connection,
-  ExecList,
+  isExecKey,
   type TypedSocket,
 } from "renderer/nodeEditor/types";
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
@@ -85,7 +85,7 @@ async function updateDynamicSchemaNode(
   const targetNode = editor.getNode(data.target);
   if (!targetNode) return;
   if (!isDynamicSchemaNode(targetNode)) return;
-  if (ExecList.includes(data.targetInput)) return;
+  if (isExecKey(data.targetInput)) return;
   await traverseDynamicSchemaNodes(
     editor,
     data,

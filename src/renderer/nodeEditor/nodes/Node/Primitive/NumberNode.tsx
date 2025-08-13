@@ -48,8 +48,6 @@ export class NumberNode extends SerializableInputsNode<
     return { out: this.controls.numInput.value ?? 0 }
   }
 
-  async execute(): Promise<void> { }
-
   serializeControlValue(): { data: { value: number } } {
     return {
       data: { value: this.controls.numInput.value ?? 0 },

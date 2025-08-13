@@ -89,6 +89,4 @@ export class OpenAIToChatEventNode extends SerializableInputsNode<
     }
     return { event };
   }
-
-  execute(): void {}
 }

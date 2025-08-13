@@ -50,8 +50,6 @@ export class StringNode
     return { out: this.controls.textInput.value || '' }
   }
 
-  async execute(): Promise<void> { }
-
   serializeControlValue(): { data: { value: string } } {
     return {
       data: { value: this.controls.textInput.value || '' },
