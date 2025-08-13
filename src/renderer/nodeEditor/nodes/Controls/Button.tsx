@@ -19,12 +19,8 @@ export class ButtonControl extends BaseControl<any, ButtonControlParams> {
   setValue(): void { }
   getValue(): object { return {}; }
 
-  override toJSON(): ControlJson { return { data: { label: this.opts.label } } }
-
-  override setFromJSON({ data }: ControlJson): void {
-    const { label } = data as any;
-    this.opts.label = label;
-  }
+  override toJSON(): ControlJson { return {} }
+  override setFromJSON(): void { }
 }
 
 // カスタム Run ボタンコンポーネント
