@@ -44,6 +44,7 @@ export class CounterLoopNode
         key: "exec",
         typeName: "exec",
         label: "In",
+        showControl: false,
         onClick: () => this.controlflow.execute(this.id, "exec"),
       },
       {
@@ -75,7 +76,6 @@ export class CounterLoopNode
         key: "count",
         typeName: "number",
         label: "Count",
-        showControl: false,
         control: new InputValueControl<number>({
           value: initial,
           cols: 1,
@@ -122,10 +122,8 @@ export class CounterLoopNode
     forward: (output: "exec") => void
   ) {
     if (input === "reset") {
-      const inputs = (await this.dataflow.fetchInputs(this.id, ["count"])) as {
-        count: number;
-      };
-      const value = getInputValue(this.inputs, "count", inputs) || 0;
+      const inputs = await this.dataflow.fetchInputs(this.id, ["count"]);
+      const value = this.getInputValue<number>(inputs, "count") || 0;
       this.counter = value;
       this.controls.count.setValue(value);
       this.dataflow.reset(this.id);
