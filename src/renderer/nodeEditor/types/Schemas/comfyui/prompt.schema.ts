@@ -22,21 +22,22 @@ export type WorkflowOutputs = Static<typeof WorkflowOutputs>;
 /**
  * PromptRecipe 用の TypeBox スキーマ
  */
+export const PromptRunOpts = Type.Object(
+  {
+    forceWs: Type.Optional(Type.Boolean()),
+    wsTimeout: Type.Optional(Type.Integer({ minimum: 0 })),
+    maxTries: Type.Optional(Type.Integer({ minimum: 0 })),
+    delayTime: Type.Optional(Type.Integer({ minimum: 0 })),
+  },
+  { additionalProperties: false, description: "Options for running Prompt" }
+);
+export type PromptRunOpts = Static<typeof PromptRunOpts>;
+
 export const PromptRecipe = Type.Object(
   {
     endpoint: Type.String({ description: "ComfyUI API endpoint URL" }),
     workflow: Type.Unknown({ description: "ComfyUI workflow JSON" }),
-    opts: Type.Optional(
-      Type.Object(
-        {
-          forceWs: Type.Optional(Type.Boolean()),
-          wsTimeout: Type.Optional(Type.Integer({ minimum: 0 })),
-          maxTries: Type.Optional(Type.Integer({ minimum: 0 })),
-          delayTime: Type.Optional(Type.Integer({ minimum: 0 })),
-        },
-        { additionalProperties: false }
-      )
-    ),
+    opts: Type.Optional(PromptRunOpts),
     inputs: WorkflowInputs,
     outputs: WorkflowOutputs,
     bypass: Type.Optional(Type.Array(Type.String())),

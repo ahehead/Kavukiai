@@ -6,15 +6,29 @@ import type { NodeImage } from 'renderer/nodeEditor/types/Schemas/NodeImage'
 import { createNodeImageFromPath } from 'renderer/nodeEditor/types/Schemas/NodeImage'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
-import type { ComfyUIRunRequestArgs, PromptRecipe } from 'shared/ComfyUIType'
+import type {
+  ComfyUIRunRequestArgs,
+  PromptRecipe,
+  PromptRunOpts,
+  WorkflowInputs,
+  WorkflowOutputs,
+} from 'shared/ComfyUIType'
 import type { ComfyUIPortEvent } from 'shared/ComfyUIType/port-events'
 import { ConsoleControl } from '../../Controls/Console'
 import { ProgressControl } from '../../Controls/view/ProgressControl'
 
-
 export class ComfyUINode extends MessagePortNode<
   'ComfyUI',
-  { exec: TypedSocket; exec2: TypedSocket; recipe: TypedSocket },
+  {
+    exec: TypedSocket
+    exec2: TypedSocket
+    endpoint: TypedSocket
+    workflow: TypedSocket
+    inputs: TypedSocket
+    outputs: TypedSocket
+    opts: TypedSocket
+    bypass: TypedSocket
+  },
   { exec: TypedSocket; image: TypedSocket },
   { progress: ProgressControl; console: ConsoleControl },
   ComfyUIPortEvent,
@@ -39,7 +53,12 @@ export class ComfyUINode extends MessagePortNode<
         label: 'Cancel',
         onClick: () => this.controlflow.execute(this.id, 'exec2'),
       },
-      { key: 'recipe', typeName: 'PromptRecipe', label: 'Recipe' },
+      { key: 'endpoint', typeName: 'string', label: 'Endpoint' },
+      { key: 'workflow', typeName: 'object', label: 'Workflow' },
+      { key: 'inputs', typeName: 'WorkflowInputs', label: 'Inputs' },
+      { key: 'outputs', typeName: 'WorkflowOutputs', label: 'Outputs' },
+      { key: 'opts', typeName: 'PromptRunOpts', label: 'Run Opts' },
+      { key: 'bypass', typeName: 'StringArray', label: 'Bypass' },
     ])
     this.addOutputPort([
       { key: 'exec', typeName: 'exec', label: 'Out' },
@@ -54,11 +73,36 @@ export class ComfyUINode extends MessagePortNode<
   }
 
   protected async buildRequestArgs(): Promise<ComfyUIRunRequestArgs | null> {
-    const { recipe } = (await this.dataflow.fetchInputs(this.id)) as {
-      recipe?: PromptRecipe[]
+    const [endpoint, workflow, inputs, outputs, opts, bypass] =
+      await this.dataflow.fetchInputMultiple<
+        [
+          string | undefined,
+          unknown,
+          WorkflowInputs | undefined,
+          WorkflowOutputs | undefined,
+          PromptRunOpts | undefined,
+          string[] | undefined,
+        ]
+      >(this.id, [
+        'endpoint',
+        'workflow',
+        'inputs',
+        'outputs',
+        'opts',
+        'bypass',
+      ])
+
+    if (!endpoint || !workflow || !inputs || !outputs) return null
+
+    const recipe: PromptRecipe = {
+      endpoint,
+      workflow,
+      inputs,
+      outputs,
+      ...(opts ? { opts } : {}),
+      ...(bypass ? { bypass } : {}),
     }
-    if (!recipe || recipe.length === 0) return null
-    return { id: this.id, recipe: recipe[0] }
+    return { id: this.id, recipe }
   }
 
   protected callMain(args: ComfyUIRunRequestArgs): void {
