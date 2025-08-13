@@ -60,10 +60,10 @@ export class InspectorNode
       },
     ])
 
-    this.addControlByKey({
-      key: 'view',
-      control: new MultiLineControl({ value: '', editable: false }),
-    })
+    this.addControl(
+      'view',
+      new MultiLineControl({ value: '', editable: false }),
+    )
   }
 
   data(inputs: { inputAny?: any[] }): { outputAny: any | undefined } {

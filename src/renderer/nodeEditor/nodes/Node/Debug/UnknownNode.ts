@@ -10,13 +10,13 @@ export class UnknownNode extends SerializableInputsNode<
 > {
   constructor(private message: string = "Unknown Node") {
     super("Unknown");
-    this.addControlByKey({
-      key: "view",
-      control: new MultiLineControl({
+    this.addControl(
+      "view",
+      new MultiLineControl({
         value: this.message,
         editable: false,
-      }),
-    });
+      })
+    );
   }
 
   data(): object {
