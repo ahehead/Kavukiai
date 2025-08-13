@@ -20,6 +20,14 @@ export abstract class BaseNode<
     this.setStatus(status);
     await area.update("node", this.id);
   }
+
+  data(
+    _inputs: Record<string, any>
+  ): Promise<Record<string, any>> | Record<string, any> {
+    return {};
+  }
+
+  async execute(_input: any, _forward: (output: any) => void): Promise<void> {}
 }
 
 export { NodeStatus };
