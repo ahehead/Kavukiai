@@ -9,10 +9,11 @@ import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import type { WorkflowOutputs } from 'shared/ComfyUIType'
+import type { ControlJson } from 'shared/JsonType'
 import {
   WorkflowIOSelectControl,
   type WorkflowIOSelectValue,
-} from '../../Controls/input/WorkflowIOSelectControl'
+} from '../../Controls/ComfyUI/WorkflowIOSelectControl'
 
 export class WorkflowOutputsNode extends SerializableInputsNode<
   'WorkflowOutputs',
@@ -66,5 +67,13 @@ export class WorkflowOutputsNode extends SerializableInputsNode<
       'workflow'
     )
     this.controls.select.setWorkflow(workflow)
+  }
+
+  serializeControlValue(): ControlJson {
+    return this.controls.select.toJSON()
+  }
+
+  deserializeControlValue(data: any): void {
+    this.controls.select.setFromJSON({ data })
   }
 }

@@ -13,7 +13,7 @@ import type { WorkflowInputs } from 'shared/ComfyUIType'
 import {
   WorkflowIOSelectControl,
   type WorkflowIOSelectValue,
-} from '../../Controls/input/WorkflowIOSelectControl'
+} from '../../Controls/ComfyUI/WorkflowIOSelectControl'
 
 export class WorkflowInputsNode extends SerializableInputsNode<
   'WorkflowInputs',

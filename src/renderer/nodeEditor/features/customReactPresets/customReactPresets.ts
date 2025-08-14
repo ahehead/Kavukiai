@@ -11,6 +11,10 @@ import {
   UChatControl,
   UChatMessageListControlView,
 } from "renderer/nodeEditor/nodes/Controls/Chat/UChat";
+import {
+  WorkflowIOSelectControl,
+  WorkflowIOSelectControlView,
+} from "renderer/nodeEditor/nodes/Controls/ComfyUI/WorkflowIOSelectControl";
 // Console
 import {
   ConsoleControl,
@@ -63,14 +67,7 @@ import {
   SwitchControl,
   SwitchControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Switch";
-import {
-  WorkflowIOSelectControl,
-  WorkflowIOSelectControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/WorkflowIOSelectControl";
-import {
-  WorkflowSelectControl,
-  WorkflowSelectControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/WorkflowSelectControl";
+
 // RunButton
 import {
   RunButtonControl,
@@ -114,7 +111,6 @@ const controlViews = new Map<Ctor, ControlViewComponent>([
   [ImageFileInputControl, ImageFileInputControlView],
   [ProgressControl, ProgressControlView],
   [PathInputControl, PathInputControlView],
-  [WorkflowSelectControl, WorkflowSelectControlView],
   [WorkflowIOSelectControl, WorkflowIOSelectControlView],
 ]);
 

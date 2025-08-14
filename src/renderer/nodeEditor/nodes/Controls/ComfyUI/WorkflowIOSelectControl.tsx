@@ -1,6 +1,11 @@
 import { type JSX, useEffect, useMemo, useRef, useState } from 'react'
-import { BaseControl, type ControlOptions, useControlValue } from 'renderer/nodeEditor/types'
+import {
+  BaseControl,
+  type ControlOptions,
+  useControlValue,
+} from 'renderer/nodeEditor/types'
 import { Drag } from 'rete-react-plugin'
+import type { ControlJson } from 'shared/JsonType'
 import { useStopWheel } from '../../util/useStopWheel'
 
 export type WorkflowMapNode = {
@@ -36,6 +41,7 @@ export interface WorkflowIOSelectParams
     primitiveInputsOnly?: boolean
   }
 }
+
 
 interface InputCandidate {
   path: string
@@ -104,7 +110,11 @@ function extractOutputCandidates(workflow: unknown, leafOnly: boolean) {
   const list: OutputCandidate[] = []
   for (const [nodeId, node] of Object.entries(map)) {
     if (leafOnly && refs.has(nodeId)) continue
-    list.push({ nodeId, nodeTitle: node._meta?.title || node.class_type || nodeId, path: nodeId })
+    list.push({
+      nodeId,
+      nodeTitle: node._meta?.title || node.class_type || nodeId,
+      path: nodeId,
+    })
   }
   return list
 }
@@ -114,13 +124,16 @@ export class WorkflowIOSelectControl extends BaseControl<
   WorkflowIOSelectParams
 > {
   private value: WorkflowIOSelectValue
+
   constructor(params: WorkflowIOSelectParams) {
     super(params)
     this.value = params.value ?? { workflow: {}, selections: [] }
   }
+
   getValue(): WorkflowIOSelectValue {
     return this.value
   }
+
   setValue(v: WorkflowIOSelectValue) {
     const prev = this.value
     this.value = v
@@ -128,112 +141,174 @@ export class WorkflowIOSelectControl extends BaseControl<
     this.opts.onChange?.(this.value)
     this.notify()
   }
-  private get optParams(): WorkflowIOSelectParams {
-    return this.opts as WorkflowIOSelectParams
-  }
+
   private getCandidates(workflow: unknown) {
-    if (this.optParams.mode === 'inputs') {
-      return extractInputCandidates(workflow, !!this.optParams.filters?.primitiveInputsOnly)
+    if (this.opts.mode === 'inputs') {
+      return extractInputCandidates(
+        workflow,
+        !!this.opts.filters?.primitiveInputsOnly
+      )
     }
-    return extractOutputCandidates(workflow, !!this.optParams.filters?.leafNodesOnly)
+    return extractOutputCandidates(
+      workflow,
+      !!this.opts.filters?.leafNodesOnly
+    )
   }
+
   setWorkflow(workflow: unknown) {
-    const valid = new Set(this.getCandidates(workflow).map(c => (c as any).path))
+    const valid = new Set(
+      this.getCandidates(workflow).map(c => (c as any).path)
+    )
     const nextSel = this.value.selections.filter(s => valid.has(s.path))
     this.setValue({ workflow, selections: nextSel })
   }
+
+  isInput(_candidate?: InputCandidate | OutputCandidate): _candidate is InputCandidate {
+    return this.opts.mode === 'inputs'
+  }
+
   addSelection(candidate: InputCandidate | OutputCandidate) {
-    const isInput = this.optParams.mode === 'inputs'
     const existing = new Set(this.value.selections.map(s => s.key))
-    let base = isInput ? (candidate as InputCandidate).propKey : candidate.nodeId
+    let base = this.isInput(candidate)
+      ? candidate.propKey
+      : candidate.nodeId
     if (!base) base = 'key'
     let keyName = base
     let i = 2
     while (existing.has(keyName)) keyName = `${base}${i++}`
     const sel: WorkflowIOSelection = {
       key: keyName,
-      path: (candidate as any).path,
-      type: isInput ? (candidate as InputCandidate).inferredType : undefined,
-      default: isInput ? (candidate as InputCandidate).defaultValue : undefined,
+      path: candidate.path,
+      type: this.isInput(candidate) ? candidate.inferredType : undefined,
+      default: this.isInput(candidate) ? candidate.defaultValue : undefined,
       meta: {
-        nodeTitle: (candidate as any).nodeTitle,
-        propKey: 'propKey' in candidate ? (candidate as any).propKey : undefined,
+        nodeTitle: candidate.nodeTitle,
+        propKey: 'propKey' in candidate ? candidate.propKey : undefined,
       },
     }
-    this.setValue({ workflow: this.value.workflow, selections: [...this.value.selections, sel] })
+    this.setValue({
+      workflow: this.value.workflow,
+      selections: [...this.value.selections, sel],
+    })
   }
+
   removeSelection(path: string) {
-    this.setValue({ workflow: this.value.workflow, selections: this.value.selections.filter(s => s.path !== path) })
+    this.setValue({
+      workflow: this.value.workflow,
+      selections: this.value.selections.filter(s => s.path !== path),
+    })
   }
+
   updateKey(path: string, nextKey: string) {
     if (!nextKey) return
     if (this.value.selections.some(s => s.key === nextKey)) return
     this.setValue({
       workflow: this.value.workflow,
-      selections: this.value.selections.map(s => (s.path === path ? { ...s, key: nextKey } : s)),
+      selections: this.value.selections.map(s =>
+        s.path === path ? { ...s, key: nextKey } : s
+      ),
     })
   }
+
   updateType(path: string, next: PrimitiveType) {
-    if (this.optParams.mode !== 'inputs') return
+    if (this.opts.mode !== 'inputs') return
     this.setValue({
       workflow: this.value.workflow,
-      selections: this.value.selections.map(s => (s.path === path ? { ...s, type: next } : s)),
+      selections: this.value.selections.map(s =>
+        s.path === path ? { ...s, type: next } : s
+      ),
     })
   }
+
   getSelections() {
     return this.value.selections
   }
+
+  override toJSON(): ControlJson {
+    return { data: { selections: this.value.selections } }
+  }
+
+  override setFromJSON({ data }: ControlJson) {
+    const { selections } = data as any
+    this.setValue({ workflow: undefined, selections })
+  }
 }
 
-export function WorkflowIOSelectControlView({ data: control }: { data: WorkflowIOSelectControl }): JSX.Element {
+export function WorkflowIOSelectControlView({
+  data: control,
+}: {
+  data: WorkflowIOSelectControl
+}): JSX.Element {
   const value = useControlValue(control)
-  const mode = (control as any).opts.mode as WorkflowIOSelectMode
-  const filters = (control as any).opts.filters as WorkflowIOSelectParams['filters'] | undefined
+  const mode = control.opts.mode
+  const filters = control.opts.filters
+  const isInputs = (_cand?: InputCandidate | OutputCandidate): _cand is InputCandidate => mode === 'inputs'
+
   const candidates = useMemo(() => {
-    return mode === 'inputs'
+    return isInputs()
       ? extractInputCandidates(value.workflow, !!filters?.primitiveInputsOnly)
       : extractOutputCandidates(value.workflow, !!filters?.leafNodesOnly)
   }, [value.workflow, mode, filters])
+
   const selectedByPath = useMemo(() => {
     const m = new Map<string, WorkflowIOSelection>()
     for (const s of value.selections) m.set(s.path, s)
     return m
   }, [value.selections])
+
   const listRef = useRef<HTMLDivElement | null>(null)
   useStopWheel(listRef)
+
   const [drafts, setDrafts] = useState<Record<string, string>>({})
   useEffect(() => setDrafts({}), [value.workflow])
-  const onToggle = (cand: InputCandidate | OutputCandidate, checked: boolean) => {
+
+  const onToggle = (
+    cand: InputCandidate | OutputCandidate,
+    checked: boolean
+  ) => {
     if (checked) control.addSelection(cand)
-    else control.removeSelection((cand as any).path)
+    else control.removeSelection(cand.path)
   }
+
   const onCommitKey = (path: string) => {
     const d = drafts[path]
     if (d) control.updateKey(path, d)
   }
+
   return (
     <Drag.NoDrag>
       <div className="flex flex-col gap-1 h-full w-full">
-        <div ref={listRef} className="flex-1 w-full min-h-0 overflow-y-auto border rounded p-2 bg-node-bg">
+        <div
+          ref={listRef}
+          className="flex-1 w-full min-h-0 overflow-y-auto border rounded p-2 bg-node-bg"
+        >
           {candidates.length === 0 && (
             <div className="text-xs text-muted-foreground">No candidates.</div>
           )}
           {candidates.map((cand: InputCandidate | OutputCandidate) => {
             const path = cand.path
             const selected = selectedByPath.get(path)
-            const keyDraft = drafts[path] ?? selected?.key ?? (mode === 'inputs' ? (cand as InputCandidate).propKey : cand.nodeId)
+            const keyDraft =
+              drafts[path] ??
+              selected?.key ??
+              (isInputs(cand) ? cand.propKey : cand.nodeId)
             return (
               <div key={path} className="mb-1.5 border-b pb-1.5">
                 <label className="flex items-center gap-2 text-sm">
-                  <input type="checkbox" checked={!!selected} onChange={e => onToggle(cand, e.target.checked)} />
+                  <input
+                    type="checkbox"
+                    checked={!!selected}
+                    onChange={e => onToggle(cand, e.target.checked)}
+                  />
                   <div className="flex-1">
                     <div className="text-xs text-muted-foreground">
-                      {mode === 'inputs' ? cand.path : cand.nodeId}
-                      {mode === 'inputs' && <> · type: {(cand as InputCandidate).inferredType}</>}
+                      {isInputs(cand) ? cand.path : cand.nodeId}
+                      {isInputs(cand) && (<> · type: {cand.inferredType}</>
+                      )}
                     </div>
                     <div className="font-medium">
                       {cand.nodeTitle}
-                      {mode === 'inputs' && ` ·  + ${(cand as InputCandidate).propKey}`}
+                      {isInputs(cand) && ` ·  + ${cand.propKey}`}
                     </div>
                   </div>
                 </label>
@@ -244,7 +319,9 @@ export function WorkflowIOSelectControlView({ data: control }: { data: WorkflowI
                       <input
                         className="w-full px-2 py-1 border rounded"
                         value={keyDraft}
-                        onChange={e => setDrafts(d => ({ ...d, [path]: e.target.value }))}
+                        onChange={e =>
+                          setDrafts(d => ({ ...d, [path]: e.target.value }))
+                        }
                         onBlur={() => onCommitKey(path)}
                       />
                     </div>
@@ -254,7 +331,12 @@ export function WorkflowIOSelectControlView({ data: control }: { data: WorkflowI
                         <select
                           className="w-full px-2 py-1 border rounded"
                           value={selected.type}
-                          onChange={e => control.updateType(path, e.target.value as PrimitiveType)}
+                          onChange={e =>
+                            control.updateType(
+                              path,
+                              e.target.value as PrimitiveType
+                            )
+                          }
                         >
                           <option value="string">string</option>
                           <option value="number">number</option>
@@ -262,9 +344,12 @@ export function WorkflowIOSelectControlView({ data: control }: { data: WorkflowI
                         </select>
                       </div>
                     )}
-                    {mode === 'inputs' && (
+                    {isInputs(cand) && (
                       <div className="col-span-2 text-xs text-muted-foreground">
-                        default: <code>{String((cand as InputCandidate).defaultValue)}</code>
+                        default:{' '}
+                        <code>
+                          {String(cand.defaultValue)}
+                        </code>
                       </div>
                     )}
                   </div>

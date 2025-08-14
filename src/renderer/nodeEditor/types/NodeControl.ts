@@ -1,6 +1,7 @@
 import type { ButtonControl } from "../nodes/Controls/Button";
 import type { ChatMessageListControl } from "../nodes/Controls/Chat/ChatMessageList";
 import type { UChatControl } from "../nodes/Controls/Chat/UChat";
+import type { WorkflowIOSelectControl } from "../nodes/Controls/ComfyUI/WorkflowIOSelectControl";
 import type { ConsoleControl } from "../nodes/Controls/Console";
 import type { ImageControl } from "../nodes/Controls/Image";
 import type { CheckBoxControl } from "../nodes/Controls/input/CheckBox";
@@ -13,8 +14,6 @@ import type { PropertyInputControl } from "../nodes/Controls/input/PropertyInput
 import type { SelectControl } from "../nodes/Controls/input/Select";
 import type { SliderControl } from "../nodes/Controls/input/Slider";
 import type { SwitchControl } from "../nodes/Controls/input/Switch";
-import type { WorkflowIOSelectControl } from "../nodes/Controls/input/WorkflowIOSelectControl";
-import type { WorkflowSelectControl } from "../nodes/Controls/input/WorkflowSelectControl";
 import type { RunButtonControl } from "../nodes/Controls/RunButton";
 import type { ProgressControl } from "../nodes/Controls/view/ProgressControl";
 
@@ -37,5 +36,4 @@ export type NodeControl =
   | ProgressControl
   | UChatControl
   | PathInputControl
-  | WorkflowSelectControl
   | WorkflowIOSelectControl;
