@@ -26,6 +26,7 @@ import type {
   LMStudioStopNode,
   LMStudioToUChatCommandNode,
   LoadWorkflowNode,
+  MergeWorkflowInputsDefaultsNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
   NumberNode,
@@ -59,6 +60,7 @@ import type {
   UnLoadModelNode,
   UPartTextNode,
   WorkflowInputsNode,
+  WorkflowOutputsNode,
 } from "../nodes/Node";
 import type { Connection } from "./Connection";
 import type { BaseNode } from "./Node/BaseNode";
@@ -120,7 +122,9 @@ export type NodeTypes =
   | LLMPredictionConfigNode
   | ComfyUINode
   | LoadWorkflowNode
+  | MergeWorkflowInputsDefaultsNode
   | WorkflowInputsNode
+  | WorkflowOutputsNode
   | OpenAIToChatEventNode
   | OpenAIToUChatCommandNode
   | UChatToOpenAINode
