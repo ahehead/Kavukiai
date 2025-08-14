@@ -142,25 +142,12 @@ export class WorkflowIOSelectControl extends BaseControl<
     this.notify()
   }
 
-  private getCandidates(workflow: unknown) {
-    if (this.opts.mode === 'inputs') {
-      return extractInputCandidates(
-        workflow,
-        !!this.opts.filters?.primitiveInputsOnly
-      )
-    }
-    return extractOutputCandidates(
-      workflow,
-      !!this.opts.filters?.leafNodesOnly
-    )
-  }
-
   setWorkflow(workflow: unknown) {
-    const valid = new Set(
-      this.getCandidates(workflow).map(c => (c as any).path)
-    )
-    const nextSel = this.value.selections.filter(s => valid.has(s.path))
-    this.setValue({ workflow, selections: nextSel })
+    // NOTE: workflow 自体は永続化しない方針。
+    // 以前は候補に存在しない selection をここで pruning していたが、
+    // 復元直後 (workflow 未設定 or 差分あり) に消えてしまう問題があったため保持する。
+    // UI 側で "missing" として表示し、ユーザーが手動で削除できるようにする。
+    this.setValue({ workflow, selections: this.value.selections })
   }
 
   isInput(_candidate?: InputCandidate | OutputCandidate): _candidate is InputCandidate {
@@ -230,6 +217,7 @@ export class WorkflowIOSelectControl extends BaseControl<
 
   override setFromJSON({ data }: ControlJson) {
     const { selections } = data as any
+    console.log(selections)
     this.setValue({ workflow: undefined, selections })
   }
 }
@@ -244,11 +232,44 @@ export function WorkflowIOSelectControlView({
   const filters = control.opts.filters
   const isInputs = (_cand?: InputCandidate | OutputCandidate): _cand is InputCandidate => mode === 'inputs'
 
-  const candidates = useMemo(() => {
+  const baseCandidates = useMemo(() => {
     return isInputs()
       ? extractInputCandidates(value.workflow, !!filters?.primitiveInputsOnly)
       : extractOutputCandidates(value.workflow, !!filters?.leafNodesOnly)
   }, [value.workflow, mode, filters])
+
+  // selections にあるが再スキャンで見つからないもの = missing selections
+  const candidates = useMemo(() => {
+    const byPath = new Set(baseCandidates.map(c => c.path))
+    const missing = value.selections.filter(s => !byPath.has(s.path))
+    if (missing.length === 0) return baseCandidates
+    // プレースホルダ候補を合成
+    const placeholders: (InputCandidate | OutputCandidate)[] = missing.map(sel => {
+      if (mode === 'inputs') {
+        // path 形式: <nodeId>.inputs.<propKey> を期待。失敗したら fallback。
+        const m = sel.path.match(/^(.*?)\.inputs\.(.*)$/)
+        const nodeId = m?.[1] || sel.meta?.nodeTitle || 'unknown'
+        const propKey = m?.[2] || sel.meta?.propKey || sel.key
+        return {
+          path: sel.path,
+          // 型と default は selection から復元 (永続化済み) / 型未指定時は string
+          inferredType: (sel.type as PrimitiveType) || 'string',
+          defaultValue: sel.default,
+          nodeId,
+          propKey,
+          nodeTitle: sel.meta?.nodeTitle || nodeId,
+        } as InputCandidate
+      }
+      // outputs mode
+      const nodeId = sel.path.split('.')[0] || sel.meta?.nodeTitle || 'unknown'
+      return {
+        path: sel.path,
+        nodeId,
+        nodeTitle: sel.meta?.nodeTitle || nodeId,
+      } as OutputCandidate
+    })
+    return [...baseCandidates, ...placeholders]
+  }, [baseCandidates, value.selections, mode])
 
   const selectedByPath = useMemo(() => {
     const m = new Map<string, WorkflowIOSelection>()
@@ -292,8 +313,9 @@ export function WorkflowIOSelectControlView({
               drafts[path] ??
               selected?.key ??
               (isInputs(cand) ? cand.propKey : cand.nodeId)
+            const missing = !selected && !!value.selections.find(s => s.path === path)
             return (
-              <div key={path} className="mb-1.5 border-b pb-1.5">
+              <div key={path} className="mb-1.5 [&:not(:last-child)]:border-b pb-1.5">
                 <label className="flex items-center gap-2 text-sm">
                   <input
                     type="checkbox"
@@ -304,6 +326,11 @@ export function WorkflowIOSelectControlView({
                     <div className="text-xs text-muted-foreground">
                       {isInputs(cand) ? cand.path : cand.nodeId}
                       {isInputs(cand) && (<> · type: {cand.inferredType}</>
+                      )}
+                      {missing && (
+                        <>
+                          {' '}· <span className="text-amber-500">(missing)</span>
+                        </>
                       )}
                     </div>
                     <div className="font-medium">
