@@ -2,8 +2,8 @@ import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { MessagePortNode } from 'renderer/nodeEditor/types/Node/MessagePortNode'
-import type { NodeImage } from 'renderer/nodeEditor/types/Schemas/NodeImage'
-import { createNodeImageFromPath } from 'renderer/nodeEditor/types/Schemas/NodeImage'
+import type { NodeImageArray } from 'renderer/nodeEditor/types/Schemas/NodeImage'
+import { createNodeImageFromBlob, createNodeImageFromUrl } from 'renderer/nodeEditor/types/Schemas/NodeImage'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type {
@@ -29,12 +29,12 @@ export class ComfyUINode extends MessagePortNode<
     opts: TypedSocket
     bypass: TypedSocket
   },
-  { exec: TypedSocket; image: TypedSocket },
+  { exec: TypedSocket; images: TypedSocket },
   { progress: ProgressControl; console: ConsoleControl },
   ComfyUIPortEvent,
   ComfyUIRunRequestArgs
 > {
-  private lastImage: NodeImage | null = null
+  private images: NodeImageArray | null = null
 
   constructor(
     area: AreaPlugin<Schemes, AreaExtra>,
@@ -62,14 +62,14 @@ export class ComfyUINode extends MessagePortNode<
     ])
     this.addOutputPort([
       { key: 'exec', typeName: 'exec', label: 'Out' },
-      { key: 'image', typeName: 'NodeImage', label: 'Image' },
+      { key: 'images', typeName: 'ImageArrayOrNull', label: 'Image' },
     ])
     this.addControl('progress', new ProgressControl({ value: 0 }))
     this.addControl('console', new ConsoleControl({}))
   }
 
-  data(): { image: NodeImage | null } {
-    return { image: this.lastImage }
+  data(): { images: NodeImageArray | null } {
+    return { images: this.images }
   }
 
   protected async buildRequestArgs(): Promise<ComfyUIRunRequestArgs | null> {
@@ -107,7 +107,7 @@ export class ComfyUINode extends MessagePortNode<
 
   protected callMain(args: ComfyUIRunRequestArgs): void {
     // preload 経由で postMessage する
-    ; (electronApiService as any).runRecipe(args)
+    electronApiService.runRecipe(args)
   }
 
   protected async onPortEvent(
@@ -133,14 +133,13 @@ export class ComfyUINode extends MessagePortNode<
         this.controls.console.addValue(`Output: ${evt.key}`)
         break
       case 'finish': {
-        let img: NodeImage | null = null
+        let imgs: NodeImageArray | null = null
         if ('paths' in evt.result) {
-          const path = evt.result.paths[0]
-          if (path) img = createNodeImageFromPath(path)
+          imgs = evt.result.paths.map((path) => createNodeImageFromUrl(path))
         } else if ('buffers' in evt.result) {
-          // Optional: could convert buffers to blob; skipping to keep simple
+          imgs = evt.result.buffers.map((buffer) => createNodeImageFromBlob(new Blob([buffer])))
         }
-        this.lastImage = img
+        this.images = imgs
         this.dataflow.reset(this.id)
         this.controls.progress.setValue(100)
         await this.logAndTerminate('done', 'finished', forward)

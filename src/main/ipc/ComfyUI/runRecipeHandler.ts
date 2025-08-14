@@ -32,6 +32,10 @@ async function handleRunRecipe(
       await launchComfyDesktop();
     } catch (error) {
       console.error("Failed to launch Comfy Desktop:", error);
+      send({
+        type: "error",
+        message: `Failed to launch Comfy Desktop: ${String(error)}`,
+      });
     }
   }
 
@@ -88,30 +92,27 @@ async function handleRunRecipe(
         });
       })
       .onFinished(async (data: any, promptId?: string) => {
-        try {
-          const images = data?.images?.images ?? [];
-          if (images.length > 0) {
-            const paths = images.map((img: any) => api.getPathImage(img));
-            send({ type: "finish", result: { paths }, promptId });
-          } else {
-            send({ type: "finish", result: { paths: [] }, promptId });
+        const buffers: ArrayBuffer[] = [];
+        for (const key of outputKeys) {
+          const out = (await Promise.all(
+            data[key].images.map((img: any) => api.getImage(img))
+          )) as Blob[];
+          if (out) {
+            buffers.push(
+              ...(await Promise.all(out.map((blob) => blob.arrayBuffer())))
+            );
           }
-        } catch (e) {
-          send({ type: "error", message: String(e), promptId });
         }
+        send({ type: "finish", result: { buffers }, promptId });
       })
       .onFailed(async (err: Error) => {
         send({ type: "error", message: err.message });
-        await api.freeMemory(true, true);
-        await api.destroy();
       });
 
     port.on("message", async (e) => {
       if (e.data?.type === "abort") {
         console.log("Aborting ComfyUI run");
         await api.interrupt();
-        await api.freeMemory(true, true);
-        await api.destroy();
       }
     });
 
