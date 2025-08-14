@@ -6,21 +6,20 @@ import {
   SerializableInputsNode,
   type TypedSocket,
 } from 'renderer/nodeEditor/types'
-
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import type { WorkflowInputs } from 'shared/ComfyUIType'
 import {
-  WorkflowSelectControl,
-  type WorkflowSelectValue,
-} from '../../Controls/input/WorkflowSelectControl'
+  WorkflowIOSelectControl,
+  type WorkflowIOSelectValue,
+} from '../../Controls/input/WorkflowIOSelectControl'
 
 export class WorkflowInputsNode extends SerializableInputsNode<
   'WorkflowInputs',
   { exec: TypedSocket; workflow: TypedSocket },
   { keyPath: TypedSocket; schema: TypedSocket },
-  { select: WorkflowSelectControl }
+  { select: WorkflowIOSelectControl }
 > {
   constructor(
     private history: HistoryPlugin<Schemes>,
@@ -48,10 +47,12 @@ export class WorkflowInputsNode extends SerializableInputsNode<
       { key: 'schema', typeName: 'JsonSchema', label: 'Schema' },
     ])
 
-    const control = new WorkflowSelectControl({
+    const control = new WorkflowIOSelectControl({
+      mode: 'inputs',
       editable: true,
       history: this.history,
       area: this.area,
+      filters: { primitiveInputsOnly: true },
       onChange: value => {
         this.changeSchema(value)
         this.dataflow.reset(this.id)
@@ -60,13 +61,13 @@ export class WorkflowInputsNode extends SerializableInputsNode<
     this.addControl('select', control)
   }
 
-  private buildSchemaFromValue(value: WorkflowSelectValue): TSchema {
+  private buildSchemaFromValue(value: WorkflowIOSelectValue): TSchema {
     const props: Record<string, TSchema> = {}
-    for (const [key, info] of Object.entries(value.inputs)) {
-      const t = info.type
-      if (t === 'boolean') props[key] = Type.Boolean()
-      else if (t === 'number') props[key] = Type.Number()
-      else props[key] = Type.String()
+    for (const sel of value.selections) {
+      const t = sel.type
+      if (t === 'boolean') props[sel.key] = Type.Boolean()
+      else if (t === 'number') props[sel.key] = Type.Number()
+      else props[sel.key] = Type.String()
     }
     return Type.Object(props)
   }
@@ -78,8 +79,8 @@ export class WorkflowInputsNode extends SerializableInputsNode<
     const value = this.controls.select.getValue()
 
     const keyPath: WorkflowInputs = {}
-    for (const [key, info] of Object.entries(value.inputs)) {
-      keyPath[key] = { path: info.path, default: info.default }
+    for (const sel of value.selections) {
+      keyPath[sel.key] = { path: sel.path, default: sel.default }
     }
 
     const schema = this.buildSchemaFromValue(value)
@@ -88,7 +89,7 @@ export class WorkflowInputsNode extends SerializableInputsNode<
     return { keyPath, schema }
   }
 
-  changeSchema(value: WorkflowSelectValue): void {
+  changeSchema(value: WorkflowIOSelectValue): void {
     this.outputs.schema?.socket.setSchema(
       'JsonSchema',
       this.buildSchemaFromValue(value)
@@ -100,7 +101,6 @@ export class WorkflowInputsNode extends SerializableInputsNode<
       this.id,
       'workflow'
     )
-    // control に workflow を反映
-    this.controls.select.setValue({ workflow, inputs: {} })
+    this.controls.select.setWorkflow(workflow)
   }
 }

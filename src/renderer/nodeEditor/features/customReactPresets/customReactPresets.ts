@@ -64,6 +64,10 @@ import {
   SwitchControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Switch";
 import {
+  WorkflowIOSelectControl,
+  WorkflowIOSelectControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/WorkflowIOSelectControl";
+import {
   WorkflowSelectControl,
   WorkflowSelectControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/WorkflowSelectControl";
@@ -111,6 +115,7 @@ const controlViews = new Map<Ctor, ControlViewComponent>([
   [ProgressControl, ProgressControlView],
   [PathInputControl, PathInputControlView],
   [WorkflowSelectControl, WorkflowSelectControlView],
+  [WorkflowIOSelectControl, WorkflowIOSelectControlView],
 ]);
 
 export function customReactPresets(

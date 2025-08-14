@@ -39,7 +39,7 @@ export const PromptRecipe = Type.Object(
     workflow: Type.Unknown({ description: "ComfyUI workflow JSON" }),
     opts: Type.Optional(PromptRunOpts),
     inputs: WorkflowInputs,
-    outputs: WorkflowOutputs,
+    outputs: Type.Optional(WorkflowOutputs),
     bypass: Type.Optional(Type.Array(Type.String())),
   },
   { additionalProperties: false, description: "PromptRecipe schema" }

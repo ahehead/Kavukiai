@@ -28,6 +28,7 @@ import {
   LMStudioStartNode,
   LMStudioStopNode,
   LoadWorkflowNode,
+  MergeWorkflowInputsDefaultsNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
   NumberNode,
@@ -51,6 +52,7 @@ import {
   UnknownNode,
   UnLoadModelNode,
   WorkflowInputsNode,
+  WorkflowOutputsNode,
 } from "./Node";
 import { LMStudioToUChatCommandNode } from "./Node/Chat/LMStudioToUChatCommandNode";
 import { OpenAIToUChatCommandNode } from "./Node/Chat/OpenAIToUChatCommandNode";
@@ -134,6 +136,9 @@ export const nodeFactories = {
     new LoadWorkflowNode(area, dataflow, controlflow),
   WorkflowInputs: ({ history, area, dataflow, controlflow }) =>
     new WorkflowInputsNode(history, area, dataflow, controlflow),
+  WorkflowOutputs: ({ history, area, dataflow, controlflow }) =>
+    new WorkflowOutputsNode(history, area, dataflow, controlflow),
+  MergeWorkflowInputsDefaults: () => new MergeWorkflowInputsDefaultsNode(),
 
   // OpenAI nodes
   OpenAI: ({ area, dataflow, controlflow }) =>
@@ -296,6 +301,11 @@ const rawMenu: RawMenuItem[] = [
       { label: "ComfyUI", factoryKey: "ComfyUI" },
       { label: "LoadWorkflow", factoryKey: "LoadWorkflow" },
       { label: "WorkflowInputs", factoryKey: "WorkflowInputs" },
+      { label: "WorkflowOutputs", factoryKey: "WorkflowOutputs" },
+      {
+        label: "MergeWorkflowInputsDefaults",
+        factoryKey: "MergeWorkflowInputsDefaults",
+      },
     ],
   },
   // include Debug category only in development, placed at bottom

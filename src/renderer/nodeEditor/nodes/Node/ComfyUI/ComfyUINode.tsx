@@ -92,13 +92,13 @@ export class ComfyUINode extends MessagePortNode<
         'bypass',
       ])
 
-    if (!endpoint || !workflow || !inputs || !outputs) return null
+    if (!endpoint || !workflow || !inputs) return null
 
     const recipe: PromptRecipe = {
       endpoint,
       workflow,
       inputs,
-      outputs,
+      ...(outputs ? { outputs } : {}),
       ...(opts ? { opts } : {}),
       ...(bypass ? { bypass } : {}),
     }
