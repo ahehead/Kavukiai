@@ -38,9 +38,7 @@ async function handleRunRecipe(
   try {
     console.log("ComfyUI run recipe:", id);
     api.init(recipe.opts?.maxTries, recipe.opts?.delayTime);
-    // Build PromptBuilder from PromptRecipe's inputs/outputs definition
-    // - inputs: Record<name, { path, default? }>
-    // - outputs: Record<name, { path }>
+
     const inputKeys = Object.keys(recipe.inputs ?? {});
     const outputKeys = Object.keys(recipe.outputs ?? {});
 
@@ -102,10 +100,10 @@ async function handleRunRecipe(
           send({ type: "error", message: String(e), promptId });
         }
       })
-      .onFailed((err: any) => {
-        console.error("ComfyUI run failed:", err);
-        const message = err?.data?.exception_message ?? String(err);
-        send({ type: "error", message });
+      .onFailed(async (err: Error) => {
+        send({ type: "error", message: err.message });
+        await api.freeMemory(true, true);
+        await api.destroy();
       });
 
     port.on("message", async (e) => {
@@ -122,8 +120,6 @@ async function handleRunRecipe(
     console.log(err);
     send({ type: "error", message: String(err?.message ?? err) });
   } finally {
-    await api.freeMemory(true, true);
-    await api.destroy();
     port.close();
   }
 }
