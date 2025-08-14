@@ -217,7 +217,6 @@ export class WorkflowIOSelectControl extends BaseControl<
 
   override setFromJSON({ data }: ControlJson) {
     const { selections } = data as any
-    console.log(selections)
     this.setValue({ workflow: undefined, selections })
   }
 }

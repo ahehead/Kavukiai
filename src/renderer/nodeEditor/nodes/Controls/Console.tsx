@@ -23,7 +23,7 @@ export class ConsoleControl extends BaseControl<any, ConsoleControlParams> {
 
   constructor(public params: ConsoleControlParams) {
     super(params)
-    this.isOpen = params.isOpen ?? false
+    this.isOpen = params.isOpen ?? true
     this.value = ''
   }
 
