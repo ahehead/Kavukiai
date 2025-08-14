@@ -26,13 +26,13 @@ export abstract class BaseControl<T, O extends ControlOptions<T>>
   extends ClassicPreset.Control
   implements SerializableControl
 {
-  opts: ControlOptions<T> & { cols: 0 | 1 | 2; editable: boolean };
+  opts: O & { cols: 0 | 1 | 2; editable: boolean };
 
   private listeners = new Set<Listener>();
 
   constructor(opts: O = {} as O) {
     super();
-    this.opts = { editable: true, cols: 1, ...opts };
+    this.opts = { editable: true, cols: 1, ...opts }; // editable,colsの設定が存在すれば上書きされる
   }
 
   abstract setValue(value: any): void;
