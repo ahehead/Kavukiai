@@ -7,7 +7,13 @@ import { LMStudioChatPortEventOrNull } from "./LMStudioChatPortEventOrNull";
 import { ChatHistoryData } from "./lmstudio/LMStudioSchemas";
 import * as ModelInfoSchemas from "./lmstudio/ModelSchemas";
 import * as StatusSchemas from "./lmstudio/StatusSchemas";
-import { ImageArray, NodeImage } from "./NodeImage";
+import {
+  ImageArrayOrNull,
+  NodeImage,
+  NodeImageArray,
+  NodeImageOrArray,
+  NodeImageOrArrayOrNull,
+} from "./NodeImage";
 import * as BaseSchemas from "./openai/BaseSchemas";
 import * as EventsSchemas from "./openai/EventsSchemas";
 import * as InputSchemas from "./openai/InputSchemas";
@@ -58,7 +64,10 @@ const registry = {
   ChatCommandEventOrNull,
   LMStudioChatPortEventOrNull,
   NodeImage,
-  ImageArray,
+  ImageArray: NodeImageArray,
+  NodeImageOrArray,
+  ImageArrayOrNull,
+  NodeImageOrArrayOrNull,
   ...PromptRecipe,
 } satisfies Record<string, TSchema>;
 

@@ -121,8 +121,11 @@ export async function toUPartImage(
   return { type: "image", source, mime: img.mime } as UPart;
 }
 
-export const ImageArray = Type.Array(NodeImage);
-export type ImageArray = Static<typeof ImageArray>;
+export const NodeImageArray = Type.Array(NodeImage);
+export type NodeImageArray = Static<typeof NodeImageArray>;
+
+export const ImageArrayOrNull = Type.Union([NodeImageArray, Type.Null()]);
+export type ImageArrayOrNull = Static<typeof ImageArrayOrNull>;
 
 /** 内部用: NodeImage の一意IDを生成 */
 function genNodeImageId(): string {
@@ -139,3 +142,12 @@ function genNodeImageId(): string {
   // Fallback (not RFC4122): sufficiently unique for UI identity
   return `${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
 }
+
+export const NodeImageOrArray = Type.Union([NodeImage, NodeImageArray]);
+export type NodeImageOrArray = Static<typeof NodeImageOrArray>;
+
+export const NodeImageOrArrayOrNull = Type.Union([
+  NodeImageOrArray,
+  Type.Null(),
+]);
+export type NodeImageOrArrayOrNull = Static<typeof NodeImageOrArrayOrNull>;
