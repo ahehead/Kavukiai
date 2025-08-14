@@ -4,6 +4,7 @@ import { IpcChannel } from "shared/ApiType";
 import type { ComfyUIRunRequestArgs } from "shared/ComfyUIType";
 import type { ComfyUIPortEvent } from "shared/ComfyUIType/port-events";
 import { getComfyApiClient } from "./comfyApiClient";
+import { launchComfyDesktop } from "./comfyDesktop";
 
 export function registerComfyUIRunRecipeHandler(): void {
   ipcMain.on(IpcChannel.PortComfyUIRunRecipe, handleRunRecipe);
@@ -14,6 +15,7 @@ async function handleRunRecipe(
   data: unknown
 ): Promise<void> {
   const { id, recipe } = data as ComfyUIRunRequestArgs;
+  console.log("comfy recipe", id, recipe);
   const port = evt.ports[0];
   port.start();
 
@@ -24,9 +26,18 @@ async function handleRunRecipe(
   });
 
   try {
-    console.log("ComfyUI run recipe:", id);
-    api.init();
+    await api.pollStatus();
+  } catch (_error) {
+    try {
+      await launchComfyDesktop();
+    } catch (error) {
+      console.error("Failed to launch Comfy Desktop:", error);
+    }
+  }
 
+  try {
+    console.log("ComfyUI run recipe:", id);
+    api.init(recipe.opts?.maxTries, recipe.opts?.delayTime);
     // Build PromptBuilder from PromptRecipe's inputs/outputs definition
     // - inputs: Record<name, { path, default? }>
     // - outputs: Record<name, { path }>
@@ -46,15 +57,13 @@ async function handleRunRecipe(
       builder.setInputNode(key, inp.path);
     }
     for (const key of outputKeys) {
-      const out = recipe.outputs[key];
+      const out = recipe.outputs?.[key];
       if (!out) continue;
       builder.setOutputNode(key, out.path);
     }
 
     // Apply defaults unless bypassed
-    const bypass = new Set(recipe.bypass ?? []);
     for (const key of inputKeys) {
-      if (bypass.has(key)) continue;
       const def = recipe.inputs[key]?.default;
       if (typeof def !== "undefined") {
         // Pass-through value as provided in recipe
@@ -94,42 +103,27 @@ async function handleRunRecipe(
         }
       })
       .onFailed((err: any) => {
+        console.error("ComfyUI run failed:", err);
         const message = err?.data?.exception_message ?? String(err);
         send({ type: "error", message });
       });
 
-    port.on("message", (e) => {
+    port.on("message", async (e) => {
       if (e.data?.type === "abort") {
-        try {
-          api.interrupt();
-          api.freeMemory(true, true);
-          api.destroy();
-        } catch {
-          /* ignore */
-        }
+        console.log("Aborting ComfyUI run");
+        await api.interrupt();
+        await api.freeMemory(true, true);
+        await api.destroy();
       }
     });
 
-    // Basic retry using recipe.opts.maxTries / delayTime
-    const maxTries = Math.max(1, recipe.opts?.maxTries ?? 1);
-    const delayTime = Math.max(0, recipe.opts?.delayTime ?? 0);
-    let attempt = 0;
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      try {
-        await runner.run();
-        break;
-      } catch (e) {
-        attempt++;
-        if (attempt >= maxTries) throw e;
-        if (delayTime > 0) await new Promise((r) => setTimeout(r, delayTime));
-      }
-    }
+    const _result = await runner.run();
   } catch (err: any) {
+    console.log(err);
     send({ type: "error", message: String(err?.message ?? err) });
   } finally {
-    api.freeMemory(true, true);
-    api.destroy();
+    await api.freeMemory(true, true);
+    await api.destroy();
     port.close();
   }
 }
