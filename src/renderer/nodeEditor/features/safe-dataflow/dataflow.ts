@@ -97,7 +97,7 @@ export class Dataflow<Schemes extends ClassicScheme> {
       cons.map(async (c) => {
         return {
           c,
-          sourceData: await this.fetch(c.source, path),
+          sourceData: await this.fetch(c.source, new Set(path)),
         };
       })
     );
