@@ -96,10 +96,6 @@ export class ComfyDesktopStartNode extends SerializableInputsNode<
     this.addControl('console', new ConsoleControl({ isOpen: true }))
   }
 
-  data(): object {
-    return {}
-  }
-
   async execute(
     _input: 'exec',
     forward: (output: 'exec') => void
