@@ -15,6 +15,7 @@ import type { SelectControl } from "../nodes/Controls/input/Select";
 import type { SliderControl } from "../nodes/Controls/input/Slider";
 import type { SwitchControl } from "../nodes/Controls/input/Switch";
 import type { RunButtonControl } from "../nodes/Controls/RunButton";
+import type { SelectWorkflowControl } from "../nodes/Controls/SelectWorkflowControl";
 import type { ProgressControl } from "../nodes/Controls/view/ProgressControl";
 
 export type NodeControl =
@@ -36,4 +37,5 @@ export type NodeControl =
   | ProgressControl
   | UChatControl
   | PathInputControl
-  | WorkflowIOSelectControl;
+  | WorkflowIOSelectControl
+  | SelectWorkflowControl;

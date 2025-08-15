@@ -73,6 +73,10 @@ import {
   RunButtonControl,
   RunButtonControlView,
 } from "renderer/nodeEditor/nodes/Controls/RunButton";
+import {
+  SelectWorkflowControl,
+  SelectWorkflowControlView,
+} from "renderer/nodeEditor/nodes/Controls/SelectWorkflowControl";
 // Progress control
 import {
   ProgressControl,
@@ -112,6 +116,7 @@ const controlViews = new Map<Ctor, ControlViewComponent>([
   [ProgressControl, ProgressControlView],
   [PathInputControl, PathInputControlView],
   [WorkflowIOSelectControl, WorkflowIOSelectControlView],
+  [SelectWorkflowControl, SelectWorkflowControlView],
 ]);
 
 export function customReactPresets(
