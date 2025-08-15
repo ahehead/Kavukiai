@@ -77,7 +77,7 @@ export class LoadWorkflowNode extends SerializableInputsNode<
     }
 
     try {
-      const data = await (electronApiService as any).readWorkflowRef({
+      const data = await electronApiService.readWorkflowRef({
         endpoint,
         workflowRef,
       })

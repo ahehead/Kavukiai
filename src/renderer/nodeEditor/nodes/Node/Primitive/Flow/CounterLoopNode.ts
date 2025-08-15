@@ -1,5 +1,4 @@
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
-import { getInputValue } from "renderer/nodeEditor/nodes/util/getInput";
 import type {
   AreaExtra,
   Schemes,
@@ -149,10 +148,8 @@ export class CounterLoopNode
     }
 
     if (input === "start") {
-      const inputs = (await this.dataflow.fetchInputs(this.id, ["count"])) as {
-        count: number;
-      };
-      this.counter = getInputValue(this.inputs, "count", inputs) || 0;
+      const inputs = await this.dataflow.fetchInputs(this.id, ["count"]);
+      this.counter = this.getInputValue<number>(inputs, "count") || 0;
       this.counter -= 1;
       forward("exec");
       return;
