@@ -39,7 +39,8 @@ export const PromptRecipe = Type.Object(
     endpoint: Type.String({ description: "ComfyUI API endpoint URL" }),
     workflowRef: WorkflowRef,
     opts: Type.Optional(PromptRunOpts),
-    inputs: WorkflowInputs,
+    // inputs を Optional 化 (workflow がデフォルト値を全て内包しているケースなどを許容)
+    inputs: Type.Optional(WorkflowInputs),
     outputs: Type.Optional(WorkflowOutputs),
     bypass: Type.Optional(Type.Array(Type.String())),
   },

@@ -91,15 +91,15 @@ export class ComfyUINode extends MessagePortNode<
         'opts',
         'bypass',
       ])
-
-    if (!endpoint || !workflowRef || !inputs) return null
+    // inputs は Optional 化されたため endpoint / workflowRef のみ必須
+    if (!endpoint || !workflowRef) return null
 
     const recipe: PromptRecipe = {
       endpoint,
       // 型的には workflowRef: WorkflowRef だが runtime では unknown から渡る
       // dataflow 側で schema 保証されている前提
       workflowRef: workflowRef as any,
-      inputs,
+      ...(inputs ? { inputs } : {}),
       ...(outputs ? { outputs } : {}),
       ...(opts ? { opts } : {}),
       ...(bypass ? { bypass } : {}),

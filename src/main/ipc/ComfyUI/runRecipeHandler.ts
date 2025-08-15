@@ -60,25 +60,32 @@ async function handleRunRecipe(
     );
 
     // Map variable names to graph paths
-    for (const key of inputKeys) {
-      const inp = recipe.inputs[key];
-      if (!inp) continue;
-      builder.setInputNode(key, inp.path);
+    if (recipe.inputs) {
+      for (const key of inputKeys) {
+        const inp = recipe.inputs[key];
+        if (!inp) continue;
+        builder.setInputNode(key, inp.path);
+      }
     }
-    for (const key of outputKeys) {
-      const out = recipe.outputs?.[key];
-      if (!out) continue;
-      builder.setOutputNode(key, out.path);
+    if (recipe.outputs) {
+      for (const key of outputKeys) {
+        const out = recipe.outputs?.[key];
+        if (!out) continue;
+        builder.setOutputNode(key, out.path);
+      }
     }
 
     // Apply defaults unless bypassed
-    for (const key of inputKeys) {
-      const def = recipe.inputs[key]?.default;
-      if (typeof def !== "undefined") {
-        // Pass-through value as provided in recipe
-        builder.input(key, def as unknown as any);
+    if (recipe.inputs) {
+      for (const key of inputKeys) {
+        const def = recipe.inputs[key]?.default;
+        if (typeof def !== "undefined") {
+          // Pass-through value as provided in recipe
+          builder.input(key, def as unknown as any);
+        }
       }
     }
+    console.log("ComfyUI run recipe:", builder);
     const runner = new CallWrapper(api, builder)
       .onPending((promptId?: string) => send({ type: "pending", promptId }))
       .onStart((promptId?: string) => send({ type: "start", promptId }))
@@ -112,8 +119,11 @@ async function handleRunRecipe(
         }
         send({ type: "finish", result: { buffers }, promptId });
       })
-      .onFailed(async (err: Error) => {
-        send({ type: "error", message: err.message });
+      .onFailed(async (err: any) => {
+        // err.cause?.error?.message に本来の Comfy 側の詳細メッセージが入るケースがある
+        console.log("ComfyUI run failed:", err);
+        const message = extractComfyErrorMessage(err);
+        send({ type: "error", message });
       });
 
     port.on("message", async (e) => {
@@ -125,7 +135,6 @@ async function handleRunRecipe(
 
     const _result = await runner.run();
   } catch (err: any) {
-    console.log(err);
     send({ type: "error", message: String(err?.message ?? err) });
   } finally {
     port.close();
@@ -143,4 +152,31 @@ async function resolveWorkflowJson(
   }
   const api = getComfyApiClient(endpoint);
   return getWorkflow(api, workflowRef.name);
+}
+
+/**
+ * ComfyUI のエラーオブジェクトから人間向けの message を抽出するヘルパー。
+ * 例:
+ * Error: Failed to queue prompt
+ *   cause: { error: { type: 'invalid_prompt', message: 'Cannot execute ...', details: 'Node ID ...' }}
+ */
+function extractComfyErrorMessage(err: unknown): string {
+  // 型ガード的に any へ
+  const e: any = err as any;
+  const causeError = e?.cause?.error;
+  const nestedMessage: string | undefined = causeError?.message;
+  const nestedDetails: string | undefined = causeError?.details;
+  // ネストされた詳細メッセージがあればそれを優先し、details があれば括弧付きで追加
+  if (nestedMessage) {
+    return nestedDetails && nestedDetails !== nestedMessage
+      ? `${nestedMessage} (${nestedDetails})`
+      : nestedMessage;
+  }
+  // Fallback: 通常のエラーメッセージ
+  if (typeof e?.message === "string") return e.message;
+  try {
+    return JSON.stringify(err);
+  } catch {
+    return String(err);
+  }
 }
