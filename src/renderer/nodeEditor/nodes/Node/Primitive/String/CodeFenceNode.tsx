@@ -34,7 +34,6 @@ export class CodeFenceNode extends SerializableInputsNode<
   data(inputs: { input?: string[]; lang?: string[] }): { out: string } {
     const code = inputs.input?.[0] ?? ''
     const lang = this.getInputValue<string>(inputs, 'lang') ?? ''
-    console.log("lang:", lang)
     return { out: `\`\`\`${lang}\n${code}\n\`\`\`` }
   }
 
