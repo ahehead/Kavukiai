@@ -210,6 +210,7 @@ dialog::backdrop {
   backdrop-filter: blur(5px);
 }
 
+/* ノードのコントロール部分に無理やり高さを伝搬させる。 */
 .control {
   @apply flex min-h-0;
 }
@@ -222,7 +223,9 @@ dialog::backdrop {
   @apply flex flex-1 h-full;
 }
 
-/* control-console に flex-1 を適用 */
+/* 縦に目一杯伸ばしたいコントロール に flex-1 を適用。
+ただしここのコントロールの名前は、nodeのcontrolのkey名になっている。
+*/
 [data-testid="control-console"] {
   @apply flex-1;
 }
@@ -236,5 +239,9 @@ dialog::backdrop {
 }
 
 [data-testid="control-input"] {
+  @apply flex-1;
+}
+
+[data-testid="control-select"] {
   @apply flex-1;
 }
