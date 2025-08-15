@@ -8,6 +8,7 @@ import type {
   ChatMessageListNode,
   ChatMessageNode,
   CodeFenceNode,
+  ComfyDesktopStartNode,
   ComfyUINode,
   CounterLoopNode,
   CreateSelectNode,
@@ -123,6 +124,7 @@ export type NodeTypes =
   | UnLoadModelNode
   | LLMPredictionConfigNode
   | ComfyUINode
+  | ComfyDesktopStartNode
   | LoadWorkflowNode
   | MergeWorkflowInputsDefaultsNode
   | TemplateWorkflowListNode

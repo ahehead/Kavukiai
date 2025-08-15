@@ -1,6 +1,10 @@
 import { ipcRenderer } from "electron";
 import { IpcChannel } from "shared/ApiType";
-import type { ComfyUIRunRequestArgs } from "shared/ComfyUIType";
+import type {
+  ComfyUIRunRequestArgs,
+  LaunchComfyDesktopResult,
+  LaunchOpts,
+} from "shared/ComfyUIType";
 
 export const comfyuiApi = {
   runRecipe: ({ id, recipe }: ComfyUIRunRequestArgs) => {
@@ -25,5 +29,10 @@ export const comfyuiApi = {
     );
     if (res?.status === "success") return res.data as string[];
     throw new Error(res?.message || "Failed to list template workflows");
+  },
+  launchDesktop: async (
+    opts: LaunchOpts = {}
+  ): Promise<LaunchComfyDesktopResult> => {
+    return ipcRenderer.invoke(IpcChannel.LaunchComfyDesktop, opts);
   },
 };

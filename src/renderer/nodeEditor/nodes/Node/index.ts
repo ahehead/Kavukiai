@@ -11,6 +11,7 @@ export { UChatToLMStudioNode } from "./Chat/UChatToLMStudioNode";
 export { UChatToOpenAINode } from "./Chat/UChatToOpenAINode";
 export { UChatToStringNode } from "./Chat/UChatToStringNode";
 export { UPartTextNode } from "./Chat/UPartTextNode";
+export { ComfyDesktopStartNode } from "./ComfyUI/ComfyDesktopStartNode";
 export { ComfyUINode } from "./ComfyUI/ComfyUINode";
 export { LoadWorkflowNode } from "./ComfyUI/LoadWorkflowNode";
 export { MergeWorkflowInputsDefaultsNode } from "./ComfyUI/MergeWorkflowInputsDefaultsNode";

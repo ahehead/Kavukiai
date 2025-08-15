@@ -13,6 +13,7 @@ import {
   BoolNode,
   ChatMessageNode,
   CodeFenceNode,
+  ComfyDesktopStartNode,
   ComfyUINode,
   CounterLoopNode,
   CreateSelectNode,
@@ -134,6 +135,8 @@ export const nodeFactories = {
   // ComfyUI
   ComfyUI: ({ area, dataflow, controlflow }) =>
     new ComfyUINode(area, dataflow, controlflow),
+  ComfyDesktopStart: ({ area, dataflow, controlflow }) =>
+    new ComfyDesktopStartNode(area, dataflow, controlflow),
   LoadWorkflow: ({ area, dataflow, controlflow }) =>
     new LoadWorkflowNode(area, dataflow, controlflow),
   TemplateWorkflowList: ({ history, dataflow, controlflow }) =>
@@ -305,6 +308,7 @@ const rawMenu: RawMenuItem[] = [
     label: "ComfyUI",
     subitems: [
       { label: "ComfyUI", factoryKey: "ComfyUI" },
+      { label: "ComfyDesktopStart", factoryKey: "ComfyDesktopStart" },
       { label: "LoadWorkflow", factoryKey: "LoadWorkflow" },
       { label: "TemplateWorkflowList", factoryKey: "TemplateWorkflowList" },
       { label: "UserWorkflowList", factoryKey: "UserWorkflowList" },

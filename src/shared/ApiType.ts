@@ -37,6 +37,7 @@ export enum IpcChannel {
   PortComfyUIRunRecipe = "port-comfyui-run-recipe",
   ListComfyUserWorkflows = "list-comfy-user-workflows",
   ListComfyTemplateWorkflows = "list-comfy-template-workflows",
+  LaunchComfyDesktop = "launch-comfy-desktop", // 追加
 }
 
 // 汎用パス選択ダイアログ

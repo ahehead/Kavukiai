@@ -1,43 +1,26 @@
-// comfyDesktop.ts (main)
-
 import { type ChildProcess, spawn } from "node:child_process";
 import fs from "node:fs";
 import http from "node:http";
 import os from "node:os";
 import path from "node:path";
-import { dialog } from "electron";
-
-type LaunchOpts = {
-  /** ユーザーが選んだ .exe / .app の絶対パス。未指定なら既定場所を探索 */
-  appPath?: string;
-  /** 期待するサーバーポート（Desktopの既定は 8000） */
-  port?: number;
-  /** 見つからないときにファイルダイアログで聞くか */
-  askIfMissing?: boolean;
-  /**
-   * ヘルスチェックのタイムアウト(ms)。
-   * ComfyUI Desktop の起動確認で待つ最大時間。
-   * 例: 120_000 (2分)
-   * 既定: 90_000 (90秒)
-   */
-  timeoutMs?: number;
-};
+import type { LaunchOpts } from "shared/ComfyUIType";
 
 let child: ChildProcess | null = null;
 
 export async function launchComfyDesktop(opts: LaunchOpts = {}) {
   const port = opts.port ?? 8000;
   const resolved = opts.appPath ?? (await findDesktopApp());
-  const target =
-    resolved ?? (opts.askIfMissing ? await askAppPath() : undefined);
-  if (!target) throw new Error("ComfyUI Desktop の場所が見つかりません");
+  if (!resolved) throw new Error("ComfyUI Desktop の場所が見つかりません");
 
   if (process.platform === "darwin") {
     // macOS: .app を open で起動（引数伝達は基本想定しない）
-    child = spawn("open", ["-n", target], { detached: true, stdio: "ignore" });
+    child = spawn("open", ["-n", resolved], {
+      detached: true,
+      stdio: "ignore",
+    });
   } else if (process.platform === "win32") {
     // Windows: .exe を直接起動
-    child = spawn(target, [], { detached: true, stdio: "ignore" });
+    child = spawn(resolved, [], { detached: true, stdio: "ignore" });
   } else {
     // Linux: 現状 Desktop 未対応（Portable/CLI 推奨）
     // ここに AppImage などの起動処理を入れるなら分岐
@@ -55,15 +38,6 @@ export async function launchComfyDesktop(opts: LaunchOpts = {}) {
   await waitUntilReady(port, opts.timeoutMs ?? 90_000);
   return { port };
 }
-
-// export function stopComfyDesktop() {
-//   if (!child) return;
-//   try {
-//     process.platform === "win32" ? child.kill("SIGINT") : child.kill("SIGTERM");
-//   } finally {
-//     child = null;
-//   }
-// }
 
 // --------- helpers ---------
 
@@ -122,16 +96,4 @@ async function findDesktopApp(): Promise<string | undefined> {
     return macCandidates.find((p) => fs.existsSync(p));
   }
   return undefined;
-}
-
-async function askAppPath(): Promise<string | undefined> {
-  const res = await dialog.showOpenDialog({
-    title: "ComfyUI Desktop のアプリ本体を選択",
-    properties: ["openFile", "dontAddToRecent"],
-    filters:
-      process.platform === "darwin"
-        ? [{ name: "Application", extensions: ["app"] }]
-        : [{ name: "Executable", extensions: ["exe"] }],
-  });
-  return res.canceled ? undefined : res.filePaths[0];
 }
