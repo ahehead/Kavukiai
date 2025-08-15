@@ -47,10 +47,12 @@ import {
   StringFormNode,
   StringNode,
   TemplateReplaceNode,
+  TemplateWorkflowListNode,
   TestNode,
   UChatNode,
   UnknownNode,
   UnLoadModelNode,
+  UserWorkflowListNode,
   WorkflowInputsNode,
   WorkflowOutputsNode,
 } from "./Node";
@@ -134,6 +136,10 @@ export const nodeFactories = {
     new ComfyUINode(area, dataflow, controlflow),
   LoadWorkflow: ({ area, dataflow, controlflow }) =>
     new LoadWorkflowNode(area, dataflow, controlflow),
+  TemplateWorkflowList: ({ history, dataflow, controlflow }) =>
+    new TemplateWorkflowListNode(history, dataflow, controlflow),
+  UserWorkflowList: ({ history, dataflow, controlflow }) =>
+    new UserWorkflowListNode(history, dataflow, controlflow),
   WorkflowInputs: ({ history, area, dataflow, controlflow }) =>
     new WorkflowInputsNode(history, area, dataflow, controlflow),
   WorkflowOutputs: ({ history, area, dataflow, controlflow }) =>
@@ -300,6 +306,8 @@ const rawMenu: RawMenuItem[] = [
     subitems: [
       { label: "ComfyUI", factoryKey: "ComfyUI" },
       { label: "LoadWorkflow", factoryKey: "LoadWorkflow" },
+      { label: "TemplateWorkflowList", factoryKey: "TemplateWorkflowList" },
+      { label: "UserWorkflowList", factoryKey: "UserWorkflowList" },
       { label: "WorkflowInputs", factoryKey: "WorkflowInputs" },
       { label: "WorkflowOutputs", factoryKey: "WorkflowOutputs" },
       {
