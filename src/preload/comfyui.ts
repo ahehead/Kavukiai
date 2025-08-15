@@ -10,4 +10,20 @@ export const comfyuiApi = {
     ]);
     window.postMessage({ type: "node-port", id }, "*", [port1]);
   },
+  listUserWorkflows: async (endpoint: string): Promise<string[]> => {
+    const res = await ipcRenderer.invoke(
+      IpcChannel.ListComfyUserWorkflows,
+      endpoint
+    );
+    if (res?.status === "success") return res.data as string[];
+    throw new Error(res?.message || "Failed to list user workflows");
+  },
+  listTemplateWorkflows: async (endpoint: string): Promise<string[]> => {
+    const res = await ipcRenderer.invoke(
+      IpcChannel.ListComfyTemplateWorkflows,
+      endpoint
+    );
+    if (res?.status === "success") return res.data as string[];
+    throw new Error(res?.message || "Failed to list template workflows");
+  },
 };
