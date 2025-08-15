@@ -3,8 +3,9 @@ import { type IpcMainEvent, ipcMain } from "electron";
 import { IpcChannel } from "shared/ApiType";
 import type { ComfyUIRunRequestArgs } from "shared/ComfyUIType";
 import type { ComfyUIPortEvent } from "shared/ComfyUIType/port-events";
-import { getComfyApiClient } from "./comfyApiClient";
+import { getComfyApiClient, getWorkflow } from "./comfyApiClient";
 import { launchComfyDesktop } from "./comfyDesktop";
+import { ComfyTemplatesClient } from "./comfyTemplatesClient";
 
 export function registerComfyUIRunRecipeHandler(): void {
   ipcMain.on(IpcChannel.PortComfyUIRunRecipe, handleRunRecipe);
@@ -46,8 +47,14 @@ async function handleRunRecipe(
     const inputKeys = Object.keys(recipe.inputs ?? {});
     const outputKeys = Object.keys(recipe.outputs ?? {});
 
+    // workflowRef から実体の workflow JSON を取得
+    const workflowJson = await resolveWorkflowJson(
+      recipe.endpoint,
+      recipe.workflowRef
+    );
+
     const builder = new PromptBuilder(
-      recipe.workflow as any,
+      workflowJson as any,
       inputKeys,
       outputKeys
     );
@@ -123,4 +130,17 @@ async function handleRunRecipe(
   } finally {
     port.close();
   }
+}
+
+/** workflowRef から実際の workflow JSON を取得する簡易解決関数 */
+async function resolveWorkflowJson(
+  endpoint: string,
+  workflowRef: { source: "userData" | "template"; name: string }
+): Promise<any> {
+  if (workflowRef.source === "template") {
+    const client = new ComfyTemplatesClient(endpoint);
+    return client.getTemplate(workflowRef.name);
+  }
+  const api = getComfyApiClient(endpoint);
+  return getWorkflow(api, workflowRef.name);
 }
