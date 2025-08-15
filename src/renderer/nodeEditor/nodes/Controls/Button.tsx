@@ -9,12 +9,10 @@ export interface ButtonControlParams extends ControlOptions<any> {
 
 // ボタン用コントロール
 export class ButtonControl extends BaseControl<any, ButtonControlParams> {
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   constructor(
     public params: ButtonControlParams
   ) {
     super({ cols: 0, ...params }); // cols:0でラベルを非表示にする
-    this.onClick = params.onClick;
   }
   setValue(): void { }
   getValue(): object { return {}; }
@@ -25,7 +23,7 @@ export class ButtonControl extends BaseControl<any, ButtonControlParams> {
 
 // カスタム Run ボタンコンポーネント
 export function ButtonControlView(props: { data: ButtonControl }) {
-  return <Button label={props.data.opts.label ?? ""} onClick={props.data.onClick} />;
+  return <Button label={props.data.opts.label ?? ""} onClick={props.data.opts.onClick} />;
 }
 
 function Button(props: {
