@@ -1,4 +1,6 @@
+import { cva } from 'class-variance-authority'
 import { type JSX, useSyncExternalStore } from 'react'
+import { cn } from 'renderer/lib/utils'
 import { BaseControl, type ControlOptions } from 'renderer/nodeEditor/types'
 import { Drag } from 'rete-react-plugin'
 import type { ControlJson } from 'shared/JsonType'
@@ -118,25 +120,49 @@ export function SelectWorkflowControlView({
     cb => data.subscribe(cb),
     () => data.getState()
   )
+
+  // cva: list コンテナ
+  const listContainerStyles = cva(
+    'border rounded p-1 text-xs overflow-auto bg-node-bg flex flex-col gap-0.5',
+    {
+      variants: {
+        loading: {
+          true: 'opacity-60 pointer-events-none',
+          false: '',
+        },
+      },
+      defaultVariants: { loading: false },
+    }
+  )
+
+  // cva: ワークフロー項目ボタン
+  const workflowItemButton = cva(
+    'text-left px-2 py-1 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-node-accent transition-colors',
+    {
+      variants: {
+        selected: {
+          true: 'bg-node-accent/70 shadow-inner hover:bg-node-accent/90',
+          false: 'bg-transparent hover:bg-node-accent/40',
+        },
+      },
+      defaultVariants: { selected: false },
+    }
+  )
   return (
     <Drag.NoDrag>
-      <div className="flex flex-col w-full gap-1">
+      <div className="flex flex-col w-full gap-1 h-full">
         {/* Error message (moved to top) */}
         <div
           className={
-            'text-xs min-h-4 transition-colors ' +
+            'text-xs min-h-4 transition-colors empty:hidden ' +
             (state.error ? 'text-red-500' : 'text-transparent')
           }
         >
-          {state.error || '.'}
+          {state.error}
         </div>
-        <div className="flex flex-col gap-1">
-          <div
-            className={
-              'border rounded p-1 text-xs max-h-40 overflow-auto bg-node-bg flex flex-col gap-0.5 ' +
-              (state.loading ? 'opacity-60 pointer-events-none' : '')
-            }
-          >
+        {/* list */}
+        <div className="flex flex-col gap-1 w-full h-full">
+          <div className={listContainerStyles({ loading: state.loading })}>
             {state.loading && (
               <div className="text-muted-foreground italic px-1 py-0.5">
                 Loading...
@@ -159,12 +185,7 @@ export function SelectWorkflowControlView({
                       data.addHistory(pre, it)
                       data.select(it)
                     }}
-                    className={
-                      'text-left px-2 py-1 rounded cursor-pointer hover:bg-node-accent/40 focus:outline-none focus:ring-1 focus:ring-node-accent transition-colors ' +
-                      (selected
-                        ? 'bg-node-accent text-white shadow-inner'
-                        : 'bg-transparent')
-                    }
+                    className={cn(workflowItemButton({ selected }))}
                   >
                     {it}
                   </button>
