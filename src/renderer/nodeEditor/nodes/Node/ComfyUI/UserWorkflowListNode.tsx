@@ -18,15 +18,19 @@ export class UserWorkflowListNode extends SerializableInputsNode<
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('UserWorkflowList')
-    this.addInputPortPattern({
-      type: 'RunButton',
-      controlflow: this.controlflow,
-    })
-    this.addInputPort({
-      key: 'endpoint',
-      typeName: 'string',
-      label: 'Endpoint',
-    })
+    this.addInputPort([
+      {
+        key: 'exec',
+        typeName: 'exec',
+        label: 'Refresh',
+        onClick: () => this.controlflow.execute(this.id),
+      },
+      {
+        key: 'endpoint',
+        typeName: 'string',
+        label: 'Endpoint',
+      }
+    ])
     this.addOutputPort({
       key: 'workflowRef',
       typeName: 'WorkflowRef',
@@ -64,5 +68,12 @@ export class UserWorkflowListNode extends SerializableInputsNode<
     workflowRef: { source: 'userData' | 'template'; name: string } | null
   } {
     return { workflowRef: this.controls.select.getSelected() }
+  }
+
+  serializeControlValue() {
+    return this.controls.select.toJSON()
+  }
+  deserializeControlValue(data: any) {
+    this.controls.select.setFromJSON({ data })
   }
 }

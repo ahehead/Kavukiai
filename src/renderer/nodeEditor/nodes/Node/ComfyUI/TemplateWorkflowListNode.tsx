@@ -55,7 +55,6 @@ export class TemplateWorkflowListNode extends SerializableInputsNode<
     this.controls.select.setLoading()
     try {
       const list = await electronApiService.listTemplateWorkflows(endpoint)
-      console.log('TemplateWorkflowListNode list', list)
       await this.controls.select.setItems(list)
       // 成功時はエラークリア
       this.controls.select.setError('')
@@ -70,5 +69,12 @@ export class TemplateWorkflowListNode extends SerializableInputsNode<
     workflowRef: { source: 'userData' | 'template'; name: string } | null
   } {
     return { workflowRef: this.controls.select.getSelected() }
+  }
+
+  serializeControlValue() {
+    return this.controls.select.toJSON()
+  }
+  deserializeControlValue(data: any) {
+    this.controls.select.setFromJSON({ data })
   }
 }
