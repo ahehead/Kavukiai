@@ -35,4 +35,12 @@ export const comfyuiApi = {
   ): Promise<LaunchComfyDesktopResult> => {
     return ipcRenderer.invoke(IpcChannel.LaunchComfyDesktop, opts);
   },
+  readWorkflowRef: async (args: {
+    endpoint: string;
+    workflowRef: { source: "userData" | "template"; name: string };
+  }): Promise<any> => {
+    const res = await ipcRenderer.invoke(IpcChannel.ReadWorkflowRef, args);
+    if (res?.status === "success") return res.data;
+    throw new Error(res?.message || "Failed to read workflowRef");
+  },
 };

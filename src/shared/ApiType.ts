@@ -38,6 +38,7 @@ export enum IpcChannel {
   ListComfyUserWorkflows = "list-comfy-user-workflows",
   ListComfyTemplateWorkflows = "list-comfy-template-workflows",
   LaunchComfyDesktop = "launch-comfy-desktop", // 追加
+  ReadWorkflowRef = "read-workflow-ref",
 }
 
 // 汎用パス選択ダイアログ

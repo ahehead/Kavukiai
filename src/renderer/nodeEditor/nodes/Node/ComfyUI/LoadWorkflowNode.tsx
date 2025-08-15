@@ -11,11 +11,10 @@ import {
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import { ConsoleControl } from '../../Controls/Console'
-import { PathInputControl } from '../../Controls/input/PathInputControl'
 
 export class LoadWorkflowNode extends SerializableInputsNode<
   'LoadWorkflow',
-  { exec: TypedSocket; path: TypedSocket },
+  { exec: TypedSocket; endpoint: TypedSocket; workflowRef: TypedSocket },
   { exec: TypedSocket; workflow: TypedSocket },
   { console: ConsoleControl }
 > {
@@ -35,15 +34,15 @@ export class LoadWorkflowNode extends SerializableInputsNode<
         onClick: () => this.controlflow.execute(this.id, 'exec'),
       },
       {
-        key: 'path',
+        key: 'endpoint',
         typeName: 'string',
-        label: 'workflow.json path',
-        control: new PathInputControl({
-          placeholder: 'Select workflow.json',
-          mode: 'file',
-          filters: [{ name: 'JSON', extensions: ['json'] }],
-        }),
-        showControl: true,
+        label: 'endpoint',
+        require: true,
+      },
+      {
+        key: 'workflowRef',
+        typeName: 'object',
+        label: 'WorkflowRef',
         require: true,
       },
     ])
@@ -59,27 +58,36 @@ export class LoadWorkflowNode extends SerializableInputsNode<
   }
 
   async execute(_: never, forward: (output: 'exec') => void): Promise<void> {
-    const inputs = await this.dataflow.fetchInputs(this.id)
-    const filePath = this.getInputValue<string>(inputs, 'path')
+    if (this.status === NodeStatus.RUNNING) return
+    this.changeStatus(this.area, NodeStatus.RUNNING)
 
-    if (!filePath) {
+    const inputs = await this.dataflow.fetchInputs(this.id)
+    const endpoint = this.getInputValue<string>(inputs, 'endpoint')
+    const workflowRef = this.getInputValue<any>(inputs, 'workflowRef')
+
+    if (!endpoint) {
       this.changeStatus(this.area, NodeStatus.ERROR)
-      this.controls.console.addValue('Error: path is empty')
+      this.controls.console.addValue('Error: endpoint is empty')
+      return
+    }
+    if (!workflowRef) {
+      this.changeStatus(this.area, NodeStatus.ERROR)
+      this.controls.console.addValue('Error: workflowRef is empty')
       return
     }
 
     try {
-      const res = await electronApiService.readJsonByPath(filePath)
-      if (!res || res.status !== 'success') {
-        const msg = res?.message ?? 'Unknown error'
-        this.controls.console.addValue(`Error: ${msg}`)
-        return
-      }
-      this.lastWorkflow = res.data
-      this.controls.console.addValue('Loaded workflow.json')
+      const data = await (electronApiService as any).readWorkflowRef({
+        endpoint,
+        workflowRef,
+      })
+      this.lastWorkflow = data
+      this.controls.console.addValue('Loaded workflow via workflowRef')
+      this.changeStatus(this.area, NodeStatus.COMPLETED)
       this.dataflow.reset(this.id)
       forward('exec')
     } catch (e: any) {
+      this.changeStatus(this.area, NodeStatus.ERROR)
       this.controls.console.addValue(`Error: ${e?.message ?? String(e)}`)
     }
   }
