@@ -37,5 +37,4 @@ export class CodeFenceNode extends SerializableInputsNode<
     return { out: `\`\`\`${lang}\n${code}\n\`\`\`` }
   }
 
-  async execute(): Promise<void> { }
 }

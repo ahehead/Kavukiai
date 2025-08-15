@@ -43,5 +43,4 @@ export class JoinNode extends SerializableInputsNode<
     return { out: Array.isArray(arr) ? arr.join(sep) : '' }
   }
 
-  async execute(): Promise<void> { }
 }
