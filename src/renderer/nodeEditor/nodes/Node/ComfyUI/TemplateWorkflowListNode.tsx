@@ -37,7 +37,11 @@ export class TemplateWorkflowListNode extends SerializableInputsNode<
     })
     this.addControl(
       'select',
-      new SelectWorkflowControl({ history, source: 'template' })
+      new SelectWorkflowControl({
+        history,
+        source: 'template',
+        onChange: () => this.dataflow.reset(this.id),
+      })
     )
   }
 
