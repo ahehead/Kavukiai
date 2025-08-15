@@ -19,6 +19,7 @@ import {
   CreateSelectNode,
   InspectorNode,
   JoinNode,
+  JsonFilePathNode,
   JsonSchemaFormatNode,
   JsonSchemaNode,
   JsonSchemaToObjectNode,
@@ -95,6 +96,8 @@ export const nodeFactories = {
     new MultiLineStringNode("", history, area, dataflow),
   TemplateReplace: ({ area, dataflow, controlflow }) =>
     new TemplateReplaceNode(area, dataflow, controlflow),
+  JsonFilePath: ({ history, area, dataflow }) =>
+    new JsonFilePathNode("", history, area, dataflow),
   StringForm: ({ history, area, dataflow, controlflow }: NodeDeps) =>
     new StringFormNode("", history, area, dataflow, controlflow),
   Join: ({ dataflow }) => new JoinNode(dataflow),
@@ -230,6 +233,7 @@ const rawMenu: RawMenuItem[] = [
           { label: "String", factoryKey: "String" },
           { label: "MultiLineString", factoryKey: "MultiLineString" },
           { label: "TemplateReplace", factoryKey: "TemplateReplace" },
+          { label: "JsonFilePath", factoryKey: "JsonFilePath" },
           { label: "Join", factoryKey: "Join" },
           { label: "StringForm", factoryKey: "StringForm" },
           { label: "NumberToString", factoryKey: "NumberToString" },

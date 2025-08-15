@@ -55,6 +55,7 @@ export { JsonSchemaToObjectNode } from "./Primitive/Object/JsonSchemaToObject";
 export { ObjectPickNode } from "./Primitive/Object/ObjectPickNode";
 export { CodeFenceNode } from "./Primitive/String/CodeFenceNode";
 export { JoinNode } from "./Primitive/String/JoinNode";
+export { JsonFilePathNode } from "./Primitive/String/JsonFilePathNode";
 export { MultiLineStringNode } from "./Primitive/String/MultiLineStringNode";
 export { NumberToStringNode } from "./Primitive/String/NumberToStringNode";
 export { ObjectToStringNode } from "./Primitive/String/ObjectToStringNode";

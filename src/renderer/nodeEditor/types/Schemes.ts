@@ -16,6 +16,7 @@ import type {
   IFNode,
   InspectorNode,
   JoinNode,
+  JsonFilePathNode,
   JsonSchemaFormatNode,
   JsonSchemaNode,
   JsonSchemaToObjectNode,
@@ -140,6 +141,7 @@ export type NodeTypes =
   | UChatNode
   | UChatRoleNode
   | LMStudioChatNode
+  | JsonFilePathNode
   | ReverseRoleNode;
 
 export type NodeTypeKey = NodeTypes["label"];
