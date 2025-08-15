@@ -1,3 +1,5 @@
+import { ENVIRONMENT } from "shared/constants";
+
 export type ApplicationSettings = {
   windowSettings: WindowSettings;
   systemSettings: SystemSettings;
@@ -23,7 +25,8 @@ export function createDefaultApplicationSettings(): ApplicationSettings {
       height: 473,
       x: 0,
       y: 0,
-      alwaysOnTop: true,
+      // 開発時は常に最前面 / 本番パッケージでは通常ウィンドウ
+      alwaysOnTop: ENVIRONMENT.IS_DEV,
     },
     systemSettings: {
       lastDir: null,
