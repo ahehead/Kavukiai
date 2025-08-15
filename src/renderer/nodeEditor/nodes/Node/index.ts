@@ -14,6 +14,8 @@ export { UPartTextNode } from "./Chat/UPartTextNode";
 export { ComfyUINode } from "./ComfyUI/ComfyUINode";
 export { LoadWorkflowNode } from "./ComfyUI/LoadWorkflowNode";
 export { MergeWorkflowInputsDefaultsNode } from "./ComfyUI/MergeWorkflowInputsDefaultsNode";
+export { TemplateWorkflowListNode } from "./ComfyUI/TemplateWorkflowListNode";
+export { UserWorkflowListNode } from "./ComfyUI/UserWorkflowListNode";
 export { WorkflowInputsNode } from "./ComfyUI/WorkflowInputsNode";
 export { WorkflowOutputsNode } from "./ComfyUI/WorkflowOutputsNode";
 export { TestNode } from "./Debug/TestNode";

@@ -35,6 +35,8 @@ export enum IpcChannel {
   PortLMStudioChat = "port-lmstudio-chat",
   // ComfyUI
   PortComfyUIRunRecipe = "port-comfyui-run-recipe",
+  ListComfyUserWorkflows = "list-comfy-user-workflows",
+  ListComfyTemplateWorkflows = "list-comfy-template-workflows",
 }
 
 // 汎用パス選択ダイアログ

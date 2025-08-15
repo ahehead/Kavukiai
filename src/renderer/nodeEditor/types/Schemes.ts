@@ -48,6 +48,7 @@ import type {
   StringFormNode,
   StringNode,
   TemplateReplaceNode,
+  TemplateWorkflowListNode,
   TestNode,
   UChatGetLastMessageNode,
   UChatMessageNode,
@@ -59,6 +60,7 @@ import type {
   UnknownNode,
   UnLoadModelNode,
   UPartTextNode,
+  UserWorkflowListNode,
   WorkflowInputsNode,
   WorkflowOutputsNode,
 } from "../nodes/Node";
@@ -123,6 +125,8 @@ export type NodeTypes =
   | ComfyUINode
   | LoadWorkflowNode
   | MergeWorkflowInputsDefaultsNode
+  | TemplateWorkflowListNode
+  | UserWorkflowListNode
   | WorkflowInputsNode
   | WorkflowOutputsNode
   | OpenAIToChatEventNode
