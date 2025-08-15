@@ -1,6 +1,7 @@
 import type { PromptRecipe } from "../../renderer/nodeEditor/types/Schemas/comfyui/prompt.schema";
 
 export * from "../../renderer/nodeEditor/types/Schemas/comfyui/prompt.schema";
+export { WorkflowRef } from "../../renderer/nodeEditor/types/Schemas/comfyui/workflow-ref.schema";
 export * from "./launch";
 export * from "./port-events";
 

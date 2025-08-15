@@ -23,7 +23,7 @@ export class ComfyUINode extends MessagePortNode<
     exec: TypedSocket
     exec2: TypedSocket
     endpoint: TypedSocket
-    workflow: TypedSocket
+    workflowRef: TypedSocket
     inputs: TypedSocket
     outputs: TypedSocket
     opts: TypedSocket
@@ -54,7 +54,7 @@ export class ComfyUINode extends MessagePortNode<
         onClick: () => this.controlflow.execute(this.id, 'exec2'),
       },
       { key: 'endpoint', typeName: 'string', label: 'Endpoint' },
-      { key: 'workflow', typeName: 'object', label: 'Workflow' },
+      { key: 'workflowRef', typeName: 'WorkflowRef', label: 'WorkflowRef' },
       { key: 'inputs', typeName: 'WorkflowInputs', label: 'Inputs' },
       { key: 'outputs', typeName: 'WorkflowOutputs', label: 'Outputs' },
       { key: 'opts', typeName: 'PromptRunOpts', label: 'Run Opts' },
@@ -73,7 +73,7 @@ export class ComfyUINode extends MessagePortNode<
   }
 
   protected async buildRequestArgs(): Promise<ComfyUIRunRequestArgs | null> {
-    const [endpoint, workflow, inputs, outputs, opts, bypass] =
+    const [endpoint, workflowRef, inputs, outputs, opts, bypass] =
       await this.dataflow.fetchInputMultiple<
         [
           string | undefined,
@@ -85,18 +85,20 @@ export class ComfyUINode extends MessagePortNode<
         ]
       >(this.id, [
         'endpoint',
-        'workflow',
+        'workflowRef',
         'inputs',
         'outputs',
         'opts',
         'bypass',
       ])
 
-    if (!endpoint || !workflow || !inputs) return null
+    if (!endpoint || !workflowRef || !inputs) return null
 
     const recipe: PromptRecipe = {
       endpoint,
-      workflow,
+      // 型的には workflowRef: WorkflowRef だが runtime では unknown から渡る
+      // dataflow 側で schema 保証されている前提
+      workflowRef: workflowRef as any,
       inputs,
       ...(outputs ? { outputs } : {}),
       ...(opts ? { opts } : {}),
