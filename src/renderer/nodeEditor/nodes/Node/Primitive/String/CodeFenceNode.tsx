@@ -1,6 +1,5 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { InputValueControl } from 'renderer/nodeEditor/nodes/Controls/input/InputValue'
-import { getInputValue } from 'renderer/nodeEditor/nodes/util/getInput'
 import {
   type Schemes,
   SerializableInputsNode,
@@ -34,8 +33,8 @@ export class CodeFenceNode extends SerializableInputsNode<
 
   data(inputs: { input?: string[]; lang?: string[] }): { out: string } {
     const code = inputs.input?.[0] ?? ''
-    const lang =
-      inputs.lang?.[0] ?? getInputValue(this.inputs, 'lang', inputs) ?? ''
+    const lang = this.getInputValue<string>(inputs, 'lang') ?? ''
+    console.log("lang:", lang)
     return { out: `\`\`\`${lang}\n${code}\n\`\`\`` }
   }
 

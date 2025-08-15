@@ -17,7 +17,6 @@ import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { InputValueControl } from '../../../Controls/input/InputValue'
 import { SwitchControl } from '../../../Controls/input/Switch'
-import { getInputValue } from '../../../util/getInput'
 import { removeLinkedSockets } from '../../../util/removeNode'
 
 export class JsonSchemaToObjectNode
@@ -159,10 +158,10 @@ export class JsonSchemaToObjectNode
   }
 
   // 動的なinputからobjectを作り返す
-  data(inputs: Record<string, unknown>): { out: Record<string, unknown> } {
+  data(inputs: Record<string, unknown[]>): { out: Record<string, unknown> } {
     const result: Record<string, unknown> = {}
     for (const [key, _tooltip] of this.getDynamicInputs()) {
-      result[key] = getInputValue(this.inputs, key, inputs)
+      result[key] = this.getInputValue(inputs, key)
     }
     return { out: result }
   }
