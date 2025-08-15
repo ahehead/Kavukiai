@@ -14,7 +14,6 @@ import type { HistoryPlugin } from "rete-history-plugin";
 import { CheckBoxControl } from "../../Controls/input/CheckBox";
 import { InputValueControl } from "../../Controls/input/InputValue";
 import { SelectControl } from "../../Controls/input/Select";
-import { getInputValue } from "../../util/getInput";
 
 type OpenAIParamKeys = keyof ResponseCreateParamsBase;
 // Run ノード
@@ -309,9 +308,9 @@ export class ResponseCreateParamsBaseNode
     const param: Partial<OpenAI.Responses.ResponseCreateParams> = {};
 
     for (const key of Object.keys(this.inputs) as OpenAIParamKeys[]) {
-      const value = getInputValue(this.inputs, key, inputs);
-      if (value !== undefined) {
-        param[key] = value;
+      const value = this.getInputValue(inputs, key);
+      if (value) {
+        (param as any)[key] = value;
       }
     }
 
