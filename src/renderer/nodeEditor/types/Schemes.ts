@@ -26,6 +26,7 @@ import type {
   LMStudioStartNode,
   LMStudioStopNode,
   LMStudioToUChatCommandNode,
+  LoadWorkflowFileNode,
   LoadWorkflowNode,
   MergeWorkflowInputsDefaultsNode,
   ModelInfoToModelListNode,
@@ -126,6 +127,7 @@ export type NodeTypes =
   | ComfyUINode
   | ComfyDesktopStartNode
   | LoadWorkflowNode
+  | LoadWorkflowFileNode
   | MergeWorkflowInputsDefaultsNode
   | TemplateWorkflowListNode
   | UserWorkflowListNode

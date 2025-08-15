@@ -13,6 +13,7 @@ export { UChatToStringNode } from "./Chat/UChatToStringNode";
 export { UPartTextNode } from "./Chat/UPartTextNode";
 export { ComfyDesktopStartNode } from "./ComfyUI/ComfyDesktopStartNode";
 export { ComfyUINode } from "./ComfyUI/ComfyUINode";
+export { LoadWorkflowFileNode } from "./ComfyUI/LoadWorkflowFileNode";
 export { LoadWorkflowNode } from "./ComfyUI/LoadWorkflowNode";
 export { MergeWorkflowInputsDefaultsNode } from "./ComfyUI/MergeWorkflowInputsDefaultsNode";
 export { TemplateWorkflowListNode } from "./ComfyUI/TemplateWorkflowListNode";

@@ -28,6 +28,7 @@ import {
   LMStudioLoadModelNode,
   LMStudioStartNode,
   LMStudioStopNode,
+  LoadWorkflowFileNode,
   LoadWorkflowNode,
   MergeWorkflowInputsDefaultsNode,
   ModelInfoToModelListNode,
@@ -139,6 +140,8 @@ export const nodeFactories = {
     new ComfyDesktopStartNode(area, dataflow, controlflow),
   LoadWorkflow: ({ area, dataflow, controlflow }) =>
     new LoadWorkflowNode(area, dataflow, controlflow),
+  LoadWorkflowFile: ({ area, dataflow, controlflow }) =>
+    new LoadWorkflowFileNode(area, dataflow, controlflow),
   TemplateWorkflowList: ({ history, dataflow, controlflow }) =>
     new TemplateWorkflowListNode(history, dataflow, controlflow),
   UserWorkflowList: ({ history, dataflow, controlflow }) =>
@@ -310,6 +313,7 @@ const rawMenu: RawMenuItem[] = [
       { label: "ComfyUI", factoryKey: "ComfyUI" },
       { label: "ComfyDesktopStart", factoryKey: "ComfyDesktopStart" },
       { label: "LoadWorkflow", factoryKey: "LoadWorkflow" },
+      { label: "LoadWorkflowFile", factoryKey: "LoadWorkflowFile" },
       { label: "TemplateWorkflowList", factoryKey: "TemplateWorkflowList" },
       { label: "UserWorkflowList", factoryKey: "UserWorkflowList" },
       { label: "WorkflowInputs", factoryKey: "WorkflowInputs" },
