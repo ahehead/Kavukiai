@@ -4,7 +4,7 @@ import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
-import { SelectWorkflowControl } from '../../Controls/SelectWorkflowControl'
+import { SelectWorkflowControl } from '../../Controls/ComfyUI/SelectWorkflowControl'
 
 export class UserWorkflowListNode extends SerializableInputsNode<
   'UserWorkflowList',

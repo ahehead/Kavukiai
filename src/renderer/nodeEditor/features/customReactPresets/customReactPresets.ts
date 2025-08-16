@@ -12,6 +12,10 @@ import {
   UChatMessageListControlView,
 } from "renderer/nodeEditor/nodes/Controls/Chat/UChat";
 import {
+  SelectWorkflowControl,
+  SelectWorkflowControlView,
+} from "renderer/nodeEditor/nodes/Controls/ComfyUI/SelectWorkflowControl";
+import {
   WorkflowIOSelectControl,
   WorkflowIOSelectControlView,
 } from "renderer/nodeEditor/nodes/Controls/ComfyUI/WorkflowIOSelectControl";
@@ -67,16 +71,11 @@ import {
   SwitchControl,
   SwitchControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Switch";
-
 // RunButton
 import {
   RunButtonControl,
   RunButtonControlView,
 } from "renderer/nodeEditor/nodes/Controls/RunButton";
-import {
-  SelectWorkflowControl,
-  SelectWorkflowControlView,
-} from "renderer/nodeEditor/nodes/Controls/SelectWorkflowControl";
 // Progress control
 import {
   ProgressControl,
