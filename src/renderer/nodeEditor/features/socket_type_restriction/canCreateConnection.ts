@@ -14,7 +14,7 @@ export function canConnect(
   editor: NodeEditor<Schemes>,
   connection: Schemes["Connection"]
 ): boolean {
-  return isCompatible(getConnectionSockets(editor, connection));
+  return isCompatible(getConnectedSockets(editor, connection));
 }
 
 export function isCompatible({ source, target }: SocketPair): boolean {
@@ -22,6 +22,7 @@ export function isCompatible({ source, target }: SocketPair): boolean {
   return !!(source && target && source.isCompatibleWith(target));
 }
 
+// コネクションから双方のportのペアを取得,双方揃っていないとundefined
 export function getConnectionPorts(
   editor: NodeEditor<Schemes>,
   connection: Schemes["Connection"]
@@ -48,11 +49,31 @@ export function getConnectionPorts(
   };
 }
 
-export function getConnectionSockets(
+// コネクションから双方のsocketのペアを取得
+export function getConnectedSockets(
   editor: NodeEditor<Schemes>,
   connection: Schemes["Connection"]
 ): SocketPair {
   const { output, input } = getConnectionPorts(editor, connection);
+  return {
+    source: output?.socket,
+    target: input?.socket,
+  };
+}
+
+export function getConnectionSockets(
+  editor: NodeEditor<Schemes>,
+  connection: Schemes["Connection"]
+) {
+  const source = editor.getNode(connection.source);
+  const target = editor.getNode(connection.target);
+
+  const output =
+    source &&
+    (source.outputs as Record<string, Input>)[connection.sourceOutput];
+  const input =
+    target && (target.inputs as Record<string, Output>)[connection.targetInput];
+
   return {
     source: output?.socket,
     target: input?.socket,

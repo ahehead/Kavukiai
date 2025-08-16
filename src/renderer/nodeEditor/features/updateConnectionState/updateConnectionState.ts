@@ -11,7 +11,7 @@ import type { AreaExtra, NodeInterface, Schemes } from "../../types/Schemes";
 import type { DataflowEngine } from "../safe-dataflow/dataflowEngin";
 import {
   canConnect,
-  getConnectionSockets,
+  getConnectedSockets,
 } from "../socket_type_restriction/canCreateConnection";
 
 /**
@@ -35,7 +35,7 @@ export function registerConnectionPipeline(
       case "connectioncreated":
       case "connectionremoved": {
         const isConnected = ctx.type === "connectioncreated";
-        const { source, target } = getConnectionSockets(editor, ctx.data);
+        const { source, target } = getConnectedSockets(editor, ctx.data);
         if (!source || !target) return ctx;
 
         dataflow.reset(ctx.data.target);
@@ -133,7 +133,7 @@ export async function traverseDynamicSchemaNodes(
           // TODO: 接続を赤表示
           continue;
         }
-        const { source: nextSource, target: nextTarget } = getConnectionSockets(
+        const { source: nextSource, target: nextTarget } = getConnectedSockets(
           editor,
           conn
         );
