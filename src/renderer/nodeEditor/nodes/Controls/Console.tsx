@@ -113,7 +113,7 @@ export function ConsoleControlView(props: {
 }): JSX.Element {
   const value = useControlValue(props.data)
   const isOpen = useControlOpen(props.data)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const textareaRef = useRef<HTMLDivElement>(null)
   useStopWheel(textareaRef)
 
   useLayoutEffect(() => {
@@ -161,14 +161,17 @@ export function ConsoleControlView(props: {
           </button>
         </div>
         {isOpen && (
-          <textarea
+          <div
             ref={textareaRef}
-            className="w-full h-full min-h-0 overflow-auto p-2 border-none resize-none text-sm text-gray-700 dark:text-gray-200 rounded-md bg-gray-100 focus:outline-none mt-1 select-all"
-            value={value}
-            readOnly
-            rows={1}
-          />
-        )}
+            className="w-full h-full min-h-0 overflow-auto p-2 rounded-md bg-gray-100 mt-1"
+            onPointerDown={(e) => e.stopPropagation()}
+            onPointerMove={(e) => e.stopPropagation()}
+            onWheel={(e) => e.stopPropagation()}
+          >
+            <pre className="text-sm whitespace-pre-wrap select-text">
+              {value}
+            </pre>
+          </div>)}
       </div>
     </Drag.NoDrag>
   )
