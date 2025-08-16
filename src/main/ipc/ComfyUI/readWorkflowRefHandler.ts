@@ -9,7 +9,7 @@ export type ReadWorkflowRefArgs = {
   workflowRef: { source: "userData" | "template"; name: string };
 };
 
-/** workflowRef -> 実体 JSON を取得する IPC handler */
+/** workflowRef -> 実体 JSON を取得する , さらにapi用prompt方式に変換する　IPC handler */
 export function registerReadWorkflowRefHandler(): void {
   ipcMain.handle(
     IpcChannel.ReadWorkflowRef,
