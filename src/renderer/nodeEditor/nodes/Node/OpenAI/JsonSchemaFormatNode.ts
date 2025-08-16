@@ -10,7 +10,6 @@ import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
 import { CheckBoxControl } from "../../Controls/input/CheckBox";
 import { InputValueControl } from "../../Controls/input/InputValue";
-import { getInputValue } from "../../util/getInput";
 
 type JsonSchemaFormatKeys = keyof JsonSchemaFormat;
 export class JsonSchemaFormatNode extends SerializableInputsNode<
@@ -91,9 +90,9 @@ export class JsonSchemaFormatNode extends SerializableInputsNode<
       out: {
         type: "json_schema",
         ...{
-          name: getInputValue(this.inputs, "name", inputs),
-          description: getInputValue(this.inputs, "description", inputs),
-          strict: getInputValue(this.inputs, "strict", inputs),
+          name: this.getInputValue(inputs, "name"),
+          description: this.getInputValue(inputs, "description"),
+          strict: this.getInputValue(inputs, "strict"),
         },
         schema: schema as Record<string, unknown>,
       },
