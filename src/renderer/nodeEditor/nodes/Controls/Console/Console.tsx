@@ -8,8 +8,9 @@ import {
 } from 'renderer/nodeEditor/types'
 import { Drag } from 'rete-react-plugin'
 import type { ControlJson } from 'shared/JsonType'
-import { useDragEdgeAutoscroll } from '../util/useDragEdgeAutoscroll'
-import { useStopWheel } from '../util/useStopWheel'
+import { useDragEdgeAutoscroll } from '../../util/useDragEdgeAutoscroll'
+import { useStopWheel } from '../../util/useStopWheel'
+import { MonacoLog } from './MonacoLog'
 
 export interface ConsoleControlParams extends ControlOptions<any> {
   isOpen?: boolean
@@ -135,7 +136,7 @@ export function ConsoleControlView(props: {
 
   return (
     <Drag.NoDrag>
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full h-full">
         <div className="flex items-center">
           <button
             type="button"
@@ -166,16 +167,8 @@ export function ConsoleControlView(props: {
           </button>
         </div>
         {isOpen && (
-          <div
-            ref={textareaRef}
-            className="w-full h-full min-h-0 overflow-auto p-2 rounded-md bg-gray-100 mt-1"
-            onPointerDown={e => e.stopPropagation()}
-            onPointerMove={e => e.stopPropagation()}
-            onWheel={e => e.stopPropagation()}
-          >
-            <pre className="text-sm whitespace-pre-wrap select-text">
-              {value}
-            </pre>
+          <div className="flex-1 min-h-0">
+            <MonacoLog value={value} />
           </div>
         )}
       </div>
