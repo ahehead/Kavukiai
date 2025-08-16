@@ -31,11 +31,7 @@ import {
   UPart,
   UPartArray,
 } from "./UChat/UChatMessage";
-import {
-  Image,
-  OpenAIClientResponse,
-  OpenAIClientResponseOrNull,
-} from "./Util";
+import { OpenAIClientResponse, OpenAIClientResponseOrNull } from "./Util";
 
 const registry = {
   ...BaseSchemas,
@@ -48,7 +44,6 @@ const registry = {
   OpenAIClientResponseOrNull,
   ChatMessageItem,
   ChatMessageItemList,
-  Image,
   UChatRole,
   UFileRef,
   UPart,
@@ -64,7 +59,7 @@ const registry = {
   ChatCommandEventOrNull,
   LMStudioChatPortEventOrNull,
   NodeImage,
-  ImageArray: NodeImageArray,
+  NodeImageArray,
   NodeImageOrArray,
   ImageArrayOrNull,
   NodeImageOrArrayOrNull,
