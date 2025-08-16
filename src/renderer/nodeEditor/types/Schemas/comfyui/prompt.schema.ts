@@ -1,5 +1,4 @@
 import { type Static, Type } from "@sinclair/typebox";
-import { WorkflowRef } from "./workflow-ref.schema";
 
 export const WorkflowInputs = Type.Record(
   Type.String(),
@@ -37,16 +36,16 @@ export type PromptRunOpts = Static<typeof PromptRunOpts>;
 export const PromptRecipe = Type.Object(
   {
     endpoint: Type.String({ description: "ComfyUI API endpoint URL" }),
-    workflowRef: WorkflowRef,
+    // ComfyUI のワークフロー JSON Api ver
+    workflow: Type.Any({ description: "ComfyUI workflow JSON object" }),
     opts: Type.Optional(PromptRunOpts),
-    // inputs を Optional 化 (workflow がデフォルト値を全て内包しているケースなどを許容)
     inputs: Type.Optional(WorkflowInputs),
     outputs: Type.Optional(WorkflowOutputs),
     bypass: Type.Optional(Type.Array(Type.String())),
   },
   {
     additionalProperties: false,
-    description: "PromptRecipe schema (workflowRef 指定)",
+    description: "PromptRecipe schema (direct workflow object)",
   }
 );
 
