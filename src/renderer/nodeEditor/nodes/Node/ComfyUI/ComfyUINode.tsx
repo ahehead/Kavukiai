@@ -125,7 +125,7 @@ export class ComfyUINode extends MessagePortNode<
         break
       case 'progress':
         this.controls.progress.setValue(Math.round((evt.progress ?? 0) * 100))
-        if (evt.detail) this.controls.console.addValue(`Node: ${evt.detail}`)
+        if (evt.detail) this.controls.console.addValue(`Progress NodeID: ${evt.detail}`)
         break
       case 'preview':
         this.controls.console.addValue('Preview received')
@@ -133,7 +133,11 @@ export class ComfyUINode extends MessagePortNode<
       case 'output':
         this.controls.console.addValue(`Output: ${evt.key}`)
         break
-      case 'finish': {
+      case 'finish':
+        // 新仕様では finish は完了通知のみ
+        this.controls.console.addValue('Finished (awaiting result)')
+        break
+      case 'result': {
         let imgs: NodeImageArray | null = null
         if ('paths' in evt.result) {
           imgs = evt.result.paths.map((path) => createNodeImageFromUrl(path))
@@ -143,7 +147,7 @@ export class ComfyUINode extends MessagePortNode<
         this.images = imgs
         this.dataflow.reset(this.id)
         this.controls.progress.setValue(100)
-        await this.logAndTerminate('done', 'finished', forward)
+        await this.logAndTerminate('done', 'result received', forward)
         break
       }
       case 'error':

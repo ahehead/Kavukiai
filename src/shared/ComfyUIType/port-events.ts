@@ -33,8 +33,9 @@ export type ComfyUIPortEvent =
       data: unknown;
       promptId?: string;
     }
+  | { type: "finish"; promptId?: string } // 互換用 (結果は result イベントで送信)
   | {
-      type: "finish";
+      type: "result";
       /** 最終成果物のまとめ（画像パス配列 or ArrayBuffer 配列） */
       result: ComfyUIFinishResult;
       promptId?: string;
