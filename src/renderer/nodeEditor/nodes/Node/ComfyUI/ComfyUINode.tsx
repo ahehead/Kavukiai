@@ -23,7 +23,7 @@ export class ComfyUINode extends MessagePortNode<
     exec: TypedSocket
     exec2: TypedSocket
     endpoint: TypedSocket
-    workflowRef: TypedSocket
+    workflow: TypedSocket
     inputs: TypedSocket
     outputs: TypedSocket
     opts: TypedSocket
@@ -54,7 +54,7 @@ export class ComfyUINode extends MessagePortNode<
         onClick: () => this.controlflow.execute(this.id, 'exec2'),
       },
       { key: 'endpoint', typeName: 'string', label: 'Endpoint' },
-      { key: 'workflowRef', typeName: 'WorkflowRef', label: 'WorkflowRef' },
+      { key: 'workflow', typeName: 'object', label: 'Workflow' },
       { key: 'inputs', typeName: 'WorkflowInputs', label: 'Inputs' },
       { key: 'outputs', typeName: 'WorkflowOutputs', label: 'Outputs' },
       { key: 'opts', typeName: 'PromptRunOpts', label: 'Run Opts' },
@@ -73,7 +73,7 @@ export class ComfyUINode extends MessagePortNode<
   }
 
   protected async buildRequestArgs(): Promise<ComfyUIRunRequestArgs | null> {
-    const [endpoint, workflowRef, inputs, outputs, opts, bypass] =
+    const [endpoint, workflow, inputs, outputs, opts, bypass] =
       await this.dataflow.fetchInputMultiple<
         [
           string | undefined,
@@ -85,20 +85,19 @@ export class ComfyUINode extends MessagePortNode<
         ]
       >(this.id, [
         'endpoint',
-        'workflowRef',
+        'workflow',
         'inputs',
         'outputs',
         'opts',
         'bypass',
       ])
-    // inputs は Optional 化されたため endpoint / workflowRef のみ必須
-    if (!endpoint || !workflowRef) return null
+    // inputs は Optional 化されたため endpoint / workflow のみ必須
+    if (!endpoint || !workflow) return null
 
     const recipe: PromptRecipe = {
       endpoint,
-      // 型的には workflowRef: WorkflowRef だが runtime では unknown から渡る
-      // dataflow 側で schema 保証されている前提
-      workflowRef: workflowRef as any,
+      // runtime では unknown から渡るため any キャスト (schema 側で保証される前提)
+      workflow: workflow as any,
       ...(inputs ? { inputs } : {}),
       ...(outputs ? { outputs } : {}),
       ...(opts ? { opts } : {}),
