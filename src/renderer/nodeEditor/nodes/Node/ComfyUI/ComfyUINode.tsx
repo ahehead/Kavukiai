@@ -53,8 +53,8 @@ export class ComfyUINode extends MessagePortNode<
         label: 'Cancel',
         onClick: () => this.controlflow.execute(this.id, 'exec2'),
       },
-      { key: 'endpoint', typeName: 'string', label: 'Endpoint' },
-      { key: 'workflow', typeName: 'object', label: 'Workflow' },
+      { key: 'endpoint', typeName: 'string', label: 'Endpoint', require: true },
+      { key: 'workflow', typeName: 'object', label: 'Workflow', require: true },
       { key: 'inputs', typeName: 'WorkflowInputs', label: 'Inputs' },
       { key: 'outputs', typeName: 'WorkflowOutputs', label: 'Outputs' },
       { key: 'opts', typeName: 'PromptRunOpts', label: 'Run Opts' },
@@ -91,6 +91,7 @@ export class ComfyUINode extends MessagePortNode<
         'opts',
         'bypass',
       ])
+    this.controls.console.addValue(`Inputs: ${JSON.stringify({ endpoint, workflow, inputs, outputs, opts, bypass }, null, 2)}`);
     // inputs は Optional 化されたため endpoint / workflow のみ必須
     if (!endpoint || !workflow) return null
 
