@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Folder } from 'lucide-react'
 import type { FC } from 'react'
 import { memo } from 'react'
 import type { Item } from 'rete-context-menu-plugin/_types/types'
@@ -64,7 +64,15 @@ export const MenuItem: FC<MenuItemProps> = memo(
           onPointerEnter={() => ctx.handleEnterMenuItem(level, item)}
           onPointerLeave={ctx.handleLeaveMenu}
         >
-          <div className="w-[30px]"></div>
+          <div className="w-[30px] flex items-center justify-center">
+            {hasChildren && (
+              <Folder
+                className="w-3.5 h-3.5 text-muted-foreground"
+                strokeWidth={1}
+                aria-hidden="true"
+              />
+            )}
+          </div>
           <span className="flex-1 text-left">{item.label}</span>
           {hasChildren && (
             <ChevronRight
