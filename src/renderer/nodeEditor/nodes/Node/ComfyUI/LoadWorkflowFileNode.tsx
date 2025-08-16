@@ -10,7 +10,7 @@ import {
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { IpcResult } from 'shared/ApiType'
-import { ConsoleControl } from '../../Controls/Console'
+import { ConsoleControl } from '../../Controls/Console/Console'
 
 // ファイルパスから API 用 ComfyUI workflow JSON を読み込むノード
 // 入力: exec, path(string)

@@ -14,7 +14,7 @@ import type {
   WorkflowOutputs,
 } from 'shared/ComfyUIType'
 import type { ComfyUIPortEvent } from 'shared/ComfyUIType/port-events'
-import { ConsoleControl } from '../../Controls/Console'
+import { ConsoleControl } from '../../Controls/Console/Console'
 import { ProgressControl } from '../../Controls/view/ProgressControl'
 
 export class ComfyUINode extends MessagePortNode<

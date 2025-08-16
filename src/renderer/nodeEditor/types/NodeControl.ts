@@ -3,7 +3,7 @@ import type { ChatMessageListControl } from "../nodes/Controls/Chat/ChatMessageL
 import type { UChatControl } from "../nodes/Controls/Chat/UChat";
 import type { SelectWorkflowControl } from "../nodes/Controls/ComfyUI/SelectWorkflowControl";
 import type { WorkflowIOSelectControl } from "../nodes/Controls/ComfyUI/WorkflowIOSelectControl";
-import type { ConsoleControl } from "../nodes/Controls/Console";
+import type { ConsoleControl } from "../nodes/Controls/Console/Console";
 import type { ImageControl } from "../nodes/Controls/Image";
 import type { CheckBoxControl } from "../nodes/Controls/input/CheckBox";
 import type { ImageFileInputControl } from "../nodes/Controls/input/ImageFileInput";

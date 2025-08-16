@@ -5,7 +5,7 @@ import { MessagePortNode } from 'renderer/nodeEditor/types/Node/MessagePortNode'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { LMStudioLoadRequestArgs, LMStudioPortEvent } from "shared/LMStudioType"
-import { ConsoleControl } from '../../Controls/Console'
+import { ConsoleControl } from '../../Controls/Console/Console'
 import { ProgressControl } from '../../Controls/view/ProgressControl'
 
 export class LMStudioLoadModelNode extends MessagePortNode<

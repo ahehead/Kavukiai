@@ -1,5 +1,5 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import { ConsoleControl } from 'renderer/nodeEditor/nodes/Controls/Console'
+import { ConsoleControl } from 'renderer/nodeEditor/nodes/Controls/Console/Console'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { NodeStatus, SerializableInputsNode } from 'renderer/nodeEditor/types'
 

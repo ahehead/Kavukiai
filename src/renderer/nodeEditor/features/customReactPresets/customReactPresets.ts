@@ -23,7 +23,7 @@ import {
 import {
   ConsoleControl,
   ConsoleControlView,
-} from "renderer/nodeEditor/nodes/Controls/Console";
+} from "renderer/nodeEditor/nodes/Controls/Console/Console";
 import {
   ImageControl,
   ImageControlView,
@@ -86,6 +86,7 @@ import {
   CustomSocket,
   createCustomNode,
 } from "renderer/nodeEditor/nodes/components";
+import { CustomConnection } from "renderer/nodeEditor/nodes/components/CustomConnection";
 import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
@@ -126,6 +127,9 @@ export function customReactPresets(
   // Use any-cast to bypass complex TS types for Rete React Presets
   return (ReactPresets.classic as any).setup({
     customize: {
+      connection: (_data: any) => {
+        return CustomConnection;
+      },
       socket: (data: any) => {
         return data.payload?.isExec ? CustomExecSocket : CustomSocket;
       },

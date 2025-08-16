@@ -10,7 +10,7 @@ import {
 
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
-import { ConsoleControl } from '../../Controls/Console'
+import { ConsoleControl } from '../../Controls/Console/Console'
 
 /**
  * PrepareWorkflowPromptNode

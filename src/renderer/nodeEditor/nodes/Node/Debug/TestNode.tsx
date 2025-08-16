@@ -1,7 +1,7 @@
 import { SerializableInputsNode } from 'renderer/nodeEditor/types'
 import { ButtonControl } from '../../Controls/Button'
 import { UChatControl } from '../../Controls/Chat/UChat'
-import { ConsoleControl } from '../../Controls/Console'
+import { ConsoleControl } from '../../Controls/Console/Console'
 import { ImageControl } from '../../Controls/Image'
 import { CheckBoxControl } from '../../Controls/input/CheckBox'
 import { ImageFileInputControl } from '../../Controls/input/ImageFileInput'
@@ -118,7 +118,7 @@ export class TestNode extends SerializableInputsNode<
     const consoleControl = new ConsoleControl({ isOpen: true })
     this.addControl('console', consoleControl)
 
-    // 既存のボタンに大量テキスト追加動作を付与（副作用でも良いが専用ボタンにしたい場合は別途）
+    // 大量テキスト追加動作
     this.addControl(
       'buttonHeavyLog',
       new ButtonControl({
@@ -132,7 +132,6 @@ export class TestNode extends SerializableInputsNode<
           for (let i = 0; i < lines; i++) {
             chunk += `${i}: ${base}Line repeat performance test.\n`
           }
-          // 分割して addValue すると現在の実装で split/join が多発し体感しやすい。ここではまとめて addValue。
           consoleControl.addValue(chunk)
         },
       })

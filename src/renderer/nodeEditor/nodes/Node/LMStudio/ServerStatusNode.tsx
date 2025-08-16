@@ -11,7 +11,7 @@ import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
 import type { ServerStatusInfo } from 'renderer/nodeEditor/types/Schemas/lmstudio/StatusSchemas'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
-import { ConsoleControl } from '../../Controls/Console'
+import { ConsoleControl } from '../../Controls/Console/Console'
 
 export class ServerStatusNode extends SerializableInputsNode<
   'ServerStatus',

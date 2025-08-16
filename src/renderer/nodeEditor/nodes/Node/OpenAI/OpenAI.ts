@@ -12,7 +12,7 @@ import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import type { OpenAIPortEventType, OpenAIRequestArgs } from "shared/ApiType";
 import type { ControlJson } from "shared/JsonType";
-import { ConsoleControl } from "../../Controls/Console";
+import { ConsoleControl } from "../../Controls/Console/Console";
 
 // Run ノード
 export class OpenAINode extends MessagePortNode<

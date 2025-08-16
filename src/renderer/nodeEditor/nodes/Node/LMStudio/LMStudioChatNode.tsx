@@ -12,7 +12,7 @@ import {
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { LMStudioChatRequestArgs } from "shared/LMStudioType"
-import { ConsoleControl } from '../../Controls/Console'
+import { ConsoleControl } from '../../Controls/Console/Console'
 
 export class LMStudioChatNode extends MessagePortNode<
   'LMStudioChat',
