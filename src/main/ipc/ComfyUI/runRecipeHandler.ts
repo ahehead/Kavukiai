@@ -100,8 +100,8 @@ async function handleRunRecipe(
     port.postMessage(msg);
   };
   const api = getComfyApiClient(recipe.endpoint, {
-    forceWs: recipe.opts?.forceWs,
-    wsTimeout: recipe.opts?.wsTimeout,
+    forceWs: recipe.opts?.forceWs ?? true,
+    wsTimeout: recipe.opts?.wsTimeout ?? 5000,
   });
   // finish イベントで受け取った raw data / promptId を保持し、run() 完了後にまとめて result を送信する方式へ変更
   let finishedRawData: ComfyFinishData | null = null;
@@ -123,7 +123,9 @@ async function handleRunRecipe(
   }
 
   try {
-    api.init(recipe.opts?.maxTries, recipe.opts?.delayTime);
+    await api
+      .init(recipe.opts?.maxTries, recipe.opts?.delayTime)
+      .waitForReady();
 
     const inputKeys = Object.keys(recipe.inputs ?? {});
     const outputKeys = Object.keys(recipe.outputs ?? {});
