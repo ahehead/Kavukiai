@@ -28,7 +28,6 @@ import type {
   LMStudioStopNode,
   LMStudioToUChatCommandNode,
   LoadWorkflowFileNode,
-  LoadWorkflowNode,
   MergeWorkflowInputsDefaultsNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
@@ -40,6 +39,7 @@ import type {
   OpenAINode,
   OpenAIToChatEventNode,
   OpenAIToUChatCommandNode,
+  PrepareWorkflowPromptNode,
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
   ReverseRoleNode,
@@ -127,7 +127,7 @@ export type NodeTypes =
   | LLMPredictionConfigNode
   | ComfyUINode
   | ComfyDesktopStartNode
-  | LoadWorkflowNode
+  | PrepareWorkflowPromptNode
   | LoadWorkflowFileNode
   | MergeWorkflowInputsDefaultsNode
   | TemplateWorkflowListNode

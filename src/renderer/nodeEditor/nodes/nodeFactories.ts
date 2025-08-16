@@ -30,7 +30,6 @@ import {
   LMStudioStartNode,
   LMStudioStopNode,
   LoadWorkflowFileNode,
-  LoadWorkflowNode,
   MergeWorkflowInputsDefaultsNode,
   ModelInfoToModelListNode,
   MultiLineStringNode,
@@ -40,6 +39,7 @@ import {
   ObjectToStringNode,
   ObjectToYAMLStringNode,
   OpenAINode,
+  PrepareWorkflowPromptNode,
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
   RoleNode,
@@ -141,8 +141,8 @@ export const nodeFactories = {
     new ComfyUINode(area, dataflow, controlflow),
   ComfyDesktopStart: ({ area, dataflow, controlflow }) =>
     new ComfyDesktopStartNode(area, dataflow, controlflow),
-  LoadWorkflow: ({ area, dataflow, controlflow }) =>
-    new LoadWorkflowNode(area, dataflow, controlflow),
+  PrepareWorkflowPrompt: ({ area, dataflow, controlflow }) =>
+    new PrepareWorkflowPromptNode(area, dataflow, controlflow),
   LoadWorkflowFile: ({ area, dataflow, controlflow }) =>
     new LoadWorkflowFileNode(area, dataflow, controlflow),
   TemplateWorkflowList: ({ history, dataflow, controlflow }) =>
@@ -316,7 +316,7 @@ const rawMenu: RawMenuItem[] = [
     subitems: [
       { label: "ComfyUI", factoryKey: "ComfyUI" },
       { label: "ComfyDesktopStart", factoryKey: "ComfyDesktopStart" },
-      { label: "LoadWorkflow", factoryKey: "LoadWorkflow" },
+      { label: "PrepareWorkflowPrompt", factoryKey: "PrepareWorkflowPrompt" },
       { label: "LoadWorkflowFile", factoryKey: "LoadWorkflowFile" },
       { label: "TemplateWorkflowList", factoryKey: "TemplateWorkflowList" },
       { label: "UserWorkflowList", factoryKey: "UserWorkflowList" },

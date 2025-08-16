@@ -12,20 +12,24 @@ import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import { ConsoleControl } from '../../Controls/Console'
 
-export class LoadWorkflowNode extends SerializableInputsNode<
-  'LoadWorkflow',
+/**
+ * PrepareWorkflowPromptNode
+ * workflowRef (userData/template) を解決し、API 用 prompt/workflow データ(正規化済)を取得する。
+ */
+export class PrepareWorkflowPromptNode extends SerializableInputsNode<
+  'PrepareWorkflowPrompt',
   { exec: TypedSocket; endpoint: TypedSocket; workflowRef: TypedSocket },
-  { exec: TypedSocket; workflow: TypedSocket },
+  { exec: TypedSocket; workflowPrompt: TypedSocket },
   { console: ConsoleControl }
 > {
-  private lastWorkflow: unknown = null
+  private lastWorkflowPrompt: unknown = null
 
   constructor(
     private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
-    super('LoadWorkflow')
+    super('PrepareWorkflowPrompt')
     this.addInputPort([
       {
         key: 'exec',
@@ -48,13 +52,13 @@ export class LoadWorkflowNode extends SerializableInputsNode<
     ])
     this.addOutputPort([
       { key: 'exec', typeName: 'exec', label: 'Out' },
-      { key: 'workflow', typeName: 'object', label: 'Workflow' },
+      { key: 'workflowPrompt', typeName: 'object', label: 'WorkflowPrompt' },
     ])
     this.addControl('console', new ConsoleControl({ isOpen: true }))
   }
 
-  data(): { workflow: unknown } {
-    return { workflow: this.lastWorkflow }
+  data(): { workflowPrompt: unknown } {
+    return { workflowPrompt: this.lastWorkflowPrompt }
   }
 
   async execute(_: never, forward: (output: 'exec') => void): Promise<void> {
@@ -81,8 +85,8 @@ export class LoadWorkflowNode extends SerializableInputsNode<
         endpoint,
         workflowRef,
       })
-      this.lastWorkflow = data
-      this.controls.console.addValue('Loaded workflow via workflowRef')
+      this.lastWorkflowPrompt = data
+      this.controls.console.addValue('Resolved workflowRef to API prompt')
       this.changeStatus(this.area, NodeStatus.COMPLETED)
       this.dataflow.reset(this.id)
       forward('exec')
