@@ -102,7 +102,7 @@ export async function createNodeEditor(container: HTMLElement) {
 
   connection.addPreset(ConnectionPresets.classic.setup());
   // react pluginのカスタマイズ
-  render.addPreset(customReactPresets(area, history, getZoom));
+  render.addPreset(customReactPresets(editor, area, history, getZoom));
 
   // Undo/Redo機能有効化
   history.addPreset(HistoryPresets.classic.setup());

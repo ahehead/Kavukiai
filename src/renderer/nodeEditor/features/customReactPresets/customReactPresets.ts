@@ -86,11 +86,16 @@ import {
   CustomSocket,
   createCustomNode,
 } from "renderer/nodeEditor/nodes/components";
-import { CustomConnection } from "renderer/nodeEditor/nodes/components/CustomConnection";
+import {
+  CustomDataConnection,
+  CustomExecConnection,
+} from "renderer/nodeEditor/nodes/components/CustomConnection";
 import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
+import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
 import { Presets as ReactPresets } from "rete-react-plugin";
+import { getConnectionSockets } from "../socket_type_restriction/canCreateConnection";
 
 type Ctor<T = unknown> = new (...a: any[]) => T;
 // React コンポーネント型を明確に定義
@@ -120,6 +125,7 @@ const controlViews = new Map<Ctor, ControlViewComponent>([
 ]);
 
 export function customReactPresets(
+  editor: NodeEditor<Schemes>,
   area: AreaPlugin<Schemes, AreaExtra>,
   history: HistoryPlugin<Schemes>,
   getZoom: () => number
@@ -128,7 +134,11 @@ export function customReactPresets(
   return (ReactPresets.classic as any).setup({
     customize: {
       connection: (_data: any) => {
-        return CustomConnection;
+        const { source, target } = getConnectionSockets(editor, _data.payload);
+        if (source?.isExec || target?.isExec) {
+          return CustomExecConnection;
+        }
+        return CustomDataConnection;
       },
       socket: (data: any) => {
         return data.payload?.isExec ? CustomExecSocket : CustomSocket;
