@@ -1,18 +1,20 @@
 import { ComfyApi } from "@saintno/comfyui-sdk";
-import { toApiPromptStrict } from "./graph-to-prompt-strict";
+import { toApiPromptStrict } from "../src/main/ipc/ComfyUI/graph-to-prompt-strict.ts";
+import sampleJson from "../src/resources/build/sample/workflow_2.json";
 
 async function main() {
   const api = new ComfyApi("http://localhost:8000");
 
-  const list = await api.fetchApi("/templates/image2image.json");
-  const workflow = await list.json();
-  console.log(workflow);
+  const list = await api.fetchApi("/templates/default.json");
+  const target = await list.json();
+  console.log("target workflow json : \n", JSON.stringify(target, null, 2));
 
-  const apiPrompt = await toApiPromptStrict(workflow, {
+  const apiPrompt = await toApiPromptStrict(target, {
     baseUrl: "http://localhost:8000",
   });
 
-  console.log(apiPrompt);
+  console.log("workflow prompt version : \n", apiPrompt);
+  console.log("参考 workflow json : \n", sampleJson);
 }
 
 main();
