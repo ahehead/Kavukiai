@@ -1,6 +1,7 @@
 import { SerializableInputsNode } from 'renderer/nodeEditor/types'
 import { ButtonControl } from '../../Controls/Button'
 import { UChatControl } from '../../Controls/Chat/UChat'
+import { ConsoleControl } from '../../Controls/Console'
 import { ImageControl } from '../../Controls/Image'
 import { CheckBoxControl } from '../../Controls/input/CheckBox'
 import { ImageFileInputControl } from '../../Controls/input/ImageFileInput'
@@ -21,6 +22,7 @@ export class TestNode extends SerializableInputsNode<
   {
     check: CheckBoxControl
     button: ButtonControl
+    buttonHeavyLog: ButtonControl
     select: SelectControl<string>
     list: ListControl<string>
     switch: SwitchControl
@@ -31,6 +33,7 @@ export class TestNode extends SerializableInputsNode<
     progress: ProgressControl
     uChat: UChatControl
     pathInput: PathInputControl
+    console: ConsoleControl
     // コントロールを作った場合まずここに追加
   }
 > {
@@ -108,6 +111,30 @@ export class TestNode extends SerializableInputsNode<
         mode: 'file',
         placeholder: 'ファイルまたはフォルダを選択…',
         title: 'パスを選択',
+      })
+    )
+
+    // ConsoleControl (heavy text test)
+    const consoleControl = new ConsoleControl({ isOpen: true })
+    this.addControl('console', consoleControl)
+
+    // 既存のボタンに大量テキスト追加動作を付与（副作用でも良いが専用ボタンにしたい場合は別途）
+    this.addControl(
+      'buttonHeavyLog',
+      new ButtonControl({
+        label: 'Add Huge Console Text',
+        onClick: async () => {
+          // 約 ~1MB 相当のテキストを生成して Console に追加
+          const lines = 5000 // 行数
+          const base =
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+          let chunk = ''
+          for (let i = 0; i < lines; i++) {
+            chunk += `${i}: ${base}Line repeat performance test.\n`
+          }
+          // 分割して addValue すると現在の実装で split/join が多発し体感しやすい。ここではまとめて addValue。
+          consoleControl.addValue(chunk)
+        },
       })
     )
 

@@ -18,7 +18,12 @@ export interface ConsoleControlParams extends ControlOptions<any> {
 export class ConsoleControl extends BaseControl<any, ConsoleControlParams> {
   value: string
   isOpen: boolean
-  private lastMessage: string | null = null
+  // 追加: 内部ログ配列（行ごと + 連続回数）
+  private logs: { msg: string; count: number }[] = []
+  private dirty = false // value 再生成が必要か
+  private static readonly SEPARATOR = '\n-----------\n'
+  private static readonly MAX_ENTRIES = 2000 // 上限（必要なら調整）
+  private lastMessage: string | null = null // 互換用（UI 他で参照されている場合に備え保持）
   private repeatCount = 1
 
   constructor(public params: ConsoleControlParams) {
@@ -39,46 +44,67 @@ export class ConsoleControl extends BaseControl<any, ConsoleControlParams> {
   addValue: (addValue: string) => void = addValue => {
     if (!addValue) return
 
-    if (addValue === this.lastMessage) {
-      this.repeatCount++
-      // valueの最後のメッセージブロックを更新
-      const blocks = this.value.split('\n-----------\n')
-      // 最後のブロックは空文字列なので、その前を更新
-      const lastBlockIndex = blocks.length - 2
-      blocks[lastBlockIndex] = `${this.lastMessage} (x${this.repeatCount})`
-      this.value = blocks.join('\n-----------\n')
+    const last = this.logs[this.logs.length - 1]
+    if (last && last.msg === addValue) {
+      last.count++
+      this.repeatCount = last.count
     } else {
+      this.logs.push({ msg: addValue, count: 1 })
       this.lastMessage = addValue
       this.repeatCount = 1
-      this.value += `${addValue}\n-----------\n`
+      // 上限超過を早期トリム（古いものを捨てる）
+      if (this.logs.length > ConsoleControl.MAX_ENTRIES) {
+        const overflow = this.logs.length - ConsoleControl.MAX_ENTRIES
+        this.logs.splice(0, overflow)
+      }
     }
+    this.dirty = true
     this.notify()
   }
   setValue(value: string) {
+    // 外部から直接設定（クリア等）
     this.value = value
-    this.lastMessage = null
-    this.repeatCount = 1
+    this.logs = []
+    if (value) {
+      const parts = value.split(ConsoleControl.SEPARATOR).filter(p => p)
+      for (const p of parts) {
+        const m = p.match(/^(.*) \(x(\d+)\)$/)
+        if (m) this.logs.push({ msg: m[1], count: Number(m[2]) })
+        else this.logs.push({ msg: p, count: 1 })
+      }
+    }
+    const last = this.logs[this.logs.length - 1]
+    this.lastMessage = last ? last.msg : null
+    this.repeatCount = last ? last.count : 1
+    this.dirty = false
     this.notify()
   }
   getValue(): string {
+    if (this.dirty) {
+      // 再構築（線形）: logs が上限管理されているので負荷軽減
+      this.value = this.logs
+        .map(l => (l.count > 1 ? `${l.msg} (x${l.count})` : l.msg))
+        .join(ConsoleControl.SEPARATOR)
+      if (this.value) this.value += ConsoleControl.SEPARATOR
+      this.dirty = false
+    }
     return this.value
   }
   override toJSON(): ControlJson {
     return {
       data: {
-        value: this.value,
+        value: this.getValue(),
         isOpen: this.isOpen,
+        // 互換: lastMessage / repeatCount も保存
         lastMessage: this.lastMessage,
         repeatCount: this.repeatCount,
       },
     }
   }
   override setFromJSON({ data }: ControlJson): void {
-    const { value, isOpen, lastMessage, repeatCount } = data as any
-    this.value = value ?? ''
+    const { value, isOpen } = data as any
     this.isOpen = isOpen ?? false
-    this.lastMessage = lastMessage ?? null
-    this.repeatCount = repeatCount ?? 1
+    this.setValue(value ?? '')
   }
 }
 
@@ -137,7 +163,7 @@ export function ConsoleControlView(props: {
         {isOpen && (
           <textarea
             ref={textareaRef}
-            className="w-full h-full min-h-0 overflow-auto p-2 border-none resize-none text-sm text-gray-700 dark:text-gray-200 rounded-md bg-gray-100 focus:outline-none mt-1"
+            className="w-full h-full min-h-0 overflow-auto p-2 border-none resize-none text-sm text-gray-700 dark:text-gray-200 rounded-md bg-gray-100 focus:outline-none mt-1 select-all"
             value={value}
             readOnly
             rows={1}
