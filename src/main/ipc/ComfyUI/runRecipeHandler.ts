@@ -95,10 +95,8 @@ async function handleRunRecipe(
   console.log("comfy recipe", id, recipe);
   const port = evt.ports[0];
   port.start();
-  const sentSequence: string[] = [];
   const send = (msg: ComfyUIPortEvent) => {
-    sentSequence.push(msg.type);
-    console.log(`[ComfyUI][send] type=${msg.type} seq=${sentSequence.length}`);
+    console.log(`[ComfyUI][send] type=${msg.type}`);
     port.postMessage(msg);
   };
   const api = getComfyApiClient(recipe.endpoint, {
@@ -267,6 +265,7 @@ async function handleRunRecipe(
             ? (runResult as any)
             : null);
         if (raw) {
+          console.log("[ComfyUI][run] building result from raw data", { raw });
           const buffers = await collectOutputBuffers(raw, outputKeys, api);
           send({
             type: "result",
@@ -293,7 +292,6 @@ async function handleRunRecipe(
   } finally {
     console.log("[ComfyUI][run] finally closing port", {
       nodeId: id,
-      sentSequence,
     });
     try {
       port.close();

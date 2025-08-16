@@ -11,7 +11,6 @@ export function getComfyApiClient(
   opts?: {
     forceWs?: boolean;
     wsTimeout?: number;
-    listenTerminal?: boolean;
   }
 ): ComfyApi {
   if (!comfyApiInstance) {
