@@ -12,7 +12,6 @@ import {
 } from 'renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas'
 import { InputValueControl } from '../../Controls/input/InputValue'
 import { SelectControl } from '../../Controls/input/Select'
-import { getInputValue } from '../../util/getInput'
 
 // Node that builds LLMPredictionConfig object for LMStudio
 export class LLMPredictionConfigNode extends SerializableInputsNode<
@@ -108,7 +107,7 @@ export class LLMPredictionConfigNode extends SerializableInputsNode<
   } {
     const cfg: Partial<LLMPredictionConfig> = {}
     for (const key of Object.keys(this.inputs) as LLMPredictionConfigKey[]) {
-      const val = getInputValue(this.inputs, key, inputs)
+      const val = this.getInputValue(inputs, key)
       if (val !== undefined) cfg[key] = val as any
     }
     return { config: cfg as LLMPredictionConfig }
