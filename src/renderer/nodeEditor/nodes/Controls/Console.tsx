@@ -8,6 +8,7 @@ import {
 } from 'renderer/nodeEditor/types'
 import { Drag } from 'rete-react-plugin'
 import type { ControlJson } from 'shared/JsonType'
+import { useDragEdgeAutoscroll } from '../util/useDragEdgeAutoscroll'
 import { useStopWheel } from '../util/useStopWheel'
 
 export interface ConsoleControlParams extends ControlOptions<any> {
@@ -112,9 +113,13 @@ export function ConsoleControlView(props: {
   data: ConsoleControl
 }): JSX.Element {
   const value = useControlValue(props.data)
-  const isOpen = useControlOpen(props.data)
+  const isOpen = useSyncExternalStore(
+    cb => props.data.subscribe(cb),
+    () => props.data.isConsoleOpen()
+  )
   const textareaRef = useRef<HTMLDivElement>(null)
   useStopWheel(textareaRef)
+  useDragEdgeAutoscroll(textareaRef)
 
   useLayoutEffect(() => {
     if (textareaRef.current) {
@@ -149,7 +154,7 @@ export function ConsoleControlView(props: {
             />
             <span className="text-sm ml-1">Console</span>
           </button>
-          <div className='flex-1'></div>
+          <div className="flex-1"></div>
           <button
             type="button"
             className="ml-2 p-1 rounded bg-node-bg text-gray-500 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:text-gray-700 dark:text-gray-200 transition flex items-center justify-center"
@@ -164,22 +169,17 @@ export function ConsoleControlView(props: {
           <div
             ref={textareaRef}
             className="w-full h-full min-h-0 overflow-auto p-2 rounded-md bg-gray-100 mt-1"
-            onPointerDown={(e) => e.stopPropagation()}
-            onPointerMove={(e) => e.stopPropagation()}
-            onWheel={(e) => e.stopPropagation()}
+            onPointerDown={e => e.stopPropagation()}
+            onPointerMove={e => e.stopPropagation()}
+            onWheel={e => e.stopPropagation()}
           >
             <pre className="text-sm whitespace-pre-wrap select-text">
               {value}
             </pre>
-          </div>)}
+          </div>
+        )}
       </div>
     </Drag.NoDrag>
   )
 }
 
-export function useControlOpen(control: ConsoleControl): boolean {
-  return useSyncExternalStore(
-    cb => control.subscribe(cb),
-    () => control.isConsoleOpen()
-  )
-}
