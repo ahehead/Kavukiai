@@ -1,6 +1,6 @@
 import { ComfyApi } from "@saintno/comfyui-sdk";
 import { toApiPromptStrict } from "../src/main/ipc/ComfyUI/graph-to-prompt-strict.ts";
-import sampleJson from "../src/resources/build/sample/workflow_2.json";
+import sampleJson from "../src/resources/build/sample/default_api.json";
 
 async function main() {
   const api = new ComfyApi("http://localhost:8000");
@@ -13,8 +13,11 @@ async function main() {
     baseUrl: "http://localhost:8000",
   });
 
-  console.log("workflow prompt version : \n", apiPrompt);
-  console.log("参考 workflow json : \n", sampleJson);
+  console.log(
+    "workflow prompt version : \n",
+    JSON.stringify(apiPrompt, null, 2)
+  );
+  console.log("参考 workflow json : \n", JSON.stringify(sampleJson, null, 2));
 }
 
 main();

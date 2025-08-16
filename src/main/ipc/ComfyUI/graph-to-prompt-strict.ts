@@ -33,6 +33,8 @@ type NodeClassInfo = {
   input?: {
     required?: Record<string, InputTypeDecl>;
     optional?: Record<string, InputTypeDecl>;
+    // 一部ノード（SaveImage 等）は hidden 入力を持つ
+    hidden?: Record<string, InputTypeDecl>;
   };
   output?: Record<string, OutputTypeDecl>;
   // その他: category, name, description, etc...
@@ -159,44 +161,60 @@ class ObjectInfoCache {
       info?.input?.required?.[inputName] ?? info?.input?.optional?.[inputName];
     return t ? String(t[0]) : undefined;
   }
+
+  async getInputDecl(
+    className: string,
+    inputName: string
+  ): Promise<InputTypeDecl | undefined> {
+    const info = await this.get(className);
+    return (
+      info?.input?.required?.[inputName] ||
+      info?.input?.optional?.[inputName] ||
+      info?.input?.hidden?.[inputName]
+    );
+  }
 }
 
 // ---------- ユーティリティ ----------
 const asId = (v: number | string) => String(v);
 
-// GUIの outputs から (nodeId, slotIndex) -> 出力名 を作る
-function buildOutputNameIndex(nodes: GuiNode[]): Map<string, string> {
-  const outName = new Map<string, string>();
+// GUIの outputs から (nodeId, slotIndex) -> slotIndex を作る（将来拡張用に保持）
+function buildOutputSlotIndex(nodes: GuiNode[]): Map<string, number> {
+  const outSlot = new Map<string, number>();
   for (const n of nodes) {
     const nid = asId(n.id);
     for (const o of n.outputs ?? []) {
-      const key = `${nid}:${String(o.slot_index ?? 0)}`;
-      outName.set(key, o.name);
+      const slotIdx = Number(o.slot_index ?? 0);
+      const key = `${nid}:${slotIdx}`;
+      outSlot.set(key, slotIdx);
     }
   }
-  return outName;
+  return outSlot;
 }
 
-// links を (dstId, dstSlot) -> [srcId, srcOutName] に正規化
+// links を (dstId, dstSlot) -> [srcId, srcSlotIndexNumber] に正規化（API仕様準拠）
 function buildIncomingLinkIndex(
-  wf: GuiWorkflow,
-  outName: Map<string, string>
-): Map<string, [string, string]> {
-  const linkIn = new Map<string, [string, string]>();
+  wf: GuiWorkflow
+): Map<string, [string, number]> {
+  const linkIn = new Map<string, [string, number]>();
   for (const L of wf.links ?? []) {
     if (Array.isArray(L)) {
       // v0.4: [id, origin_id, origin_slot, target_id, target_slot, TYPE]
       const [, srcId, srcSlot, dstId, dstSlot] = L;
-      const srcOut = outName.get(`${asId(srcId)}:${String(srcSlot)}`) ?? "OUT";
-      linkIn.set(`${asId(dstId)}:${String(dstSlot)}`, [asId(srcId), srcOut]);
+      linkIn.set(`${asId(dstId)}:${String(dstSlot)}`, [
+        asId(srcId),
+        Number(srcSlot),
+      ]);
     } else if (L && typeof L === "object") {
       // v1.0: { origin_id, origin_slot, target_id, target_slot, ... }
       const srcId = L.origin_id,
         srcSlot = L.origin_slot;
       const dstId = L.target_id,
         dstSlot = L.target_slot;
-      const srcOut = outName.get(`${asId(srcId)}:${String(srcSlot)}`) ?? "OUT";
-      linkIn.set(`${asId(dstId)}:${String(dstSlot)}`, [asId(srcId), srcOut]);
+      linkIn.set(`${asId(dstId)}:${String(dstSlot)}`, [
+        asId(srcId),
+        Number(srcSlot),
+      ]);
     }
   }
   return linkIn;
@@ -250,17 +268,8 @@ function popNextMatching(
 }
 
 // 追加: スカラーのデフォルトを決める（安全側）
-function pickScalarDefault(expectedType?: string): any | undefined {
-  if (!expectedType) return undefined;
-  if (
-    expectedType === "STRING" ||
-    expectedType === "COMBO" ||
-    expectedType === "FILE" ||
-    expectedType === "ENUM"
-  ) {
-    return ""; // 空文字で明示すれば /prompt では「未指定」にならない
-  }
-  // INT/FLOAT/BOOLEAN は勝手に埋めない（ノードごとに意味が重い）
+function pickScalarDefault(_expectedType?: string): any | undefined {
+  // 案A: 自動補完しない（object_info 由来 default のみ別途使用）
   return undefined;
 }
 
@@ -273,8 +282,9 @@ export async function toApiPromptStrict(
   const info = new ObjectInfoCache(baseUrl);
 
   // 出力名逆引き/入力リンク逆引きを構築
-  const outNameIndex = buildOutputNameIndex(wf.nodes ?? []);
-  const linkInIndex = buildIncomingLinkIndex(wf, outNameIndex);
+  // 出力スロット逆引き（現状未使用だが保持）
+  const _outSlotIndex = buildOutputSlotIndex(wf.nodes ?? []);
+  const linkInIndex = buildIncomingLinkIndex(wf);
 
   const result: ApiPrompt = {};
 
@@ -415,17 +425,19 @@ export async function toApiPromptStrict(
           const t = normalizeScalarType(tRaw);
           // 1) リンク系はここではスキップ（後でリンクで満たされる）
           if (t && LINK_TYPES.has(t)) continue;
-
-          // 2) スカラー必須はデフォルトで穴埋め（STRING系は空文字、他は未設定のまま）
+          // 2) object_info の default があるなら採用（InputTypeDecl の第2要素 例: ["STRING", {default:"ComfyUI"}])
           if (t && isScalarType(t)) {
-            const def = pickScalarDefault(t);
-            if (def !== undefined) {
-              inputs[r] = def;
-              continue;
+            const decl = await info.getInputDecl(classType, r);
+            if (Array.isArray(decl) && decl[1] && typeof decl[1] === "object") {
+              const maybeDefault = (decl[1] as any).default;
+              if (maybeDefault !== undefined) {
+                inputs[r] = maybeDefault;
+                continue;
+              }
             }
           }
-          // 3) それでも未設定なら厳密モードで落とす
-          if (strictTypes && inputs[r] === undefined) {
+          // 3) 依然未設定ならエラー
+          if (inputs[r] === undefined) {
             console.error("DBG", {
               classType,
               nodeId: nid,
