@@ -8,21 +8,15 @@ export interface RunButtonControlOptions extends ControlOptions<any> {
 
 // Run ボタン用コントロール
 export class RunButtonControl extends BaseControl<any, RunButtonControlOptions> {
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  constructor(opts: RunButtonControlOptions) {
-    super(opts);
-    this.onClick = opts.onClick ?? (() => { });
-  }
   setValue(_value: object): void { }
   getValue(): object { return {}; }
 }
 
 // カスタム Run ボタンコンポーネント
-export function RunButtonControlView(props: { data: RunButtonControl }) {
-  const control = props.data;
+export function RunButtonControlView({ data: control }: { data: RunButtonControl }) {
   return <RunButton
     label={"Run"}
-    onClick={control.onClick}
+    onClick={control.opts.onClick ?? (() => { })}
   />;
 }
 
