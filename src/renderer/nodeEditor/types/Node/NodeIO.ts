@@ -128,6 +128,7 @@ export abstract class NodeIO<
             e.stopPropagation();
             await onClick();
           },
+          isExec: true,
         })
       );
       input.showControl = showControl ?? true; // controlはデフォルトで表示する

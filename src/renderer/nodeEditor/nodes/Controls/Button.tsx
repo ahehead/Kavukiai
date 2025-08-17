@@ -1,42 +1,73 @@
-import type React from "react"
-import { BaseControl, type ControlOptions } from "renderer/nodeEditor/types/BaseControl";
-import { Drag } from "rete-react-plugin";
-import type { ControlJson } from "shared/JsonType";
+import { cva, type VariantProps } from 'class-variance-authority'
+import type React from 'react'
+import {
+  BaseControl,
+  type ControlOptions,
+} from 'renderer/nodeEditor/types/BaseControl'
+import { Drag } from 'rete-react-plugin'
+import type { ControlJson } from 'shared/JsonType'
 
 export interface ButtonControlParams extends ControlOptions<any> {
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
+  isExec?: boolean
 }
 
 // ボタン用コントロール
 export class ButtonControl extends BaseControl<any, ButtonControlParams> {
-  constructor(
-    public params: ButtonControlParams
-  ) {
-    super({ cols: 0, ...params }); // cols:0でラベルを非表示にする
+  constructor(public params: ButtonControlParams) {
+    super({ cols: 0, ...params }) // cols:0でラベルを非表示にする
   }
   setValue(): void { }
-  getValue(): object { return {}; }
+  getValue(): object {
+    return {}
+  }
 
-  override toJSON(): ControlJson { return {} }
+  override toJSON(): ControlJson {
+    return {}
+  }
   override setFromJSON(): void { }
 }
 
 // カスタム Run ボタンコンポーネント
-export function ButtonControlView(props: { data: ButtonControl }) {
-  return <Button label={props.data.opts.label ?? ""} onClick={props.data.opts.onClick} />;
+export function ButtonControlView({ data: control }: { data: ButtonControl }) {
+  return (
+    <Button
+      label={control.opts.label ?? ''}
+      onClick={control.opts.onClick}
+      isExec={!!control.opts.isExec}
+    />
+  )
 }
 
-function Button(props: {
+const buttonVariants = cva(
+  'flex items-center justify-center p-1 overflow-hidden text-sm font-medium w-full rounded-lg border-1 hover:bg-accent/50 text-foreground active:bg-accent/90 bg-node-bg transition-colors',
+  {
+    variants: {
+      exec: {
+        false: 'border-border',
+        true: 'border-[var(--execSocket)]',
+      },
+    },
+    defaultVariants: { exec: false },
+  }
+)
+
+interface ButtonProps extends VariantProps<typeof buttonVariants> {
   label: string
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
-}): React.JSX.Element {
+  isExec?: boolean // エイリアス (exec と同意)
+}
+
+function Button(props: ButtonProps): React.JSX.Element {
+  const { label, onClick, isExec } = props
   return (
     <Drag.NoDrag>
       <button
-        className="flex items-center justify-center p-1 overflow-hidden text-sm font-medium w-full rounded-lg border-border border-1 hover:bg-accent/50 text-foreground active:bg-accent/90 bg-node-bg"
-        onClick={props.onClick}
+        className={buttonVariants({ exec: isExec })}
+        onClick={onClick}
+        data-exec={isExec ? 'true' : 'false'}
       >
-        {props.label}
+        {label}
       </button>
     </Drag.NoDrag>
   )
