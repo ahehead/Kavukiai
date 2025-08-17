@@ -24,10 +24,6 @@ import {
   ConsoleControl,
   ConsoleControlView,
 } from "renderer/nodeEditor/nodes/Controls/Console/Console";
-import {
-  ImageControl,
-  ImageControlView,
-} from "renderer/nodeEditor/nodes/Controls/Image";
 // CheckBox
 import {
   CheckBoxControl,
@@ -76,6 +72,10 @@ import {
   RunButtonControl,
   RunButtonControlView,
 } from "renderer/nodeEditor/nodes/Controls/RunButton";
+import {
+  ImageControl,
+  ImageControlView,
+} from "renderer/nodeEditor/nodes/Controls/view/Image";
 // Progress control
 import {
   ProgressControl,

@@ -1,5 +1,5 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import { ImageControl } from 'renderer/nodeEditor/nodes/Controls/Image'
+import { ImageControl } from 'renderer/nodeEditor/nodes/Controls/view/Image'
 import {
   type AreaExtra,
   type Schemes,
