@@ -1,3 +1,4 @@
+import { type BeforeMount, Editor, type OnMount } from '@monaco-editor/react'
 import { cva } from 'class-variance-authority'
 import { BrushCleaning, ChevronRight } from 'lucide-react'
 import { type JSX, useLayoutEffect, useRef, useSyncExternalStore } from 'react'
@@ -10,7 +11,6 @@ import { Drag } from 'rete-react-plugin'
 import type { ControlJson } from 'shared/JsonType'
 import { useDragEdgeAutoscroll } from '../../util/useDragEdgeAutoscroll'
 import { useStopWheel } from '../../util/useStopWheel'
-import { MonacoLog } from './MonacoLog'
 
 export interface ConsoleControlParams extends ControlOptions<any> {
   isOpen?: boolean
@@ -119,12 +119,23 @@ export function ConsoleControlView(props: {
     () => props.data.isConsoleOpen()
   )
   const textareaRef = useRef<HTMLDivElement>(null)
+  // Monaco editor インスタンス保持用
+  const editorRef = useRef<
+    import('monaco-editor').editor.IStandaloneCodeEditor | null
+  >(null)
   useStopWheel(textareaRef)
   useDragEdgeAutoscroll(textareaRef)
 
   useLayoutEffect(() => {
+    // コンテナ自体のスクロール（フォールバック）
     if (textareaRef.current) {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight
+    }
+    // Monaco 側の最終行へスクロール
+    const ed = editorRef.current
+    const model = ed?.getModel()
+    if (ed && model) {
+      ed.revealLine(model.getLineCount())
     }
   }, [value])
 
@@ -167,12 +178,84 @@ export function ConsoleControlView(props: {
           </button>
         </div>
         {isOpen && (
-          <div className="flex-1 min-h-0">
-            <MonacoLog value={value} />
+          <div
+            ref={textareaRef}
+            className="w-full h-full min-h-0 rounded-md bg-gray-100 mt-1 overflow-auto"
+          >
+            <Editor
+              value={value}
+              // 初期化前にテーマを定義
+              beforeMount={
+                (monaco => {
+                  monaco.editor.defineTheme('logViewerLight', {
+                    base: 'vs',
+                    inherit: true,
+                    rules: [],
+                    colors: {
+                      'editor.background': '#f3f4f6',
+                      'editorGutter.background': '#f3f4f6',
+                      'editor.selectionBackground': '#2563eb66',
+                      'editor.inactiveSelectionBackground': '#93c5fd66',
+                      'editor.selectionHighlightBackground': '#2563eb33',
+                      'editor.selectionForeground': '#111827',
+                    },
+                  })
+                }) as BeforeMount
+              }
+              // マウント後にインスタンス参照 & 最終行へ
+              onMount={
+                (editor => {
+                  editorRef.current = editor
+                  const model = editor.getModel()
+                  if (model) editor.revealLine(model.getLineCount())
+                }) as OnMount
+              }
+              language="plaintext"
+              options={{
+                readOnly: true,
+                minimap: { enabled: false },
+                lineNumbers: 'off',
+                wordWrap: 'off',
+                scrollbar: {
+                  vertical: 'auto',
+                  horizontal: 'auto',
+                  useShadows: false,
+                },
+                renderWhitespace: 'none',
+                renderLineHighlight: 'none',
+                renderLineHighlightOnlyWhenFocus: false,
+                occurrencesHighlight: 'off',
+                selectionHighlight: false,
+                guides: { indentation: false, bracketPairs: false },
+                glyphMargin: false,
+                folding: false,
+                links: false,
+                hover: { enabled: false },
+                quickSuggestions: {
+                  other: false,
+                  comments: false,
+                  strings: false,
+                },
+                parameterHints: { enabled: false },
+                suggestOnTriggerCharacters: false,
+                // lightbulb: ShowLightbulbIconMode | undefined （明示的に無効化）
+                lightbulb: { enabled: undefined },
+                overviewRulerLanes: 0,
+                overviewRulerBorder: false,
+                stickyScroll: { enabled: false },
+                scrollBeyondLastLine: false,
+                padding: { top: 0, bottom: 0 },
+                find: {
+                  addExtraSpaceOnTop: false,
+                  autoFindInSelection: 'never',
+                  seedSearchStringFromSelection: 'never',
+                },
+                theme: 'logViewerLight',
+              }}
+            />
           </div>
         )}
       </div>
     </Drag.NoDrag>
   )
 }
-
