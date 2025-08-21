@@ -1,3 +1,4 @@
+import type { TooltipInput } from "renderer/nodeEditor/types";
 import type { Schemes } from "renderer/nodeEditor/types/Schemes";
 import type { TypedSocket } from "renderer/nodeEditor/types/TypedSocket";
 import type { ClassicPreset, NodeEditor } from "rete";
@@ -27,8 +28,8 @@ export function getConnectionPorts(
   editor: NodeEditor<Schemes>,
   connection: Schemes["Connection"]
 ): {
-  input?: Input;
-  output?: Output;
+  sourcePort?: Output;
+  targetPort?: TooltipInput<TypedSocket>;
 } {
   const sourceNode = editor.getNode(connection.source);
   const targetNode = editor.getNode(connection.target);
@@ -36,16 +37,16 @@ export function getConnectionPorts(
     return {};
   }
 
-  const output = (sourceNode.outputs as Record<string, Output>)[
+  const sourcePort = (sourceNode.outputs as Record<string, Output>)[
     connection.sourceOutput
   ];
-  const input = (targetNode.inputs as Record<string, Input>)[
-    connection.targetInput
-  ];
+  const targetPort = (
+    targetNode.inputs as Record<string, TooltipInput<TypedSocket>>
+  )[connection.targetInput];
 
   return {
-    output,
-    input,
+    sourcePort,
+    targetPort,
   };
 }
 
@@ -54,10 +55,10 @@ export function getConnectedSockets(
   editor: NodeEditor<Schemes>,
   connection: Schemes["Connection"]
 ): SocketPair {
-  const { output, input } = getConnectionPorts(editor, connection);
+  const { sourcePort, targetPort } = getConnectionPorts(editor, connection);
   return {
-    source: output?.socket,
-    target: input?.socket,
+    source: sourcePort?.socket,
+    target: targetPort?.socket,
   };
 }
 

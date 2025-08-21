@@ -2,16 +2,19 @@ import { getConnectionsByOutputPortKey } from "renderer/nodeEditor/nodes/util/re
 import {
   type Connection,
   isExecKey,
+  type TooltipInput,
   type TypedSocket,
 } from "renderer/nodeEditor/types";
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 import type { NodeEditor } from "rete";
+import type { Output } from "rete/_types/presets/classic";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { AreaExtra, NodeInterface, Schemes } from "../../types/Schemes";
 import type { DataflowEngine } from "../safe-dataflow/dataflowEngin";
 import {
   canConnect,
   getConnectedSockets,
+  getConnectionPorts,
 } from "../socket_type_restriction/canCreateConnection";
 
 /**
@@ -35,9 +38,11 @@ export function registerConnectionPipeline(
       case "connectioncreated":
       case "connectionremoved": {
         const isConnected = ctx.type === "connectioncreated";
+        const { sourcePort, targetPort } = getConnectionPorts(editor, ctx.data);
         const { source, target } = getConnectedSockets(editor, ctx.data);
-        if (!source || !target) return ctx;
+        if (!sourcePort || !targetPort || !source || !target) return ctx;
 
+        updateShowControl({ sourcePort, targetPort });
         dataflow.reset(ctx.data.target);
         await syncSocketState(area, ctx.data, isConnected, source, target);
         await updateDynamicSchemaNode(
@@ -52,6 +57,14 @@ export function registerConnectionPipeline(
     }
     return ctx;
   });
+}
+
+// 出力側のportのcontrolを非表示にする
+function updateShowControl(ports: {
+  sourcePort: Output<TypedSocket>;
+  targetPort: TooltipInput<TypedSocket>;
+}) {
+  ports.targetPort.showControl = false;
 }
 
 /**
