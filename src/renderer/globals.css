@@ -18,10 +18,10 @@
   --sidebar-light: hsl(220, 66%, 97%);
   --sidebar-foreground: oklch(0.145 0 0);
 
-  --primary: rgb(60, 191, 125);
+  --primary: rgb(74, 89, 255);
   --primary-foreground: oklch(0.145 0 0);
 
-  --accent: rgb(173, 255, 188);
+  --accent: rgb(103, 149, 255);
   --accent-foreground: oklch(0.145 0 0);
 
   --destructive: rgb(185 18 49);
