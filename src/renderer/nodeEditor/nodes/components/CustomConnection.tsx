@@ -37,10 +37,10 @@ export function CustomDataConnection(_props: { data: ClassicScheme['Connection']
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      {/* 内側本体 (steelblue, 半透明) */}
+      {/* 内側本体 */}
       <path
         d={path}
-        className="pointer-events-auto fill-none stroke-[4px] stroke-[steelblue] opacity-90"
+        className="pointer-events-auto fill-none stroke-[4px] stroke-dataSocket"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
