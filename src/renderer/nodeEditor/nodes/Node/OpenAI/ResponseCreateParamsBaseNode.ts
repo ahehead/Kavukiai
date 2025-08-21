@@ -91,6 +91,7 @@ export class ResponseCreateParamsBaseNode
         schema: Type.Index(ResponseCreateParamsBase, ["store"]),
         label: "store",
         tooltip: "会話履歴をOpenAIに**保存**して運用するか。",
+        showControl: false,
         control: new CheckBoxControl({
           value: false,
           label: "store",
@@ -103,6 +104,7 @@ export class ResponseCreateParamsBaseNode
         schema: Type.Index(ResponseCreateParamsBase, ["instructions"]),
         label: "instructions",
         tooltip: "最初に挿入する**システムメッセージ**。",
+        showControl: false,
         control: new InputValueControl<string>({
           value: "",
           type: "string",
@@ -116,6 +118,7 @@ export class ResponseCreateParamsBaseNode
         schema: Type.Index(ResponseCreateParamsBase, ["service_tier"]),
         label: "service_tier",
         tooltip: "処理レイテンシの**ティア** (auto/default/flex)。",
+        showControl: false,
         control: new SelectControl<"auto" | "default" | "flex">({
           value: "auto",
           optionsList: [
@@ -133,6 +136,7 @@ export class ResponseCreateParamsBaseNode
         schema: Type.Index(ResponseCreateParamsBase, ["truncation"]),
         label: "truncation",
         tooltip: "コンテキスト過剰時の**コンテキスト切り詰め戦略**。",
+        showControl: false,
         control: new SelectControl<"auto" | "disabled">({
           value: "auto",
           optionsList: [
@@ -149,6 +153,7 @@ export class ResponseCreateParamsBaseNode
         schema: Type.Index(ResponseCreateParamsBase, ["background"]),
         label: "background",
         tooltip: "モデルの応答を**バックグラウンド**で実行するかどうか。",
+        showControl: false,
         control: new CheckBoxControl({
           value: false,
           label: "background",
@@ -169,6 +174,7 @@ export class ResponseCreateParamsBaseNode
         schema: Type.Index(ResponseCreateParamsBase, ["max_output_tokens"]),
         label: "max_output_tokens",
         tooltip: "生成する**トークン数の上限**。",
+        showControl: false,
         control: new InputValueControl<number>({
           value: 1024,
           type: "number",
@@ -189,6 +195,7 @@ export class ResponseCreateParamsBaseNode
         schema: Type.Index(ResponseCreateParamsBase, ["parallel_tool_calls"]),
         label: "parallel_tool_calls",
         tooltip: "ツール実行を**並列**で行うかどうか。",
+        showControl: false,
         control: new CheckBoxControl({
           value: false,
           label: "parallel_tool_calls",
@@ -216,6 +223,7 @@ export class ResponseCreateParamsBaseNode
         label: "temperature",
         tooltip:
           "出力の**ランダム性**を制御する温度パラメータ（0〜2）。top_pと併用不可。",
+        showControl: false,
         control: new InputValueControl<number>({
           value: 1,
           step: 0.01,
@@ -252,6 +260,7 @@ export class ResponseCreateParamsBaseNode
         label: "top_p",
         tooltip:
           "核サンプリングの**確率質量上位閾値**（0〜1）。temperatureと併用不可。",
+        showControl: false,
         control: new InputValueControl<number>({
           value: 1,
           step: 0.01,
