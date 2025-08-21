@@ -245,3 +245,21 @@ dialog::backdrop {
 [data-testid="control-select"] {
   @apply flex-1;
 }
+
+/* ConsoleControl Monaco Editor 角丸 */
+.console-rounded, .console-rounded .monaco-editor, .console-rounded .monaco-editor .overflow-guard, .console-rounded .monaco-scrollable-element  {
+  border-radius: 0.5rem; /* rounded-md 相当 */
+}
+.console-rounded .monaco-scrollable-element, .console-rounded .monaco-editor-background, .console-rounded .monaco-editor, .console-rounded .overflow-guard {
+  background-color: transparent; /* wrapper の bg を見せる */
+}
+/* Monaco デフォルトのフォーカス枠(青)を無効化 */
+.console-rounded .monaco-editor:focus,
+.console-rounded .monaco-editor:focus-visible,
+.console-rounded .monaco-editor .focused,
+.console-rounded .monaco-editor .monaco-editor:focus,
+.console-rounded .monaco-editor .monaco-editor:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}

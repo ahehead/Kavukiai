@@ -180,7 +180,7 @@ export function ConsoleControlView(props: {
         {isOpen && (
           <div
             ref={textareaRef}
-            className="w-full h-full min-h-0 rounded-md bg-gray-100 mt-1 overflow-auto"
+            className="w-full h-full min-h-0 rounded-md bg-gray-100 mt-1 overflow-auto "
           >
             <Editor
               value={value}
@@ -198,10 +198,14 @@ export function ConsoleControlView(props: {
                       'editor.inactiveSelectionBackground': '#93c5fd66',
                       'editor.selectionHighlightBackground': '#2563eb33',
                       'editor.selectionForeground': '#111827',
+                      // フォーカス時の青い枠線を除去
+                      focusBorder: '#00000000',
+                      'editor.focusedBorder': '#00000000',
                     },
                   })
-                }) as BeforeMount
+                })
               }
+              theme="logViewerLight"
               // マウント後にインスタンス参照 & 最終行へ
               onMount={
                 (editor => {
@@ -250,7 +254,6 @@ export function ConsoleControlView(props: {
                   autoFindInSelection: 'never',
                   seedSearchStringFromSelection: 'never',
                 },
-                theme: 'logViewerLight',
               }}
             />
           </div>
