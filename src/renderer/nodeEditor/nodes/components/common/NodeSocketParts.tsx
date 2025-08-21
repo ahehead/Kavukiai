@@ -144,7 +144,7 @@ export function NodeExecSocket({
   return (
     <div className={socketIconWrapperStyles()}>
       <div
-        className="rounded-full transform transition-all duration-100 group-hover:scale-115"
+        className="rounded-full transform transition-all duration-100 group-hover:scale-120"
         title={title}
       >
         <TriangleIcon className={cn(execIconStyles({ isConnected }), className)} />
