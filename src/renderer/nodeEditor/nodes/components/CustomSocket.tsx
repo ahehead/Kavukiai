@@ -6,6 +6,10 @@ export function CustomSocket<T extends TypedSocket>(
 ): React.ReactElement {
   const { name, isConnected } = props.data
   return (
-    <NodeDataSocket isConnected={isConnected} title={name} />
+    <NodeDataSocket
+      isConnected={isConnected}
+      title={name}
+      className={'group-data-[show-control=true]:fill-white'}
+    />
   )
 }

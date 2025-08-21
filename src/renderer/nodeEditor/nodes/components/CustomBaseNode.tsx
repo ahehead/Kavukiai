@@ -10,6 +10,7 @@ import {
 } from 'renderer/nodeEditor/nodes/components/common/NodeParts'
 import {
   NodeInputPort,
+  NodeInputPortContent,
   NodeOutputPort,
   NodeSocketLabel,
   NodeSocketsWrapper,
@@ -157,73 +158,78 @@ export function createCustomNode(
                 // NodeのInputは二種類、ソケットとコントロールモードがある。
                 // 更にコントロールモードは、ラベルとコントロールを一行にするか二行にするかある。
                 <NodeInputPort
-                  showControl={Boolean(input.control && input.showControl)}
-                  cols={input.control?.opts.cols || 0}
                   key={key}
                   data-testid={`input-${key}`}
                 >
-                  {/* !showControl */}
-                  {!(input.control && input.showControl) && (
-                    <>
-                      <Presets.classic.RefSocket
-                        name="input-socket"
-                        side="input"
-                        socketKey={key}
-                        nodeId={id}
-                        emit={emit}
-                        payload={input.socket}
-                        data-testid="input-socket"
-                      />
-
-                      {!input.socket.isExec &&
-                        withTooltip(
-                          <NodeSocketTypeLabel data-testid="input-type">
-                            {input.socket.name}
-                          </NodeSocketTypeLabel>,
-                          true,
-                          input.socket.tooltip
-                        )}
-                      {input.label &&
-                        withTooltip(
-                          <NodeSocketLabel
-                            isExec={input.socket.isExec}
-                            data-testid="input-title"
-                            isRequired={input.require}
-                          >
-                            {input.label}
-                          </NodeSocketLabel>,
-                          false,
-                          input.tooltip
-                        )}
-                    </>
-                  )}
-                  {input.control && input.showControl && (
-                    <>
-                      {input.control.opts.label &&
-                        input.control.opts.cols !== 0 && (
-                          <ControlLabel
-                            cols={input.control.opts.cols}
-                            htmlFor={input.control.id}
-                            isRequired={input.require}
-                          >
-                            {withTooltip(
-                              <div className="inline-block">
-                                {input.control.opts.label}
-                              </div>,
-                              false,
-                              input.tooltip
-                            )}
-                          </ControlLabel>
-                        )}
-                      <Presets.classic.RefControl
-                        key={key}
-                        name="input-control"
-                        emit={emit}
-                        payload={input.control}
-                        data-testid="input-control"
-                      />
-                    </>
-                  )}
+                  <div className='flex items-center'>
+                    <Presets.classic.RefSocket
+                      name="input-socket group"
+                      side="input"
+                      socketKey={key}
+                      nodeId={id}
+                      emit={emit}
+                      payload={input.socket}
+                      data-testid="input-socket"
+                      data-show-control={input.control && input.showControl}
+                    />
+                  </div>
+                  <NodeInputPortContent
+                    showControl={Boolean(input.control && input.showControl)}
+                    cols={input.control?.opts.cols || 0}
+                  >
+                    {/* !showControl */}
+                    {!(input.control && input.showControl) && (
+                      <>
+                        {!input.socket.isExec &&
+                          withTooltip(
+                            <NodeSocketTypeLabel data-testid="input-type">
+                              {input.socket.name}
+                            </NodeSocketTypeLabel>,
+                            true,
+                            input.socket.tooltip
+                          )}
+                        {input.label &&
+                          withTooltip(
+                            <NodeSocketLabel
+                              isExec={input.socket.isExec}
+                              data-testid="input-title"
+                              isRequired={input.require}
+                            >
+                              {input.label}
+                            </NodeSocketLabel>,
+                            false,
+                            input.tooltip
+                          )}
+                      </>
+                    )}
+                    {input.control && input.showControl && (
+                      <>
+                        {input.control.opts.label &&
+                          input.control.opts.cols !== 0 && (
+                            <ControlLabel
+                              cols={input.control.opts.cols}
+                              htmlFor={input.control.id}
+                              isRequired={input.require}
+                            >
+                              {withTooltip(
+                                <div className="inline-flex items-center">
+                                  {input.control.opts.label}
+                                </div>,
+                                false,
+                                input.tooltip
+                              )}
+                            </ControlLabel>
+                          )}
+                        <Presets.classic.RefControl
+                          key={key}
+                          name="input-control"
+                          emit={emit}
+                          payload={input.control}
+                          data-testid="input-control"
+                        />
+                      </>
+                    )}
+                  </NodeInputPortContent>
                 </NodeInputPort>
               )
             })}

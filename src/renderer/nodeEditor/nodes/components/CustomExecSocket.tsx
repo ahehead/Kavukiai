@@ -7,6 +7,9 @@ export function CustomExecSocket<T extends TypedSocket>(
   const { data } = props
 
   return (
-    <NodeExecSocket title={data.name} isConnected={data.isConnected} />
+    <NodeExecSocket
+      title={data.name}
+      isConnected={data.isConnected}
+      className={'group-data-[show-control=true]:fill-white group-data-[show-control=true]:stroke-[var(--execSocket)]'} />
   )
 }
