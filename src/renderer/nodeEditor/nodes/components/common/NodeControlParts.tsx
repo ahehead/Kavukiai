@@ -1,91 +1,113 @@
-import { cva } from "class-variance-authority";
-import type { VariantProps } from "class-variance-authority";
-import { useRef } from "react";
-import { cn } from "renderer/lib/utils"
-import { Drag } from "rete-react-plugin";
-import { requiredMark } from "./NodeSocketParts";
-
+import type { VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
+import { useRef } from 'react'
+import { cn } from 'renderer/lib/utils'
+import { Drag } from 'rete-react-plugin'
+import { requiredMark } from './NodeSocketParts'
 
 export const textAreaStyles = cva(
-  ["w-full h-full min-h-0 overflow-auto py-2 px-2.5 resize-none border-none rounded-md"],
+  [
+    'w-full h-full min-h-0 overflow-auto py-2 px-2.5 resize-none border-none rounded-md',
+  ],
   {
     variants: {
       editable: {
-        true: "ring-1 ring-input focus:ring-2 focus:ring-accent",
-        false: "bg-gray-100 ring-0 focus:ring-0 outline-none focus:outline-none",
+        true: 'ring-1 ring-input focus:ring-2 focus:ring-accent',
+        false:
+          'bg-gray-100 ring-0 focus:ring-0 outline-none focus:outline-none',
       },
     },
     defaultVariants: {
       editable: true,
     },
   }
-);
+)
 
-const wrapperStyles = cva("grid items-center w-full px-3 py-[0.2em]", {
+const wrapperStyles = cva('grid items-center w-full px-3 py-[0.2em]', {
   variants: {
     cols: {
-      1: "grid-cols-1 grid-cols-subgrid",
-      2: "grid-cols-2 gap-x-2"
-    }
+      1: 'grid-cols-1 grid-cols-subgrid',
+      2: 'grid-cols-2 gap-x-2',
+    },
   },
-  defaultVariants: { cols: 1 }
-});
+  defaultVariants: { cols: 1 },
+})
 
-export type ControlWrapperProps = VariantProps<typeof wrapperStyles> & React.ComponentProps<"div">;
+export type ControlWrapperProps = VariantProps<typeof wrapperStyles> &
+  React.ComponentProps<'div'>
 
-export function ControlWrapper({ cols, className, ...props }: ControlWrapperProps) {
-  return <div className={cn(wrapperStyles({ cols }), className)} {...props} />;
+export function ControlWrapper({
+  cols,
+  className,
+  ...props
+}: ControlWrapperProps) {
+  return <div className={cn(wrapperStyles({ cols }), className)} {...props} />
 }
 
-const labelStyles = cva("cursor-pointer min-w-0 truncate ml-2", {
-  variants: {
-    cols: {
-      0: "",
-      1: "mb-2",
-      2: ""
-    }
-  },
-  defaultVariants: { cols: 1 }
-});
+const labelStyles = cva(
+  'inline-flex items-center cursor-pointer min-w-0 truncate pl-1',
+  {
+    variants: {
+      cols: {
+        0: '',
+        1: 'mb-2',
+        2: '',
+      },
+    },
+    defaultVariants: { cols: 1 },
+  }
+)
 
-export type ControlLabelProps = VariantProps<typeof labelStyles> & React.ComponentProps<"label"> & { isRequired?: boolean; };
+export type ControlLabelProps = VariantProps<typeof labelStyles> &
+  React.ComponentProps<'label'> & { isRequired?: boolean }
 
-export function ControlLabel({ cols, htmlFor, className, isRequired, children, ...props }: ControlLabelProps) {
-  const ref = useRef<HTMLLabelElement | null>(null);
-  Drag.useNoDrag(ref); // areaのdragを無効化
+export function ControlLabel({
+  cols,
+  htmlFor,
+  className,
+  isRequired,
+  children,
+  ...props
+}: ControlLabelProps) {
+  const ref = useRef<HTMLLabelElement | null>(null)
+  Drag.useNoDrag(ref) // areaのdragを無効化
   return (
     <label
       ref={ref}
       htmlFor={htmlFor}
       className={cn(labelStyles({ cols }), className)}
-      {...props}>
+      {...props}
+    >
       {children}
       {isRequired && requiredMark()}
     </label>
-  );
+  )
 }
 
 export const inputValueStyles = cva(
-  ["w-full min-w-0 rounded-full border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"],
+  [
+    'w-full min-w-0 rounded-full border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+  ],
   {
     variants: {
       editable: {
-        true: "",
-        false: "bg-gray-100 cursor-not-allowed",
-      }
-    }
+        true: '',
+        false: 'bg-gray-100 cursor-not-allowed',
+      },
+    },
   }
-);
+)
 
 export const checkBoxStyles = cva(
-  ["w-[18px] h-[18px] rounded opacity-90 bg-gray-100 border-input accent-gray-100 hover:accent-gray-300"],
+  [
+    'w-[18px] h-[18px] rounded opacity-90 bg-gray-100 border-input accent-gray-100 hover:accent-gray-300',
+  ],
   {
     variants: {
       editable: {
-        true: "",
-        false: "cursor-not-allowed opacity-50",
-      }
-    }
+        true: '',
+        false: 'cursor-not-allowed opacity-50',
+      },
+    },
   }
-);
-
+)
