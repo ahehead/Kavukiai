@@ -48,11 +48,9 @@ export class LMStudioLoadModelNode extends MessagePortNode<
   }
 
   protected async buildRequestArgs(): Promise<LMStudioLoadRequestArgs | null> {
-    const { modelKey } = (await this.dataflow.fetchInputs(this.id)) as {
-      modelKey?: string[]
-    }
-    if (!modelKey || modelKey.length === 0) return null
-    return { id: this.id, modelKey: modelKey[0] }
+    const modelKey = (await this.dataflow.fetchInputSingle<string>(this.id, "modelKey"))
+    if (!modelKey) return null
+    return { id: this.id, modelKey }
   }
 
   protected callMain(args: LMStudioLoadRequestArgs): void {
