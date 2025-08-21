@@ -40,12 +40,12 @@ export function ButtonControlView({ data: control }: { data: ButtonControl }) {
 }
 
 const buttonVariants = cva(
-  'flex items-center justify-center p-1 overflow-hidden text-sm font-medium w-full rounded-lg border-1 hover:bg-accent/50 text-foreground active:bg-accent/90 bg-node-bg transition-colors',
+  'flex items-center justify-center p-1 overflow-hidden text-sm font-medium w-full rounded-lg border-1 text-foregroundbg-node-bg transition-colors',
   {
     variants: {
       exec: {
-        false: 'border-border',
-        true: 'border-[var(--execSocket)]',
+        false: 'border-border hover:bg-accent/50 active:bg-accent/90 ',
+        true: 'border-[var(--execSocket)]/90 hover:bg-node-execSocket-light/50 active:bg-node-execSocket/90',
       },
     },
     defaultVariants: { exec: false },
