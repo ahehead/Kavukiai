@@ -5,7 +5,7 @@
 :root {
   --dataSocket: hsl(220, 65%, 55%);
   --execSocket: hsl(22, 87%, 60%);
-  --execSocket-light: hsl(22, 100%, 84%);
+  --execSocket-light: hsl(31, 100%, 92%);
 
   --socket-icon-size: 0.74rem;
 

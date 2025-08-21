@@ -27,10 +27,10 @@ function RunButton(props: {
   return (
     <Drag.NoDrag>
       <button
-        className="relative inline-flex items-center justify-center p-0.5 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white  w-full"
+        className="relative inline-flex items-center justify-center p-0.5 me-2 overflow-hidden text-sm font-bold text-node-fg rounded-lg group bg-gradient-to-br from-node-execSocket to-dataSocket w-full drop-shadow-md active:drop-shadow-none -translate-y-1 active:translate-y-0 transform-gpu transition-all duration-100 ease-out"
         onClick={props.onClick}
       >
-        <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-background dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent w-full">
+        <span className="relative px-5 py-2.5 bg-background rounded-md w-full group-active:bg-node-execSocket-light">
           {props.label}
         </span>
       </button>
