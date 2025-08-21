@@ -1,4 +1,4 @@
-import { type BeforeMount, Editor, type OnMount } from '@monaco-editor/react'
+import { Editor, type OnMount } from '@monaco-editor/react'
 import { cva } from 'class-variance-authority'
 import { BrushCleaning, ChevronRight } from 'lucide-react'
 import { type JSX, useLayoutEffect, useRef, useSyncExternalStore } from 'react'
