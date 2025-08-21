@@ -19,10 +19,26 @@ export function NodeOutputPort({
   return <div {...props} className={cn(outputPortStyles(), className)} />
 }
 
-const nodeInputPortStyles = cva(['node-socket-text-size tracking-tight pl-0.5'], {
+
+const nodeInputPortStyles = cva(['node-socket-text-size tracking-tight pl-0.5 grid grid-cols-[auto_1fr]'],)
+// input/outputのポート　
+
+export function NodeInputPort({
+  className,
+  ...props
+}: React.ComponentProps<'div'> & VariantProps<typeof nodeInputPortStyles>) {
+  return (
+    <div
+      {...props}
+      className={cn(nodeInputPortStyles(), className)}
+    />
+  )
+}
+
+export const NodeInputPortContentStyle = cva([''], {
   variants: {
     showControl: {
-      true: 'grid items-center w-full px-3 py-[0.2em]',
+      true: 'grid items-center w-full pr-2 py-[0.2em]',
       false: 'flex w-full justify-start flex-row items-center',
     },
     cols: {
@@ -48,24 +64,23 @@ const nodeInputPortStyles = cva(['node-socket-text-size tracking-tight pl-0.5'],
     cols: 0,
   },
 })
-// input/outputのポート
 
-export function NodeInputPort({
+export function NodeInputPortContent({
   cols,
   showControl,
   className,
   ...props
-}: React.ComponentProps<'div'> & VariantProps<typeof nodeInputPortStyles>) {
+}: React.ComponentProps<'div'> & VariantProps<typeof NodeInputPortContentStyle>) {
   return (
     <div
       {...props}
-      className={cn(nodeInputPortStyles({ cols, showControl }), className)}
+      className={cn(NodeInputPortContentStyle({ showControl, cols }), className)}
     />
   )
 }
 
 const socketNameStyles = cva(
-  ['inline-block align-middle mx-1 min-w-0 truncate'],
+  ['inline-flex items-center mx-1 min-w-0 truncate'],
   {
     variants: {
       isExec: {
@@ -124,14 +139,15 @@ export const execIconStyles = cva([' stroke-[#f2ffee]'], {
 export function NodeExecSocket({
   title,
   isConnected,
-}: { title: string } & VariantProps<typeof execIconStyles>) {
+  className,
+}: { title: string, className?: string } & VariantProps<typeof execIconStyles>) {
   return (
     <div className={socketIconWrapperStyles()}>
       <div
         className="rounded-full transform transition-all duration-100 group-hover:scale-115"
         title={title}
       >
-        <TriangleIcon className={execIconStyles({ isConnected })} />
+        <TriangleIcon className={cn(execIconStyles({ isConnected }), className)} />
       </div>
     </div>
   )
@@ -152,14 +168,15 @@ const dataIconStyles = cva(['fill-[var(--color-dataSocket)] text-dataSocket'], {
 export function NodeDataSocket({
   isConnected,
   title,
-}: { title: string; tooltip?: string } & VariantProps<typeof dataIconStyles>) {
+  className,
+}: { title: string; tooltip?: string; className?: string } & VariantProps<typeof dataIconStyles>) {
   return (
     <div className={socketIconWrapperStyles()}>
       <div
         className="transform transition-all duration-100 group-hover:scale-115"
         title={title}
       >
-        <Circle className={dataIconStyles({ isConnected })} />
+        <Circle className={cn(dataIconStyles({ isConnected }), className)} />
       </div>
     </div>
   )
