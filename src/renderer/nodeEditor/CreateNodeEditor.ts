@@ -14,6 +14,7 @@ import {
   Presets as HistoryPresets,
 } from "rete-history-plugin";
 import { ReactPlugin } from "rete-react-plugin";
+import { handleConnectionEvent } from "./features/connection_drop_flow/setup";
 import { customContextMenuPreset } from "./features/contextMenu/setup/CustomContextMenuPreset";
 import { setupContextMenu } from "./features/contextMenu/setup/SetupContextMenu";
 import { customReactPresets } from "./features/customReactPresets/customReactPresets";
@@ -90,6 +91,7 @@ export async function createNodeEditor(container: HTMLElement) {
       currentZoom = context.data.zoom;
       return context;
     }
+    // console.log("context", context);
     return context;
   });
   const getZoom = () => currentZoom;
@@ -130,12 +132,16 @@ export async function createNodeEditor(container: HTMLElement) {
     })
   );
 
+  // なにもないところでコネクションを離すと右クリックメニューを開く
+  const removeHandlerPointerMove = handleConnectionEvent(connection, area);
+
   // 外部に公開するAPI
   return {
     destroy: () => {
       area.destroy();
       cleanupDragPan();
       cleanupDeleteKey();
+      removeHandlerPointerMove();
     },
 
     // 現在のnode editorの状態を取得
