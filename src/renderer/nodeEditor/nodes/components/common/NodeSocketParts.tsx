@@ -35,7 +35,7 @@ export function NodeInputPort({
   )
 }
 
-export const NodeInputPortContentStyle = cva(['pl-1'], {
+export const NodeInputPortContentStyle = cva(['pl-0.5'], {
   variants: {
     showControl: {
       true: 'grid items-center w-full py-[0.2em] pr-5', //cols:0,showControl:true button等
