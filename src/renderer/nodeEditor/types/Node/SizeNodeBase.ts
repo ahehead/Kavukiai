@@ -1,4 +1,6 @@
+import type { AreaPlugin } from "rete-area-plugin";
 import type { NodeControl } from "../NodeControl";
+import type { AreaExtra, Schemes } from "../Schemes";
 import type { TypedSocket } from "../TypedSocket";
 import { NodeIO } from "./NodeIO";
 
@@ -14,38 +16,55 @@ export abstract class SizeNodeBase<
 > extends NodeIO<Inputs, Outputs, Controls> {
   declare readonly label: L;
 
-  private _width: number;
-  private _height: number;
+  private _width?: number;
+  private _height?: number;
 
   protected constructor(label: L) {
     super(label);
-    this._width = NodeMinWidth;
-    this._height = NodeMinHeight;
   }
 
-  setSize(width: number, height: number) {
+  setRowSize(width: number | undefined, height: number | undefined) {
     this._width = width;
     this._height = height;
   }
 
-  getSize(): { width: number | undefined; height: number | undefined } {
+  getRowSize(): { width: number | undefined; height: number | undefined } {
     return { width: this._width, height: this._height };
   }
 
   clearSize() {
-    this._width = NodeMinWidth;
-    this._height = NodeMinHeight;
+    this._width = undefined;
+    this._height = undefined;
   }
 
   clearHeight() {
-    this._height = NodeMinHeight;
+    this._height = undefined;
   }
 
   get width() {
     return this._width;
   }
 
+  set width(value: number | undefined) {
+    this._width = value;
+  }
+
   get height() {
     return this._height;
+  }
+
+  set height(value: number | undefined) {
+    this._height = value;
+  }
+
+  getElementSize(area: AreaPlugin<Schemes, AreaExtra>) {
+    if (this._width !== undefined && this._height !== undefined) {
+      return { width: this._width, height: this._height };
+    }
+    const nodeView = area.nodeViews.get(this.id);
+    const zoom = area.area.transform.k;
+    if (!nodeView) return null;
+    const { width, height } = nodeView.element.getBoundingClientRect();
+    return { width: width / zoom, height: height / zoom };
   }
 }
