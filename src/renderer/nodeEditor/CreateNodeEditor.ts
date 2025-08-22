@@ -120,7 +120,7 @@ export async function createNodeEditor(container: HTMLElement) {
   );
 
   // なにもないところでコネクションを離すと右クリックメニューを開く
-  const removeHandlerPointerMove = handleConnectionEvent(connection, area);
+  handleConnectionEvent(connection, area);
 
   // 外部に公開するAPI
   return {
@@ -128,7 +128,6 @@ export async function createNodeEditor(container: HTMLElement) {
       area.destroy();
       cleanupDragPan();
       cleanupDeleteKey();
-      removeHandlerPointerMove();
     },
 
     // 現在のnode editorの状態を取得
