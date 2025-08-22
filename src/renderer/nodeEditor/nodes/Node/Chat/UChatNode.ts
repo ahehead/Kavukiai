@@ -37,8 +37,6 @@ export class UChatNode
   >
   implements SerializableDataNode
 {
-  override width = 500;
-  override height = 700;
   deltaFunc: DeltaStreamFunctions;
 
   constructor(
@@ -49,6 +47,8 @@ export class UChatNode
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super("UChat");
+    this.width = 500;
+    this.height = 700;
     this.addInputPort([
       { key: "systemPrompt", typeName: "string", label: "System Prompt" },
       {
