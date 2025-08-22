@@ -111,14 +111,14 @@ export function selectableNodes<T>(
   function selectNode(node: Schemes["Node"]) {
     if (!node.selected) {
       node.selected = true;
-      void area.update("node", node.id);
+      node.notify();
     }
   }
 
   function unselectNode(node: Schemes["Node"]) {
     if (node.selected) {
       node.selected = false;
-      void area.update("node", node.id);
+      node.notify();
     }
   }
   /**

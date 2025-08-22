@@ -16,6 +16,7 @@ import {
   NodeSocketsWrapper,
   NodeSocketTypeLabel,
 } from 'renderer/nodeEditor/nodes/components/common/NodeSocketParts'
+import { useSelectedValue, useStatusValue } from 'renderer/nodeEditor/types'
 import { NodeEditor } from 'rete'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'
@@ -51,9 +52,10 @@ export function createCustomNode(
     const inputs = Object.entries(data.inputs)
     const outputs = Object.entries(data.outputs)
     const controls = Object.entries(data.controls)
-    const { id, label, width, height, selected } = data
+    const { id, label, width, height } = data
     const hierarchyPath = getContextMenuPath(label)
-
+    const selected = useSelectedValue(data)
+    const status = useStatusValue(data)
     function sortByIndex<T extends [string, undefined | { index?: number }][]>(
       entries: T
     ) {
@@ -81,16 +83,16 @@ export function createCustomNode(
     return (
       <NodeContainer
         ref={panelRef}
-        selected={selected || false}
-        status={data.status}
+        selected={selected}
+        status={status}
         nodeType={label}
         style={{
           width: `${Number.isFinite(width) ? width : nodeMinWidth}px`,
           height: Number.isFinite(height) ? `${height}px` : 'auto',
         }}
       >
-        <NodeHeader status={data.status} nodeType={label}>
-          <NodeTitle status={data.status}>{label}</NodeTitle>
+        <NodeHeader status={status} nodeType={label}>
+          <NodeTitle status={status}>{label}</NodeTitle>
           <button
             aria-label="ノードを削除"
             title="ノードを削除"
@@ -157,11 +159,8 @@ export function createCustomNode(
               return (
                 // NodeのInputは二種類、ソケットとコントロールモードがある。
                 // 更にコントロールモードは、ラベルとコントロールを一行にするか二行にするかある。
-                <NodeInputPort
-                  key={key}
-                  data-testid={`input-${key}`}
-                >
-                  <div className='flex items-center'>
+                <NodeInputPort key={key} data-testid={`input-${key}`}>
+                  <div className="flex items-center">
                     <Presets.classic.RefSocket
                       name="input-socket group"
                       side="input"
