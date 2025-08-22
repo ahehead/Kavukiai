@@ -13,11 +13,11 @@ class SizeChangeHistory implements HistoryAction {
     private next: { width: number; height: number }
   ) {}
   async undo() {
-    this.node.setSize(this.prev.width, this.prev.height);
+    this.node.setRowSize(this.prev.width, this.prev.height);
     await this.area.resize(this.node.id, this.prev.width, this.prev.height);
   }
   async redo() {
-    this.node.setSize(this.next.width, this.next.height);
+    this.node.setRowSize(this.next.width, this.next.height);
     await this.area.resize(this.node.id, this.next.width, this.next.height);
   }
 }
@@ -31,13 +31,13 @@ class ClearSizeHistoryAction implements HistoryAction {
     private area: AreaPlugin<Schemes, AreaExtra>
   ) {
     // 保存: クリア前のサイズ
-    this.prev = this.node.getSize();
+    this.prev = this.node.getRowSize();
   }
 
   async undo() {
     const { width, height } = this.prev;
     if (width !== undefined && height !== undefined) {
-      this.node.setSize(width, height);
+      this.node.setRowSize(width, height);
       await this.area.resize(this.node.id, width, height);
     }
   }
@@ -56,7 +56,7 @@ type UseNodeResizeProps = {
   area: AreaPlugin<Schemes, AreaExtra>;
   history: HistoryPlugin<Schemes>;
   getZoom: () => number;
-  panelRef: React.RefObject<HTMLDivElement | null>;
+  elementRef: React.RefObject<HTMLDivElement | null>;
 };
 
 export function useNodeResize({
@@ -64,19 +64,19 @@ export function useNodeResize({
   area,
   history,
   getZoom,
-  panelRef,
+  elementRef,
 }: UseNodeResizeProps) {
   const getPanelSize = useCallback((): { width: number; height: number } => {
-    if (panelRef.current) {
-      const rect = panelRef.current.getBoundingClientRect();
-      const zoom = getZoom();
+    if (elementRef.current) {
+      const rect = elementRef.current.getBoundingClientRect();
+      const zoom = area.area.transform.k;
       return { width: rect.width / zoom, height: rect.height / zoom };
     }
     return {
-      width: node.width,
-      height: node.height,
+      width: node.width ?? NodeMinWidth,
+      height: node.height ?? NodeMinHeight,
     };
-  }, [panelRef, getZoom, node]);
+  }, [elementRef, getZoom, node, area]);
 
   const startResize = useCallback(
     (e: React.PointerEvent) => {
@@ -94,7 +94,7 @@ export function useNodeResize({
         const dy = (event.clientY - startY) / zoom;
         const newWidth = Math.max(startW + dx, NodeMinWidth);
         const newHeight = Math.max(startH + dy, NodeMinHeight);
-        node.setSize(newWidth, newHeight);
+        node.setRowSize(newWidth, newHeight);
         await area.resize(node.id, newWidth, newHeight);
       }
 
@@ -103,9 +103,10 @@ export function useNodeResize({
         target.releasePointerCapture(e.pointerId);
         window.removeEventListener("pointermove", move);
         window.removeEventListener("pointerup", up);
-        const { width, height } = node.getSize();
+        const { width, height } = node.getRowSize();
         // width または height が undefined の場合は履歴に追加しない
         if (width === undefined || height === undefined) return;
+        // サイズが変わっていたら
         if (startW !== width || startH !== height) {
           // Only add to history if size actually changed
           history.add(
@@ -127,7 +128,7 @@ export function useNodeResize({
 
   // ノードサイズをクリアする関数を追加
   const clearNodeSize = useCallback(async () => {
-    const { width: currentWidth, height: currentHeight } = node.getSize();
+    const { width: currentWidth, height: currentHeight } = node.getRowSize();
 
     // サイズが既にクリアされている場合は何もしない
     if (currentWidth === undefined && currentHeight === undefined) return;
