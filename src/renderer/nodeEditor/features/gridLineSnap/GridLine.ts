@@ -1,5 +1,5 @@
 import { cva } from "class-variance-authority";
-import { Scope, type BaseSchemes, type Root } from "rete";
+import { type BaseSchemes, type Root, Scope } from "rete";
 import { type Area2D, type BaseArea, BaseAreaPlugin } from "rete-area-plugin";
 
 export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
@@ -30,7 +30,7 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
     this.gridOpacity = options?.gridOpacity ?? 0.35;
   }
 
-  setParent(scope: Scope<BaseArea<Schemes>, [Root<Schemes>]>) {
+  setParent(scope: Scope<any, [Root<Schemes>]>) {
     super.setParent(scope);
 
     this.area =
@@ -53,7 +53,7 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
     this.container.childNodes[0].appendChild(background);
     this.applyStyle();
 
-    this.addPipe((context) => {
+    this.addPipe(async (context) => {
       if (!context || !(typeof context === "object" && "type" in context))
         return context;
 
@@ -67,13 +67,13 @@ export class GridLineSnapPlugin<Schemes extends BaseSchemes> extends Scope<
       // ノードの移動後、グリッド幅にスナップ
       if (context.type === "nodedragged" && this.snapEnabled) {
         const { id } = context.data;
-        const node = this.area.nodeViews.get(id);
-        if (!node) return context;
+        const nodeView = this.area.nodeViews.get(id);
+        if (!nodeView) return context;
         const nextPosition = {
-          x: Math.round(node.position.x / this.baseSize) * this.baseSize,
-          y: Math.round(node.position.y / this.baseSize) * this.baseSize,
+          x: Math.round(nodeView.position.x / this.baseSize) * this.baseSize,
+          y: Math.round(nodeView.position.y / this.baseSize) * this.baseSize,
         };
-        void this.area.translate(id, nextPosition);
+        await this.area.translate(id, nextPosition);
       }
       return context;
     });
