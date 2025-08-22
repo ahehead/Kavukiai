@@ -1,6 +1,4 @@
-import type { AreaPlugin } from "rete-area-plugin";
 import type { NodeControl } from "../NodeControl";
-import type { AreaExtra, Schemes } from "../Schemes";
 import type { TypedSocket } from "../TypedSocket";
 import { NodeStatus, StatusNodeBase } from "./StatusNodeBase";
 
@@ -14,11 +12,6 @@ export abstract class BaseNode<
 
   protected constructor(label: L, initialStatus: NodeStatus = NodeStatus.IDLE) {
     super(label, initialStatus);
-  }
-
-  async changeStatus(area: AreaPlugin<Schemes, AreaExtra>, status: NodeStatus) {
-    this.setStatus(status);
-    await area.update("node", this.id);
   }
 
   data(
