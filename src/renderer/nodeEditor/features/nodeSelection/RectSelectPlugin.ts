@@ -168,7 +168,7 @@ export class RectSelectPlugin extends Scope<
   }
 
   getSize(node: Schemes["Node"], nodeView: NodeView, zoom: number) {
-    const { width, height } = node.getSize();
+    const { width, height } = node.getRowSize();
     if (width && height) {
       return { width, height };
     }
