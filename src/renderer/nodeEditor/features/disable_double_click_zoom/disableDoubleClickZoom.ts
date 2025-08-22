@@ -3,7 +3,9 @@ import type { AreaPlugin } from "rete-area-plugin";
 
 export function disableDoubleClickZoom(area: AreaPlugin<Schemes, AreaExtra>) {
   area.addPipe((context) => {
-    if (context.type === "zoom" && context.data.source === "dblclick") return;
+    // ダブルクリックによるズームをガード。無効化
+    if (context.type === "zoom" && context.data.source === "dblclick")
+      return undefined;
     return context;
   });
 }
