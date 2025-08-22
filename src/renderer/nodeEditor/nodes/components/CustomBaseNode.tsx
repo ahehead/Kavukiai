@@ -16,7 +16,7 @@ import {
   NodeSocketsWrapper,
   NodeSocketTypeLabel,
 } from 'renderer/nodeEditor/nodes/components/common/NodeSocketParts'
-import { useSelectedValue, useStatusValue } from 'renderer/nodeEditor/types'
+import { NodeMinWidth, useSelectedValue, useStatusValue } from 'renderer/nodeEditor/types'
 import { NodeEditor } from 'rete'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'
@@ -42,7 +42,7 @@ export function createCustomNode(
     emit,
   }: Props<Scheme>) {
     const panelRef = useRef<HTMLDivElement>(null)
-    const { startResize, nodeMinWidth, clearNodeSize } = useNodeResize({
+    const { startResize, clearNodeSize } = useNodeResize({
       node: data,
       area,
       history,
@@ -87,7 +87,7 @@ export function createCustomNode(
         status={status}
         nodeType={label}
         style={{
-          width: `${Number.isFinite(width) ? width : nodeMinWidth}px`,
+          width: `${Number.isFinite(width) ? width : NodeMinWidth}px`,
           height: Number.isFinite(height) ? `${height}px` : 'auto',
         }}
       >

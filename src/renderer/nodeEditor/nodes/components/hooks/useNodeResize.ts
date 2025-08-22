@@ -1,11 +1,9 @@
 // New hook for node resizing logic
 import { useCallback } from "react";
+import { NodeMinHeight, NodeMinWidth } from "renderer/nodeEditor/types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryAction, HistoryPlugin } from "rete-history-plugin";
 import type { AreaExtra, NodeInterface, Schemes } from "../../../types/Schemes";
-
-const nodeMinWidth = 220;
-const nodeMinHeight = 100;
 
 class SizeChangeHistory implements HistoryAction {
   constructor(
@@ -75,8 +73,8 @@ export function useNodeResize({
       return { width: rect.width / zoom, height: rect.height / zoom };
     }
     return {
-      width: node.width ?? nodeMinWidth,
-      height: node.height ?? nodeMinHeight,
+      width: node.width,
+      height: node.height,
     };
   }, [panelRef, getZoom, node]);
 
@@ -94,8 +92,8 @@ export function useNodeResize({
       async function move(event: PointerEvent) {
         const dx = (event.clientX - startX) / zoom;
         const dy = (event.clientY - startY) / zoom;
-        const newWidth = Math.max(startW + dx, nodeMinWidth);
-        const newHeight = Math.max(startH + dy, nodeMinHeight);
+        const newWidth = Math.max(startW + dx, NodeMinWidth);
+        const newHeight = Math.max(startH + dy, NodeMinHeight);
         node.setSize(newWidth, newHeight);
         await area.resize(node.id, newWidth, newHeight);
       }
@@ -146,7 +144,5 @@ export function useNodeResize({
   return {
     startResize,
     clearNodeSize, // clearNodeSize を返す
-    nodeMinWidth,
-    nodeMinHeight,
   };
 }
