@@ -1,10 +1,5 @@
 import { type NodeEditor, type Root, Scope } from "rete";
-import {
-  type Area2D,
-  AreaPlugin,
-  type BaseArea,
-  type NodeView,
-} from "rete-area-plugin";
+import { type Area2D, AreaPlugin, type NodeView } from "rete-area-plugin";
 import type { AreaExtra, Schemes } from "../../types";
 import type { selectableNodes } from "./selectable";
 
@@ -17,7 +12,6 @@ export class RectSelectPlugin extends Scope<
   private area!: AreaPlugin<Schemes, AreaExtra>;
   private editor: NodeEditor<Schemes>;
   private container: HTMLElement;
-  private getZoom: () => number;
   private selectableNodes: ReturnType<typeof selectableNodes> | null = null;
   private isDragging = false;
   private startPoint: Point = { x: 0, y: 0 };
@@ -29,17 +23,15 @@ export class RectSelectPlugin extends Scope<
   constructor(options: {
     editor: NodeEditor<Schemes>;
     container: HTMLElement;
-    getZoom: () => number;
     selectableNodes: ReturnType<typeof selectableNodes> | null;
   }) {
     super("node-selection-plugin");
     this.editor = options.editor;
     this.container = options.container;
-    this.getZoom = options.getZoom;
     this.selectableNodes = options.selectableNodes;
   }
 
-  setParent(scope: Scope<BaseArea<Schemes>, [Root<Schemes>]>) {
+  setParent(scope: Scope<any, [Root<Schemes>]>) {
     super.setParent(scope);
     this.area = this.parentScope<AreaPlugin<Schemes, AreaExtra>>(AreaPlugin);
 
@@ -81,7 +73,7 @@ export class RectSelectPlugin extends Scope<
         // 2) オーバーレイ上に選択矩形を生成
         if (!this.rectElement && this.overlayElement) {
           this.rectElement = document.createElement("div");
-          const borderSize = 1 / this.getZoom();
+          const borderSize = 1 / this.area.area.transform.k;
           this.rectElement.classList.add(
             "absolute",
             "border-dashed",
@@ -122,7 +114,7 @@ export class RectSelectPlugin extends Scope<
         const selectedNodes = this.filterNodesInArea(
           this.startPoint,
           endPoint,
-          this.getZoom()
+          this.area.area.transform.k
         );
         for (const node of selectedNodes) {
           this.selectableNodes?.select(node.id, true);

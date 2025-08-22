@@ -35,7 +35,6 @@ type Props<S extends Schemes> = {
 export function createCustomNode(
   area: AreaPlugin<Schemes, AreaExtra>,
   history: HistoryPlugin<Schemes>,
-  getZoom: () => number
 ) {
   return function CustomNode<Scheme extends Schemes>({
     data,
@@ -46,7 +45,6 @@ export function createCustomNode(
       node: data,
       area,
       history,
-      getZoom,
       elementRef,
     })
     const inputs = Object.entries(data.inputs)

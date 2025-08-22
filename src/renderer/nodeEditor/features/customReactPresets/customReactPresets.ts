@@ -127,8 +127,7 @@ const controlViews = new Map<Ctor, ControlViewComponent>([
 export function customReactPresets(
   editor: NodeEditor<Schemes>,
   area: AreaPlugin<Schemes, AreaExtra>,
-  history: HistoryPlugin<Schemes>,
-  getZoom: () => number
+  history: HistoryPlugin<Schemes>
 ) {
   // Use any-cast to bypass complex TS types for Rete React Presets
   return (ReactPresets.classic as any).setup({
@@ -147,7 +146,7 @@ export function customReactPresets(
         const payload = data.payload as { constructor: Ctor };
         return controlViews.get(payload.constructor) ?? null;
       },
-      node: () => createCustomNode(area, history, getZoom),
+      node: () => createCustomNode(area, history),
     },
   });
 }

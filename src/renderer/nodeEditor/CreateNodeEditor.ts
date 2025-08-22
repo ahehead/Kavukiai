@@ -84,18 +84,6 @@ export async function createNodeEditor(container: HTMLElement) {
   area.use(render);
   area.use(gridLine);
 
-  // ズームの値を保持
-  let currentZoom = 1;
-  area.addPipe((context) => {
-    if (context.type === "zoomed") {
-      currentZoom = context.data.zoom;
-      return context;
-    }
-    // console.log("context", context);
-    return context;
-  });
-  const getZoom = () => currentZoom;
-
   // コネクションの作成時と削除時に、ソケットの接続状態とデータフローを更新
   registerConnectionPipeline(editor, area, dataflow);
 
@@ -104,7 +92,7 @@ export async function createNodeEditor(container: HTMLElement) {
 
   connection.addPreset(ConnectionPresets.classic.setup());
   // react pluginのカスタマイズ
-  render.addPreset(customReactPresets(editor, area, history, getZoom));
+  render.addPreset(customReactPresets(editor, area, history));
 
   // Undo/Redo機能有効化
   history.addPreset(HistoryPresets.classic.setup());
@@ -127,7 +115,6 @@ export async function createNodeEditor(container: HTMLElement) {
     new RectSelectPlugin({
       editor,
       container,
-      getZoom,
       selectableNodes: sn,
     })
   );

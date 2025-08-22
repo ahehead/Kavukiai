@@ -55,7 +55,6 @@ type UseNodeResizeProps = {
   node: NodeInterface;
   area: AreaPlugin<Schemes, AreaExtra>;
   history: HistoryPlugin<Schemes>;
-  getZoom: () => number;
   elementRef: React.RefObject<HTMLDivElement | null>;
 };
 
@@ -63,7 +62,6 @@ export function useNodeResize({
   node,
   area,
   history,
-  getZoom,
   elementRef,
 }: UseNodeResizeProps) {
   const getPanelSize = useCallback((): { width: number; height: number } => {
@@ -76,7 +74,7 @@ export function useNodeResize({
       width: node.width ?? NodeMinWidth,
       height: node.height ?? NodeMinHeight,
     };
-  }, [elementRef, getZoom, node, area]);
+  }, [elementRef, node, area]);
 
   const startResize = useCallback(
     (e: React.PointerEvent) => {
@@ -87,7 +85,7 @@ export function useNodeResize({
       const { width: startW, height: startH } = getPanelSize();
       const startX = e.clientX;
       const startY = e.clientY;
-      const zoom = getZoom();
+      const zoom = area.area.transform.k;
 
       async function move(event: PointerEvent) {
         const dx = (event.clientX - startX) / zoom;
@@ -123,7 +121,7 @@ export function useNodeResize({
       window.addEventListener("pointermove", move);
       window.addEventListener("pointerup", up);
     },
-    [getPanelSize, getZoom, node, area, history]
+    [getPanelSize, node, area, history]
   );
 
   // ノードサイズをクリアする関数を追加
