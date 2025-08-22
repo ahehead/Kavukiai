@@ -1,7 +1,8 @@
-import { Editor, type OnMount } from '@monaco-editor/react'
+import { Editor } from '@monaco-editor/react'
 import { cva } from 'class-variance-authority'
 import { BrushCleaning, ChevronRight } from 'lucide-react'
-import { type JSX, useLayoutEffect, useRef, useSyncExternalStore } from 'react'
+import type * as Monaco from 'monaco-editor'
+import { type JSX, useEffect, useLayoutEffect, useRef, useSyncExternalStore } from 'react'
 import {
   BaseControl,
   type ControlOptions,
@@ -11,7 +12,6 @@ import { Drag } from 'rete-react-plugin'
 import type { ControlJson } from 'shared/JsonType'
 import { useDragEdgeAutoscroll } from '../../util/useDragEdgeAutoscroll'
 import { useStopWheel } from '../../util/useStopWheel'
-
 export interface ConsoleControlParams extends ControlOptions<any> {
   isOpen?: boolean
 }
@@ -118,37 +118,41 @@ export function ConsoleControlView(props: {
     cb => props.data.subscribe(cb),
     () => props.data.isConsoleOpen()
   )
-  const textareaRef = useRef<HTMLDivElement>(null)
-  // Monaco editor インスタンス保持用
-  const editorRef = useRef<
-    import('monaco-editor').editor.IStandaloneCodeEditor | null
-  >(null)
-  useStopWheel(textareaRef)
-  useDragEdgeAutoscroll(textareaRef)
+  // Monaco のラッパ（親）と Monaco インスタンス参照
+  const containerRef = useRef<HTMLDivElement>(null)
+  const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null)
 
-  useLayoutEffect(() => {
-    // コンテナ自体のスクロール（フォールバック）
-    if (textareaRef.current) {
-      textareaRef.current.scrollTop = textareaRef.current.scrollHeight
-    }
-    // Monaco 側の最終行へスクロール
-    const ed = editorRef.current
-    const model = ed?.getModel()
-    if (ed && model) {
-      ed.revealLine(model.getLineCount())
-    }
-  }, [value])
-
+  useStopWheel(containerRef)
+  useDragEdgeAutoscroll(containerRef)
   const toggle = () => props.data.toggle()
   // valueをクリアする関数
   const clearValue = () => {
     props.data.setValue('')
   }
 
+  // ラッパサイズ変化に合わせて layout
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const ro = new ResizeObserver(() => {
+      if (editorRef.current) editorRef.current.layout()
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  // 開閉時（表示された直後）にも layout
+  useLayoutEffect(() => {
+    if (isOpen && editorRef.current) {
+      // 次のフレームで実行してサイズ確定後に layout
+      requestAnimationFrame(() => editorRef.current?.layout())
+    }
+  }, [isOpen])
+
   return (
     <Drag.NoDrag>
       <div className="flex flex-col w-full h-full">
-        <div className="flex items-center">
+        <div className="flex items-center w-full">
           <button
             type="button"
             className="flex items-center cursor-pointer"
@@ -179,44 +183,25 @@ export function ConsoleControlView(props: {
         </div>
         {isOpen && (
           <div
-            ref={textareaRef}
-            className="w-full h-full min-h-0 rounded-md bg-gray-100 mt-1 overflow-auto "
+            ref={containerRef}
+            className="relative w-full h-full min-h-0 min-w-0 rounded-md bg-gray-100 mt-1 overflow-auto "
           >
             <Editor
+              width="100%"
+              height="100%"
               value={value}
-              // 初期化前にテーマを定義
-              beforeMount={
-                (monaco => {
-                  monaco.editor.defineTheme('logViewerLight', {
-                    base: 'vs',
-                    inherit: true,
-                    rules: [],
-                    colors: {
-                      'editor.background': '#f3f4f6',
-                      'editorGutter.background': '#f3f4f6',
-                      'editor.selectionBackground': '#2563eb66',
-                      'editor.inactiveSelectionBackground': '#93c5fd66',
-                      'editor.selectionHighlightBackground': '#2563eb33',
-                      'editor.selectionForeground': '#111827',
-                      // フォーカス時の青い枠線を除去
-                      focusBorder: '#00000000',
-                      'editor.focusedBorder': '#00000000',
-                    },
-                  })
-                })
-              }
               theme="logViewerLight"
-              // マウント後にインスタンス参照 & 最終行へ
-              onMount={
-                (editor => {
-                  editorRef.current = editor
-                  const model = editor.getModel()
-                  if (model) editor.revealLine(model.getLineCount())
-                }) as OnMount
-              }
               language="plaintext"
+              onMount={(editor) => {
+                editorRef.current = editor
+                const model = editor.getModel()
+                if (model) editor.revealLine(model.getLineCount())
+                // マウント直後の初回 layout
+                editor.layout()
+              }}
               options={{
                 readOnly: true,
+                automaticLayout: true,
                 minimap: { enabled: false },
                 lineNumbers: 'off',
                 wordWrap: 'off',
@@ -242,7 +227,6 @@ export function ConsoleControlView(props: {
                 },
                 parameterHints: { enabled: false },
                 suggestOnTriggerCharacters: false,
-                // lightbulb: ShowLightbulbIconMode | undefined （明示的に無効化）
                 lightbulb: { enabled: undefined },
                 overviewRulerLanes: 0,
                 overviewRulerBorder: false,
