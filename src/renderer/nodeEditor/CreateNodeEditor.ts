@@ -2,7 +2,6 @@
 import { createRoot } from "react-dom/client";
 import { NodeEditor } from "rete";
 import { AreaExtensions, AreaPlugin } from "rete-area-plugin";
-import { CommentPlugin } from "rete-comment-plugin";
 import {
   ConnectionPlugin,
   Presets as ConnectionPresets,
@@ -75,9 +74,6 @@ export async function createNodeEditor(container: HTMLElement) {
   // グリッドラインスナッププラグインのインスタンス化
   const gridLine = new GridLineSnapPlugin<Schemes>({ container, baseSize: 20 });
 
-  // コメントプラグイン
-  const comment = new CommentPlugin<Schemes, AreaExtra>();
-
   // エディタにプラグインを接続
   editor.use(dataflow);
   editor.use(controlflow);
@@ -87,7 +83,6 @@ export async function createNodeEditor(container: HTMLElement) {
   area.use(contextMenu);
   area.use(render);
   area.use(gridLine);
-  area.use(comment);
 
   // ズームの値を保持
   let currentZoom = 1;
