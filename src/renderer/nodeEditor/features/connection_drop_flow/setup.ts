@@ -8,18 +8,16 @@ export function handleConnectionEvent(
 ) {
   let clientX = 0;
   let clientY = 0;
-  const handlerPointerMove = (event: PointerEvent) => {
-    clientX = event.clientX;
-    clientY = event.clientY;
-  };
-  document.addEventListener("pointermove", handlerPointerMove);
-  connection;
   connection.addPipe((ctx) => {
-    // console.log("connection event", ctx);
+    // ポインタの画面位置を取っておく
+    if (ctx.type === "pointermove") {
+      clientX = ctx.data.event.clientX;
+      clientY = ctx.data.event.clientY;
+    }
+    // connectionのdropイベント時にとりあえずコンテキストメニューを出す
     if (ctx.type === "connectiondrop") {
       const { created } = ctx.data;
       if (!created) {
-        // console.log("connection dropped", ctx.data);
         area.emit({
           type: "contextmenu",
           data: {
@@ -31,7 +29,4 @@ export function handleConnectionEvent(
     }
     return ctx;
   });
-  return () => {
-    document.removeEventListener("pointermove", handlerPointerMove);
-  };
 }
