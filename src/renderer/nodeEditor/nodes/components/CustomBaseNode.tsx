@@ -41,13 +41,13 @@ export function createCustomNode(
     data,
     emit,
   }: Props<Scheme>) {
-    const panelRef = useRef<HTMLDivElement>(null)
+    const elementRef = useRef<HTMLDivElement>(null)
     const { startResize, clearNodeSize } = useNodeResize({
       node: data,
       area,
       history,
       getZoom,
-      panelRef,
+      elementRef,
     })
     const inputs = Object.entries(data.inputs)
     const outputs = Object.entries(data.outputs)
@@ -80,9 +80,10 @@ export function createCustomNode(
       }
     }
 
+
     return (
       <NodeContainer
-        ref={panelRef}
+        ref={elementRef}
         selected={selected}
         status={status}
         nodeType={label}
