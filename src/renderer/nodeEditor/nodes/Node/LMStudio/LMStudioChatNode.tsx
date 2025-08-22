@@ -36,28 +36,27 @@ export class LMStudioChatNode extends MessagePortNode<
     controlflow: ControlFlowEngine<Schemes>
   ) {
     super('LMStudioChat', area, dataflow, controlflow)
-    this.addInputPortPattern({
-      type: 'RunButton',
-      controlflow: this.controlflow,
-    })
-    this.addInputPort([
-      {
-        key: 'exec2', typeName: 'exec', label: 'Stop',
-        onClick: () => this.controlflow.execute(this.id, 'exec2'),
-      },
-      { key: 'modelKey', typeName: 'string', label: 'modelKey', tooltip: 'Model key to use for the chat' },
-      {
-        key: 'chatHistoryData',
-        typeName: 'ChatHistoryData',
-        schema: ChatHistoryDataSchema,
-        tooltip: 'Chat history data',
-      },
-      {
-        key: 'config',
-        typeName: 'LLMPredictionConfig',
-        schema: LLMPredictionConfigSchema,
-        tooltip: 'Prediction config',
-      },
+    this.addInputPort([{
+      key: 'exec', typeName: 'exec', label: 'Run',
+      onClick: () => this.controlflow.execute(this.id, 'exec'),
+    },
+    {
+      key: 'exec2', typeName: 'exec', label: 'Stop',
+      onClick: () => this.controlflow.execute(this.id, 'exec2'),
+    },
+    { key: 'modelKey', typeName: 'string', label: 'modelKey', tooltip: 'Model key to use for the chat' },
+    {
+      key: 'chatHistoryData',
+      typeName: 'ChatHistoryData',
+      schema: ChatHistoryDataSchema,
+      tooltip: 'Chat history data',
+    },
+    {
+      key: 'config',
+      typeName: 'LLMPredictionConfig',
+      schema: LLMPredictionConfigSchema,
+      tooltip: 'Prediction config',
+    },
     ])
     this.addOutputPort([
       { key: 'exec', typeName: 'exec', label: 'Out' },
