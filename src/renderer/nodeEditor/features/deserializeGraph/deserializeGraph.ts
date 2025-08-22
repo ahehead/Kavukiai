@@ -65,7 +65,7 @@ export async function deserializeGraphIntoEditor({
     // 最後にノードの基本設定を設定、描画の変更
     node.id = id;
     await editor.addNode(node);
-    node.setSize(size.width, size.height);
+    node.setRowSize(size.width, size.height);
     if (size.width && size.height) {
       await area.resize(id, size.width, size.height);
     }
