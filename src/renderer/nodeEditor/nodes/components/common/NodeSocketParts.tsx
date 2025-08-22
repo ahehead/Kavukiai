@@ -35,10 +35,10 @@ export function NodeInputPort({
   )
 }
 
-export const NodeInputPortContentStyle = cva([''], {
+export const NodeInputPortContentStyle = cva(['pl-1'], {
   variants: {
     showControl: {
-      true: 'grid items-center w-full pr-2 py-[0.2em]',
+      true: 'grid items-center w-full py-[0.2em] pr-5', //cols:0,showControl:true button等
       false: 'flex w-full justify-start flex-row items-center',
     },
     cols: {
@@ -51,12 +51,12 @@ export const NodeInputPortContentStyle = cva([''], {
     {
       showControl: true,
       cols: 1,
-      class: 'grid-cols-1 grid-cols-subgrid my-0.5',
+      class: 'grid-cols-1 grid-cols-subgrid my-0.5 pr-5',
     },
     {
       showControl: true,
       cols: 2,
-      class: 'grid-cols-2 gap-x-2 my-0.5'
+      class: 'grid-cols-2 gap-x-2 my-0.5 pr-5'
     },
   ],
   defaultVariants: {

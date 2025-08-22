@@ -40,7 +40,7 @@ export function ButtonControlView({ data: control }: { data: ButtonControl }) {
 }
 
 const buttonVariants = cva(
-  'flex items-center justify-center p-1 overflow-hidden text-sm font-medium w-full rounded-lg border-1 text-foregroundbg-node-bg transition-colors',
+  'flex items-center justify-center p-1 overflow-hidden text-sm font-medium w-full rounded-lg border-1 text-foregroundbg-node-bg transition-colors bg-node-bg',
   {
     variants: {
       exec: {
