@@ -13,9 +13,10 @@ import type {
   NodeTypes,
   Schemes,
 } from '../../../types/Schemes'
+import type { GroupPlugin } from '../../group'
 import type { DataflowEngine } from '../../safe-dataflow/dataflowEngin'
 import { ContextMenuPlugin } from '..'
-import { createCopyItem } from './items/copy'
+import { collectTargetNodes, createCopyItem } from './items/copy'
 import { createNodeFactoryMenuItems } from './items/createContextMenu'
 import { createDeleteConnectionItem } from './items/createDeleteConnectionItem'
 import { createDeleteNodeItem } from './items/createDeleteNodeItem'
@@ -31,6 +32,7 @@ type ContextMenuDependencies = {
   dataflow: DataflowEngine<Schemes>
   controlflow: ControlFlowEngine<Schemes>
   history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
+  groupPlugin: GroupPlugin<Schemes>
 }
 
 function isConnection(
@@ -49,6 +51,7 @@ export function setupContextMenu({
   dataflow,
   controlflow,
   history,
+  groupPlugin,
 }: ContextMenuDependencies) {
   const nodeDeps: NodeDeps = { editor, area, dataflow, controlflow, history }
 
@@ -61,13 +64,15 @@ export function setupContextMenu({
       if (context === 'root') {
         return {
           searchBar: true,
-          list: [...createNodeFactoryMenuItems(
-            contextMenuStructure,
-            editor,
-            nodeDeps,
-            pointer
-          ),
-          createPasteItem(pointer, nodeDeps)]
+          list: [
+            ...createNodeFactoryMenuItems(
+              contextMenuStructure,
+              editor,
+              nodeDeps,
+              pointer
+            ),
+            createPasteItem(pointer, nodeDeps),
+          ],
         }
       }
 
@@ -76,16 +81,31 @@ export function setupContextMenu({
       if (isNode(context)) {
         // node のinputにcontrolがある場合、(showControlをtoggleする)メニュー項目を追加
         addToggleInputMenuItem(context, listItems, editor, area, dataflow)
+
+        // group機能
+        const groupItem = {
+          label: 'グループ化',
+          key: 'grouping',
+          handler: () => {
+            const targetNodes = collectTargetNodes(context, editor)
+            groupPlugin.addGroup(
+              'test',
+              targetNodes.map(node => node.id)
+            )
+          },
+        }
+        listItems.push(groupItem)
+
         // コピー機能
         listItems.push(createCopyItem(context, editor, area))
+        // node削除機能
+        listItems.push(createDeleteNodeItem(context, editor))
       }
 
       if (isConnection(context)) {
         // 接続削除機能
         listItems.push(createDeleteConnectionItem(context, editor))
       }
-      // node削除機能
-      listItems.push(createDeleteNodeItem(context, editor))
       return {
         searchBar: false,
         list: listItems,

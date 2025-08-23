@@ -14,12 +14,7 @@ export function createCopyItem(
     key: "copy-nodes",
     handler: async () => {
       // 選択中のノード（右クリック対象を必ず含む）を収集
-      const targetNodes = [
-        context,
-        ...editor
-          .getNodes()
-          .filter((node) => node.selected && node.id !== context.id),
-      ];
+      const targetNodes = collectTargetNodes(context, editor);
 
       // 共通関数で GraphJsonData を生成
       const jsonData: GraphJsonData = buildGraphJsonForCopy(
@@ -35,4 +30,16 @@ export function createCopyItem(
       }
     },
   };
+}
+
+export function collectTargetNodes(
+  context: NodeTypes,
+  editor: NodeEditor<Schemes>
+): NodeTypes[] {
+  return [
+    context,
+    ...editor
+      .getNodes()
+      .filter((node) => node.selected && node.id !== context.id),
+  ];
 }

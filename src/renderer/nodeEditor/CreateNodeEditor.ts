@@ -28,6 +28,7 @@ import {
   resetEditorState,
 } from "./features/editor_state/historyState";
 import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
+import { GroupPlugin } from "./features/group";
 import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
 import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
 import { selectableNodes, selector } from "./features/nodeSelection/selectable";
@@ -62,6 +63,8 @@ export async function createNodeEditor(container: HTMLElement) {
   AreaExtensions.simpleNodesOrder(area);
   const connection = new ConnectionPlugin<Schemes, AreaExtra>();
   const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
+  // グループ化プラグイン
+  const groupPlugin = new GroupPlugin<Schemes>();
   // 右クリックメニュー
   const contextMenu = setupContextMenu({
     editor,
@@ -69,9 +72,10 @@ export async function createNodeEditor(container: HTMLElement) {
     dataflow,
     controlflow,
     history,
+    groupPlugin,
   });
 
-  // グリッドラインスナッププラグインのインスタンス化
+  // 背景グリッドラインスナッププラグインのインスタンス化
   const gridLine = new GridLineSnapPlugin<Schemes>({ container, baseSize: 20 });
 
   // エディタにプラグインを接続
@@ -83,6 +87,7 @@ export async function createNodeEditor(container: HTMLElement) {
   area.use(contextMenu);
   area.use(render);
   area.use(gridLine);
+  area.use(groupPlugin);
 
   // コネクションの作成時と削除時に、ソケットの接続状態とデータフローを更新
   registerConnectionPipeline(editor, area, dataflow);
