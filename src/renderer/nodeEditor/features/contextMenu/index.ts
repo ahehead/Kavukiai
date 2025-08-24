@@ -144,8 +144,11 @@ export class ContextMenuPlugin<Schemes extends BaseSchemes> extends Scope<
         if (!context.data.event.composedPath().includes(element)) {
           void parent.emit({ type: "unmount", data: { element } });
         }
-        // 右クリックメニューが開いているときにノード選択された場合は解除
-      } else if (context.type === "nodepicked") {
+        // 右クリックメニューが開いているときにノード選択(nodepicked)された場合は解除
+      } else if (
+        context.type === "nodepicked" &&
+        element.style.display !== "none"
+      ) {
         void parent.emit({ type: "unmount", data: { element } });
       }
       return context;
