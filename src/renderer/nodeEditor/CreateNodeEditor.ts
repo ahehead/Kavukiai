@@ -60,6 +60,7 @@ export async function createNodeEditor(container: HTMLElement) {
   });
 
   const area = new AreaPlugin<Schemes, AreaExtra>(container);
+  // nodepicked時にノードの順序を前に、connectioncreated時にコネクションの順序を後ろにする
   AreaExtensions.simpleNodesOrder(area);
   const connection = new ConnectionPlugin<Schemes, AreaExtra>();
   const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
