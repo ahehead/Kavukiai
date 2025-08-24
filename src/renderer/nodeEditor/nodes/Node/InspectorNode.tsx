@@ -36,12 +36,14 @@ export class InspectorNode
     public controlflow: ControlFlowEngine<Schemes>
   ) {
     super('Inspector')
-    this.addInputPortPattern({
-      type: 'RunButton',
-      controlflow: this.controlflow,
-    })
 
     this.addInputPort([
+      {
+        key: 'exec',
+        typeName: 'exec',
+        label: 'scan',
+        onClick: async () => this.controlflow.execute(this.id, 'exec')
+      },
       {
         key: 'inputAny',
         typeName: 'any',
