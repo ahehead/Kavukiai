@@ -14,7 +14,7 @@ import {
   Presets as HistoryPresets,
 } from "rete-history-plugin";
 import { ReactPlugin } from "rete-react-plugin";
-import { handleConnectionEvent } from "./features/connection_drop_flow/setup";
+import { handleConnectionEvent } from "./features/connection_drop_menu";
 import { customContextMenuPreset } from "./features/contextMenu/setup/CustomContextMenuPreset";
 import { setupContextMenu } from "./features/contextMenu/setup/SetupContextMenu";
 import { customReactPresets } from "./features/customReactPresets/customReactPresets";
