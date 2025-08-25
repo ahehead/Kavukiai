@@ -2,12 +2,14 @@
 import type { AreaExtra } from "renderer/nodeEditor/types";
 import { type BaseSchemes, NodeEditor, type NodeId, Scope } from "rete";
 import { AreaExtensions, AreaPlugin, type BaseArea } from "rete-area-plugin";
+import { Group, MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from "./Group";
+
+export { Group, MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from "./Group";
 
 const DEFAULT_PADDING = 12;
 // タイトル分の上方向の余白を追加（上だけ少し広めに）
 const EXTRA_TOP_PADDING = 24;
-const MIN_GROUP_WIDTH = 120;
-const MIN_GROUP_HEIGHT = 80;
+// min size constants are defined in Group.ts
 
 type Produces =
   | { type: "groupcreated"; data: Group }
@@ -22,31 +24,7 @@ type Produces =
       data: { group: Group; position: { x: number; y: number } };
     };
 
-export class Group {
-  id = crypto.randomUUID();
-  text = "";
-  links: NodeId[] = [];
-  // 常に定義済みの矩形（linksが空なら最小サイズ、位置は保持）
-  left: number = 0;
-  top: number = 0;
-  width: number = MIN_GROUP_WIDTH;
-  height: number = MIN_GROUP_HEIGHT;
-  selected = false;
-  element!: HTMLElement;
-  // mountElement で付与するイベントリスナー参照（destroy 時に外す）
-  onPointerDown?: (e: PointerEvent) => void;
-  onPointerMove?: (e: PointerEvent) => void;
-
-  constructor(text: string) {
-    this.text = text;
-  }
-  linkedTo(id: NodeId) {
-    return this.links.includes(id);
-  }
-  linkTo(ids: NodeId[]) {
-    this.links = Array.from(new Set(ids));
-  }
-}
+// Group model moved to ./Group
 
 export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
   Produces,
