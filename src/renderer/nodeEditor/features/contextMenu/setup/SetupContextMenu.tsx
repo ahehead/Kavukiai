@@ -1,6 +1,5 @@
 import type { NodeEditor } from 'rete'
 import type { AreaPlugin } from 'rete-area-plugin'
-import type { Item } from 'rete-context-menu-plugin/_types/types'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryActions, HistoryPlugin } from 'rete-history-plugin'
 import {
@@ -10,13 +9,12 @@ import {
 import type {
   AreaExtra,
   NodeInterface,
-  NodeTypes,
   Schemes,
 } from '../../../types/Schemes'
 import type { Group, GroupPlugin } from '../../group'
 import type { DataflowEngine } from '../../safe-dataflow/dataflowEngin'
 import { ContextMenuPlugin } from '..'
-import { collectTargetNodes, createCopyItem } from './items/copy'
+import { createCopyItem } from './items/copy'
 import { createNodeFactoryMenuItems } from './items/createContextMenu'
 import { createDeleteConnectionItem } from './items/createDeleteConnectionItem'
 import { createDeleteNodeItem } from './items/createDeleteNodeItem'
@@ -24,6 +22,7 @@ import {
   createToggleInputControlMenuItem,
   filterInputControls,
 } from './items/createToggleInputControlMenuItem'
+import { createDeleteGroupMenuItem, createGroupMenuItem } from './items/group'
 import { createPasteItem } from './items/paste'
 
 type ContextMenuDependencies = {
@@ -50,7 +49,7 @@ function isNode(ctx: any): ctx is NodeInterface {
 }
 
 function isGroup(ctx: any): ctx is { type: 'group'; group: Group } {
-  return ctx && typeof ctx === 'object' && 'type' in ctx && ctx.type === "group"
+  return ctx && typeof ctx === 'object' && 'type' in ctx && ctx.type === 'group'
 }
 
 export function setupContextMenu({
@@ -88,43 +87,45 @@ export function setupContextMenu({
         return {
           searchBar: false,
           list: [
-            {
-              label: 'グループを削除',
-              key: 'delete-group',
-              handler: () => groupPlugin.delete(context.group.id),
-            },
+            ...createNodeFactoryMenuItems(
+              contextMenuStructure,
+              editor,
+              nodeDeps,
+              pointer
+            ),
+            createDeleteGroupMenuItem(context.group, groupPlugin),
           ],
         }
       }
 
       // ノードを右クリック
       if (isNode(context)) {
-        const list: Item[] = []
 
         // node のinputにcontrolがある場合、(showControlをtoggleする)メニュー項目を追加
-        addToggleInputMenuItem(context, list, editor, area, dataflow)
-
-        // group機能
-        const groupItem = {
-          label: 'グループ化',
-          key: 'grouping',
-          handler: () => {
-            groupPlugin.addGroup(
-              'test',
-              collectTargetNodes(context, editor).map(node => node.id)
-            )
-          },
-        }
-        list.push(groupItem)
-
-        // コピー機能
-        list.push(createCopyItem(context, editor, area))
-        // node削除機能
-        list.push(createDeleteNodeItem(context, editor))
+        const inputlist = filterInputControls(context.inputs)
 
         return {
           searchBar: false,
-          list,
+          list: [
+            // 条件に一致する場合のみメニュー項目を追加（nullを含めない）
+            ...(inputlist.length > 0
+              ? [
+                createToggleInputControlMenuItem(
+                  context,
+                  editor,
+                  area,
+                  dataflow,
+                  inputlist
+                ),
+              ]
+              : []),
+            // group機能
+            createGroupMenuItem(context, editor, groupPlugin),
+            // コピー機能
+            createCopyItem(context, editor, area),
+            // node削除機能
+            createDeleteNodeItem(context, editor)
+          ],
         }
       }
 
@@ -142,31 +143,4 @@ export function setupContextMenu({
   })
 }
 
-/**
- * node のinputにcontrolがある場合、(showControlをtoggleする)メニュー項目を追加
- * @param context
- * @param listItems
- * @param editor
- * @param area
- * @param dataflow
- */
-function addToggleInputMenuItem(
-  context: NodeTypes,
-  listItems: Item[],
-  editor: NodeEditor<Schemes>,
-  area: AreaPlugin<Schemes, AreaExtra>,
-  dataflow: DataflowEngine<Schemes>
-) {
-  const inputlist = filterInputControls(context.inputs)
-  if (inputlist.length > 0) {
-    listItems.push(
-      createToggleInputControlMenuItem(
-        context,
-        editor,
-        area,
-        dataflow,
-        inputlist
-      )
-    )
-  }
-}
+
