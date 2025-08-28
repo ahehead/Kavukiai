@@ -17,8 +17,8 @@ export function createGroupMenuItem(
     key: "grouping",
     handler: () => {
       const nodeIds = collectTargetNodes(context, editor).map((n) => n.id);
-      // TODO: グループ名は後でリネーム可能にする（暫定で 'test'）
-      groupPlugin.addGroup("test", nodeIds);
+      // TODO: グループ名は後でリネーム可能にする（暫定で 'Memo'）
+      groupPlugin.addGroup("Memo", nodeIds);
     },
   };
 }
