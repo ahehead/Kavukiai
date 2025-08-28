@@ -170,8 +170,11 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         g.element.removeEventListener('pointerdown', g.onPointerDown)
       if (g.onPointerMove)
         g.element.removeEventListener('pointermove', g.onPointerMove)
+      if (g.onContextMenu)
+        g.element.removeEventListener('contextmenu', g.onContextMenu)
       g.onPointerDown = undefined
       g.onPointerMove = undefined
+      g.onContextMenu = undefined
       g.element.remove()
     }
     this.groups.delete(id)
@@ -185,6 +188,21 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     g.top += dy
     this.applyRect(g)
     void this.emit({ type: 'grouptranslated', data: { id, dx, dy, sources } })
+  }
+
+  /**
+   * グループに links を反映して、直後に自動フィットさせるユーティリティ関数（公開）
+   * - Group インスタンスまたは group id のどちらでも指定可能
+   * - 無効な nodeId は安全に無視される
+   */
+  public linkToAndFit(target: Group | string, links: NodeId[]) {
+    const g = typeof target === 'string' ? this.groups.get(target) : target
+    if (!g) return
+    // 現在存在しているノードのみをリンク対象にし、既存リンクに追加（重複は除去）
+    const validNew = links.filter(id => this.area.nodeViews.has(id))
+    const next = Array.from(new Set<NodeId>([...g.links, ...validNew]))
+    g.linkTo(next)
+    this.fitToLinks(g)
   }
 
   // ---- geometry helpers (view-based; never use model x/y)

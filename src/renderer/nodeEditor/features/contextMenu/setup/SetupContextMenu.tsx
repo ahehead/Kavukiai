@@ -91,7 +91,13 @@ export function setupContextMenu({
               contextMenuStructure,
               editor,
               nodeDeps,
-              pointer
+              pointer,
+              {
+                // グループコンテキストから生成したノードは自動的にグループにリンク
+                afterCreate: ({ node }) => {
+                  groupPlugin.linkToAndFit(context.group, [node.id])
+                },
+              }
             ),
             createDeleteGroupMenuItem(context.group, groupPlugin),
           ],
