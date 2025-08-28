@@ -276,8 +276,18 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       // content 座標の delta をそのまま渡す（grouptranslated でも同一座標系で処理）
       this.translateGroup(g.id, dx, dy)
     }
+    const onContextMenu = (e: PointerEvent) => {
+      void this.area.emit({
+        type: 'contextmenu',
+        data: {
+          event: e,
+          context: { type: 'group', group: g },
+        } as any, //無理やり
+      })
+    }
     el.addEventListener('pointerdown', onPointerDown)
     el.addEventListener('pointermove', onPointerMove)
+    el.addEventListener('contextmenu', onContextMenu)
     // 解除用に保持
     g.onPointerDown = onPointerDown
     g.onPointerMove = onPointerMove

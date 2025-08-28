@@ -19,6 +19,7 @@ export class Group {
   // mountElement で付与するイベントリスナー参照（destroy 時に外す）
   onPointerDown?: (e: PointerEvent) => void;
   onPointerMove?: (e: PointerEvent) => void;
+  onContextMenu?: (e: PointerEvent) => void;
   // 外部購読者
   private listeners = new Set<() => void>();
 

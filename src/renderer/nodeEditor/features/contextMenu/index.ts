@@ -5,6 +5,7 @@ import {
   BaseAreaPlugin,
   type RenderSignal,
 } from "rete-area-plugin";
+import type { Group } from "../group";
 export type Position = { x: number; y: number };
 
 /**
@@ -22,8 +23,15 @@ export type ItemsCollection = {
   list: Item[];
 };
 
+// 追加: コンテキストの総称型
+export type MenuContext<Schemes extends BaseSchemes> =
+  | "root"
+  | Schemes["Node"]
+  | Schemes["Connection"]
+  | { type: "group"; group: Group };
+
 export type Items<Schemes extends BaseSchemes> = (
-  context: "root" | Schemes["Node"],
+  context: MenuContext<Schemes>,
   plugin: ContextMenuPlugin<Schemes>
 ) => ItemsCollection;
 /**
@@ -59,7 +67,7 @@ type Requires<Schemes extends BaseSchemes> =
       type: "contextmenu";
       data: {
         event: MouseEvent;
-        context: "root" | Schemes["Node"] | Schemes["Connection"];
+        context: MenuContext<Schemes>;
       };
     }
   | { type: "unmount"; data: { element: HTMLElement } }

@@ -13,7 +13,7 @@ import type {
   NodeTypes,
   Schemes,
 } from '../../../types/Schemes'
-import type { GroupPlugin } from '../../group'
+import type { Group, GroupPlugin } from '../../group'
 import type { DataflowEngine } from '../../safe-dataflow/dataflowEngin'
 import { ContextMenuPlugin } from '..'
 import { collectTargetNodes, createCopyItem } from './items/copy'
@@ -35,6 +35,10 @@ type ContextMenuDependencies = {
   groupPlugin: GroupPlugin<Schemes>
 }
 
+function isRoot(ctx: any): ctx is 'root' {
+  return ctx === 'root'
+}
+
 function isConnection(
   ctx: any
 ): ctx is { id: string; source: string; target: string } {
@@ -43,6 +47,10 @@ function isConnection(
 
 function isNode(ctx: any): ctx is NodeInterface {
   return ctx && typeof ctx === 'object' && 'id' in ctx && 'inputs' in ctx
+}
+
+function isGroup(ctx: any): ctx is { type: 'group'; group: Group } {
+  return ctx && typeof ctx === 'object' && 'type' in ctx && ctx.type === "group"
 }
 
 export function setupContextMenu({
@@ -61,7 +69,7 @@ export function setupContextMenu({
       const pointer = area.area.pointer
 
       // 何もない場所で右クリックされた場合
-      if (context === 'root') {
+      if (isRoot(context)) {
         return {
           searchBar: true,
           list: [
@@ -75,41 +83,61 @@ export function setupContextMenu({
           ],
         }
       }
+      // グループを右クリック
+      if (isGroup(context)) {
+        return {
+          searchBar: false,
+          list: [
+            {
+              label: 'グループを削除',
+              key: 'delete-group',
+              handler: () => groupPlugin.delete(context.group.id),
+            },
+          ],
+        }
+      }
 
-      const listItems: Item[] = []
-
+      // ノードを右クリック
       if (isNode(context)) {
+        const list: Item[] = []
+
         // node のinputにcontrolがある場合、(showControlをtoggleする)メニュー項目を追加
-        addToggleInputMenuItem(context, listItems, editor, area, dataflow)
+        addToggleInputMenuItem(context, list, editor, area, dataflow)
 
         // group機能
         const groupItem = {
           label: 'グループ化',
           key: 'grouping',
           handler: () => {
-            const targetNodes = collectTargetNodes(context, editor)
             groupPlugin.addGroup(
               'test',
-              targetNodes.map(node => node.id)
+              collectTargetNodes(context, editor).map(node => node.id)
             )
           },
         }
-        listItems.push(groupItem)
+        list.push(groupItem)
 
         // コピー機能
-        listItems.push(createCopyItem(context, editor, area))
+        list.push(createCopyItem(context, editor, area))
         // node削除機能
-        listItems.push(createDeleteNodeItem(context, editor))
+        list.push(createDeleteNodeItem(context, editor))
+
+        return {
+          searchBar: false,
+          list,
+        }
       }
 
+      // 接続を右クリック
       if (isConnection(context)) {
-        // 接続削除機能
-        listItems.push(createDeleteConnectionItem(context, editor))
+        return {
+          searchBar: false,
+          list: [createDeleteConnectionItem(context, editor)],
+        }
       }
-      return {
-        searchBar: false,
-        list: listItems,
-      }
+
+      // デフォルト（想定外の文脈）
+      return { searchBar: false, list: [] }
     },
   })
 }
