@@ -6,7 +6,8 @@ export const MIN_GROUP_HEIGHT = 80;
 
 export class Group {
   id = crypto.randomUUID();
-  text = "";
+  // text は getter/setter 経由で更新通知を行う
+  private _text = "";
   links: NodeId[] = [];
   // 常に定義済みの矩形（linksが空なら最小サイズ、位置は保持）
   left: number = 0;
@@ -18,14 +19,44 @@ export class Group {
   // mountElement で付与するイベントリスナー参照（destroy 時に外す）
   onPointerDown?: (e: PointerEvent) => void;
   onPointerMove?: (e: PointerEvent) => void;
+  // 外部購読者
+  private listeners = new Set<() => void>();
 
   constructor(text: string) {
-    this.text = text;
+    this._text = text;
   }
   linkedTo(id: NodeId) {
     return this.links.includes(id);
   }
   linkTo(ids: NodeId[]) {
     this.links = Array.from(new Set(ids));
+  }
+
+  // --- text accessor with notify ---
+  get text(): string {
+    return this._text;
+  }
+  set text(v: string) {
+    if (v === this._text) return;
+    this._text = v;
+    this.notify();
+  }
+
+  // --- subscribe/notify for useSyncExternalStore ---
+  subscribe = (listener: () => void): (() => void) => {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  };
+  private notify() {
+    // 例外防止にコピーを走査
+    for (const l of Array.from(this.listeners)) {
+      try {
+        l();
+      } catch {
+        // no-op
+      }
+    }
   }
 }

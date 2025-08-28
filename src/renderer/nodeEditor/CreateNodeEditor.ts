@@ -65,7 +65,7 @@ export async function createNodeEditor(container: HTMLElement) {
   const connection = new ConnectionPlugin<Schemes, AreaExtra>();
   const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
   // グループ化プラグイン
-  const groupPlugin = new GroupPlugin<Schemes>();
+  const groupPlugin = new GroupPlugin<Schemes>(render);
   // 右クリックメニュー
   const contextMenu = setupContextMenu({
     editor,
