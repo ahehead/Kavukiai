@@ -57,9 +57,9 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     const isTranslating = (id: NodeId) => translating.has(id)
 
     // --- Area signals
-    this.addPipe(ctx => {
+    this.addPipe(async ctx => {
       if (!ctx || typeof ctx !== 'object' || !('type' in ctx)) return ctx
-
+      // console.log('GroupPlugin pipe', ctx)
       if (ctx.type === 'nodedragged') {
         const { id } = ctx.data
         for (const g of this.groups.values()) {
@@ -69,10 +69,8 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
 
           let membershipChanged = false
           if (wasLinked !== inside) {
-            const next = inside
-              ? Array.from(new Set([...g.links, id]))
-              : g.links.filter(n => n !== id)
-            g.linkTo(next)
+            if (inside) g.addLink(id)
+            else g.removeLink(id)
             membershipChanged = true // リンク集合の変化（入出）
           }
 
@@ -82,19 +80,13 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       }
 
       if (ctx.type === 'grouptranslated') {
-        const { id, dx, dy, sources } = ctx.data
+        const { id, dx, dy } = ctx.data
         const g = this.groups.get(id)
         if (!g) return ctx
-
-        if (sources?.length) {
-          return ctx
-        }
-
         for (const linkId of g.links) {
-          if (sources?.includes(linkId)) continue
           const v = this.area.nodeViews.get(linkId)
           if (!v || isTranslating(linkId)) continue
-          void translate(linkId, v.position.x + dx, v.position.y + dy)
+          await translate(linkId, v.position.x + dx, v.position.y + dy)
         }
       }
 
@@ -138,7 +130,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       if (ctx.type === 'noderemoved') {
         const { id } = ctx.data
         for (const g of this.groups.values()) {
-          g.linkTo(g.links.filter(x => x !== id))
+          g.removeLink(id)
           // リンク集合に合わせてフィット（links が空なら最小化）
           this.fitToLinks(g)
         }
@@ -150,10 +142,9 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
   // Public API
   addGroup(text: string, links: NodeId[] = []) {
     const g = new Group(text)
-    g.linkTo(links)
+    g.addLinks(links)
     this.mountElement(g)
     this.groups.set(g.id, g)
-    // 初期計算は常にfitToLinksに統一（linksが空なら最小サイズで位置維持）
     this.fitToLinks(g)
     void this.emit({ type: 'groupcreated', data: g })
     return g
@@ -181,13 +172,13 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     void this.emit({ type: 'groupremoved', data: g })
   }
 
-  translateGroup(id: string, dx: number, dy: number, sources?: NodeId[]) {
+  translateGroup(id: string, dx: number, dy: number) {
     const g = this.groups.get(id)
     if (!g) return
     g.left += dx
     g.top += dy
     this.applyRect(g)
-    void this.emit({ type: 'grouptranslated', data: { id, dx, dy, sources } })
+    void this.emit({ type: 'grouptranslated', data: { id, dx, dy } })
   }
 
   /**
@@ -200,8 +191,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     if (!g) return
     // 現在存在しているノードのみをリンク対象にし、既存リンクに追加（重複は除去）
     const validNew = links.filter(id => this.area.nodeViews.has(id))
-    const next = Array.from(new Set<NodeId>([...g.links, ...validNew]))
-    g.linkTo(next)
+    g.addLinks(validNew)
     this.fitToLinks(g)
   }
 
@@ -278,12 +268,14 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     let sx = 0,
       sy = 0
     const onPointerDown = (e: PointerEvent) => {
+      e.stopPropagation()
       sx = e.clientX
       sy = e.clientY
         // ターゲットではなく currentTarget にキャプチャを設定
         ; (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
     }
     const onPointerMove = (e: PointerEvent) => {
+      e.stopPropagation()
       if (!(e.buttons & 1)) return
       // 画面座標の差分を content 座標に変換（ズーム倍率を考慮）
       const k = this.area.area.transform.k ?? 1
@@ -295,6 +287,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       this.translateGroup(g.id, dx, dy)
     }
     const onContextMenu = (e: PointerEvent) => {
+      e.stopPropagation()
       void this.area.emit({
         type: 'contextmenu',
         data: {

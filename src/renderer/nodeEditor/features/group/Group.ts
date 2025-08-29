@@ -19,6 +19,7 @@ export class Group {
   // mountElement で付与するイベントリスナー参照（destroy 時に外す）
   onPointerDown?: (e: PointerEvent) => void;
   onPointerMove?: (e: PointerEvent) => void;
+  onPointerUp?: (e: PointerEvent) => void;
   onContextMenu?: (e: PointerEvent) => void;
   // 外部購読者
   private listeners = new Set<() => void>();
@@ -30,7 +31,50 @@ export class Group {
     return this.links.includes(id);
   }
   linkTo(ids: NodeId[]) {
-    this.links = Array.from(new Set(ids));
+    // 重複排除して順序を維持
+    const next = Array.from(new Set(ids));
+    const changed =
+      next.length !== this.links.length ||
+      next.some((v, i) => v !== this.links[i]);
+    this.links = next;
+    if (changed) this.notify();
+  }
+
+  // --- link helpers ---
+  /** 単一ノードをリンクへ追加（既に含まれていれば何もしない） */
+  addLink(id: NodeId) {
+    if (this.links.includes(id)) return;
+    this.links = [...this.links, id];
+    this.notify();
+  }
+
+  /** 複数ノードをリンクへ追加（重複は自動的に排除） */
+  addLinks(ids: NodeId[]) {
+    this.linkTo([...this.links, ...ids]);
+  }
+
+  /** 単一ノードをリンクから除去（存在しなければ何もしない） */
+  removeLink(id: NodeId) {
+    if (!this.links.includes(id)) return;
+    this.links = this.links.filter((x) => x !== id);
+    this.notify();
+  }
+
+  /** 複数ノードをリンクから除去 */
+  removeLinks(ids: NodeId[]) {
+    if (ids.length === 0) return;
+    const s = new Set(ids);
+    const next = this.links.filter((x) => !s.has(x));
+    if (next.length === this.links.length) return;
+    this.links = next;
+    this.notify();
+  }
+
+  /** すべてのリンクを解除 */
+  clearLinks() {
+    if (this.links.length === 0) return;
+    this.links = [];
+    this.notify();
   }
 
   // --- text accessor with notify ---
