@@ -1,5 +1,5 @@
-import { type NodeEditor, type Root, Scope } from "rete";
-import { type Area2D, AreaPlugin, type NodeView } from "rete-area-plugin";
+import { NodeEditor, Scope } from "rete";
+import { type Area2D, AreaExtensions, AreaPlugin } from "rete-area-plugin";
 import type { AreaExtra, Schemes } from "../../types";
 import type { selectableNodes } from "./selectable";
 
@@ -7,10 +7,10 @@ type Point = { x: number; y: number };
 
 export class RectSelectPlugin extends Scope<
   AreaPlugin<Schemes, AreaExtra>,
-  [Area2D<Schemes>, Root<Schemes>]
+  [Area2D<Schemes>]
 > {
   private area!: AreaPlugin<Schemes, AreaExtra>;
-  private editor: NodeEditor<Schemes>;
+  private editor!: NodeEditor<Schemes>;
   private container: HTMLElement;
   private selectableNodes: ReturnType<typeof selectableNodes> | null = null;
   private isDragging = false;
@@ -21,19 +21,18 @@ export class RectSelectPlugin extends Scope<
   private diff = 320000; // オーバーレイの大きさを調整
 
   constructor(options: {
-    editor: NodeEditor<Schemes>;
     container: HTMLElement;
     selectableNodes: ReturnType<typeof selectableNodes> | null;
   }) {
     super("node-selection-plugin");
-    this.editor = options.editor;
     this.container = options.container;
     this.selectableNodes = options.selectableNodes;
   }
 
-  setParent(scope: Scope<any, [Root<Schemes>]>) {
+  setParent(scope: Scope<Area2D<Schemes>>) {
     super.setParent(scope);
     this.area = this.parentScope<AreaPlugin<Schemes, AreaExtra>>(AreaPlugin);
+    this.editor = this.area.parentScope<NodeEditor<Schemes>>(NodeEditor);
 
     this.addPipe((context) => {
       if (!context || typeof context !== "object" || !("type" in context))
@@ -111,11 +110,7 @@ export class RectSelectPlugin extends Scope<
           x: context.data.position.x,
           y: context.data.position.y,
         };
-        const selectedNodes = this.filterNodesInArea(
-          this.startPoint,
-          endPoint,
-          this.area.area.transform.k
-        );
+        const selectedNodes = this.filterNodesInArea(this.startPoint, endPoint);
         for (const node of selectedNodes) {
           this.selectableNodes?.select(node.id, true);
         }
@@ -138,7 +133,7 @@ export class RectSelectPlugin extends Scope<
     }
   }
 
-  private filterNodesInArea(startPoint: Point, endPoint: Point, zoom: number) {
+  private filterNodesInArea(startPoint: Point, endPoint: Point) {
     const nodes = this.editor.getNodes();
     // start/end を正規化して左上 (x1,y1)、右下 (x2,y2) を算出
     const x1 = Math.min(startPoint.x, endPoint.x);
@@ -148,24 +143,13 @@ export class RectSelectPlugin extends Scope<
     return nodes.filter((node) => {
       const nodeView = this.area.nodeViews.get(node.id);
       if (!nodeView) return false;
-      const left = nodeView.position.x;
-      const top = nodeView.position.y;
-      const { width, height } = this.getSize(node, nodeView, zoom);
-      const right = left + (width || 0);
-      const bottom = top + (height || 0);
-
+      const { left, top, right, bottom } = AreaExtensions.getBoundingBox(
+        this.area,
+        [node.id]
+      );
       // 矩形同士のオーバーラップ判定
       return left < x2 && right > x1 && top < y2 && bottom > y1;
     });
-  }
-
-  getSize(node: Schemes["Node"], nodeView: NodeView, zoom: number) {
-    const { width, height } = node.getRowSize();
-    if (width && height) {
-      return { width, height };
-    }
-    const rect = nodeView.element.getBoundingClientRect();
-    return { width: rect.width / zoom, height: rect.height / zoom };
   }
 
   destroy() {

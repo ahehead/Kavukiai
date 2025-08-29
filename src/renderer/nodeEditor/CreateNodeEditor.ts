@@ -116,14 +116,13 @@ export async function createNodeEditor(container: HTMLElement) {
     accumulating: accumulateOnShift(),
   });
 
+  const rectSelect = new RectSelectPlugin({
+    container,
+    selectableNodes: sn,
+  });
+
   // 矩形選択
-  area.use(
-    new RectSelectPlugin({
-      editor,
-      container,
-      selectableNodes: sn,
-    })
-  );
+  area.use(rectSelect);
 
   // なにもないところでコネクションを離すと右クリックメニューを開く
   handleConnectionEvent(connection, area);

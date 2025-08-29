@@ -202,7 +202,7 @@ export function selectableNodes<T>(
       const element = context.data.event.target as HTMLElement;
       if (element.getAttribute("data-testid") === "context-menu-item")
         return context;
-
+      // マウスをほとんど動かさずにボタンを離した場合だけ「クリック」と判定し、それ以外（ドラッグ等）は無視
       if (twitch !== null && twitch < 4) {
         core.unselectAll();
       }
