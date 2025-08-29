@@ -134,10 +134,12 @@ export async function createNodeEditor(container: HTMLElement) {
       area.destroy();
       cleanupDragPan();
       cleanupDeleteKey();
+      groupPlugin.clear();
     },
 
     // 現在のnode editorの状態を取得
-    getCurrentEditorState: () => getCurrentEditorState(editor, area, history),
+    getCurrentEditorState: () =>
+      getCurrentEditorState(editor, area, history, groupPlugin),
 
     // Editorの状態を再設定
     resetEditorState: async (payload: NodeEditorState) =>
@@ -148,6 +150,7 @@ export async function createNodeEditor(container: HTMLElement) {
         dataflow,
         controlflow,
         history,
+        groupPlugin,
       }),
 
     // historyのaddをオーバーライドして、履歴が追加されたときにコールバックを実行する

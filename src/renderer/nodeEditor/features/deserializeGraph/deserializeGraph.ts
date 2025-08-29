@@ -1,12 +1,14 @@
-import type { NodeTypes } from "renderer/nodeEditor/types";
+import type { NodeTypes, Schemes } from "renderer/nodeEditor/types";
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 import { ClassicPreset } from "rete";
 import type { GraphJsonData, InputPortJson } from "shared/JsonType";
 import { type NodeDeps, nodeFactories } from "../../nodes/nodeFactories";
+import type { GroupPlugin } from "../group";
 
 // JSON からノードを生成してエディタに登録
 export type DeserializeGraphArgs = NodeDeps & {
   graphJsonData: GraphJsonData;
+  groupPlugin: GroupPlugin<Schemes>;
 };
 export async function deserializeGraphIntoEditor({
   graphJsonData,
@@ -15,6 +17,7 @@ export async function deserializeGraphIntoEditor({
   dataflow,
   controlflow,
   history,
+  groupPlugin,
 }: DeserializeGraphArgs): Promise<void> {
   // ノードの登録
   for (const {
@@ -111,6 +114,10 @@ export async function deserializeGraphIntoEditor({
     } catch (error) {
       console.error(`Failed to create connection ${id}:`, error);
     }
+  }
+
+  if (graphJsonData.groups) {
+    groupPlugin.fromJson(graphJsonData.groups);
   }
 
   // 必要に応じて metadata を扱う

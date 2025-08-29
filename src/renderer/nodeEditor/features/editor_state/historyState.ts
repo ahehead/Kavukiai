@@ -7,6 +7,7 @@ import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
 import type { GraphJsonData } from "shared/JsonType";
 import type { AreaExtra, Schemes } from "../../types/Schemes";
 import { deserializeGraphIntoEditor } from "../deserializeGraph/deserializeGraph";
+import type { GroupPlugin } from "../group";
 import { serializeGraph } from "../serializeGraph/serializeGraph";
 
 export interface NodeEditorState {
@@ -41,10 +42,11 @@ export function initializeHistoryState(): HistoryState {
 export function getCurrentEditorState(
   editor: NodeEditor<Schemes>,
   area: AreaPlugin<Schemes, AreaExtra>,
-  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
+  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>,
+  groupPlugin: GroupPlugin<Schemes>
 ): NodeEditorState {
   return {
-    graph: serializeGraph(editor, area),
+    graph: serializeGraph(editor, area, groupPlugin),
     historyState: {
       active: (history as any).history.active,
       produced: (history as any).history.produced.slice(),
@@ -56,6 +58,7 @@ export function getCurrentEditorState(
 
 export type ResetEditorStateParams = {
   payload: NodeEditorState;
+  groupPlugin: GroupPlugin<Schemes>;
 } & NodeDeps;
 
 export async function resetEditorState({
@@ -65,6 +68,7 @@ export async function resetEditorState({
   dataflow,
   controlflow,
   history,
+  groupPlugin,
 }: ResetEditorStateParams): Promise<void> {
   // 先にconnectionsを削除すると editor.clear() でエラーが起きない
   const connections = editor.getConnections();
@@ -90,6 +94,7 @@ export async function resetEditorState({
     dataflow,
     controlflow,
     history,
+    groupPlugin,
   });
   updateHistoryState(history, payload);
   await AreaExtensions.zoomAt(area, editor.getNodes());

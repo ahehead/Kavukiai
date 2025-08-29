@@ -5,6 +5,7 @@ export interface GraphJsonData {
   version: string; // バージョン情報
   nodes: NodeJson[]; // ノード情報の配列
   connections: ConnectionJson[]; // 接続情報の配列
+  groups?: GroupJson[]; // グループ情報の配列
   metadata?: Record<string, unknown>; // 任意のメタ情報
 }
 
@@ -34,4 +35,13 @@ export type ConnectionJson = {
   sourceOutput: string; // 接続元outputsのkey名
   target: string; // 接続先ノードID
   targetInput: string; // 接続先inputsのkey名
+};
+
+// グループ情報の型
+export type GroupJson = {
+  id: string;
+  text: string;
+  rect: { left: number; top: number; width: number; height: number };
+  // NodeId は string 互換のため JSON 上は string[] とする
+  links: string[];
 };

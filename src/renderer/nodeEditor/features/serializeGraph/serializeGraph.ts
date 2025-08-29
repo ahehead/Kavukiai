@@ -7,13 +7,15 @@ import type {
   NodeJson,
 } from "../../../../shared/JsonType";
 import type { AreaExtra, NodeTypes, Schemes } from "../../types/Schemes";
+import type { GroupPlugin } from "../group";
 
 /**
  * editor の状態を GraphJsonData 形式にシリアライズして返す
  */
 export function serializeGraph(
   editor: NodeEditor<Schemes>,
-  area: AreaPlugin<Schemes, AreaExtra>
+  area: AreaPlugin<Schemes, AreaExtra>,
+  group: GroupPlugin<Schemes>
 ): GraphJsonData {
   // ノード情報を整形
   const nodes: NodeJson[] = [];
@@ -28,6 +30,7 @@ export function serializeGraph(
     version: "1.0", // バージョン情報
     nodes,
     connections: editor.getConnections(),
+    groups: group.toJson(),
   };
 }
 
@@ -91,7 +94,7 @@ function buildNodeBaseData(
 }
 
 /**
- * コピー用に GraphJsonData を生成するヘルパー
+ * 右クリックでグラフの一部分を切り出すためのヘルパー
  * - 対象ノード群の boundingBox 左上を原点とした相対位置へ変換
  * - 対象ノード間の接続のみを含める
  */

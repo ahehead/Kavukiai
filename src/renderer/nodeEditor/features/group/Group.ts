@@ -1,26 +1,35 @@
 // Group model (no dependency on Rete Area APIs)
 import type { NodeId } from "rete";
+import type { GroupJson } from "shared/JsonType";
 
 export const MIN_GROUP_WIDTH = 120;
 export const MIN_GROUP_HEIGHT = 80;
 
+export type Rect = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+};
+
 export class Group {
-  id = crypto.randomUUID();
+  id: string = crypto.randomUUID();
   // text は getter/setter 経由で更新通知を行う
   private _text = "";
   links: NodeId[] = [];
   // 常に定義済みの矩形（linksが空なら最小サイズ、位置は保持）
-  left: number = 0;
-  top: number = 0;
-  width: number = MIN_GROUP_WIDTH;
-  height: number = MIN_GROUP_HEIGHT;
-  selected = false;
+  rect: Rect = {
+    left: 0,
+    top: 0,
+    width: MIN_GROUP_WIDTH,
+    height: MIN_GROUP_HEIGHT,
+  };
   element!: HTMLElement;
   // mountElement で付与するイベントリスナー参照（destroy 時に外す）
   onPointerDown?: (e: PointerEvent) => void;
   onPointerMove?: (e: PointerEvent) => void;
   onPointerUp?: (e: PointerEvent) => void;
-  onContextMenu?: (e: PointerEvent) => void;
+  onContextMenu?: (e: MouseEvent) => void;
   // 外部購読者
   private listeners = new Set<() => void>();
 
@@ -87,6 +96,18 @@ export class Group {
     this.notify();
   }
 
+  // --- rect updater (set all at once) ---
+  updateRect(next: Rect) {
+    const r = this.rect;
+    const changed =
+      r.left !== next.left ||
+      r.top !== next.top ||
+      r.width !== next.width ||
+      r.height !== next.height;
+    this.rect = next;
+    if (changed) this.notify();
+  }
+
   // --- subscribe/notify for useSyncExternalStore ---
   subscribe = (listener: () => void): (() => void) => {
     this.listeners.add(listener);
@@ -104,4 +125,50 @@ export class Group {
       }
     }
   }
+
+  // --- JSON serialization ---
+  toJson(): GroupJson {
+    return {
+      id: this.id,
+      text: this.text,
+      rect: {
+        left: this.rect.left,
+        top: this.rect.top,
+        width: this.rect.width,
+        height: this.rect.height,
+      },
+      links: [...this.links],
+    };
+  }
+
+  static fromJson(j: GroupJson): Group {
+    const g = new Group(j.text);
+    g.id = j.id;
+    // 重複排除して順序維持
+    const nextLinks = Array.from(new Set(j.links)) as NodeId[];
+    g.linkTo(nextLinks);
+    const { width, height } = clampGroupRectWidthHeight(
+      j.rect.width,
+      j.rect.height
+    );
+    g.updateRect({
+      left: j.rect.left,
+      top: j.rect.top,
+      width,
+      height,
+    });
+    return g;
+  }
+}
+
+// ----- JSON helpers -----
+function clampGroupRectWidthHeight(width: number, height: number) {
+  return {
+    width: Math.max(MIN_GROUP_WIDTH, width),
+    height: Math.max(MIN_GROUP_HEIGHT, height),
+  };
+}
+
+export interface GroupSerializable {
+  toJson(): GroupJson;
 }

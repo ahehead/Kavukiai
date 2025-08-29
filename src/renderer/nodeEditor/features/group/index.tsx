@@ -1,9 +1,16 @@
 // Minimal Group/Comment plugin (auto-size, no node-model x/y dependency)
 import type { AreaExtra } from 'renderer/nodeEditor/types'
-import { type BaseSchemes, NodeEditor, type NodeId, Scope } from 'rete'
+import {
+  type BaseSchemes,
+  NodeEditor,
+  type NodeId,
+  type Root,
+  Scope,
+} from 'rete'
 import { AreaExtensions, AreaPlugin, type BaseArea } from 'rete-area-plugin'
 import type { ReactPlugin } from 'rete-react-plugin'
 import type { Renderer } from 'rete-react-plugin/_types/renderer'
+import type { GroupJson } from 'shared/JsonType'
 import { Group, MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from './Group'
 import { GroupView } from './GroupView'
 
@@ -31,18 +38,26 @@ type Produces =
 
 export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
   Produces,
-  [BaseArea<Schemes>]
+  [BaseArea<Schemes>, Root<Schemes>]
 > {
   private area!: AreaPlugin<Schemes, AreaExtra>
   private editor!: NodeEditor<Schemes>
-  public groups = new Map<string, Group>()
+  public _groups = new Map<string, Group>()
   private renderer: Renderer
   constructor(render: ReactPlugin<Schemes, AreaExtra>) {
     super('group')
     this.renderer = render.renderer
   }
 
-  setParent(scope: Scope<BaseArea<Schemes>>) {
+  public get groups() {
+    return this._groups
+  }
+
+  public set groups(value: Map<string, Group>) {
+    this._groups = value
+  }
+
+  setParent(scope: Scope<BaseArea<Schemes>, [Root<Schemes>]>): void {
     super.setParent(scope)
     this.area = this.parentScope<AreaPlugin<Schemes, AreaExtra>>(AreaPlugin)
     this.editor = this.area.parentScope<NodeEditor<Schemes>>(NodeEditor)
@@ -122,6 +137,11 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
           }
         }
       }
+
+      if (ctx.type === 'clear') {
+        this.clear()
+        return ctx
+      }
       return ctx
     })
 
@@ -140,6 +160,25 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
   }
 
   // Public API
+  /** 現在のグループを JSON 配列にシリアライズ */
+  public toJson(): GroupJson[] {
+    return Array.from(this.groups.values()).map(g => g.toJson())
+  }
+
+  /** JSON 配列からグループを復元（既存は置き換え）。ノードは事前に復元済み想定 */
+  public fromJson(list: GroupJson[]): void {
+    // 既存のグループをすべて破棄
+    this.clear()
+    // 復元
+    for (const j of list) {
+      const g = Group.fromJson(j)
+      this.mountElement(g)
+      this.groups.set(g.id, g)
+      this.applyRect(g)
+      // ここではイベントは発火しない（ロード時の副作用を避ける）
+    }
+  }
+
   addGroup(text: string, links: NodeId[] = []) {
     const g = new Group(text)
     g.addLinks(links)
@@ -175,8 +214,12 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
   translateGroup(id: string, dx: number, dy: number) {
     const g = this.groups.get(id)
     if (!g) return
-    g.left += dx
-    g.top += dy
+    g.updateRect({
+      left: g.rect.left + dx,
+      top: g.rect.top + dy,
+      width: g.rect.width,
+      height: g.rect.height,
+    })
     this.applyRect(g)
     void this.emit({ type: 'grouptranslated', data: { id, dx, dy } })
   }
@@ -210,14 +253,20 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       const bb = AreaExtensions.getBoundingBox(this.area, ids)
       const pad = DEFAULT_PADDING
       const padTop = pad + EXTRA_TOP_PADDING
-      g.left = bb.left - pad
-      g.top = bb.top - padTop
-      g.width = bb.width + pad * 2
-      g.height = bb.height + padTop + pad
+      g.updateRect({
+        left: bb.left - pad,
+        top: bb.top - padTop,
+        width: bb.width + pad * 2,
+        height: bb.height + padTop + pad,
+      })
     } else {
       // links が空: 位置は維持、サイズは最小値
-      g.width = MIN_GROUP_WIDTH
-      g.height = MIN_GROUP_HEIGHT
+      g.updateRect({
+        left: g.rect.left,
+        top: g.rect.top,
+        width: MIN_GROUP_WIDTH,
+        height: MIN_GROUP_HEIGHT,
+      })
     }
     this.applyRect(g)
   }
@@ -226,34 +275,33 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     const r = this.nodeRect(nodeId)
     if (
       !r ||
-      g.left == null ||
-      g.top == null ||
-      g.width == null ||
-      g.height == null
+      g.rect.left == null ||
+      g.rect.top == null ||
+      g.rect.width == null ||
+      g.rect.height == null
     )
       return false
-    const gl = g.left,
-      gt = g.top,
-      gw = g.width,
-      gh = g.height
+    const gl = g.rect.left,
+      gt = g.rect.top,
+      gw = g.rect.width,
+      gh = g.rect.height
     return !(r.x > gl + gw || r.x + r.w < gl || r.y > gt + gh || r.y + r.h < gt)
   }
 
   private applyRect(g: Group) {
     const el = g.element
     if (!el) return
-    // transform は継続（DOM の left/top を使う必要はない）
-    el.style.transform = `translate(${g.left}px, ${g.top}px)`
-    el.style.width = `${g.width}px`
-    el.style.height = `${g.height}px`
+    el.style.transform = `translate(${g.rect.left}px, ${g.rect.top}px)`
+    el.style.width = `${g.rect.width}px`
+    el.style.height = `${g.rect.height}px`
   }
 
   private pointInGroup(g: Group, p: { x: number; y: number }): boolean {
     return (
-      p.x >= g.left &&
-      p.x <= g.left + g.width &&
-      p.y >= g.top &&
-      p.y <= g.top + g.height
+      p.x >= g.rect.left &&
+      p.x <= g.rect.left + g.rect.width &&
+      p.y >= g.rect.top &&
+      p.y <= g.rect.top + g.rect.height
     )
   }
 
@@ -286,7 +334,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       // content 座標の delta をそのまま渡す（grouptranslated でも同一座標系で処理）
       this.translateGroup(g.id, dx, dy)
     }
-    const onContextMenu = (e: PointerEvent) => {
+    const onContextMenu = (e: MouseEvent) => {
       e.stopPropagation()
       void this.area.emit({
         type: 'contextmenu',
@@ -309,7 +357,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     this.renderer.mount(<GroupView group={g} />, el)
   }
 
-  public destroy() {
+  public clear() {
     // すべてのグループ要素からイベントを外して DOM を除去
     for (const id of Array.from(this.groups.keys())) {
       this.delete(id)
