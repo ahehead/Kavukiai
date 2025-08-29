@@ -1,12 +1,10 @@
 import type { TSchema } from "@sinclair/typebox";
 import { ButtonControl } from "renderer/nodeEditor/nodes/Controls/Button";
 import { ClassicPreset } from "rete";
-import type { ControlFlowEngine } from "rete-engine";
 import type { BaseControl } from "../BaseControl";
 import { TooltipInput } from "../Input";
 import type { NodeControl } from "../NodeControl";
 import { getSchema, type SchemaKey } from "../Schemas";
-import type { Schemes } from "../Schemes";
 import { TypedSocket } from "../TypedSocket";
 
 const { Output } = ClassicPreset;
@@ -36,11 +34,6 @@ export type InputPortConfig<K> =
       onClick?: () => Promise<void> | void;
     };
 
-export type NodeInputType = {
-  type: "RunButton";
-  controlflow: ControlFlowEngine<Schemes>;
-};
-
 export type InputSpec<K> = InputPortConfig<K> | InputPortConfig<K>[];
 
 export type OutputPortConfig<K> =
@@ -67,23 +60,6 @@ export abstract class NodeIO<
   declare inputs: {
     [key in keyof Inputs]?: TooltipInput<Exclude<Inputs[key], undefined>>;
   };
-
-  public addInputPortPattern(param: NodeInputType): void {
-    if (param.type === "RunButton") {
-      this.addInputPort({
-        key: "exec",
-        typeName: "exec",
-        label: "Run",
-        control: new ButtonControl({
-          label: "Run",
-          onClick: async (e) => {
-            e.stopPropagation();
-            param.controlflow.execute(this.id, "exec");
-          },
-        }),
-      });
-    }
-  }
 
   /** 単一 or 複数の入力ポート */
   public addInputPort<K extends keyof Inputs>(param: InputSpec<K>): void {

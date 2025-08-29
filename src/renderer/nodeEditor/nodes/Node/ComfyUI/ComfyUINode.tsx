@@ -42,11 +42,13 @@ export class ComfyUINode extends MessagePortNode<
     protected controlflow: ControlFlowEngine<Schemes>
   ) {
     super('ComfyUI', area, dataflow, controlflow)
-    this.addInputPortPattern({
-      type: 'RunButton',
-      controlflow: this.controlflow,
-    })
     this.addInputPort([
+      {
+        key: 'exec',
+        typeName: 'exec',
+        label: 'Run',
+        onClick: () => this.controlflow.execute(this.id, 'exec'),
+      },
       {
         key: 'exec2',
         typeName: 'exec',
