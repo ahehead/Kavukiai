@@ -2,7 +2,6 @@
 import type { AreaExtra } from 'renderer/nodeEditor/types'
 import {
   type BaseSchemes,
-  NodeEditor,
   type NodeId,
   type Root,
   Scope,
@@ -41,7 +40,6 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
   [BaseArea<Schemes>, Root<Schemes>]
 > {
   private area!: AreaPlugin<Schemes, AreaExtra>
-  private editor!: NodeEditor<Schemes>
   public _groups = new Map<string, Group>()
   private renderer: Renderer
   constructor(render: ReactPlugin<Schemes, AreaExtra>) {
@@ -60,7 +58,6 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
   setParent(scope: Scope<BaseArea<Schemes>, [Root<Schemes>]>): void {
     super.setParent(scope)
     this.area = this.parentScope<AreaPlugin<Schemes, AreaExtra>>(AreaPlugin)
-    this.editor = this.area.parentScope<NodeEditor<Schemes>>(NodeEditor)
 
     const translating = new Set<NodeId>()
     const translate = async (id: NodeId, x: number, y: number) => {
@@ -75,6 +72,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     this.addPipe(async ctx => {
       if (!ctx || typeof ctx !== 'object' || !('type' in ctx)) return ctx
       // console.log('GroupPlugin pipe', ctx)
+      // ノードが移動した後のイベント
       if (ctx.type === 'nodedragged') {
         const { id } = ctx.data
         for (const g of this.groups.values()) {
@@ -94,6 +92,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         }
       }
 
+      // グループが移動している途中のイベント
       if (ctx.type === 'grouptranslated') {
         const { id, dx, dy } = ctx.data
         const g = this.groups.get(id)
@@ -108,13 +107,12 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       if (ctx.type === 'pointerdown') {
         const { position, event } = ctx.data as {
           position: { x: number; y: number }
-          // 型定義上は任意だが、実際は PointerEvent が入っているケースが多い
           event?: PointerEvent
         }
 
         // 1) DOM パス上にグループ要素が含まれているか（信頼度高め）
-        if (event && typeof (event as any).composedPath === 'function') {
-          const path = (event as any).composedPath() as EventTarget[]
+        if (event && "composedPath" in event) {
+          const path = event.composedPath() as EventTarget[]
           for (const g of this.groups.values()) {
             if (g.element && path.includes(g.element)) {
               void this.emit({
@@ -142,17 +140,14 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         this.clear()
         return ctx
       }
-      return ctx
-    })
 
-    // --- Editor signals
-    this.editor.addPipe(ctx => {
       if (ctx.type === 'noderemoved') {
         const { id } = ctx.data
         for (const g of this.groups.values()) {
-          g.removeLink(id)
-          // リンク集合に合わせてフィット（links が空なら最小化）
-          this.fitToLinks(g)
+          if (g.linkedTo(id)) {
+            g.removeLink(id)
+            this.fitToLinks(g)
+          }
         }
       }
       return ctx
@@ -309,7 +304,6 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     const el = document.createElement('div')
     // data-attribute で group を明示
     el.setAttribute('data-rete-group', 'true')
-    // 素の要素: クラスやinnerHTMLは付与しない。位置決めのみ必要最小限。
     el.style.position = 'absolute'
 
     // ドラッグでグループを動かす（dx,dy を emit）
@@ -350,6 +344,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     // 解除用に保持
     g.onPointerDown = onPointerDown
     g.onPointerMove = onPointerMove
+    g.onContextMenu = onContextMenu
     this.area.area.content.add(el) // Area の content レイヤに載せる
     this.area.area.content.reorder(el, this.area.area.content.holder.firstChild) // 一番下に
     g.element = el
