@@ -3,8 +3,8 @@ import {
   Menu,
   type MenuItemConstructorOptions,
 } from "electron";
-import { IpcChannel } from "shared/ApiType";
 import { openDialogAndReadFile } from "main/features/openFile";
+import { IpcChannel } from "shared/ApiType";
 
 export function createAppMenu(window: BrowserWindow) {
   const template: MenuItemConstructorOptions[] = [
@@ -25,6 +25,11 @@ export function createAppMenu(window: BrowserWindow) {
           label: "Save",
           accelerator: "CmdOrCtrl+S",
           click: () => window.webContents.send(IpcChannel.SaveGraphInitiate),
+        },
+        {
+          label: "Save As",
+          accelerator: "CmdOrCtrl+Shift+S",
+          click: () => window.webContents.send(IpcChannel.SaveAsGraphInitiate),
         },
         { type: "separator" },
         {

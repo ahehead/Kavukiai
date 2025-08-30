@@ -1,12 +1,12 @@
 import { useCallback } from "react";
-import { electronApiService } from "../features/services/appService";
-import { isFileDirty } from "../features/dirty-check/useIsFileDirty";
-import { hashGraph } from "../features/dirty-check/hash";
-import { notify } from "../features/toast-notice/notify";
-import { CloseFileDialogResponse, type FileData } from "shared/ApiType";
 import { getNewActiveFileId } from "renderer/features/tab/getNewActiveFileId";
+import { CloseFileDialogResponse, type FileData } from "shared/ApiType";
 import { createFile, type File } from "shared/AppType";
 import type { GraphJsonData } from "shared/JsonType";
+import { hashGraph } from "../features/dirty-check/hash";
+import { isFileDirty } from "../features/dirty-check/useIsFileDirty";
+import { electronApiService } from "../features/services/appService";
+import { notify } from "../features/toast-notice/notify";
 
 export function useFileOperations(
   files: File[],
@@ -20,6 +20,64 @@ export function useFileOperations(
   updateFile: (id: File["id"], updates: Partial<File>) => void,
   clearHistory: (id: File["id"]) => void
 ) {
+  const saveFileAs = useCallback(
+    async (fileId: string | null): Promise<boolean> => {
+      if (!fileId) return true;
+      setCurrentFileState();
+      const f = getFileById(fileId);
+
+      if (!f) return true;
+
+      // 常にダイアログを表示
+      const targetPath = await electronApiService.showSaveDialog(f.title);
+      if (!targetPath) return false; // キャンセル
+
+      // グラフを保存（"Save As"は常に上書き確認対象外: lastHash未指定）
+      const result = await electronApiService.saveGraphJsonData(
+        targetPath,
+        f.graph,
+        undefined
+      );
+      if (result.status === "cancel") {
+        notify("info", "保存キャンセル");
+        return false;
+      }
+      if (result.status === "error") {
+        notify("error", `保存失敗: ${result.message}`);
+        return false;
+      }
+      const { filePath, fileName } = result.data;
+
+      // 元と同じパスだと結局上書きした
+      if (f.path && targetPath === f.path) {
+        updateFile(fileId, {
+          title: fileName,
+          path: filePath,
+          graph: f.graph,
+          graphHash: await hashGraph(f.graph),
+        });
+        clearHistory(fileId);
+        if (fileId === activeFileId) {
+          clearEditorHistory(f.graph);
+        }
+        notify("success", `保存しました: ${fileName}`);
+        return true; // 保存成功
+      }
+
+      // ファイルの新規作成追加
+      addFile(await createFile(fileName, f.graph, filePath));
+      notify("success", `新しく名前を付けて保存しました: ${fileName}`);
+      return true;
+    },
+    [
+      activeFileId,
+      getFileById,
+      setCurrentFileState,
+      updateFile,
+      clearHistory,
+      clearEditorHistory,
+    ]
+  );
   const saveFile = useCallback(
     async (fileId: string | null): Promise<boolean> => {
       if (!fileId) return true;
@@ -131,5 +189,5 @@ export function useFileOperations(
     addFile(await createFile(title));
   }, [addFile, setCurrentFileState]);
 
-  return { saveFile, loadFile, closeFile, newFile };
+  return { saveFile, saveFileAs, loadFile, closeFile, newFile };
 }

@@ -50,7 +50,7 @@ export function MainScreen() {
     setGraphAndHistory
   )
 
-  const { saveFile, closeFile, loadFile, newFile } = useFileOperations(
+  const { saveFile, saveFileAs, closeFile, loadFile, newFile } = useFileOperations(
     files,
     activeFileId,
     setCurrentFileState,
@@ -96,6 +96,16 @@ export function MainScreen() {
     }
   }, [activeFileId, saveFile])
 
+  useEffect(() => {
+    // mainからの「名前を付けて保存」指示
+    const unsubSaveAs = electronApiService.onSaveAsGraphInitiate(
+      async () => await saveFileAs(activeFileId)
+    )
+    return () => {
+      unsubSaveAs()
+    }
+  }, [activeFileId, saveFileAs])
+
   const handleNewFile = async () => {
     newFile()
   }
@@ -122,7 +132,7 @@ export function MainScreen() {
 
   return (
     <div className="flex flex-col fixed inset-0">
-      {/* タイトルバー */}
+      {/* タイトルバー メニューバー*/}
       <div className="flex titlebar bg-titlebar">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -134,6 +144,11 @@ export function MainScreen() {
                 onClick={async () => await saveFile(activeFileId)}
               >
                 Save
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={async () => await saveFileAs(activeFileId)}
+              >
+                Save As
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLoadFile}>Open</DropdownMenuItem>
             </DropdownMenuGroup>

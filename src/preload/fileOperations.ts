@@ -1,5 +1,5 @@
 import { ipcRenderer } from "electron";
-import type { OpenPathDialogOptions } from "shared/ApiType";
+import type { OpenPathDialogOptions, SaveJsonOptions } from "shared/ApiType";
 import {
   type FileData,
   IpcChannel,
@@ -21,6 +21,19 @@ export const fileOperationsApi = {
     return () =>
       ipcRenderer.removeListener(IpcChannel.SaveGraphInitiate, listener);
   },
+  // mainからの「名前を付けて保存」リクエスト
+  onSaveAsGraphInitiate: (callback: () => Promise<boolean>): (() => void) => {
+    const listener = async () => {
+      try {
+        await callback();
+      } catch (e) {
+        console.error("onSaveAsGraphInitiate callback error:", e);
+      }
+    };
+    ipcRenderer.on(IpcChannel.SaveAsGraphInitiate, listener);
+    return () =>
+      ipcRenderer.removeListener(IpcChannel.SaveAsGraphInitiate, listener);
+  },
   // ダイアログを開く
   showSaveDialog: (title: string): Promise<string | null> =>
     ipcRenderer.invoke(IpcChannel.ShowSaveDialog, title),
@@ -35,9 +48,16 @@ export const fileOperationsApi = {
   saveGraphJsonData: (
     filePath: string,
     graph: GraphJsonData,
-    lastHash?: string
+    lastHash?: string,
+    options?: SaveJsonOptions
   ): Promise<IpcResultDialog<{ filePath: string; fileName: string }>> =>
-    ipcRenderer.invoke(IpcChannel.SaveJsonGraph, filePath, graph, lastHash),
+    ipcRenderer.invoke(
+      IpcChannel.SaveJsonGraph,
+      filePath,
+      graph,
+      lastHash,
+      options
+    ),
 
   // 閉じる時の確認ダイアログ
   showCloseConfirm: (): Promise<{ response: number }> =>

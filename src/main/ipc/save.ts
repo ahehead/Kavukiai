@@ -9,6 +9,7 @@ import {
   IpcChannel,
   type IpcResultDialog,
   type OpenPathDialogOptions,
+  type SaveJsonOptions,
 } from "shared/ApiType";
 import type { GraphJsonData } from "shared/JsonType";
 import writeFileAtomic from "write-file-atomic";
@@ -88,9 +89,25 @@ export function registerSaveHandlers(): void {
       event,
       filePath: string,
       graph: GraphJsonData,
-      lastHash?: string // lastHashは、同じファイルを上書きする時だけ
+      lastHash?: string, // lastHashは、同じファイルを上書きする時だけ
+      options?: SaveJsonOptions
     ): Promise<IpcResultDialog<{ filePath: string; fileName: string }>> => {
       try {
+        // 上書き禁止や同一パス禁止
+        if (options?.forbidSamePath && options.forbidSamePath === filePath) {
+          return {
+            status: "error",
+            message:
+              "元ファイルと同じパスには保存できません。別名を指定してください。",
+          };
+        }
+        if (options?.disallowOverwrite && (await fileExists(filePath))) {
+          return {
+            status: "error",
+            message: "指定のファイルは既に存在します。別名を指定してください。",
+          };
+        }
+
         // 同名かつファイルがあれば、上書き確認
         if (lastHash !== undefined && (await fileExists(filePath))) {
           // ファイルを読み込みhashを計算、lastHashと比較

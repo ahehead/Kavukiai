@@ -3,6 +3,13 @@ import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/open
 import type { Response } from "renderer/nodeEditor/types/Schemas/openai/ResponseSchemas";
 import type { GraphJsonData } from "./JsonType";
 
+export type SaveJsonOptions = {
+  /** 既存ファイルがある場合はエラーにする */
+  disallowOverwrite?: boolean;
+  /** このパスと同一の保存先を禁止（例: Save Asで元パスの指定禁止） */
+  forbidSamePath?: string;
+};
+
 export enum IpcChannel {
   LoadSnapshot = "load-snapshot",
   SaveSnapshot = "save-snapshot",
@@ -14,6 +21,7 @@ export enum IpcChannel {
   OpenSettings = "open-settings",
 
   SaveGraphInitiate = "save-graph-initiate",
+  SaveAsGraphInitiate = "save-as-graph-initiate",
   ShowSaveDialog = "show-save-dialog",
   ShowOpenPathDialog = "show-open-path-dialog",
   SaveJsonGraph = "save-json-graph",
