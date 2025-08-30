@@ -54,7 +54,7 @@ export class ComfyUINode extends MessagePortNode<
         onClick: () => this.controlflow.execute(this.id, 'exec2'),
       },
       { key: 'endpoint', typeName: 'string', label: 'Endpoint', require: true },
-      { key: 'workflow', typeName: 'object', label: 'Workflow', require: true },
+      { key: 'workflow', typeName: 'object', label: 'Workflow(API)', require: true },
       { key: 'inputs', typeName: 'WorkflowInputs', label: 'Inputs' },
       { key: 'outputs', typeName: 'WorkflowOutputs', label: 'Outputs' },
       { key: 'opts', typeName: 'PromptRunOpts', label: 'Run Opts' },
