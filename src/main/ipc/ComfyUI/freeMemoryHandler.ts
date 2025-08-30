@@ -18,7 +18,11 @@ export function registerComfyUIFreeMemoryHandler(): void {
         const freeMemory = args.freeMemory ?? true;
 
         const api = getComfyApiClient(endpoint);
-        await api.pollStatus();
+        try {
+          await api.pollStatus();
+        } catch {
+          throw new Error("ComfyUIに接続できませんでした。");
+        }
         const ok = await api.freeMemory(unloadModels, freeMemory);
         if (!ok) return { status: "error", message: "Free memory failed" };
         return { status: "success", data: true };
