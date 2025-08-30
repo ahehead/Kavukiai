@@ -1,23 +1,27 @@
 import { deserializeGraphIntoEditor } from "renderer/nodeEditor/features/deserializeGraph/deserializeGraph";
+import type { GroupPlugin } from "renderer/nodeEditor/features/group";
 import type { NodeDeps } from "renderer/nodeEditor/nodes/nodeFactories";
+import type { Schemes } from "renderer/nodeEditor/types";
 import { getUID } from "rete";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 import type {
   ConnectionJson,
   GraphJsonData,
+  GroupJson,
   NodeJson,
 } from "../../../../../../shared/JsonType";
 
 export function createPasteItem(
   pointerPosition: { x: number; y: number },
-  nodeDeps: NodeDeps
+  nodeDeps: NodeDeps,
+  groupPlugin: GroupPlugin<Schemes>
 ): Item {
   return {
     label: "ノードをペースト",
     key: "paste-nodes",
     handler: async () => {
       // クリップボードから JSON を取得してidとpositionを変更して貼り付け実行
-      await pasteGraphFromClipboard(pointerPosition, nodeDeps);
+      await pasteGraphFromClipboard(pointerPosition, nodeDeps, groupPlugin);
     },
   };
 }
@@ -50,7 +54,7 @@ function isGraphJsonData(data: unknown): data is GraphJsonData {
 }
 
 /**
- * 旧 -> 新 ノードIDの対応表を作成（ペースト時にIDを再割り当て）
+ * ペースト時にnode connection双方のIDを新しくして再割り当てするため、旧 -> 新 ノードIDの対応表を作成
  */
 function buildNewNodeIdMap(nodes: NodeJson[]): Map<string, string> {
   const idMap = new Map<string, string>();
@@ -93,6 +97,17 @@ function remapConnections(
   }));
 }
 
+function remapGroups(
+  groups: GroupJson[],
+  idMap: Map<string, string>
+): GroupJson[] {
+  return groups.map((g: GroupJson) => ({
+    ...g,
+    id: getUID(),
+    links: g.links.map((l) => idMap.get(l) ?? l),
+  }));
+}
+
 /**
  * 置換済みグラフを生成
  */
@@ -105,6 +120,7 @@ function createRemappedGraph(
     version: jsonData.version ?? "1.0",
     nodes: remapNodes(pointerPosition, jsonData.nodes, idMap),
     connections: remapConnections(jsonData.connections, idMap),
+    groups: jsonData.groups ? remapGroups(jsonData.groups, idMap) : undefined,
   };
 }
 
@@ -113,7 +129,8 @@ function createRemappedGraph(
  */
 async function pasteGraphFromClipboard(
   pointerPosition: { x: number; y: number },
-  nodeDeps: NodeDeps
+  nodeDeps: NodeDeps,
+  groupPlugin: GroupPlugin<Schemes>
 ) {
   const jsonData = await parseClipboardGraphJson();
   if (!jsonData) return;
@@ -128,5 +145,6 @@ async function pasteGraphFromClipboard(
   await deserializeGraphIntoEditor({
     graphJsonData: remapped,
     ...nodeDeps,
+    groupPlugin,
   });
 }

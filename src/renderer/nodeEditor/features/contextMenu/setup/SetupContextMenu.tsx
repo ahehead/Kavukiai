@@ -78,7 +78,7 @@ export function setupContextMenu({
               nodeDeps,
               pointer
             ),
-            createPasteItem(pointer, nodeDeps),
+            createPasteItem(pointer, nodeDeps, groupPlugin),
           ],
         }
       }

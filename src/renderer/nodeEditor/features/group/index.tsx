@@ -162,8 +162,8 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
 
   /** JSON 配列からグループを復元（既存は置き換え）。ノードは事前に復元済み想定 */
   public fromJson(list: GroupJson[]): void {
-    // 既存のグループをすべて破棄
-    this.clear()
+    // 破棄はclearイベントで行い、fromJsonは常に追加方向にすると、pasteと整合性が取れる
+    // this.clear()
     // 復元
     for (const j of list) {
       const g = Group.fromJson(j)
