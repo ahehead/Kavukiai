@@ -55,7 +55,6 @@ function isConfigTypeSchema<K>(
   return "schema" in config && "typeName" in config;
 }
 
-// 自作スキーマTSchemaと、スキーマ呼び出しSchemaKeyと、exec buttonの三通り
 export type InputPortConfig<K> =
   | ConfigTypeSchema<K>
   | ConfigTypeNomal<K>
@@ -101,6 +100,7 @@ export abstract class NodeIO<
     K extends keyof Inputs,
     S extends Exclude<Inputs[K], undefined>
   >(param: InputPortConfig<K>): void {
+    // execボタン
     if (isExec(param)) {
       const { key, label, tooltip, showControl, onClick } = param;
       const input = new TooltipInput<Exclude<Inputs[ExecKey], undefined>>(
@@ -127,6 +127,7 @@ export abstract class NodeIO<
       input.showControl = showControl ?? true; // controlはデフォルトで表示する
       return;
     }
+    // スキーマ直接指定（現在使ってないはず）
     if (isConfigTypeSchema(param)) {
       const {
         key,
@@ -152,6 +153,7 @@ export abstract class NodeIO<
       input.showControl = showControl ?? true; // controlはデフォルトで表示する
       return;
     }
+    // スキーマを文字列で指定
     if (isConfigTypeNormal(param)) {
       const { key, typeName, label, tooltip, control, showControl, require } =
         param;
