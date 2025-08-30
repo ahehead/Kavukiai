@@ -15,7 +15,7 @@ export type Rect = {
 export class Group {
   id: string = crypto.randomUUID();
   // text は getter/setter 経由で更新通知を行う
-  private _text = "";
+  #_text = "";
   links: NodeId[] = [];
   // 常に定義済みの矩形（linksが空なら最小サイズ、位置は保持）
   rect: Rect = {
@@ -25,26 +25,21 @@ export class Group {
     height: MIN_GROUP_HEIGHT,
   };
   element!: HTMLElement;
-  _selected: boolean = false;
-  // mountElement で付与するイベントリスナー参照（clear 時に外す）
-  onPointerDown?: (e: PointerEvent) => void;
-  onPointerMove?: (e: PointerEvent) => void;
-  onPointerUp?: (e: PointerEvent) => void;
-  onContextMenu?: (e: MouseEvent) => void;
+  #_selected: boolean = false;
   // 外部購読者
   private listeners = new Set<() => void>();
 
   constructor(text: string) {
-    this._text = text;
+    this.#_text = text;
   }
 
   get selected(): boolean {
-    return this._selected;
+    return this.#_selected;
   }
 
   set selected(value: boolean) {
-    if (value === this._selected) return;
-    this._selected = value;
+    if (value === this.#_selected) return;
+    this.#_selected = value;
     this.notify();
   }
 
@@ -100,11 +95,11 @@ export class Group {
 
   // --- text accessor with notify ---
   get text(): string {
-    return this._text;
+    return this.#_text;
   }
   set text(v: string) {
-    if (v === this._text) return;
-    this._text = v;
+    if (v === this.#_text) return;
+    this.#_text = v;
     this.notify();
   }
 

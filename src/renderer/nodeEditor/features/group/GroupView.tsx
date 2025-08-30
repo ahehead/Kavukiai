@@ -2,8 +2,15 @@ import type { ReactElement } from 'react'
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import type { Group } from './Group'
 
+type Props = {
+  group: Group
+  getK?: () => number
+  translate?: (id: string, dx: number, dy: number) => Promise<void>
+  emitContextMenu?: (e: MouseEvent, group: Group) => void
+}
+
 // Group を購読してタイトル等を描画する React コンポーネント
-export function GroupView({ group }: { group: Group }): ReactElement {
+export function GroupView({ group, getK, translate, emitContextMenu }: Props): ReactElement {
   // 外部ストアのスナップショットとして text を利用
   const text = useSyncExternalStore(
     group.subscribe,
@@ -20,6 +27,8 @@ export function GroupView({ group }: { group: Group }): ReactElement {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(text)
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const lastX = useRef(0)
+  const lastY = useRef(0)
 
   // 編集開始時にフォーカス
   useEffect(() => {
@@ -63,12 +72,46 @@ export function GroupView({ group }: { group: Group }): ReactElement {
     }
   }
 
+  const onPointerDownRoot = (e: React.PointerEvent<HTMLDivElement>) => {
+    // 編集中はドラッグ開始も無効化し、編集モードを終了、確定
+    if (editing) {
+      commit()
+      return
+    }
+    e.stopPropagation()
+    lastX.current = e.clientX
+    lastY.current = e.clientY
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  const onPointerMoveRoot = async (e: React.PointerEvent<HTMLDivElement>) => {
+    // 編集中はドラッグ処理を無効化
+    if (editing) return
+    e.stopPropagation()
+    if (!(e.buttons & 1)) return
+    const k = getK ? getK() : 1
+    const dx = (e.clientX - lastX.current) / k
+    const dy = (e.clientY - lastY.current) / k
+    lastX.current = e.clientX
+    lastY.current = e.clientY
+    if (translate) await translate(group.id, dx, dy)
+  }
+
+  const onContextMenuRoot = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    if (emitContextMenu) emitContextMenu(e.nativeEvent, group)
+  }
+
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: drag and context menu handled manually
     <div
       style={{
         width: `${rect.width}px`,
         height: `${rect.height}px`,
       }}
+      onPointerDown={onPointerDownRoot}
+      onPointerMove={onPointerMoveRoot}
+      onContextMenu={onContextMenuRoot}
       className="w-full h-full rounded-md border border-neutral-500/60 dark:border-neutral-600/60 bg-neutral-200/50 dark:bg-neutral-800/40 p-2">
       {/* タイトル行。クリックで編集モードに */}
       <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">

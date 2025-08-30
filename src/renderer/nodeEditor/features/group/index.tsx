@@ -192,22 +192,13 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     if (g.element) {
       // React を先にアンマウント
       this.renderer.unmount(g.element)
-      if (g.onPointerDown)
-        g.element.removeEventListener('pointerdown', g.onPointerDown)
-      if (g.onPointerMove)
-        g.element.removeEventListener('pointermove', g.onPointerMove)
-      if (g.onContextMenu)
-        g.element.removeEventListener('contextmenu', g.onContextMenu)
-      g.onPointerDown = undefined
-      g.onPointerMove = undefined
-      g.onContextMenu = undefined
       g.element.remove()
     }
     this.groups.delete(id)
     void this.emit({ type: 'groupremoved', data: g })
   }
 
-  translateGroup(id: string, dx: number, dy: number) {
+  async translateGroup(id: string, dx: number, dy: number) {
     const g = this.groups.get(id)
     if (!g) return
     g.updateRect({
@@ -217,7 +208,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       height: g.rect.height,
     })
     this.setElementPosition(g)
-    void this.emit({ type: 'grouptranslated', data: { id, dx, dy } })
+    await this.emit({ type: 'grouptranslated', data: { id, dx, dy } })
   }
 
   /**
@@ -299,50 +290,31 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     el.setAttribute('data-rete-group', 'true')
     el.style.position = 'absolute'
 
-    // ドラッグでグループを動かす（dx,dy を emit）
-    let sx = 0,
-      sy = 0
-    const onPointerDown = (e: PointerEvent) => {
-      e.stopPropagation()
-      sx = e.clientX;
-      sy = e.clientY;
-      // ターゲットではなく currentTarget にキャプチャを設定
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
-    }
-    const onPointerMove = (e: PointerEvent) => {
-      e.stopPropagation()
-      if (!(e.buttons & 1)) return
-      // 画面座標の差分を content 座標に変換（ズーム倍率を考慮）
-      const k = this.area.area.transform.k ?? 1
-      const dx = (e.clientX - sx) / k,
-        dy = (e.clientY - sy) / k
-      sx = e.clientX
-      sy = e.clientY
-      // content 座標の delta をそのまま渡す（grouptranslated でも同一座標系で処理）
-      this.translateGroup(g.id, dx, dy)
-    }
-    const onContextMenu = (e: MouseEvent) => {
-      e.stopPropagation()
-      void this.area.emit({
-        type: 'contextmenu',
-        data: {
-          event: e,
-          context: { type: 'group', group: g },
-        } as any, //無理やり. contextmenuプラグインで受け取る
-      })
-    }
-    el.addEventListener('pointerdown', onPointerDown)
-    el.addEventListener('pointermove', onPointerMove)
-    el.addEventListener('contextmenu', onContextMenu)
-    // 解除用に保持
-    g.onPointerDown = onPointerDown
-    g.onPointerMove = onPointerMove
-    g.onContextMenu = onContextMenu
     this.area.area.content.add(el) // Area の content レイヤに載せる
     this.area.area.content.reorder(el, this.area.area.content.holder.firstChild) // 一番下に
     g.element = el
     // React 側のビューをマウント
-    this.renderer.mount(<GroupView group={g} />, el)
+    const getK = () => this.area.area.transform.k ?? 1
+    const translate = async (id: string, dx: number, dy: number) =>
+      await this.translateGroup(id, dx, dy)
+    const emitContextMenu = (e: MouseEvent, group: Group) => {
+      void this.area.emit({
+        type: 'contextmenu',
+        data: {
+          event: e,
+          context: { type: 'group', group },
+        } as any,
+      })
+    }
+    this.renderer.mount(
+      <GroupView
+        group={g}
+        getK={getK}
+        translate={translate}
+        emitContextMenu={emitContextMenu}
+      />,
+      el,
+    )
   }
 
 
