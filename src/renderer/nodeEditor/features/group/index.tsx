@@ -170,6 +170,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       this.mountElement(g)
       this.groups.set(g.id, g)
       g.notify()
+      this.setElementPosition(g)
       // ここではイベントは発火しない（ロード時の副作用を避ける）
     }
   }
@@ -215,6 +216,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       width: g.rect.width,
       height: g.rect.height,
     })
+    this.setElementPosition(g)
     void this.emit({ type: 'grouptranslated', data: { id, dx, dy } })
   }
 
@@ -262,6 +264,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         height: MIN_GROUP_HEIGHT,
       })
     }
+    this.setElementPosition(g)
   }
 
   private intersects(g: Group, nodeId: NodeId) {
@@ -301,10 +304,10 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       sy = 0
     const onPointerDown = (e: PointerEvent) => {
       e.stopPropagation()
-      sx = e.clientX
-      sy = e.clientY
-        // ターゲットではなく currentTarget にキャプチャを設定
-        ; (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+      sx = e.clientX;
+      sy = e.clientY;
+      // ターゲットではなく currentTarget にキャプチャを設定
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
     }
     const onPointerMove = (e: PointerEvent) => {
       e.stopPropagation()
@@ -325,7 +328,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         data: {
           event: e,
           context: { type: 'group', group: g },
-        } as any, //無理やり
+        } as any, //無理やり. contextmenuプラグインで受け取る
       })
     }
     el.addEventListener('pointerdown', onPointerDown)
@@ -338,9 +341,17 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     this.area.area.content.add(el) // Area の content レイヤに載せる
     this.area.area.content.reorder(el, this.area.area.content.holder.firstChild) // 一番下に
     g.element = el
-    // React 側のビューをマウント（関数実行ではなくJSXで渡す）
+    // React 側のビューをマウント
     this.renderer.mount(<GroupView group={g} />, el)
   }
+
+
+  private setElementPosition(g: Group) {
+    const el = g.element
+    if (!el) return
+    el.style.transform = `translate(${g.rect.left}px, ${g.rect.top}px)`
+  }
+
 
   public clear() {
     // すべてのグループ要素からイベントを外して DOM を除去

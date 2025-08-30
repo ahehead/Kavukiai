@@ -66,7 +66,6 @@ export function GroupView({ group }: { group: Group }): ReactElement {
   return (
     <div
       style={{
-        transform: `translate(${rect.left}px, ${rect.top}px)`,
         width: `${rect.width}px`,
         height: `${rect.height}px`,
       }}
@@ -83,6 +82,7 @@ export function GroupView({ group }: { group: Group }): ReactElement {
             // ポインタイベントの親伝播を止めてドラッグを防止
             onPointerDown={e => {
               e.stopPropagation()
+              if (e.nativeEvent?.stopImmediatePropagation) e.nativeEvent.stopImmediatePropagation()
             }}
             aria-label="グループ名を編集"
             className="w-full bg-transparent outline-none border border-neutral-400/60 dark:border-neutral-500/60 rounded px-2 py-1 focus:border-blue-500/70"
