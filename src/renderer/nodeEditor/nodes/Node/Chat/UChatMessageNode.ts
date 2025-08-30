@@ -35,6 +35,4 @@ export class UChatMessageNode extends SerializableInputsNode<
     const content = inputs.list?.[0] ?? [];
     return { out: { role, content } };
   }
-
-  async execute(): Promise<void> {}
 }

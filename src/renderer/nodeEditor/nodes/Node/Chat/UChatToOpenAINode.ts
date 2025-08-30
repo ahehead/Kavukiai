@@ -31,6 +31,4 @@ export class UChatToOpenAINode extends SerializableInputsNode<
     const easy = toOpenAIEasy(chat, resolver) as ResponseInput;
     return { out: easy };
   }
-
-  async execute(): Promise<void> {}
 }

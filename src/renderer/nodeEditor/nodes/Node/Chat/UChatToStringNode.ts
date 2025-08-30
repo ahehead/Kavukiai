@@ -53,6 +53,4 @@ export class UChatToStringNode extends SerializableInputsNode<
     }
     return { out: result.trimEnd() };
   }
-
-  async execute(): Promise<void> {}
 }

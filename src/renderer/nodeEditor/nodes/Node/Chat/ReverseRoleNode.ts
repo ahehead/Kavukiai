@@ -28,6 +28,4 @@ export class ReverseRoleNode extends SerializableInputsNode<
     });
     return { list: out };
   }
-
-  async execute(): Promise<void> {}
 }

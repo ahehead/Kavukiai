@@ -49,5 +49,4 @@ export class UPartTextNode extends SerializableInputsNode<
     return { out: { type: 'text', text } }
   }
 
-  async execute(): Promise<void> { }
 }

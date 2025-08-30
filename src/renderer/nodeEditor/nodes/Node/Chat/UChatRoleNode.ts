@@ -59,8 +59,6 @@ export class UChatRoleNode
     return { out: this.controls.select.getValue() };
   }
 
-  async execute(): Promise<void> {}
-
   serializeControlValue(): { data: { value: UChatRole } } {
     return {
       data: { value: this.controls.select.getValue() },

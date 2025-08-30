@@ -37,6 +37,4 @@ export class UChatGetLastMessageNode extends SerializableInputsNode<
     const result = addRole ? `${roleLabel}\n${text}` : text;
     return { out: result };
   }
-
-  async execute(): Promise<void> {}
 }

@@ -52,6 +52,4 @@ export class UChatToLMStudioNode extends SerializableInputsNode<
     const chatHistory = toLMHistory(chat, resolver);
     return { chatHistory };
   }
-
-  async execute(): Promise<void> {}
 }
