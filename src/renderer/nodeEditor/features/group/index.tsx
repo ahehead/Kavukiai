@@ -169,7 +169,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       const g = Group.fromJson(j)
       this.mountElement(g)
       this.groups.set(g.id, g)
-      this.applyRect(g)
+      g.notify()
       // ここではイベントは発火しない（ロード時の副作用を避ける）
     }
   }
@@ -215,7 +215,6 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       width: g.rect.width,
       height: g.rect.height,
     })
-    this.applyRect(g)
     void this.emit({ type: 'grouptranslated', data: { id, dx, dy } })
   }
 
@@ -263,7 +262,6 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         height: MIN_GROUP_HEIGHT,
       })
     }
-    this.applyRect(g)
   }
 
   private intersects(g: Group, nodeId: NodeId) {
@@ -281,14 +279,6 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       gw = g.rect.width,
       gh = g.rect.height
     return !(r.x > gl + gw || r.x + r.w < gl || r.y > gt + gh || r.y + r.h < gt)
-  }
-
-  private applyRect(g: Group) {
-    const el = g.element
-    if (!el) return
-    el.style.transform = `translate(${g.rect.left}px, ${g.rect.top}px)`
-    el.style.width = `${g.rect.width}px`
-    el.style.height = `${g.rect.height}px`
   }
 
   private pointInGroup(g: Group, p: { x: number; y: number }): boolean {

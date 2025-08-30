@@ -25,7 +25,8 @@ export class Group {
     height: MIN_GROUP_HEIGHT,
   };
   element!: HTMLElement;
-  // mountElement で付与するイベントリスナー参照（destroy 時に外す）
+  _selected: boolean = false;
+  // mountElement で付与するイベントリスナー参照（clear 時に外す）
   onPointerDown?: (e: PointerEvent) => void;
   onPointerMove?: (e: PointerEvent) => void;
   onPointerUp?: (e: PointerEvent) => void;
@@ -36,6 +37,17 @@ export class Group {
   constructor(text: string) {
     this._text = text;
   }
+
+  get selected(): boolean {
+    return this._selected;
+  }
+
+  set selected(value: boolean) {
+    if (value === this._selected) return;
+    this._selected = value;
+    this.notify();
+  }
+
   linkedTo(id: NodeId) {
     return this.links.includes(id);
   }
@@ -115,7 +127,8 @@ export class Group {
       this.listeners.delete(listener);
     };
   };
-  private notify() {
+
+  public notify() {
     // 例外防止にコピーを走査
     for (const l of Array.from(this.listeners)) {
       try {

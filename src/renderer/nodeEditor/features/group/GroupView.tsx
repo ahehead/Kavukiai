@@ -11,6 +11,11 @@ export function GroupView({ group }: { group: Group }): ReactElement {
     () => group.text
   )
 
+  const rect = useSyncExternalStore(
+    group.subscribe,
+    () => group.rect,
+  )
+
   // インライン編集用のローカル状態
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(text)
@@ -59,7 +64,13 @@ export function GroupView({ group }: { group: Group }): ReactElement {
   }
 
   return (
-    <div className="w-full h-full rounded-md border border-neutral-500/60 dark:border-neutral-600/60 bg-neutral-200/50 dark:bg-neutral-800/40 p-2">
+    <div
+      style={{
+        transform: `translate(${rect.left}px, ${rect.top}px)`,
+        width: `${rect.width}px`,
+        height: `${rect.height}px`,
+      }}
+      className="w-full h-full rounded-md border border-neutral-500/60 dark:border-neutral-600/60 bg-neutral-200/50 dark:bg-neutral-800/40 p-2">
       {/* タイトル行。クリックで編集モードに */}
       <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
         {editing ? (
