@@ -40,7 +40,6 @@ export class InspectorNode
     this.addInputPort([
       {
         key: 'exec',
-        typeName: 'exec',
         label: 'scan',
         onClick: async () => this.controlflow.execute(this.id, 'exec')
       },

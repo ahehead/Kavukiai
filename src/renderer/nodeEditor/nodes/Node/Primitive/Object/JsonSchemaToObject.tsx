@@ -41,9 +41,7 @@ export class JsonSchemaToObjectNode
     this.addInputPort([
       {
         key: 'exec',
-        typeName: 'exec',
         label: 'Generate',
-        showControl: true,
         onClick: async () => {
           this.controlflow.execute(this.id, 'exec')
           this.clearSize()

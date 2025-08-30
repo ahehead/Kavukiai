@@ -29,7 +29,6 @@ export class ServerStatusNode extends SerializableInputsNode<
     super('ServerStatus')
     this.addInputPort({
       key: 'exec',
-      typeName: 'exec',
       label: 'Check',
       onClick: () => this.controlflow.execute(this.id, 'exec'),
     })

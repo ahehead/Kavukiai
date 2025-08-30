@@ -29,7 +29,6 @@ export class StringFormNode extends SerializableInputsNode<
     // 入力トリガー
     this.addInputPort({
       key: 'exec',
-      typeName: 'exec',
       label: 'clear',
       onClick: async () => {
         this.controlFlow.execute(this.id, 'exec')

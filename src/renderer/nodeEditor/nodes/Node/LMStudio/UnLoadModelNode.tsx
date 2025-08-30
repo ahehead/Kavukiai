@@ -24,7 +24,6 @@ export class UnLoadModelNode extends SerializableInputsNode<
     super('UnLoadModel')
     this.addInputPort({
       key: 'exec',
-      typeName: 'exec',
       label: 'Unload',
       onClick: () => this.controlflow.execute(this.id, 'exec'),
     })

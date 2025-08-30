@@ -24,7 +24,6 @@ export class LMStudioStartNode extends SerializableInputsNode<
     super('LMStudioStart')
     this.addInputPort({
       key: 'exec',
-      typeName: 'exec',
       label: 'Start',
       onClick: () => this.controlflow.execute(this.id, 'exec'),
       tooltip: 'Start LM Studio server',

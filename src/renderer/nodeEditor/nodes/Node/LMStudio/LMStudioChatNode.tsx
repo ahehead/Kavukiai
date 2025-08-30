@@ -37,11 +37,13 @@ export class LMStudioChatNode extends MessagePortNode<
   ) {
     super('LMStudioChat', area, dataflow, controlflow)
     this.addInputPort([{
-      key: 'exec', typeName: 'exec', label: 'Run',
+      key: 'exec',
+      label: 'Run',
       onClick: () => this.controlflow.execute(this.id, 'exec'),
     },
     {
-      key: 'exec2', typeName: 'exec', label: 'Stop',
+      key: 'exec2',
+      label: 'Stop',
       onClick: () => this.controlflow.execute(this.id, 'exec2'),
     },
     { key: 'modelKey', typeName: 'string', label: 'modelKey', tooltip: 'Model key to use for the chat' },

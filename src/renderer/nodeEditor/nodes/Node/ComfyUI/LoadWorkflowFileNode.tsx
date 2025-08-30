@@ -32,7 +32,6 @@ export class LoadWorkflowFileNode extends SerializableInputsNode<
     this.addInputPort([
       {
         key: 'exec',
-        typeName: 'exec',
         label: 'Run',
         onClick: () => this.controlflow.execute(this.id, 'exec'),
       },

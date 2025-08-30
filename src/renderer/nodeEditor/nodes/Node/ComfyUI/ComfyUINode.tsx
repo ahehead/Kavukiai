@@ -45,13 +45,11 @@ export class ComfyUINode extends MessagePortNode<
     this.addInputPort([
       {
         key: 'exec',
-        typeName: 'exec',
         label: 'Run',
         onClick: () => this.controlflow.execute(this.id, 'exec'),
       },
       {
         key: 'exec2',
-        typeName: 'exec',
         label: 'Cancel',
         onClick: () => this.controlflow.execute(this.id, 'exec2'),
       },

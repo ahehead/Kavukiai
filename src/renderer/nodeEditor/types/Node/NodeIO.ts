@@ -5,34 +5,61 @@ import type { BaseControl } from "../BaseControl";
 import { TooltipInput } from "../Input";
 import type { NodeControl } from "../NodeControl";
 import { getSchema, type SchemaKey } from "../Schemas";
+import { type ExecKey, isExecKey } from "../Schemes";
 import { TypedSocket } from "../TypedSocket";
 
 const { Output } = ClassicPreset;
 
+export type ConfigTypeExec = {
+  key: ExecKey;
+  label?: string;
+  tooltip?: string;
+  showControl?: boolean;
+  onClick: () => Promise<void> | void;
+};
+
+export type ConfigTypeNomal<K> = {
+  key: K;
+  typeName: SchemaKey;
+  label?: string;
+  tooltip?: string;
+  control?: BaseControl<any, any>;
+  showControl?: boolean;
+  require?: boolean;
+};
+
+export type ConfigTypeSchema<K> = {
+  key: K;
+  schema: TSchema;
+  typeName: string;
+  label?: string;
+  tooltip?: string;
+  control?: BaseControl<any, any>;
+  showControl?: boolean;
+  require?: boolean;
+};
+
+function isExec<K>(config: InputPortConfig<K>): config is ConfigTypeExec {
+  return "onClick" in config && isExecKey(config.key) && !("schema" in config);
+}
+
+function isConfigTypeNormal<K>(
+  config: InputPortConfig<K>
+): config is ConfigTypeNomal<K> {
+  return !("schema" in config);
+}
+
+function isConfigTypeSchema<K>(
+  config: InputPortConfig<K>
+): config is ConfigTypeSchema<K> {
+  return "schema" in config && "typeName" in config;
+}
+
 // 自作スキーマTSchemaと、スキーマ呼び出しSchemaKeyと、exec buttonの三通り
 export type InputPortConfig<K> =
-  | {
-      key: K;
-      schema: TSchema;
-      typeName: string;
-      label?: string;
-      tooltip?: string;
-      control?: BaseControl<any, any>;
-      showControl?: boolean;
-      require?: boolean;
-      onClick?: () => Promise<void> | void;
-    }
-  | {
-      key: K;
-      schema?: undefined;
-      typeName: SchemaKey;
-      label?: string;
-      tooltip?: string;
-      control?: BaseControl<any, any>;
-      showControl?: boolean;
-      require?: boolean;
-      onClick?: () => Promise<void> | void;
-    };
+  | ConfigTypeSchema<K>
+  | ConfigTypeNomal<K>
+  | ConfigTypeExec;
 
 export type InputSpec<K> = InputPortConfig<K> | InputPortConfig<K>[];
 
@@ -73,41 +100,74 @@ export abstract class NodeIO<
   private _addInputPort<
     K extends keyof Inputs,
     S extends Exclude<Inputs[K], undefined>
-  >({
-    key,
-    typeName,
-    schema,
-    label,
-    tooltip,
-    control,
-    showControl,
-    require,
-    onClick,
-  }: InputPortConfig<K>): void {
-    const input = new TooltipInput<S>(
-      new TypedSocket(typeName, schema ? schema : getSchema(typeName)) as S,
-      label,
-      false,
-      tooltip,
-      require ?? false
-    );
-    this.addInput(key, input);
-    // control と onClick が両方指定された場合は control を優先する
-    if (control) {
-      input.addControl(control);
-      input.showControl = showControl ?? true; // controlはデフォルトで表示する
-    } else if (onClick) {
+  >(param: InputPortConfig<K>): void {
+    if (isExec(param)) {
+      const { key, label, tooltip, showControl, onClick } = param;
+      const input = new TooltipInput<Exclude<Inputs[ExecKey], undefined>>(
+        new TypedSocket("exec", getSchema("exec")) as Exclude<
+          Inputs[ExecKey],
+          undefined
+        >,
+        label ?? "Run",
+        false,
+        tooltip,
+        false
+      );
+      this.addInput(key, input);
       input.addControl(
         new ButtonControl({
-          label: label ?? "Click",
+          label: label ?? "Run",
           onClick: async (e) => {
             e.stopPropagation();
-            await onClick();
+            await onClick?.();
           },
           isExec: true,
         })
       );
       input.showControl = showControl ?? true; // controlはデフォルトで表示する
+      return;
+    }
+    if (isConfigTypeSchema(param)) {
+      const {
+        key,
+        typeName,
+        schema,
+        label,
+        tooltip,
+        control,
+        showControl,
+        require,
+      } = param;
+      const input = new TooltipInput<S>(
+        new TypedSocket(typeName, schema) as S,
+        label,
+        false,
+        tooltip,
+        require ?? false
+      );
+      this.addInput(key, input);
+      if (control) {
+        input.addControl(control);
+      }
+      input.showControl = showControl ?? true; // controlはデフォルトで表示する
+      return;
+    }
+    if (isConfigTypeNormal(param)) {
+      const { key, typeName, label, tooltip, control, showControl, require } =
+        param;
+      const input = new TooltipInput<S>(
+        new TypedSocket(typeName, getSchema(typeName)) as S,
+        label,
+        false,
+        tooltip,
+        require ?? false
+      );
+      this.addInput(key, input);
+      if (control) {
+        input.addControl(control);
+      }
+      input.showControl = showControl ?? true; // controlはデフォルトで表示する
+      return;
     }
   }
 

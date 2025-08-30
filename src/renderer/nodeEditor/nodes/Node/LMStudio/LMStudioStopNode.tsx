@@ -24,7 +24,6 @@ export class LMStudioStopNode extends SerializableInputsNode<
     super('LMStudioStop')
     this.addInputPort({
       key: 'exec',
-      typeName: 'exec',
       label: 'Stop',
       onClick: () => this.controlflow.execute(this.id, 'exec'),
     })

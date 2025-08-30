@@ -26,7 +26,6 @@ export class ShowImageNode extends SerializableInputsNode<
     this.addInputPort([
       {
         key: 'exec',
-        typeName: 'exec',
         label: 'Show',
         onClick: () => this.controlflow.execute(this.id, 'exec'),
       },

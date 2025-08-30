@@ -35,13 +35,11 @@ export class OpenAINode extends MessagePortNode<
     this.addInputPort([
       {
         key: "exec",
-        typeName: "exec",
         label: "Run",
         onClick: () => this.controlflow.execute(this.id, "exec"),
       },
       {
         key: "exec2",
-        typeName: "exec",
         label: "Stop",
         onClick: () => this.controlflow.execute(this.id, "exec2"),
       },

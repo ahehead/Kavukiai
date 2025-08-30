@@ -26,7 +26,6 @@ export class CreateSelectNode extends SerializableInputsNode<
     this.addInputPort([
       {
         key: 'exec',
-        typeName: 'exec',
         label: 'Generate',
         onClick: () => this.controlflow.execute(this.id, 'exec'),
       },

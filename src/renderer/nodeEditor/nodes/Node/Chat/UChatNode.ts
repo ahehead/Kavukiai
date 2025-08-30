@@ -53,21 +53,18 @@ export class UChatNode
       { key: "systemPrompt", typeName: "string", label: "System Prompt" },
       {
         key: "exec",
-        typeName: "exec",
         label: "Push Message",
         onClick: () => this.controlflow.execute(this.id, "exec"),
       },
       { key: "newMessage", typeName: "UChatMessage", label: "New Message" },
       {
         key: "exec2",
-        typeName: "exec",
         label: "Response",
         onClick: () => this.controlflow.execute(this.id, "exec2"),
       },
       { key: "event", typeName: "UChatCommandEventOrNull", label: "Event" },
       {
         key: "exec3",
-        typeName: "exec",
         label: "Reset",
         onClick: () => this.controlflow.execute(this.id, "exec3"),
       },

@@ -33,15 +33,13 @@ export class ComfyDesktopStartNode extends SerializableInputsNode<
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('ComfyDesktopStart')
-    this.addInputPort({
+    this.addInputPort([{
       key: 'exec',
-      typeName: 'exec',
       label: 'Start',
       onClick: () => this.controlflow.execute(this.id, 'exec'),
       tooltip: 'Start ComfyUI Desktop',
-    })
-    // appPath (string, control)
-    this.addInputPort({
+    },
+    {
       key: 'appPath',
       typeName: 'string',
       label: 'appPath',
@@ -52,10 +50,9 @@ export class ComfyDesktopStartNode extends SerializableInputsNode<
         title: 'ComfyUI Desktop 実行ファイルを選択',
         filters: [{ name: 'Executable', extensions: ['exe', 'app'] }],
         editable: true,
-      }),
-    })
-    // port (number)
-    this.addInputPort({
+      })
+    },
+    {
       key: 'port',
       typeName: 'number',
       label: 'port',
@@ -66,9 +63,8 @@ export class ComfyDesktopStartNode extends SerializableInputsNode<
         label: 'port',
         editable: true,
       }),
-    })
-    // timeoutMs (number)
-    this.addInputPort({
+    },
+    {
       key: 'timeoutMs',
       typeName: 'number',
       label: 'timeoutMs',
@@ -79,9 +75,8 @@ export class ComfyDesktopStartNode extends SerializableInputsNode<
         label: 'timeoutMs',
         editable: true,
       }),
-    })
-    // autoDetect (boolean)
-    this.addInputPort({
+    },
+    {
       key: 'autoDetect',
       typeName: 'boolean',
       label: 'autoDetect',
@@ -91,7 +86,8 @@ export class ComfyDesktopStartNode extends SerializableInputsNode<
         label: 'autoDetect',
         editable: true,
       }),
-    })
+    }])
+
     this.addOutputPort({ key: 'exec', typeName: 'exec', label: 'Out' })
     this.addControl('console', new ConsoleControl({ isOpen: true }))
   }

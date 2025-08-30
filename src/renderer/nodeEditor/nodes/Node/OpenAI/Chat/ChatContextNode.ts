@@ -49,14 +49,12 @@ export class ChatMessageListNode
       { key: "systemPrompt", typeName: "string", label: "System Prompt" },
       {
         key: "exec",
-        typeName: "exec",
         label: "push",
         onClick: () => this.controlflow.execute(this.id, "exec"),
       },
       { key: "newMessage", typeName: "ChatMessageItem", label: "New Message" },
       {
         key: "exec2",
-        typeName: "exec",
         label: "response",
         onClick: () => this.controlflow.execute(this.id, "exec2"),
       },

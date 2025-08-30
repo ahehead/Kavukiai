@@ -21,7 +21,6 @@ export class UserWorkflowListNode extends SerializableInputsNode<
     this.addInputPort([
       {
         key: 'exec',
-        typeName: 'exec',
         label: 'Refresh',
         onClick: () => this.controlflow.execute(this.id),
       },

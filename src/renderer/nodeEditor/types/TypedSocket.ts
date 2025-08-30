@@ -1,5 +1,6 @@
 import { type TSchema, Type } from "@sinclair/typebox";
 import { ClassicPreset } from "rete";
+import { isExecKey } from "./Schemes";
 
 export class TypedSocket extends ClassicPreset.Socket {
   schema: TSchema;
@@ -10,7 +11,7 @@ export class TypedSocket extends ClassicPreset.Socket {
   constructor(typeName: string, schema: TSchema) {
     super(typeName); // 省略型情報
     this.schema = schema;
-    this.isExec = typeName === "exec"; // exec 判定
+    this.isExec = isExecKey(typeName); // exec 判定
     void this.setTooltip(schema); // ツールチップの型情報を設定
   }
 

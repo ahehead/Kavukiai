@@ -41,33 +41,28 @@ export class CounterLoopNode
     this.addInputPort([
       {
         key: "exec",
-        typeName: "exec",
         label: "In",
         showControl: false,
         onClick: () => this.controlflow.execute(this.id, "exec"),
       },
       {
         key: "start",
-        typeName: "exec",
         label: "Start",
         onClick: () => this.controlflow.execute(this.id, "start"),
       },
       {
         key: "stop",
-        typeName: "exec",
         label: "Stop",
         onClick: () => this.controlflow.execute(this.id, "stop"),
       },
       // Add "reset" and "continue" input ports
       {
         key: "reset",
-        typeName: "exec",
         label: "Reset",
         onClick: () => this.controlflow.execute(this.id, "reset"),
       },
       {
         key: "continue",
-        typeName: "exec",
         label: "Continue",
         onClick: () => this.controlflow.execute(this.id, "continue"),
       },
