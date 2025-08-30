@@ -14,6 +14,7 @@ import {
   ChatMessageNode,
   CodeFenceNode,
   ComfyDesktopStartNode,
+  ComfyUIFreeMemoryNode,
   ComfyUINode,
   CounterLoopNode,
   CreateSelectNode,
@@ -141,6 +142,8 @@ export const nodeFactories = {
     new ComfyUINode(area, dataflow, controlflow),
   ComfyDesktopStart: ({ area, dataflow, controlflow }) =>
     new ComfyDesktopStartNode(area, dataflow, controlflow),
+  ComfyUIFreeMemory: ({ area, history, dataflow, controlflow }) =>
+    new ComfyUIFreeMemoryNode(area, history, dataflow, controlflow),
   PrepareWorkflowPrompt: ({ area, dataflow, controlflow }) =>
     new PrepareWorkflowPromptNode(area, dataflow, controlflow),
   LoadWorkflowFile: ({ area, dataflow, controlflow }) =>
@@ -316,6 +319,7 @@ const rawMenu: RawMenuItem[] = [
     subitems: [
       { label: "ComfyUI", factoryKey: "ComfyUI" },
       { label: "ComfyDesktopStart", factoryKey: "ComfyDesktopStart" },
+      { label: "ComfyUIFreeMemory", factoryKey: "ComfyUIFreeMemory" },
       { label: "PrepareWorkflowPrompt", factoryKey: "PrepareWorkflowPrompt" },
       { label: "LoadWorkflowFile", factoryKey: "LoadWorkflowFile" },
       { label: "TemplateWorkflowList", factoryKey: "TemplateWorkflowList" },

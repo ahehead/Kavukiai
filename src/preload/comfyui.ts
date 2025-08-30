@@ -14,6 +14,15 @@ export const comfyuiApi = {
     ]);
     window.postMessage({ type: "node-port", id }, "*", [port1]);
   },
+  freeMemory: async (args: {
+    endpoint?: string;
+    unloadModels?: boolean;
+    freeMemory?: boolean;
+  }): Promise<boolean> => {
+    const res = await ipcRenderer.invoke(IpcChannel.ComfyUIFreeMemory, args);
+    if (res?.status === "success") return true;
+    throw new Error(res?.message || "Failed to free ComfyUI memory");
+  },
   listUserWorkflows: async (endpoint: string): Promise<string[]> => {
     const res = await ipcRenderer.invoke(
       IpcChannel.ListComfyUserWorkflows,

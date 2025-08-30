@@ -10,6 +10,7 @@ import type {
   CodeFenceNode,
   ComfyDesktopStartNode,
   ComfyUINode,
+  ComfyUIFreeMemoryNode,
   CounterLoopNode,
   CreateSelectNode,
   GetLastMessageNode,
@@ -126,6 +127,7 @@ export type NodeTypes =
   | UnLoadModelNode
   | LLMPredictionConfigNode
   | ComfyUINode
+  | ComfyUIFreeMemoryNode
   | ComfyDesktopStartNode
   | PrepareWorkflowPromptNode
   | LoadWorkflowFileNode

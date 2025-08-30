@@ -13,9 +13,10 @@ export function getComfyApiClient(
     wsTimeout?: number;
   }
 ): ComfyApi {
-  if (!comfyApiInstance) {
+  if (!comfyApiInstance || comfyApiInstance.apiHost !== url) {
     comfyApiInstance = new ComfyApi(url, undefined, opts);
   }
+
   return comfyApiInstance;
 }
 

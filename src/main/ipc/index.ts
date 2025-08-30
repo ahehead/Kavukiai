@@ -1,4 +1,5 @@
 import { registerApiKeysHandlers } from "./apikeys";
+import { registerComfyUIFreeMemoryHandler } from "./ComfyUI/freeMemoryHandler";
 import { registerLaunchComfyDesktopHandler } from "./ComfyUI/launchDesktopHandler";
 import { registerComfyUIWorkflowListHandlers } from "./ComfyUI/listWorkflowsHandler";
 import { registerReadWorkflowRefHandler } from "./ComfyUI/readWorkflowRefHandler";
@@ -26,6 +27,7 @@ export function registerIpcHandlers(): void {
   registerLMStudioChatHandler();
   registerComfyUIRunRecipeHandler();
   registerComfyUIWorkflowListHandlers();
+  registerComfyUIFreeMemoryHandler();
   registerLaunchComfyDesktopHandler();
   registerReadJsonByPathHandler();
   registerReadWorkflowRefHandler();
