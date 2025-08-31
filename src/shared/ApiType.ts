@@ -51,6 +51,11 @@ export enum IpcChannel {
 
   // PNG export with embedded data
   ExportPngWithData = "export-png-with-data",
+
+  // PNG import: read embedded workflow from PNG file
+  ImportWorkflowFromPng = "import-workflow-from-png",
+
+  WriteTempFile = "write-temp-file",
 }
 
 // 汎用パス選択ダイアログ
@@ -100,9 +105,21 @@ export type OpenAIPortEventType =
   | { type: "error"; message: string };
 
 // PNG export
-export type PngCaptureRect = { x: number; y: number; width: number; height: number };
+export type PngCaptureRect = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
 export type ExportPngArgs = {
   initialFileName: string;
   graph: GraphJsonData;
   rect?: PngCaptureRect;
+};
+
+// PNG import result
+export type ImportPngResult = {
+  filePath: string;
+  fileName: string; // basename without extension
+  workflow: GraphJsonData;
 };

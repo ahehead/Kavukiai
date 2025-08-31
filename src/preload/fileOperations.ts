@@ -1,6 +1,7 @@
-import { ipcRenderer } from "electron";
+import { ipcRenderer, webUtils } from "electron";
 import type {
   ExportPngArgs,
+  ImportPngResult,
   OpenPathDialogOptions,
   SaveJsonOptions,
 } from "shared/ApiType";
@@ -102,7 +103,32 @@ export const fileOperationsApi = {
   // Export current view as PNG with embedded graph data
   exportPngWithData: (
     args: ExportPngArgs
-  ): Promise<
-    import("shared/ApiType").IpcResultDialog<{ filePath: string }>
-  > => ipcRenderer.invoke(IpcChannel.ExportPngWithData, args),
+  ): Promise<IpcResultDialog<{ filePath: string }>> =>
+    ipcRenderer.invoke(IpcChannel.ExportPngWithData, args),
+
+  // Import embedded workflow from PNG file
+  importWorkflowFromPng: (
+    filePath: string
+  ): Promise<IpcResultDialog<ImportPngResult>> =>
+    ipcRenderer.invoke(IpcChannel.ImportWorkflowFromPng, filePath),
+
+  getPathForFile(file: File): string {
+    try {
+      return webUtils.getPathForFile(file) || "";
+    } catch {
+      return "";
+    }
+  },
+
+  /** パスが取れない（ブラウザ由来など）場合は temp に書き出してパスを返す */
+  async ensurePathForFile(file: File): Promise<string> {
+    const p = this.getPathForFile(file);
+    if (p) return p;
+    const buf = Buffer.from(await file.arrayBuffer());
+    const safeName = (file.name || "image.png").replace(/[^\w.-]/g, "_");
+    return ipcRenderer.invoke(IpcChannel.WriteTempFile, {
+      name: safeName,
+      data: buf,
+    });
+  },
 };

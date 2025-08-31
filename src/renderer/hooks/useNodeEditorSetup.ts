@@ -1,10 +1,10 @@
-import { useRete } from "rete-react-plugin";
-import { createNodeEditor } from "renderer/nodeEditor/CreateNodeEditor";
 import { useCallback, useEffect } from "react";
+import { createNodeEditor } from "renderer/nodeEditor/CreateNodeEditor";
 import {
   initializeHistoryState,
   type NodeEditorState,
 } from "renderer/nodeEditor/features/editor_state/historyState";
+import { useRete } from "rete-react-plugin";
 import type { GraphJsonData } from "shared/JsonType";
 
 export default function useNodeEditorSetup(
@@ -51,5 +51,21 @@ export default function useNodeEditorSetup(
     [editorApi]
   );
 
-  return { ref, setCurrentFileState, clearEditorHistory };
+  const pasteWorkflowAtPosition = useCallback(
+    async (
+      workflow: GraphJsonData,
+      pointerPosition: { x: number; y: number }
+    ) => {
+      if (!editorApi) return;
+      await editorApi.pasteWorkflowAtPosition(workflow, pointerPosition);
+    },
+    [editorApi]
+  );
+
+  return {
+    ref,
+    setCurrentFileState,
+    clearEditorHistory,
+    pasteWorkflowAtPosition,
+  };
 }

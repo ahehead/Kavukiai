@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import SettingsModal from 'renderer/components/SettingsModal'
 import { MenuButton } from 'renderer/components/UIButton'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,12 +9,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from 'renderer/components/ui/dropdown-menu'
+import { ImportPngDialog } from 'renderer/features/dragdrop/importPngDialog'
+import { useDragDrop } from 'renderer/features/dragdrop/useDragDrop'
+import { exportPngWithData } from 'renderer/features/png/exportPng'
+import { importWorkflowFromPng } from 'renderer/features/png/importPng'
 import { electronApiService } from 'renderer/features/services/appService'
 import TabBar from 'renderer/features/tab/TabBar'
 import { notify } from 'renderer/features/toast-notice/notify'
 import useMainStore from 'renderer/hooks/MainStore'
 import { useFileOperations } from 'renderer/hooks/useFileOperations'
 import useNodeEditorSetup from 'renderer/hooks/useNodeEditorSetup'
+import { createFile } from 'shared/AppType'
 import { Toaster } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
 
@@ -45,11 +51,12 @@ export function MainScreen() {
   )
 
   // Reteエディタのセットアップ
-  const { ref, setCurrentFileState, clearEditorHistory } = useNodeEditorSetup(
-    activeFileId,
-    getGraphAndHistory,
-    setGraphAndHistory
-  )
+  const {
+    ref,
+    setCurrentFileState,
+    clearEditorHistory,
+    pasteWorkflowAtPosition,
+  } = useNodeEditorSetup(activeFileId, getGraphAndHistory, setGraphAndHistory)
 
   const { saveFile, saveFileAs, closeFile, loadFile, newFile } =
     useFileOperations(
@@ -110,29 +117,8 @@ export function MainScreen() {
 
   // 画面をPNGで保存
   const handleSaveAsPng = useCallback(async () => {
-    if (!ref.current || !activeFileId) return
-    try {
-      const file = getFileById(activeFileId)
-      if (!file) return
-
-      // capture area: bounding box of editor root
-      const rect = (ref.current as HTMLElement).getBoundingClientRect()
-
-      const res = await electronApiService.exportPngWithData({
-        initialFileName: file.title,
-        graph: file.graph,
-        rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
-      })
-
-      if (res.status === 'error') {
-        notify('error', `Failed to export PNG: ${res.message}`)
-      } else if (res.status === 'success') {
-        notify('success', `Saved: ${res.data.filePath}`)
-      }
-    } catch (err) {
-      notify('error', `Failed to save image: ${(err as any).message}`)
-    }
-  }, [ref, activeFileId, getFileById, getGraphAndHistory])
+    await exportPngWithData(ref, activeFileId, getFileById)
+  }, [ref, activeFileId, getFileById])
 
   const handleNewFile = async () => {
     newFile()
@@ -157,6 +143,45 @@ export function MainScreen() {
     if (!result) return
     await loadFile(result)
   }, [loadFile])
+
+  // ドラッグ＆ドロップ用カスタムフック
+  const {
+    importDialogOpen,
+    setImportDialogOpen,
+    dropInfo,
+    setDropInfo,
+    handleDragOver,
+    handleDrop,
+  } = useDragDrop(ref)
+
+  const runImportFromPng = useCallback(async () => {
+    if (!dropInfo) return null
+    return await importWorkflowFromPng(dropInfo.filePath)
+  }, [dropInfo])
+
+  // dialogで新規ファイル作成を選択
+  const handleImportAsNew = useCallback(async () => {
+    setCurrentFileState();
+    const data = await runImportFromPng()
+    if (!data) return
+    const { fileName, workflow } = data
+    addFile(await createFile(fileName, workflow))
+    // dialogを閉じる
+    setImportDialogOpen(false)
+    setDropInfo(null)
+    notify('success', `新規ファイルを作成しました: ${fileName}`)
+  }, [addFile, runImportFromPng])
+
+  const handleImportToCurrent = useCallback(async () => {
+    const data = await runImportFromPng()
+    if (!data || !dropInfo) return
+    const { workflow } = data;
+    // 現在のエディタにワークフローを貼り付け
+    await pasteWorkflowAtPosition(workflow, dropInfo.pointer);
+    setImportDialogOpen(false);
+    setDropInfo(null);
+    notify('success', 'ワークフローを現在のエディタに貼り付けました');
+  }, [dropInfo, pasteWorkflowAtPosition, runImportFromPng])
 
   return (
     <div className="flex flex-col fixed inset-0">
@@ -219,9 +244,12 @@ export function MainScreen() {
           />
         )}
         {/* editor: 常にレンダーする。ファイルなし時はdisplay none */}
+        {/** biome-ignore lint/a11y/noStaticElementInteractions: false positive */}
         <div
           className="App flex-1 w-full h-full"
           style={{ display: files.length === 0 ? 'none' : 'block' }}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
         >
           <div ref={ref} className="w-full h-full" />
         </div>
@@ -231,8 +259,17 @@ export function MainScreen() {
             <SettingsModal onClose={() => setShowSettings(false)} />
           )
         }
+
+        {/* トースター通知 */}
         <Toaster richColors={true} expand={true} offset={5} />
       </main>
+      {/* dialog */}
+      <ImportPngDialog
+        open={importDialogOpen}
+        onOpenChange={setImportDialogOpen}
+        onImportAsNew={handleImportAsNew}
+        onImportToCurrent={handleImportToCurrent}
+      />
     </div>
   )
 }

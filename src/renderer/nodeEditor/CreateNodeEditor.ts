@@ -14,6 +14,7 @@ import {
   Presets as HistoryPresets,
 } from "rete-history-plugin";
 import { ReactPlugin } from "rete-react-plugin";
+import type { GraphJsonData } from "../../shared/JsonType";
 import { handleConnectionEvent } from "./features/connection_drop_menu";
 import { customContextMenuPreset } from "./features/contextMenu/setup/CustomContextMenuPreset";
 import { setupContextMenu } from "./features/contextMenu/setup/SetupContextMenu";
@@ -32,11 +33,10 @@ import { GroupPlugin } from "./features/group";
 import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
 import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
 import { selectableNodes, selector } from "./features/nodeSelection/selectable";
+import { pasteWorkflowAtPosition } from "./features/pasteWorkflow/pasteWorkflow";
 import { DataflowEngine } from "./features/safe-dataflow/dataflowEngin";
 import { registerConnectionPipeline } from "./features/updateConnectionState/updateConnectionState";
 import { type AreaExtra, ExecList, isExecKey, type Schemes } from "./types";
-import { pasteWorkflowAtPosition } from "./features/pasteWorkflow/pasteWorkflow";
-import type { GraphJsonData } from "../../shared/JsonType";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -162,12 +162,17 @@ export async function createNodeEditor(container: HTMLElement) {
     pasteWorkflowAtPosition: async (
       workflow: GraphJsonData,
       pointerPosition: { x: number; y: number }
-    ) =>
+    ) => {
+      const { left, top } = area.area.content.holder.getBoundingClientRect();
       await pasteWorkflowAtPosition({
         workflow,
-        pointerPosition,
+        pointerPosition: {
+          x: (pointerPosition.x - left) / area.area.transform.k,
+          y: (pointerPosition.y - top) / area.area.transform.k,
+        },
         nodeDeps: { editor, area, dataflow, controlflow, history },
         groupPlugin,
-      }),
+      });
+    },
   };
 }
