@@ -1,5 +1,9 @@
 import { ipcRenderer } from "electron";
-import type { OpenPathDialogOptions, SaveJsonOptions } from "shared/ApiType";
+import type {
+  ExportPngArgs,
+  OpenPathDialogOptions,
+  SaveJsonOptions,
+} from "shared/ApiType";
 import {
   type FileData,
   IpcChannel,
@@ -94,4 +98,11 @@ export const fileOperationsApi = {
   // 指定パスのJSONを読み込む
   readJsonByPath: (path: string) =>
     ipcRenderer.invoke(IpcChannel.ReadJsonByPath, path),
+
+  // Export current view as PNG with embedded graph data
+  exportPngWithData: (
+    args: ExportPngArgs
+  ): Promise<
+    import("shared/ApiType").IpcResultDialog<{ filePath: string }>
+  > => ipcRenderer.invoke(IpcChannel.ExportPngWithData, args),
 };

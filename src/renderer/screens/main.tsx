@@ -10,6 +10,7 @@ import {
 } from 'renderer/components/ui/dropdown-menu'
 import { electronApiService } from 'renderer/features/services/appService'
 import TabBar from 'renderer/features/tab/TabBar'
+import { notify } from 'renderer/features/toast-notice/notify'
 import useMainStore from 'renderer/hooks/MainStore'
 import { useFileOperations } from 'renderer/hooks/useFileOperations'
 import useNodeEditorSetup from 'renderer/hooks/useNodeEditorSetup'
@@ -50,18 +51,19 @@ export function MainScreen() {
     setGraphAndHistory
   )
 
-  const { saveFile, saveFileAs, closeFile, loadFile, newFile } = useFileOperations(
-    files,
-    activeFileId,
-    setCurrentFileState,
-    clearEditorHistory,
-    getFileById,
-    setActiveFileId,
-    addFile,
-    removeFile,
-    updateFile,
-    clearHistory
-  )
+  const { saveFile, saveFileAs, closeFile, loadFile, newFile } =
+    useFileOperations(
+      files,
+      activeFileId,
+      setCurrentFileState,
+      clearEditorHistory,
+      getFileById,
+      setActiveFileId,
+      addFile,
+      removeFile,
+      updateFile,
+      clearHistory
+    )
 
   // 設定画面を表示するか
   const [showSettings, setShowSettings] = useState(false)
@@ -105,6 +107,35 @@ export function MainScreen() {
       unsubSaveAs()
     }
   }, [activeFileId, saveFileAs])
+
+  // 画面をPNGで保存
+  const handleSaveAsPng = useCallback(async () => {
+    if (!ref.current || !activeFileId) return
+    try {
+      const file = getFileById(activeFileId)
+      if (!file) return
+
+      // capture area: bounding box of editor root
+      const rect = (ref.current as HTMLElement).getBoundingClientRect()
+      const graphState = getGraphAndHistory(activeFileId)
+      const graph = graphState?.graph
+      if (!graph) return
+
+      const res = await electronApiService.exportPngWithData({
+        initialFileName: file.title,
+        graph,
+        rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+      })
+
+      if (res.status === 'error') {
+        notify('error', `Failed to export PNG: ${res.message}`)
+      } else if (res.status === 'success') {
+        notify('success', `Saved: ${res.data.filePath}`)
+      }
+    } catch (err) {
+      notify('error', `Failed to save image: ${(err as any).message}`)
+    }
+  }, [ref, activeFileId, getFileById, getGraphAndHistory])
 
   const handleNewFile = async () => {
     newFile()
@@ -155,6 +186,7 @@ export function MainScreen() {
           </DropdownMenuContent>
         </DropdownMenu>
         <MenuButton onClick={() => setShowSettings(true)}>Setting</MenuButton>
+        <MenuButton onClick={handleSaveAsPng}>Export as PNG</MenuButton>
       </div>
       {/* メインコンテンツ */}
       <main className="flex flex-1 flex-col">

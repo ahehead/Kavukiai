@@ -48,6 +48,9 @@ export enum IpcChannel {
   LaunchComfyDesktop = "launch-comfy-desktop",
   ReadWorkflowRef = "read-workflow-ref",
   ComfyUIFreeMemory = "comfyui-free-memory",
+
+  // PNG export with embedded data
+  ExportPngWithData = "export-png-with-data",
 }
 
 // 汎用パス選択ダイアログ
@@ -95,3 +98,11 @@ export type OpenAIPortEventType =
   | { type: "abort" }
   | { type: "openai"; data: ResponseStreamEvent | Response }
   | { type: "error"; message: string };
+
+// PNG export
+export type PngCaptureRect = { x: number; y: number; width: number; height: number };
+export type ExportPngArgs = {
+  initialFileName: string;
+  graph: GraphJsonData;
+  rect?: PngCaptureRect;
+};
