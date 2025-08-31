@@ -117,13 +117,10 @@ export function MainScreen() {
 
       // capture area: bounding box of editor root
       const rect = (ref.current as HTMLElement).getBoundingClientRect()
-      const graphState = getGraphAndHistory(activeFileId)
-      const graph = graphState?.graph
-      if (!graph) return
 
       const res = await electronApiService.exportPngWithData({
         initialFileName: file.title,
-        graph,
+        graph: file.graph,
         rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
       })
 
