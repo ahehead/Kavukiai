@@ -35,6 +35,8 @@ import { selectableNodes, selector } from "./features/nodeSelection/selectable";
 import { DataflowEngine } from "./features/safe-dataflow/dataflowEngin";
 import { registerConnectionPipeline } from "./features/updateConnectionState/updateConnectionState";
 import { type AreaExtra, ExecList, isExecKey, type Schemes } from "./types";
+import { pasteWorkflowAtPosition } from "./features/pasteWorkflow/pasteWorkflow";
+import type { GraphJsonData } from "../../shared/JsonType";
 
 export async function createNodeEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -155,5 +157,17 @@ export async function createNodeEditor(container: HTMLElement) {
     // historyのaddをオーバーライドして、履歴が追加されたときにコールバックを実行する
     patchHistoryAdd: (callback: () => void) =>
       patchHistoryAdd(history, callback),
+
+    // 外部からworkflowとpointerPositionを渡して貼り付け
+    pasteWorkflowAtPosition: async (
+      workflow: GraphJsonData,
+      pointerPosition: { x: number; y: number }
+    ) =>
+      await pasteWorkflowAtPosition({
+        workflow,
+        pointerPosition,
+        nodeDeps: { editor, area, dataflow, controlflow, history },
+        groupPlugin,
+      }),
   };
 }
