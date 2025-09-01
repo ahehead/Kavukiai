@@ -62,10 +62,16 @@ export default function useNodeEditorSetup(
     [editorApi]
   );
 
+  const getPointerPosition = useCallback(() => {
+    if (!editorApi) return { x: 0, y: 0 };
+    return editorApi.getPointerPosition();
+  }, [editorApi]);
+
   return {
     ref,
     setCurrentFileState,
     clearEditorHistory,
     pasteWorkflowAtPosition,
+    getPointerPosition,
   };
 }

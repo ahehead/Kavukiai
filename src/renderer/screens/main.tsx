@@ -56,6 +56,7 @@ export function MainScreen() {
     setCurrentFileState,
     clearEditorHistory,
     pasteWorkflowAtPosition,
+    getPointerPosition
   } = useNodeEditorSetup(activeFileId, getGraphAndHistory, setGraphAndHistory)
 
   const { saveFile, saveFileAs, closeFile, loadFile, newFile } =
@@ -117,6 +118,7 @@ export function MainScreen() {
 
   // 画面をPNGで保存
   const handleSaveAsPng = useCallback(async () => {
+    setCurrentFileState();
     await exportPngWithData(ref, activeFileId, getFileById)
   }, [ref, activeFileId, getFileById])
 
@@ -152,7 +154,7 @@ export function MainScreen() {
     setDropInfo,
     handleDragOver,
     handleDrop,
-  } = useDragDrop(ref)
+  } = useDragDrop(getPointerPosition)
 
   const runImportFromPng = useCallback(async () => {
     if (!dropInfo) return null

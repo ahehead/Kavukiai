@@ -7,7 +7,9 @@ export interface DropInfo {
   pointer: { x: number; y: number };
 }
 
-export function useDragDrop(ref?: React.RefObject<HTMLDivElement | null>) {
+export function useDragDrop(
+  getPointerPosition: () => { x: number; y: number }
+) {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [dropInfo, setDropInfo] = useState<DropInfo | null>(null);
 
@@ -19,15 +21,7 @@ export function useDragDrop(ref?: React.RefObject<HTMLDivElement | null>) {
   const handleDrop = useCallback(
     async (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
-      let pointer = { x: e.clientX, y: e.clientY };
-      // refが渡されていれば、エディタ領域の座標に変換
-      if (ref?.current) {
-        const rect = ref.current.getBoundingClientRect();
-        pointer = {
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-        };
-      }
+      const pointer = getPointerPosition();
       const item = e.dataTransfer.files?.[0];
       if (!item) return;
       const isPng = item.type === "image/png" || /\.png$/i.test(item.name);
@@ -48,7 +42,7 @@ export function useDragDrop(ref?: React.RefObject<HTMLDivElement | null>) {
       setDropInfo({ filePath, pointer });
       setImportDialogOpen(true);
     },
-    [ref]
+    [getPointerPosition]
   );
 
   return {

@@ -158,18 +158,17 @@ export async function createNodeEditor(container: HTMLElement) {
     patchHistoryAdd: (callback: () => void) =>
       patchHistoryAdd(history, callback),
 
+    getPointerPosition: () => area.area.pointer,
+
     // 外部からworkflowとpointerPositionを渡して貼り付け
     pasteWorkflowAtPosition: async (
       workflow: GraphJsonData,
       pointerPosition: { x: number; y: number }
     ) => {
-      const { left, top } = area.area.content.holder.getBoundingClientRect();
+      // console.log("area pointer", area.area.pointer);
       await pasteWorkflowAtPosition({
         workflow,
-        pointerPosition: {
-          x: (pointerPosition.x - left) / area.area.transform.k,
-          y: (pointerPosition.y - top) / area.area.transform.k,
-        },
+        pointerPosition,
         nodeDeps: { editor, area, dataflow, controlflow, history },
         groupPlugin,
       });
