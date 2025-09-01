@@ -1,13 +1,13 @@
 import { getNodePosition } from "renderer/nodeEditor/nodes/util/getNodePosition";
 import type { NodeEditor } from "rete";
-import { AreaExtensions, type AreaPlugin } from "rete-area-plugin";
+import type { AreaPlugin } from "rete-area-plugin";
 import type {
   ConnectionJson,
   GraphJsonData,
   NodeJson,
 } from "../../../../shared/JsonType";
 import type { AreaExtra, NodeTypes, Schemes } from "../../types/Schemes";
-import type { GroupPlugin } from "../group";
+import type { Group, GroupPlugin } from "../group";
 
 /**
  * editor の状態を GraphJsonData 形式にシリアライズして返す
@@ -94,35 +94,25 @@ function buildNodeBaseData(
 }
 
 /**
- * 右クリックでグラフの一部分を切り出すためのヘルパー
- * - 対象ノード群の boundingBox 左上を原点とした相対位置へ変換
- * - 対象ノード間の接続のみを含める
+ * 右クリックコピー用に、対象ノードとグループをそのままJSONにして返す
+ * - 位置は相対変換しない（絶対位置のまま）
+ * - 接続は対象ノード間のみを含める
  */
 export function buildGraphJsonForCopy(
-  targetNodes: NodeTypes[],
   editor: NodeEditor<Schemes>,
-  area: AreaPlugin<Schemes, AreaExtra>
+  area: AreaPlugin<Schemes, AreaExtra>,
+  targetNodes: NodeTypes[],
+  groups?: Group[]
 ): GraphJsonData {
-  const { left, top } = AreaExtensions.getBoundingBox(area, targetNodes);
-
-  const jsonNodes: NodeJson[] = [];
-  for (const node of targetNodes) {
-    const nodeJson = convertNodeToJson(node, area);
-    if (!nodeJson) continue; // 位置が取れない等の場合はスキップ
-    // 相対位置へ変換
-    nodeJson.position = {
-      x: nodeJson.position.x - left,
-      y: nodeJson.position.y - top,
-    };
-    jsonNodes.push(nodeJson);
-  }
-
   return {
     version: "1.0",
-    nodes: jsonNodes,
+    nodes: targetNodes
+      .map((n) => convertNodeToJson(n, area))
+      .filter((n) => n !== null),
     connections: getConnectionsForNodes(targetNodes, editor),
     metadata: {
       createdAt: new Date().toISOString(),
     },
+    groups: groups?.map((group) => group.toJson()),
   };
 }

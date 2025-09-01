@@ -18,9 +18,9 @@ export function createCopyItem(
 
       // 共通関数で GraphJsonData を生成
       const jsonData: GraphJsonData = buildGraphJsonForCopy(
-        targetNodes,
         editor,
-        area
+        area,
+        targetNodes
       );
 
       try {

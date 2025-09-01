@@ -1,3 +1,4 @@
+import { notify } from "renderer/features/toast-notice/notify";
 import { deserializeGraphIntoEditor } from "renderer/nodeEditor/features/deserializeGraph/deserializeGraph";
 import type { GroupPlugin } from "renderer/nodeEditor/features/group";
 import type { NodeDeps } from "renderer/nodeEditor/nodes/nodeFactories";
@@ -22,6 +23,43 @@ function buildNewNodeIdMap(nodes: NodeJson[]): Map<string, string> {
   const idMap = new Map<string, string>();
   for (const n of nodes) idMap.set(n.id, getUID());
   return idMap;
+}
+
+/**
+ * ワークフローのノード群のバウンディングボックスを原点(0,0)とみなして
+ * ノード位置・グループ矩形を相対位置に変換する
+ */
+export function toRelativeWorkflowByBBox(
+  workflow: GraphJsonData
+): GraphJsonData {
+  if (!workflow.nodes || workflow.nodes.length === 0) return workflow;
+
+  const minX = Math.min(...workflow.nodes.map((n) => n.position.x));
+  const minY = Math.min(...workflow.nodes.map((n) => n.position.y));
+
+  const relNodes: NodeJson[] = workflow.nodes.map((n) => ({
+    ...n,
+    position: {
+      x: n.position.x - minX,
+      y: n.position.y - minY,
+    },
+  }));
+
+  const relGroups: GroupJson[] | undefined = workflow.groups?.map((g) => ({
+    ...g,
+    rect: {
+      ...g.rect,
+      left: g.rect.left - minX,
+      top: g.rect.top - minY,
+    },
+  }));
+
+  return {
+    ...workflow,
+    version: workflow.version ?? "1.0",
+    nodes: relNodes,
+    groups: relGroups,
+  };
 }
 
 // Remap node IDs and offset positions by the pointer position
@@ -79,6 +117,7 @@ function createRemappedGraph(
     nodes: remapNodes(pointerPosition, jsonData.nodes, idMap),
     connections: remapConnections(jsonData.connections, idMap),
     groups: remapGroups(jsonData.groups, idMap),
+    metadata: jsonData.metadata,
   };
 }
 
@@ -89,12 +128,17 @@ export async function pasteWorkflowAtPosition({
   nodeDeps,
   groupPlugin,
 }: PasteWorkflowAtPositionArgs): Promise<void> {
-  const idMap = buildNewNodeIdMap(workflow.nodes);
-  const remapped = createRemappedGraph(pointerPosition, idMap, workflow);
-
+  // 1) 入力workflowの位置をbbox基準の相対位置へ正規化
+  const relative = toRelativeWorkflowByBBox(workflow);
+  // 2) 新しいノードIDマップを作成
+  const idMap = buildNewNodeIdMap(relative.nodes);
+  // 3) pointer位置へオフセット + 各種IDのリマップ
+  const remapped = createRemappedGraph(pointerPosition, idMap, relative);
+  // 4) エディタへデシリアライズ
   await deserializeGraphIntoEditor({
     graphJsonData: remapped,
     ...nodeDeps,
     groupPlugin,
   });
+  notify("success", "Workflow pasted successfully");
 }

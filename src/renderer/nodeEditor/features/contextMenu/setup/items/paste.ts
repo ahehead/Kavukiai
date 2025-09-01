@@ -1,3 +1,4 @@
+import { notify } from "renderer/features/toast-notice/notify";
 import type { GroupPlugin } from "renderer/nodeEditor/features/group";
 import { pasteWorkflowAtPosition } from "renderer/nodeEditor/features/pasteWorkflow/pasteWorkflow";
 import type { NodeDeps } from "renderer/nodeEditor/nodes/nodeFactories";
@@ -29,12 +30,14 @@ async function parseClipboardGraphJson(): Promise<GraphJsonData | null> {
     const parsed = JSON.parse(clipboardData);
     if (!isGraphJsonData(parsed)) {
       console.warn("Clipboard JSON is not a valid GraphJsonData");
+      notify("error", "Clipboard JSON is not a valid GraphJsonData");
       return null;
     }
     return parsed;
   } catch (e) {
     // パースエラーや権限エラーを包含
     console.warn("Failed to read/parse clipboard as GraphJsonData", e);
+    notify("error", "Failed to read/parse clipboard as GraphJsonData");
     return null;
   }
 }
@@ -57,7 +60,7 @@ async function pasteGraphFromClipboard(
 ) {
   const jsonData = await parseClipboardGraphJson();
   if (!jsonData) return;
-
+  console.log("Paste Pointer position:", pointerPosition);
   await pasteWorkflowAtPosition({
     workflow: jsonData,
     pointerPosition,
