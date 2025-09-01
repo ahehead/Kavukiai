@@ -60,7 +60,6 @@ async function pasteGraphFromClipboard(
 ) {
   const jsonData = await parseClipboardGraphJson();
   if (!jsonData) return;
-  console.log("Paste Pointer position:", pointerPosition);
   await pasteWorkflowAtPosition({
     workflow: jsonData,
     pointerPosition,

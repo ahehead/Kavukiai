@@ -129,6 +129,15 @@ export async function createNodeEditor(container: HTMLElement) {
   // なにもないところでコネクションを離すと右クリックメニューを開く
   handleConnectionEvent(connection, area);
 
+  function screenToWorld(clientX: number, clientY: number) {
+    const rect = area.container.getBoundingClientRect(); // AreaPluginに渡したコンテナ
+    const { x: tx, y: ty, k } = area.area.transform; // 平行移動(tx,ty) と ズーム(k)
+    return {
+      x: (clientX - rect.left - tx) / k,
+      y: (clientY - rect.top - ty) / k,
+    };
+  }
+
   // 外部に公開するAPI
   return {
     destroy: () => {
@@ -165,10 +174,9 @@ export async function createNodeEditor(container: HTMLElement) {
       workflow: GraphJsonData,
       pointerPosition: { x: number; y: number }
     ) => {
-      // console.log("area pointer", area.area.pointer);
       await pasteWorkflowAtPosition({
         workflow,
-        pointerPosition,
+        pointerPosition: screenToWorld(pointerPosition.x, pointerPosition.y),
         nodeDeps: { editor, area, dataflow, controlflow, history },
         groupPlugin,
       });

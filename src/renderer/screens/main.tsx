@@ -246,14 +246,17 @@ export function MainScreen() {
           />
         )}
         {/* editor: 常にレンダーする。ファイルなし時はdisplay none */}
-        {/** biome-ignore lint/a11y/noStaticElementInteractions: false positive */}
+
         <div
           className="App flex-1 w-full h-full"
           style={{ display: files.length === 0 ? 'none' : 'block' }}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
+
         >
-          <div ref={ref} className="w-full h-full" />
+          {/** biome-ignore lint/a11y/noStaticElementInteractions: false positive */}
+          <div ref={ref}
+            className="w-full h-full"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop} />
         </div>
         {
           // 設定画面

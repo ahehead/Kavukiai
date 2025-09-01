@@ -21,7 +21,7 @@ export function useDragDrop(
   const handleDrop = useCallback(
     async (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
-      const pointer = getPointerPosition();
+      const pointer = { x: e.clientX, y: e.clientY };
       const item = e.dataTransfer.files?.[0];
       if (!item) return;
       const isPng = item.type === "image/png" || /\.png$/i.test(item.name);
