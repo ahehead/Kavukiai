@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
-import SettingsModal from 'renderer/components/SettingsModal'
+import { useCallback, useEffect } from 'react'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { MenuButton } from 'renderer/components/UIButton'
 
 import {
@@ -73,9 +73,6 @@ export function MainScreen() {
       clearHistory
     )
 
-  // 設定画面を表示するか
-  const [showSettings, setShowSettings] = useState(false)
-
   // mainからのファイル読み込み通知を受け取り、ファイルを開く
   useEffect(() => {
     const unsub = electronApiService.onFileLoadedRequest(
@@ -86,15 +83,17 @@ export function MainScreen() {
     }
   }, [loadFile])
 
+  const nav = useNavigate()
+
   useEffect(() => {
     // 設定画面オープン指示
     const unsubOpen = electronApiService.onOpenSettings(() =>
-      setShowSettings(true)
+      nav('/settings')
     )
     return () => {
       unsubOpen()
     }
-  }, [setShowSettings])
+  }, [nav])
 
   useEffect(() => {
     // mainからの保存指示を受け取り、現在開いているファイルを保存
@@ -209,7 +208,7 @@ export function MainScreen() {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-        <MenuButton onClick={() => setShowSettings(true)}>Setting</MenuButton>
+        <MenuButton ><Link to="/settings">Settings</Link></MenuButton>
         <MenuButton onClick={handleSaveAsPng}>Export as PNG</MenuButton>
       </div>
       {/* メインコンテンツ */}
@@ -258,12 +257,7 @@ export function MainScreen() {
             onDragOver={handleDragOver}
             onDrop={handleDrop} />
         </div>
-        {
-          // 設定画面
-          showSettings && (
-            <SettingsModal onClose={() => setShowSettings(false)} />
-          )
-        }
+        <Outlet />
 
         {/* トースター通知 */}
         <Toaster richColors={true} expand={true} offset={5} />

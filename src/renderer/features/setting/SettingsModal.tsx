@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { CloseButton, SaveButton } from 'renderer/components/UIButton'
+import { useApiKeysStore } from 'renderer/hooks/ApiKeysStore'
 import { type Provider, providers } from 'shared/ApiKeysType'
-import { electronApiService } from '../features/services/appService'
-import { useApiKeysStore } from '../hooks/ApiKeysStore'
-import { CloseButton, SaveButton } from './UIButton'
+import { electronApiService } from '../services/appService'
 
-type Props = { onClose: () => void }
+export default function SettingsModal() {
+  const nav = useNavigate()
 
-export default function SettingsModal({ onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { keys, setApiKeysFlags } = useApiKeysStore()
   const [apiKeys, setApiKeys] = useState<Record<Provider, string>>(
@@ -36,9 +37,10 @@ export default function SettingsModal({ onClose }: Props) {
   const stop = (e: React.SyntheticEvent) => e.stopPropagation()
 
   return (
-    <button
+    // biome-ignore lint/a11y/noStaticElementInteractions: false positive
+    <div
       className="fixed inset-0 w-full h-full bg-sidebar/30 backdrop-blur-xs flex items-center justify-center z-modal"
-      onClick={onClose}
+      onClick={() => nav(-1)}
       onKeyDown={stop}
       onKeyUp={stop}
     >
@@ -97,10 +99,10 @@ export default function SettingsModal({ onClose }: Props) {
           )}
 
           <div className="flex justify-end mt-5">
-            <CloseButton onClick={onClose}>Close</CloseButton>
+            <CloseButton onClick={() => nav(-1)}>Close</CloseButton>
           </div>
         </div>
       </dialog>
-    </button>
+    </div>
   )
 }
