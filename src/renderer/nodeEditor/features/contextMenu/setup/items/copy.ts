@@ -1,3 +1,4 @@
+import { notify } from "renderer/features/toast-notice/notify";
 import { buildGraphJsonForCopy } from "renderer/nodeEditor/features/serializeGraph/serializeGraph";
 import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
@@ -13,25 +14,26 @@ export function createCopyItem(
     label: "ノードをコピー",
     key: "copy-nodes",
     handler: async () => {
-      // 選択中のノード（右クリック対象を必ず含む）を収集
-      const targetNodes = collectTargetNodes(context, editor);
-
       // 共通関数で GraphJsonData を生成
       const jsonData: GraphJsonData = buildGraphJsonForCopy(
         editor,
         area,
-        targetNodes
+        collectTargetNodes(context, editor)
       );
 
       try {
         await navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2));
       } catch (error) {
         console.error("Failed to copy to clipboard:", error);
+        notify("error", "Failed to copy to clipboard");
       }
+
+      notify("success", "Nodes copied to clipboard");
     },
   };
 }
 
+// 選択中のノード（右クリック対象を必ず含む）を収集
 export function collectTargetNodes(
   context: NodeTypes,
   editor: NodeEditor<Schemes>
