@@ -24,6 +24,7 @@ export const useIsFileDirty = (fileId: string | null) => {
 
 export async function isFileDirty(file?: File): Promise<boolean> {
   if (!file) return false;
+  if (!file.path) return true; // 新規ファイルは常にダーティ
   // ① 履歴があればダーティ
   if (file.historyState.produced.length > 0) return true;
   // ② ハッシュ比較
