@@ -9,8 +9,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from 'renderer/components/ui/dropdown-menu'
-import { ImportPngDialog } from 'renderer/features/dragdrop/importPngDialog'
-import { useDragDrop } from 'renderer/features/dragdrop/useDragDrop'
+import { ImportPngDialog } from 'renderer/features/dragdrop_workflow/importPngDialog'
+import { useDragDrop } from 'renderer/features/dragdrop_workflow/useDragDrop'
 import { exportPngWithData } from 'renderer/features/png/exportPng'
 import { importWorkflowFromPng } from 'renderer/features/png/importPng'
 import { electronApiService } from 'renderer/features/services/appService'
@@ -213,6 +213,7 @@ export function MainScreen() {
       </div>
       {/* メインコンテンツ */}
       <main className="flex flex-1 flex-col">
+        {/* ファイルがない場合の画面 */}
         {files.length === 0 ? (
           <div className="flex-1 flex items-center justify-center bg-blue-100 border-8 rounded-lg border-white">
             <div className="flex flex-col items-start dialog-animate-up">
