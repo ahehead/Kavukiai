@@ -11,14 +11,14 @@ import {
 } from 'renderer/components/ui/dropdown-menu'
 import { ImportPngDialog } from 'renderer/features/dragdrop_workflow/importPngDialog'
 import { useDragDrop } from 'renderer/features/dragdrop_workflow/useDragDrop'
+import { useFileOperations } from 'renderer/features/file/useFileOperations'
+import useMainStore from 'renderer/features/main-store/MainStore'
+import useNodeEditorSetup from 'renderer/features/nodeEditor_setup/useNodeEditorSetup'
 import { exportPngWithData } from 'renderer/features/png/exportPng'
 import { importWorkflowFromPng } from 'renderer/features/png/importPng'
 import { electronApiService } from 'renderer/features/services/appService'
 import TabBar from 'renderer/features/tab/TabBar'
 import { notify } from 'renderer/features/toast-notice/notify'
-import useMainStore from 'renderer/hooks/MainStore'
-import { useFileOperations } from 'renderer/hooks/useFileOperations'
-import useNodeEditorSetup from 'renderer/hooks/useNodeEditorSetup'
 import { createFile } from 'shared/AppType'
 import { Toaster } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
@@ -56,7 +56,7 @@ export function MainScreen() {
     setCurrentFileState,
     clearEditorHistory,
     pasteWorkflowAtPosition,
-    getPointerPosition
+    getPointerPosition,
   } = useNodeEditorSetup(activeFileId, getGraphAndHistory, setGraphAndHistory)
 
   const { saveFile, saveFileAs, closeFile, loadFile, newFile } =
@@ -87,9 +87,7 @@ export function MainScreen() {
 
   useEffect(() => {
     // 設定画面オープン指示
-    const unsubOpen = electronApiService.onOpenSettings(() =>
-      nav('/settings')
-    )
+    const unsubOpen = electronApiService.onOpenSettings(() => nav('/settings'))
     return () => {
       unsubOpen()
     }
@@ -117,7 +115,7 @@ export function MainScreen() {
 
   // 画面をPNGで保存
   const handleSaveAsPng = useCallback(async () => {
-    setCurrentFileState();
+    setCurrentFileState()
     await exportPngWithData(ref, activeFileId, getFileById)
   }, [ref, activeFileId, getFileById])
 
@@ -162,7 +160,7 @@ export function MainScreen() {
 
   // dialogで新規ファイル作成を選択
   const handleImportAsNew = useCallback(async () => {
-    setCurrentFileState();
+    setCurrentFileState()
     const data = await runImportFromPng()
     if (!data) return
     const { fileName, workflow } = data
@@ -176,12 +174,12 @@ export function MainScreen() {
   const handleImportToCurrent = useCallback(async () => {
     const data = await runImportFromPng()
     if (!data || !dropInfo) return
-    const { workflow } = data;
+    const { workflow } = data
     // 現在のエディタにワークフローを貼り付け
-    await pasteWorkflowAtPosition(workflow, dropInfo.pointer);
-    setImportDialogOpen(false);
-    setDropInfo(null);
-    notify('success', 'ワークフローを現在のエディタに貼り付けました');
+    await pasteWorkflowAtPosition(workflow, dropInfo.pointer)
+    setImportDialogOpen(false)
+    setDropInfo(null)
+    notify('success', 'ワークフローを現在のエディタに貼り付けました')
   }, [dropInfo, pasteWorkflowAtPosition, runImportFromPng])
 
   return (
@@ -208,7 +206,9 @@ export function MainScreen() {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-        <MenuButton ><Link to="/settings">Settings</Link></MenuButton>
+        <MenuButton>
+          <Link to="/settings">Settings</Link>
+        </MenuButton>
         <MenuButton onClick={handleSaveAsPng}>Export as PNG</MenuButton>
       </div>
       {/* メインコンテンツ */}
@@ -250,13 +250,14 @@ export function MainScreen() {
         <div
           className="App flex-1 w-full h-full"
           style={{ display: files.length === 0 ? 'none' : 'block' }}
-
         >
           {/** biome-ignore lint/a11y/noStaticElementInteractions: false positive */}
-          <div ref={ref}
+          <div
+            ref={ref}
             className="w-full h-full"
             onDragOver={handleDragOver}
-            onDrop={handleDrop} />
+            onDrop={handleDrop}
+          />
         </div>
         <Outlet />
 

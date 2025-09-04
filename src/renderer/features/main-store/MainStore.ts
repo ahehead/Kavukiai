@@ -1,12 +1,12 @@
-import {
-  createMainState,
-  type UISettings,
-  type MainState,
-  type File as AppFile,
-} from "shared/AppType";
-import { initializeHistoryState } from "renderer/nodeEditor/features/editor_state/historyState";
-import { create } from "zustand";
 import type { NodeEditorState } from "renderer/nodeEditor/features/editor_state/historyState";
+import { initializeHistoryState } from "renderer/nodeEditor/features/editor_state/historyState";
+import {
+  type File as AppFile,
+  createMainState,
+  type MainState,
+  type UISettings,
+} from "shared/AppType";
+import { create } from "zustand";
 import { persist, subscribeWithSelector } from "zustand/middleware";
 import { createDebouncedJSONStorage } from "zustand-debounce";
 

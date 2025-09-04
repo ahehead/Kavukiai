@@ -1,12 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CloseButton, SaveButton } from 'renderer/components/UIButton'
-import { useApiKeysStore } from 'renderer/hooks/ApiKeysStore'
+import { useApiKeysStore } from 'renderer/features/setting_view/ApiKeysStore'
 import { type Provider, providers } from 'shared/ApiKeysType'
 import { electronApiService } from '../services/appService'
 
 export default function SettingsModal() {
   const nav = useNavigate()
+  const close = () => nav(-1);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") close(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [close]);
 
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { keys, setApiKeysFlags } = useApiKeysStore()
@@ -40,7 +47,7 @@ export default function SettingsModal() {
     // biome-ignore lint/a11y/noStaticElementInteractions: false positive
     <div
       className="fixed inset-0 w-full h-full bg-sidebar/30 backdrop-blur-xs flex items-center justify-center z-modal"
-      onClick={() => nav(-1)}
+      onClick={close}
       onKeyDown={stop}
       onKeyUp={stop}
     >
@@ -99,7 +106,7 @@ export default function SettingsModal() {
           )}
 
           <div className="flex justify-end mt-5">
-            <CloseButton onClick={() => nav(-1)}>Close</CloseButton>
+            <CloseButton onClick={close}>Close</CloseButton>
           </div>
         </div>
       </dialog>

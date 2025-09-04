@@ -1,12 +1,12 @@
 import { useCallback } from "react";
+import { hashGraph } from "renderer/features/dirty-check/hash";
+import { isFileDirty } from "renderer/features/dirty-check/useIsFileDirty";
+import { electronApiService } from "renderer/features/services/appService";
 import { getNewActiveFileId } from "renderer/features/tab/getNewActiveFileId";
+import { notify } from "renderer/features/toast-notice/notify";
 import { CloseFileDialogResponse, type FileData } from "shared/ApiType";
 import { createFile, type File } from "shared/AppType";
 import type { GraphJsonData } from "shared/JsonType";
-import { hashGraph } from "../features/dirty-check/hash";
-import { isFileDirty } from "../features/dirty-check/useIsFileDirty";
-import { electronApiService } from "../features/services/appService";
-import { notify } from "../features/toast-notice/notify";
 
 export function useFileOperations(
   files: File[],
