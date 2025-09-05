@@ -1,6 +1,10 @@
-import type { NodeTypes, Schemes } from "renderer/nodeEditor/types";
+import {
+  Connection,
+  type NodeInterface,
+  type NodeTypes,
+  type Schemes,
+} from "renderer/nodeEditor/types";
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
-import { ClassicPreset } from "rete";
 import type { GraphJsonData, InputPortJson } from "shared/JsonType";
 import { type NodeDeps, nodeFactories } from "../../nodes/nodeFactories";
 import type { GroupPlugin } from "../group";
@@ -103,7 +107,7 @@ export async function deserializeGraphIntoEditor({
         continue;
       }
 
-      const conn = new ClassicPreset.Connection(
+      const conn = new Connection<NodeInterface, NodeInterface>(
         sourceNode,
         sourceOutput as never,
         targetNode,

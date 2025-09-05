@@ -1,10 +1,10 @@
-import type { TooltipInput } from "renderer/nodeEditor/types";
-import type { Schemes } from "renderer/nodeEditor/types/Schemes";
-import type { TypedSocket } from "renderer/nodeEditor/types/TypedSocket";
-import type { ClassicPreset, NodeEditor } from "rete";
+import type { Connection, TooltipInput } from "renderer/nodeEditor/types";
+import type { NodeInterface, Schemes } from "renderer/nodeEditor/types/Schemes";
+import type { TypedSocket } from "renderer/nodeEditor/types/Socket/TypedSocket";
+import type { NodeEditor } from "rete";
 
-export type Input = ClassicPreset.Input<TypedSocket>;
-export type Output = ClassicPreset.Output<TypedSocket>;
+export type Input = TooltipInput<TypedSocket>;
+export type Output = TooltipInput<TypedSocket>;
 
 export type SocketPair = {
   source?: TypedSocket;
@@ -26,9 +26,9 @@ export function isCompatible({ source, target }: SocketPair): boolean {
 // コネクションから双方のportのペアを取得,双方揃っていないとundefined
 export function getConnectionPorts(
   editor: NodeEditor<Schemes>,
-  connection: Schemes["Connection"]
+  connection: Connection<NodeInterface, NodeInterface>
 ): {
-  sourcePort?: Output;
+  sourcePort?: TooltipInput<TypedSocket>;
   targetPort?: TooltipInput<TypedSocket>;
 } {
   const sourceNode = editor.getNode(connection.source);
@@ -37,9 +37,9 @@ export function getConnectionPorts(
     return {};
   }
 
-  const sourcePort = (sourceNode.outputs as Record<string, Output>)[
-    connection.sourceOutput
-  ];
+  const sourcePort = (
+    sourceNode.outputs as Record<string, TooltipInput<TypedSocket>>
+  )[connection.sourceOutput];
   const targetPort = (
     targetNode.inputs as Record<string, TooltipInput<TypedSocket>>
   )[connection.targetInput];
@@ -53,7 +53,7 @@ export function getConnectionPorts(
 // コネクションから双方のsocketのペアを取得
 export function getConnectedSockets(
   editor: NodeEditor<Schemes>,
-  connection: Schemes["Connection"]
+  connection: Connection<NodeInterface, NodeInterface>
 ): SocketPair {
   const { sourcePort, targetPort } = getConnectionPorts(editor, connection);
   return {
@@ -64,7 +64,7 @@ export function getConnectedSockets(
 
 export function getConnectionSockets(
   editor: NodeEditor<Schemes>,
-  connection: Schemes["Connection"]
+  connection: Connection<NodeInterface, NodeInterface>
 ) {
   const source = editor.getNode(connection.source);
   const target = editor.getNode(connection.target);

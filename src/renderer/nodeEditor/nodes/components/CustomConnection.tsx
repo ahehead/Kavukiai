@@ -1,23 +1,57 @@
-import { type ClassicScheme, Presets } from 'rete-react-plugin'
+import { cva, type VariantProps } from 'class-variance-authority'
+import type { Connection, NodeInterface } from 'renderer/nodeEditor/types'
+import { Presets } from 'rete-react-plugin'
 
 const { useConnection } = Presets.classic
 
-export function CustomExecConnection(_props: { data: ClassicScheme['Connection'] }) {
+// 内側本体のスタイル: 接続の種類(kind)と状態(state)で色などを変化
+const innerPathVariants = cva('pointer-events-auto fill-none stroke-[4px]', {
+  variants: {
+    kind: {
+      exec: 'opacity-90 stroke-[#ec923d]', // 実行ライン: オレンジ強調
+      data: 'stroke-dataSocket', // データライン: 既存テーマ色
+    },
+    state: {
+      normal: '',
+      'type-error': 'stroke-red-500', // 型エラー時は赤で上書き
+    },
+  },
+  defaultVariants: {
+    state: 'normal',
+  },
+})
+
+type InnerPathVariants = VariantProps<typeof innerPathVariants>
+
+// 共通アウトライン(下地)
+function OuterOutline({ d }: { d: string }) {
+  return (
+    <path
+      d={d}
+      className="fill-none stroke-black stroke-[7px] opacity-40"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  )
+}
+
+// ベースコンポーネント: 外側は共通、内側はcvaで色分け
+function BaseConnection(props: {
+  data: Connection<NodeInterface, NodeInterface>
+  kind: NonNullable<InnerPathVariants['kind']>
+}) {
   const { path } = useConnection()
   if (!path) return null
+
   return (
     <svg className="pointer-events-none overflow-visible absolute">
-      {/* 外側アウトライン (黒) */}
+      <OuterOutline d={path} />
       <path
         d={path}
-        className="fill-none stroke-black stroke-[7px] opacity-35" // 少し太めにして下地の枠線
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {/* 内側本体 (オレンジ, 半透明) */}
-      <path
-        d={path}
-        className="pointer-events-auto fill-none stroke-[4px] stroke-[#ec923d] opacity-90" // 透明度: 90%
+        className={innerPathVariants({
+          kind: props.kind,
+          state: props.data.state ?? 'normal',
+        })}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -25,25 +59,14 @@ export function CustomExecConnection(_props: { data: ClassicScheme['Connection']
   )
 }
 
-export function CustomDataConnection(_props: { data: ClassicScheme['Connection'] }) {
-  const { path } = useConnection()
-  if (!path) return null
-  return (
-    <svg className="pointer-events-none overflow-visible absolute">
-      {/* 外側アウトライン (黒) */}
-      <path
-        d={path}
-        className="fill-none stroke-black stroke-[7px] opacity-40"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {/* 内側本体 */}
-      <path
-        d={path}
-        className="pointer-events-auto fill-none stroke-[4px] stroke-dataSocket"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
+export function CustomExecConnection(props: {
+  data: Connection<NodeInterface, NodeInterface>
+}) {
+  return <BaseConnection {...props} kind="exec" />
+}
+
+export function CustomDataConnection(props: {
+  data: Connection<NodeInterface, NodeInterface>
+}) {
+  return <BaseConnection {...props} kind="data" />
 }

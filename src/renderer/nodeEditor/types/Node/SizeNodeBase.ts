@@ -1,7 +1,7 @@
 import type { AreaPlugin } from "rete-area-plugin";
 import type { NodeControl } from "../NodeControl";
 import type { AreaExtra, Schemes } from "../Schemes";
-import type { TypedSocket } from "../TypedSocket";
+import type { TypedSocket } from "../Socket/TypedSocket";
 import { NodeIO } from "./NodeIO";
 
 export const NodeMinWidth = 220;

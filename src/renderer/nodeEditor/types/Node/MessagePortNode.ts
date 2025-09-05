@@ -2,7 +2,7 @@ import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import type { AreaExtra, Schemes } from "../Schemes";
-import type { TypedSocket } from "../TypedSocket";
+import type { TypedSocket } from "../Socket/TypedSocket";
 import { NodeStatus } from "./BaseNode";
 import { SerializableInputsNode } from "./SerializableInputsNode";
 

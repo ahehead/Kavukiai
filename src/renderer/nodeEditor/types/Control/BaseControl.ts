@@ -3,7 +3,7 @@ import { ClassicPreset } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
 import type { ControlJson } from "shared/JsonType";
-import type { AreaExtra, Schemes } from ".";
+import type { AreaExtra, Schemes } from "../Schemes";
 import { ValueHistoryAction } from "./ValueHistoryAction";
 
 export interface SerializableControl {

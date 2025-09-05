@@ -1,5 +1,6 @@
-import type { Connection, NodeInterface } from "..";
-import type { TypedSocket } from "../TypedSocket";
+import type { Connection } from "../Connection/Connection";
+import type { NodeInterface } from "../Schemes";
+import type { TypedSocket } from "../Socket/TypedSocket";
 
 export type ConnectionParams = {
   data: Connection<NodeInterface, NodeInterface>;

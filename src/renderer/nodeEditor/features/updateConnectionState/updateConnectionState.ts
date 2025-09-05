@@ -7,7 +7,6 @@ import {
 } from "renderer/nodeEditor/types";
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 import type { NodeEditor } from "rete";
-import type { Output } from "rete/_types/presets/classic";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { AreaExtra, NodeInterface, Schemes } from "../../types/Schemes";
 import type { DataflowEngine } from "../safe-dataflow/dataflowEngin";
@@ -31,10 +30,12 @@ export function registerConnectionPipeline(
 ): void {
   editor.addPipe(async (ctx) => {
     switch (ctx.type) {
+      // 接続判定
       case "connectioncreate":
         if (!canConnect(editor, ctx.data)) return; // NG ならパイプ停止
         break;
 
+      // 接続／切断後の処理
       case "connectioncreated":
       case "connectionremoved": {
         const isConnected = ctx.type === "connectioncreated";
@@ -42,8 +43,10 @@ export function registerConnectionPipeline(
         const { source, target } = getConnectedSockets(editor, ctx.data);
         if (!sourcePort || !targetPort || !source || !target) return ctx;
 
-        updateShowControl({ sourcePort, targetPort });
+        // dataflow キャッシュをクリア
         dataflow.reset(ctx.data.target);
+        // 出力側のportのcontrolを非表示に
+        hideTargetPortControl(targetPort);
         await syncSocketState(area, ctx.data, isConnected, source, target);
         await updateDynamicSchemaNode(
           editor,
@@ -60,11 +63,8 @@ export function registerConnectionPipeline(
 }
 
 // 出力側のportのcontrolを非表示にする
-function updateShowControl(ports: {
-  sourcePort: Output<TypedSocket>;
-  targetPort: TooltipInput<TypedSocket>;
-}) {
-  ports.targetPort.showControl = false;
+function hideTargetPortControl(targetPort: TooltipInput<TypedSocket>) {
+  targetPort.showControl = false;
 }
 
 /**
@@ -143,7 +143,8 @@ export async function traverseDynamicSchemaNodes(
         if (!nextNode) continue;
 
         if (!canConnect(editor, conn)) {
-          // TODO: 接続を赤表示
+          conn.changeTypeErrorState(); // 型エラー状態に
+
           continue;
         }
         const { source: nextSource, target: nextTarget } = getConnectedSockets(

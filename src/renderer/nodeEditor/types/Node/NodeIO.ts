@@ -1,12 +1,12 @@
 import type { TSchema } from "@sinclair/typebox";
 import { ButtonControl } from "renderer/nodeEditor/nodes/Controls/Button";
 import { ClassicPreset } from "rete";
-import type { BaseControl } from "../BaseControl";
+import type { BaseControl } from "../Control/BaseControl";
 import { TooltipInput } from "../Input";
 import type { NodeControl } from "../NodeControl";
 import { getSchema, type SchemaKey } from "../Schemas";
 import { type ExecKey, isExecKey } from "../Schemes";
-import { TypedSocket } from "../TypedSocket";
+import { TypedSocket } from "../Socket/TypedSocket";
 
 const { Output } = ClassicPreset;
 

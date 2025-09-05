@@ -9,8 +9,8 @@ import type {
   ChatMessageNode,
   CodeFenceNode,
   ComfyDesktopStartNode,
-  ComfyUINode,
   ComfyUIFreeMemoryNode,
+  ComfyUINode,
   CounterLoopNode,
   CreateSelectNode,
   GetLastMessageNode,
@@ -68,10 +68,10 @@ import type {
   WorkflowInputsNode,
   WorkflowOutputsNode,
 } from "../nodes/Node";
-import type { Connection } from "./Connection";
+import type { Connection } from "./Connection/Connection";
 import type { BaseNode } from "./Node/BaseNode";
 import type { NodeControl } from "./NodeControl";
-import type { TypedSocket } from "./TypedSocket";
+import type { TypedSocket } from "./Socket/TypedSocket";
 
 export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
 

@@ -1,7 +1,7 @@
 import type { InputPortJson } from "shared/JsonType";
-import type { SerializableControl } from "../BaseControl";
+import type { SerializableControl } from "../Control/BaseControl";
 import type { NodeControl } from "../NodeControl";
-import type { TypedSocket } from "../TypedSocket";
+import type { TypedSocket } from "../Socket/TypedSocket";
 import { BaseNode } from "./BaseNode";
 
 // inputsをシリアライズできるように拡張したノードクラス

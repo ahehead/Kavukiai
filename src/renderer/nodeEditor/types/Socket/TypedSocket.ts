@@ -1,6 +1,6 @@
 import { type TSchema, Type } from "@sinclair/typebox";
 import { ClassicPreset } from "rete";
-import { isExecKey } from "./Schemes";
+import { isExecKey } from "../Schemes";
 
 export class TypedSocket extends ClassicPreset.Socket {
   schema: TSchema;

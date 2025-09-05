@@ -1,5 +1,5 @@
 import type { NodeControl } from "../NodeControl";
-import type { TypedSocket } from "../TypedSocket";
+import type { TypedSocket } from "../Socket/TypedSocket";
 import { NodeStatus, StatusNodeBase } from "./StatusNodeBase";
 
 export abstract class BaseNode<

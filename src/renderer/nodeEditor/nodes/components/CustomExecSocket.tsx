@@ -1,5 +1,5 @@
 import { NodeExecSocket } from 'renderer/nodeEditor/nodes/components/common/NodeSocketParts'
-import type { TypedSocket } from "../../types/TypedSocket"
+import type { TypedSocket } from "../../types/Socket/TypedSocket"
 
 export function CustomExecSocket<T extends TypedSocket>(
   props: { data: T }

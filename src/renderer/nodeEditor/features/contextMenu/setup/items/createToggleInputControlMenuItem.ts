@@ -1,6 +1,6 @@
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
-import type { TypedSocket } from "renderer/nodeEditor/types/TypedSocket";
+import type { TypedSocket } from "renderer/nodeEditor/types/Socket/TypedSocket";
 import type { ClassicPreset, NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { Item } from "rete-context-menu-plugin/_types/types";

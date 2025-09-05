@@ -4,7 +4,7 @@ import {
   BaseControl,
   type ControlOptions,
   useControlValue,
-} from 'renderer/nodeEditor/types'
+} from 'renderer/nodeEditor/types/Control/BaseControl'
 import { Drag } from 'rete-react-plugin'
 import type { ControlJson } from 'shared/JsonType'
 

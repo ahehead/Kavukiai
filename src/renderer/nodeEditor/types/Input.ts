@@ -1,6 +1,6 @@
 import { ClassicPreset } from "rete";
-import type { NodeControl } from "./NodeControl";
-import type { TypedSocket } from "./TypedSocket";
+import type { NodeControl } from ".";
+import type { TypedSocket } from "./Socket/TypedSocket";
 
 export class TooltipInput<
   S extends TypedSocket

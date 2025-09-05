@@ -1,9 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type React from 'react'
-import {
-  BaseControl,
-  type ControlOptions,
-} from 'renderer/nodeEditor/types/BaseControl'
+import { BaseControl, type ControlOptions } from 'renderer/nodeEditor/types/Control/BaseControl'
 import { Drag } from 'rete-react-plugin'
 import type { ControlJson } from 'shared/JsonType'
 
