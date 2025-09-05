@@ -1,7 +1,6 @@
 import { ClassicPreset } from "rete";
 import type { NodeInterface } from "../Schemes";
 
-type Listener = () => void;
 export class Connection<
   A extends NodeInterface,
   B extends NodeInterface
@@ -21,23 +20,9 @@ export class Connection<
 
   changeTypeErrorState() {
     this._state = "type-error";
-    this.notify();
   }
 
   changeNormalState() {
     this._state = "normal";
-    this.notify();
-  }
-
-  private listeners = new Set<Listener>();
-
-  notify() {
-    for (const listener of this.listeners) {
-      listener();
-    }
-  }
-  subscribe(l: Listener) {
-    this.listeners.add(l);
-    return () => this.listeners.delete(l); // unsubscribe
   }
 }

@@ -50,6 +50,7 @@ export function registerConnectionPipeline(
         await syncSocketState(area, ctx.data, isConnected, source, target);
         await updateDynamicSchemaNode(
           editor,
+          area,
           ctx.data,
           isConnected,
           source,
@@ -90,6 +91,7 @@ async function syncSocketState(
  */
 async function updateDynamicSchemaNode(
   editor: NodeEditor<Schemes>,
+  area: AreaPlugin<Schemes, AreaExtra>,
   data: Connection<NodeInterface, NodeInterface>,
   isConnected: boolean,
   source: TypedSocket,
@@ -101,6 +103,7 @@ async function updateDynamicSchemaNode(
   if (isExecKey(data.targetInput)) return;
   await traverseDynamicSchemaNodes(
     editor,
+    area,
     data,
     targetNode,
     isConnected,
@@ -115,6 +118,7 @@ async function updateDynamicSchemaNode(
  */
 export async function traverseDynamicSchemaNodes(
   editor: NodeEditor<Schemes>,
+  area: AreaPlugin<Schemes, AreaExtra>,
   data: Connection<NodeInterface, NodeInterface>,
   node: NodeInterface,
   isConnected: boolean,
@@ -143,8 +147,8 @@ export async function traverseDynamicSchemaNodes(
         if (!nextNode) continue;
 
         if (!canConnect(editor, conn)) {
-          conn.changeTypeErrorState(); // 型エラー状態に
-
+          conn.changeTypeErrorState();
+          await area.update("connection", conn.id);
           continue;
         }
         const { source: nextSource, target: nextTarget } = getConnectedSockets(
@@ -156,6 +160,7 @@ export async function traverseDynamicSchemaNodes(
         // 再帰的にたどる
         await traverseDynamicSchemaNodes(
           editor,
+          area,
           conn,
           nextNode,
           true,

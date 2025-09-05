@@ -90,7 +90,12 @@ import {
   CustomDataConnection,
   CustomExecConnection,
 } from "renderer/nodeEditor/nodes/components/CustomConnection";
-import type { AreaExtra, Schemes } from "renderer/nodeEditor/types";
+import type {
+  AreaExtra,
+  Connection,
+  NodeInterface,
+  Schemes,
+} from "renderer/nodeEditor/types";
 import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";
@@ -132,7 +137,9 @@ export function customReactPresets(
   // Use any-cast to bypass complex TS types for Rete React Presets
   return (ReactPresets.classic as any).setup({
     customize: {
-      connection: (_data: any) => {
+      connection: (_data: {
+        payload: Connection<NodeInterface, NodeInterface>;
+      }) => {
         const { source, target } = getConnectionSockets(editor, _data.payload);
         if (source?.isExec || target?.isExec) {
           return CustomExecConnection;

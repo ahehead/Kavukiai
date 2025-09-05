@@ -18,6 +18,7 @@ import type { GraphJsonData } from "../../shared/JsonType";
 import { handleConnectionEvent } from "./features/connection_drop_menu";
 import { customContextMenuPreset } from "./features/contextMenu/setup/CustomContextMenuPreset";
 import { setupContextMenu } from "./features/contextMenu/setup/SetupContextMenu";
+import { customClassicFlowPreset } from "./features/customClassicFlow/customClassicFlowPreset";
 import { customReactPresets } from "./features/customReactPresets/customReactPresets";
 import { setupDeleteSelectedNodes } from "./features/deleteSelectedNodes/deleteSelectedNodes";
 import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
@@ -91,6 +92,9 @@ export async function createNodeEditor(container: HTMLElement) {
   area.use(render);
   area.use(gridLine);
   area.use(groupPlugin);
+
+  // 独自Connectionを使う
+  connection.addPreset(customClassicFlowPreset());
 
   // コネクションの作成時と削除時に、ソケットの接続状態とデータフローを更新
   registerConnectionPipeline(editor, area, dataflow);
