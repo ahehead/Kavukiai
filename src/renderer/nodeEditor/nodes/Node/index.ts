@@ -1,6 +1,5 @@
 // 新規 Node バレルファイル
 
-export { LMStudioToUChatCommandNode } from "./Chat/LMStudioToUChatCommandNode";
 export { OpenAIToUChatCommandNode } from "./Chat/OpenAIToUChatCommandNode";
 export { ReverseRoleNode } from "./Chat/ReverseRoleNode";
 export { UChatGetLastMessageNode } from "./Chat/UChatGetLastMessageNode";

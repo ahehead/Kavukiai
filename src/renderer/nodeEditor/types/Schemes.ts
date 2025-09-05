@@ -27,7 +27,6 @@ import type {
   LMStudioLoadModelNode,
   LMStudioStartNode,
   LMStudioStopNode,
-  LMStudioToUChatCommandNode,
   LoadWorkflowFileNode,
   MergeWorkflowInputsDefaultsNode,
   ModelInfoToModelListNode,
@@ -122,7 +121,6 @@ export type NodeTypes =
   | LMStudioStartNode
   | LMStudioStopNode
   | LMStudioLoadModelNode
-  | LMStudioToUChatCommandNode
   | ServerStatusNode
   | UnLoadModelNode
   | LLMPredictionConfigNode

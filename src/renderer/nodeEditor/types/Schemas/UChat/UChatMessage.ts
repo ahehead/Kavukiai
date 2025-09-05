@@ -1,6 +1,7 @@
 // v0
 import type { Static } from "@sinclair/typebox";
 import { Type } from "@sinclair/typebox";
+import type { LMStudioChatPortEvent } from "../LMStudioChatPortEventOrNull";
 import { Timestamp } from "../openai/BaseSchemas";
 
 /** まずは共通3ロールのみ（tool/developerはv1拡張で） */
@@ -65,7 +66,35 @@ export const UChatMessage = Type.Object({
   tokensPerSecond: Type.Optional(Type.Number()),
 });
 export type UChatMessage = Static<typeof UChatMessage>;
+/**
+ * LMStudio の finish イベントから UChatMessage を生成
+ * 必要な最小項目のみをマッピング（content/text, modelKey, tokens stats）
+ */
+export function createUChatMessageFromLMStudioFinishEvent(
+  evt:
+    | Extract<LMStudioChatPortEvent, { type: "finish" }>
+    // 柔軟性のため result だけを渡せる形も許容
+    | {
+        type: "finish";
+        result: {
+          content: string;
+          reasoningContent: string;
+          status: { predictedTokensCount?: number; tokensPerSecond?: number };
+          modelInfo: { modelKey: string };
+        };
+      }
+): UChatMessage {
+  const { result } = evt as Extract<LMStudioChatPortEvent, { type: "finish" }>;
+  return {
+    role: "assistant",
+    content: [{ type: "text", text: result.content }],
+    model: result.modelInfo.modelKey,
+    tokensCount: result.status.predictedTokensCount,
+    tokensPerSecond: result.status.tokensPerSecond,
+  };
+}
 
+/** UChatMessage からテキスト部分のみを抽出 */
 export const extractTextContent = (msg: UChatMessage): string => {
   return msg.content
     .filter((part) => part.type === "text")

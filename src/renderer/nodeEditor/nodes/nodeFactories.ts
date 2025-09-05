@@ -60,7 +60,6 @@ import {
   WorkflowInputsNode,
   WorkflowOutputsNode,
 } from "./Node";
-import { LMStudioToUChatCommandNode } from "./Node/Chat/LMStudioToUChatCommandNode";
 import { OpenAIToUChatCommandNode } from "./Node/Chat/OpenAIToUChatCommandNode";
 import { ReverseRoleNode } from "./Node/Chat/ReverseRoleNode";
 import { UChatGetLastMessageNode } from "./Node/Chat/UChatGetLastMessageNode";
@@ -173,7 +172,6 @@ export const nodeFactories = {
   GetLastMessage: () => new GetLastMessageNode(),
   OpenAIToChatEvent: () => new OpenAIToChatEventNode(),
   OpenAIToUChatCommand: () => new OpenAIToUChatCommandNode(),
-  LMStudioToUChatCommand: () => new LMStudioToUChatCommandNode(),
   ChatMessageList: ({ history, area, dataflow, controlflow }) =>
     new ChatMessageListNode([], history, area, dataflow, controlflow),
   ChatMessage: () => new ChatMessageNode(),
@@ -282,7 +280,6 @@ const rawMenu: RawMenuItem[] = [
       { label: "UChatToOpenAI", factoryKey: "UChatToOpenAI" },
       { label: "UChatToLMStudio", factoryKey: "UChatToLMStudio" },
       { label: "OpenAIToUChatCommand", factoryKey: "OpenAIToUChatCommand" },
-      { label: "LMStudioToUChatCommand", factoryKey: "LMStudioToUChatCommand" },
       { label: "ReverseRole", factoryKey: "ReverseRole" },
     ],
   },

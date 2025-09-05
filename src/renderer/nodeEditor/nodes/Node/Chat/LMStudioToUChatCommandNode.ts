@@ -7,7 +7,7 @@ import type {
   UChatCommandEvent,
   UChatCommandEventOrNull,
 } from "renderer/nodeEditor/types/Schemas/UChat/UChatCommand";
-import type { UChatMessage } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
+import { createUChatMessageFromLMStudioFinishEvent } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
 
 // LMStudioChatPortEventOrNull を UChatCommandEvent に変換
 export class LMStudioToUChatCommandNode extends SerializableInputsNode<
@@ -59,19 +59,11 @@ export class LMStudioToUChatCommandNode extends SerializableInputsNode<
         break;
 
       case "finish": {
-        // LMStudioの完了イベントをUChatCommandEventに変換
-        const message: UChatMessage = {
-          role: "assistant",
-          content: [{ type: "text", text: event.result.content }],
-          model: event.result.modelInfo.modelKey,
-          tokensCount: event.result.status.predictedTokensCount,
-          tokensPerSecond: event.result.status.tokensPerSecond,
-        };
-
+        // LMStudioの完了イベントをUChatCommandEventに変換（共通関数へ委譲）
         command = {
           type: "finish",
           text: event.result.content,
-          message: message,
+          message: createUChatMessageFromLMStudioFinishEvent(event),
         };
         break;
       }

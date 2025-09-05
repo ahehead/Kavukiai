@@ -153,7 +153,7 @@ export class UChatControl extends BaseControl<
         if (!msg) return
         index = -1
         Object.assign(msg, message)
-        msg.content = [{ type: 'text', text: text ?? this.streamBuffer }]
+        if (text) msg.content = [{ type: 'text', text: text }]
         const next = [...this.messages]
         this.messages = next
         this.addHistory(prev, next)

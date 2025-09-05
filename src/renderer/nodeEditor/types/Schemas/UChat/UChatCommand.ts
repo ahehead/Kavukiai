@@ -2,7 +2,7 @@ import type { Static } from "@sinclair/typebox";
 import { Type } from "@sinclair/typebox";
 import { UChatMessage } from "./UChatMessage";
 
-// OpenAIのレスポンスをChatCommandEventに変換するためのイベント型
+// UChatのコマンドイベント型
 export const UChatCommandEvent = Type.Union([
   Type.Object({
     type: Type.Literal("start"),
