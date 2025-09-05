@@ -94,7 +94,7 @@ export class LMStudioChatNode extends MessagePortNode<
         [string, ChatHistoryData, LLMPredictionConfig]
       >(this.id, ['modelKey', 'chatHistoryData', 'config'])
     if (!chatHistoryData) return null
-    this.controls.console.setValue(
+    this.onLog(
       `modelKey: ${modelKey} \n config: ${JSON.stringify(config)} \n chatHistoryData: ${JSON.stringify(chatHistoryData)} `
     )
     return {
