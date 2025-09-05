@@ -85,27 +85,30 @@ export function SelectControlView<T>(props: {
   const control = props.data
   const value = useControlValue(control)
   const options = useControlOptions(control)
+  // セレクト部分ラベル
   const selectLabel = control.selectLabel ?? control.opts.label
   const { editable } = control.opts
+
+  const handleOptionChange = (val: string): void => {
+    if (editable) {
+      const option = options.find(opt => String(opt.value) === val)
+      if (option) {
+        const oldValue = value
+        const newValue = option.value
+        control.addHistory(oldValue, newValue)
+        control.setValue(newValue)
+      }
+    }
+  }
 
   return (
     <Drag.NoDrag>
       <Select
         value={String(value)}
-        onValueChange={val => {
-          if (editable) {
-            const option = options.find(opt => String(opt.value) === val)
-            if (option) {
-              const oldValue = value
-              const newValue = option.value
-              control.addHistory(oldValue, newValue)
-              control.setValue(newValue)
-            }
-          }
-        }}
+        onValueChange={handleOptionChange}
         disabled={!editable}
       >
-        <SelectTrigger>
+        <SelectTrigger className='w-full'>
           <SelectValue placeholder="Select..." />
         </SelectTrigger>
         <SelectContent>
