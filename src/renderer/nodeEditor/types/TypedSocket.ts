@@ -15,12 +15,13 @@ export class TypedSocket extends ClassicPreset.Socket {
     void this.setTooltip(schema); // ツールチップの型情報を設定
   }
 
+  // 型情報をツールチップに設定
   async setTooltip(schema: TSchema) {
     this.tooltip = `
 \`\`\`typescript
 ${JSON.stringify(schema, null, 2)}
 \`\`\`
-`; // 型情報そのまま
+`;
   }
 
   setConnected(connected: boolean) {
@@ -29,7 +30,7 @@ ${JSON.stringify(schema, null, 2)}
 
   /* 接続判定 */
   isCompatibleWith(other: TypedSocket): boolean {
-    //any型もあるので exec ⇔ exec のみ で判定
+    //any型もあるのでまず exec ⇔ exec のみ で判定
     if (this.isExec || other.isExec) {
       return this.isExec && other.isExec;
     }
@@ -39,20 +40,13 @@ ${JSON.stringify(schema, null, 2)}
       return true;
     }
 
-    // console.log("Checking type compatibility:", this.schema, other.schema);
-
+    // TypeBox の Type.Extends で代入可能かの判定で互換性を判定
     const t = Type.Extends(
       this.schema,
       other.schema,
       Type.Literal(true),
       Type.Literal(false)
     );
-    // console.log(
-    //   "Type compatibility check:",
-    //   this.schema,
-    //   other.schema,
-    //   t.const
-    // );
     return t.const === true;
   }
 
@@ -69,9 +63,4 @@ ${JSON.stringify(schema, null, 2)}
   getSchema(): TSchema {
     return this.schema;
   }
-}
-
-/* ---------- ファクトリ ---------- */
-export function createSocket(name: string, schema: TSchema): TypedSocket {
-  return new TypedSocket(name, schema);
 }
