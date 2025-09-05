@@ -8,8 +8,8 @@ const { useConnection } = Presets.classic
 const innerPathVariants = cva('pointer-events-auto fill-none stroke-[4px]', {
   variants: {
     kind: {
-      exec: 'opacity-90 stroke-[#ec923d]', // 実行ライン: オレンジ強調
-      data: 'stroke-dataSocket', // データライン: 既存テーマ色
+      exec: 'stroke-execSocket', // 実行ライン
+      data: 'stroke-dataSocket', // データライン
     },
     state: {
       normal: '',
