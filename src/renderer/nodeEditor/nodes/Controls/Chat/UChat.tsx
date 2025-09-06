@@ -230,7 +230,7 @@ export function UChatMessageListControlView(props: {
           </div>
         )}
         {messages.map((msg, index) => (
-          <div key={messageKey(msg, index)} className="rounded group">
+          <div key={messageKey(msg, index)} className="rounded group last:mb-2">
             <div className="group-hover:bg-node-header/30 py-1.5 px-3">
               <strong className="block mb-1 select-text">
                 {msg.role}
