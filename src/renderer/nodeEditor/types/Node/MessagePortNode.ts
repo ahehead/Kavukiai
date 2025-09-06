@@ -109,12 +109,8 @@ export abstract class MessagePortNode<
     });
   }
 
-  destroy() {
-    if (this.port) {
-      this.port.postMessage({ type: "abort" });
-      this.port.close();
-      this.port = null;
-    }
+  async destroy() {
+    await this.stopExecution();
   }
 
   /* ========= サブクラスが実装するフック ========= */

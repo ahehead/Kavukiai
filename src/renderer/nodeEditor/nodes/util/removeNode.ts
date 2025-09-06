@@ -26,7 +26,7 @@ export async function destroyAllNodes(
 ): Promise<void> {
   for (const node of editor.getNodes()) {
     if ("destroy" in node) {
-      node.destroy();
+      await node.destroy();
     }
   }
 }

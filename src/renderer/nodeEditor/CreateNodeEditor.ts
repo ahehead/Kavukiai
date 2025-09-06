@@ -144,7 +144,10 @@ export async function createNodeEditor(container: HTMLElement) {
 
   // 外部に公開するAPI
   return {
-    destroy: () => {
+    destroy: async () => {
+      for (const node of editor.getNodes()) {
+        if ("destroy" in node) await node.destroy();
+      }
       area.destroy();
       cleanupDragPan();
       cleanupDeleteKey();
