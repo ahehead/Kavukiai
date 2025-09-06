@@ -66,25 +66,19 @@ export const UChatMessage = Type.Object({
   tokensPerSecond: Type.Optional(Type.Number()),
 });
 export type UChatMessage = Static<typeof UChatMessage>;
+
+/** UChat schema */
+export const UChat = Type.Array(UChatMessage);
+export type UChat = Static<typeof UChat>;
+
 /**
  * LMStudio の finish イベントから UChatMessage を生成
  * 必要な最小項目のみをマッピング（content/text, modelKey, tokens stats）
  */
 export function createUChatMessageFromLMStudioFinishEvent(
-  evt:
-    | Extract<LMStudioChatPortEvent, { type: "finish" }>
-    // 柔軟性のため result だけを渡せる形も許容
-    | {
-        type: "finish";
-        result: {
-          content: string;
-          reasoningContent: string;
-          status: { predictedTokensCount?: number; tokensPerSecond?: number };
-          modelInfo: { modelKey: string };
-        };
-      }
+  evt: Extract<LMStudioChatPortEvent, { type: "finish" }>
 ): UChatMessage {
-  const { result } = evt as Extract<LMStudioChatPortEvent, { type: "finish" }>;
+  const { result } = evt;
   return {
     role: "assistant",
     content: [{ type: "text", text: result.content }],
@@ -101,107 +95,3 @@ export const extractTextContent = (msg: UChatMessage): string => {
     .map((part) => part.text)
     .join("\n");
 };
-
-/** UChat schema */
-export const UChat = Type.Array(UChatMessage);
-export type UChat = Static<typeof UChat>;
-
-// OpenAI最小型（依存を避けるために必要分だけ再定義）
-type EasyInputMessage = {
-  role: "user" | "assistant" | "system" | "developer";
-  content: string | ResponseInputMessageContentList;
-  type?: "message";
-};
-type ResponseInputMessageContentList = ResponseInputContent[];
-type ResponseInputContent =
-  | { type: "input_text"; text: string }
-  | {
-      type: "input_image";
-      detail: "low" | "high" | "auto";
-      file_id?: string | null;
-      image_url?: string | null;
-    }
-  | {
-      type: "input_file";
-      file_id?: string | null;
-      file_data?: string;
-      filename?: string;
-    };
-
-export interface OpenAIFileResolver {
-  toImage(ref: UFileRef): {
-    file_id?: string | null;
-    image_url?: string | null;
-  }; // 必要ならアップロードしてfile_idを返す
-  toFile(
-    ref: UFileRef,
-    name?: string
-  ): { file_id?: string | null; file_data?: string; filename?: string };
-}
-
-/** UChat => EasyInputMessage[] */
-export function toOpenAIEasy(
-  chat: UChat,
-  file: OpenAIFileResolver
-): EasyInputMessage[] {
-  return chat.map<EasyInputMessage>((m) => {
-    // 単一textのみなら string、そうでなければ配列
-    if (m.content.length === 1 && m.content[0].type === "text") {
-      return { role: m.role, content: m.content[0].text, type: "message" };
-    }
-    const content: ResponseInputMessageContentList =
-      m.content.map<ResponseInputContent>((p) => {
-        if (p.type === "text") return { type: "input_text", text: p.text };
-        if (p.type === "image") {
-          const img = file.toImage(p.source);
-          return { type: "input_image", detail: p.detail ?? "auto", ...img };
-        }
-        // file
-        const f = file.toFile(p.source, p.name);
-        return { type: "input_file", ...f };
-      });
-    return { role: m.role, content, type: "message" };
-  });
-}
-
-// LM Studio最小型（必要分のみ）
-type ChatHistoryData = { messages: ChatMessageData[] };
-type ChatMessageData =
-  | { role: "assistant"; content: (TextPart | FilePart)[] }
-  | { role: "user"; content: (TextPart | FilePart)[] }
-  | { role: "system"; content: (TextPart | FilePart)[] };
-
-type TextPart = { type: "text"; text: string };
-type FilePart = {
-  type: "file";
-  name: string;
-  identifier: string;
-  sizeBytes?: number;
-  fileType?: string;
-};
-
-export interface LMFileResolver {
-  /** 画像/一般ファイルをLM Studioが扱える identifier に解決する（必要なら保存・コピー） */
-  toFilePart(
-    ref: UFileRef,
-    hint?: { isImage?: boolean; name?: string }
-  ): FilePart;
-}
-
-/** UChat => ChatHistoryData */
-export function toLMHistory(
-  chat: UChat,
-  file: LMFileResolver
-): ChatHistoryData {
-  return {
-    messages: chat.map<ChatMessageData>((m) => {
-      const parts = m.content.map<TextPart | FilePart>((p) => {
-        if (p.type === "text") return { type: "text", text: p.text };
-        const isImage = p.type === "image";
-        const nameHint = p.type === "file" ? p.name : undefined;
-        return file.toFilePart(p.source, { isImage, name: nameHint });
-      });
-      return { role: m.role, content: parts } as ChatMessageData;
-    }),
-  };
-}

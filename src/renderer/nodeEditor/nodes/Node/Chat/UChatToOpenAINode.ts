@@ -6,8 +6,8 @@ import type { ResponseInput } from "renderer/nodeEditor/types/Schemas/openai/Inp
 import {
   type OpenAIFileResolver,
   toOpenAIEasy,
-  type UChat,
-} from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
+} from "renderer/nodeEditor/types/Schemas/UChat";
+import type { UChat } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
 
 // UChat を OpenAI ResponseInput に変換するノード
 export class UChatToOpenAINode extends SerializableInputsNode<

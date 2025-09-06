@@ -29,6 +29,9 @@ export const UChatCommandEvent = Type.Union([
     type: Type.Literal("response"),
     messages: Type.Array(UChatMessage),
   }),
+  Type.Object({
+    type: Type.Literal("stop"),
+  }),
 ]);
 
 export type UChatCommandEvent = Static<typeof UChatCommandEvent>;

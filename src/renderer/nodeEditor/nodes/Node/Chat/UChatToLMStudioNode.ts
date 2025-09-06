@@ -6,8 +6,10 @@ import type { ChatHistoryData } from "renderer/nodeEditor/types/Schemas/lmstudio
 import {
   type LMFileResolver,
   toLMHistory,
-  type UChat,
-  type UFileRef,
+} from "renderer/nodeEditor/types/Schemas/UChat";
+import type {
+  UChat,
+  UFileRef,
 } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
 
 // UChat を LM Studio ChatHistoryData に変換するノード
@@ -36,7 +38,7 @@ export class UChatToLMStudioNode extends SerializableInputsNode<
         _ref: UFileRef,
         hint?: { isImage?: boolean; name?: string }
       ) => {
-        // 基本的な実装 - 実際のプロジェクトでは適切なファイル解決を行う
+        // 基本的な実装
         const name = hint?.name || "file";
         const identifier = "";
 
