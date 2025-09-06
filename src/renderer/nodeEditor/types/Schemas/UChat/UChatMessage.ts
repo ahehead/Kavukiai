@@ -64,6 +64,7 @@ export const UChatMessage = Type.Object({
   created_at: Type.Optional(Timestamp),
   tokensCount: Type.Optional(Type.Number()),
   tokensPerSecond: Type.Optional(Type.Number()),
+  stopReason: Type.Optional(Type.String()),
 });
 export type UChatMessage = Static<typeof UChatMessage>;
 
@@ -85,6 +86,7 @@ export function createUChatMessageFromLMStudioFinishEvent(
     model: result.modelInfo.modelKey,
     tokensCount: result.status.predictedTokensCount,
     tokensPerSecond: result.status.tokensPerSecond,
+    stopReason: result.status.stopReason,
   };
 }
 

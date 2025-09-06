@@ -1,7 +1,8 @@
 // UChatMessageListControl.tsx
 
+import { Editor } from '@monaco-editor/react'
 import { Check, Copy, GitBranch, Pencil, Trash2, X } from 'lucide-react'
-import { type JSX, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { type JSX, useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -177,15 +178,7 @@ export function UChatMessageListControlView(props: {
   const messages = useControlValue<UChat>(control)
   const [editIndex, setEditIndex] = useState<number | null>(null)
   const [editText, setEditText] = useState('')
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-
-  useLayoutEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
-    }
-  }, [editText, editIndex])
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -222,6 +215,8 @@ export function UChatMessageListControlView(props: {
   const cancelEdit = () => setEditIndex(null)
   const deleteMsg = (index: number) => control.removeMessage(index)
 
+  const lineCount = editText.split('\n').length
+  const h = Math.min(600, Math.max(120, lineCount * 20))
 
   return (
     <Drag.NoDrag>
@@ -246,13 +241,23 @@ export function UChatMessageListControlView(props: {
                 )}
               </strong>
               {editIndex === index ? (
-                <div>
-                  <textarea
-                    className="w-full border mb-1"
-                    ref={textareaRef}
-                    style={{ overflow: 'hidden' }}
+                <div className='flex flex-col'>
+                  <Editor
+                    width={'100%'}
+                    height={h}
                     value={editText}
-                    onChange={e => setEditText(e.target.value)}
+                    onChange={(value: string | undefined, _e) => setEditText(value ?? '')}
+                    options={{
+                      wordWrap: 'on',
+                      minimap: { enabled: false },
+                      lineNumbers: 'off',
+                      glyphMargin: false,
+                      folding: false,
+                      renderWhitespace: 'none',
+                      automaticLayout: true,
+                      renderLineHighlight: 'none',
+                      renderLineHighlightOnlyWhenFocus: false,
+                    }}
                   />
                   <div className="flex justify-end gap-1">
                     <Check
@@ -296,9 +301,12 @@ export function UChatMessageListControlView(props: {
                 >
                   {msg.tokensPerSecond != null && (
                     <span className="text-xs text-gray-500 mr-1">
-                      {msg.tokensPerSecond} tps
+                      {msg.tokensPerSecond.toFixed(3)} tps
                     </span>
                   )}
+                  <span className="text-xs text-gray-500 mr-1">
+                    {msg.stopReason ?? ''}
+                  </span>
                   <ToolButton
                     icon={<GitBranch size={14} />}
                     onClick={() => { }}
