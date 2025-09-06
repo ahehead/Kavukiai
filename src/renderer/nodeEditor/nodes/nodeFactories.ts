@@ -25,6 +25,7 @@ import {
   JsonSchemaNode,
   JsonSchemaToObjectNode,
   ListDownloadedModelsNode,
+  GetModelInfoListNode,
   LLMPredictionConfigNode,
   LMStudioChatNode,
   LMStudioLoadModelNode,
@@ -122,6 +123,8 @@ export const nodeFactories = {
   // lmstudio nodes
   ListDownloadedModels: ({ area, dataflow, controlflow }) =>
     new ListDownloadedModelsNode(area, dataflow, controlflow),
+  GetModelInfoList: ({ area, dataflow, controlflow }) =>
+    new GetModelInfoListNode(area, dataflow, controlflow),
   ModelInfoToModelList: () => new ModelInfoToModelListNode(),
   LMStudioChat: ({ area, dataflow, controlflow }) =>
     new LMStudioChatNode(area, dataflow, controlflow),
@@ -291,6 +294,7 @@ const rawMenu: RawMenuItem[] = [
     label: "LMStudio",
     subitems: [
       { label: "ListDownloadedModels", factoryKey: "ListDownloadedModels" },
+      { label: "GetModelInfoList", factoryKey: "GetModelInfoList" },
       { label: "ModelInfoToModelList", factoryKey: "ModelInfoToModelList" },
       { label: "LMStudioChat", factoryKey: "LMStudioChat" },
       { label: "LMStudioStart", factoryKey: "LMStudioStart" },

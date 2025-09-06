@@ -22,6 +22,7 @@ import type {
   JsonSchemaNode,
   JsonSchemaToObjectNode,
   ListDownloadedModelsNode,
+  GetModelInfoListNode,
   LLMPredictionConfigNode,
   LMStudioChatNode,
   LMStudioLoadModelNode,
@@ -119,6 +120,7 @@ export type NodeTypes =
   | ShowImageNode
   | SelectImageNode
   | ListDownloadedModelsNode
+  | GetModelInfoListNode
   | ModelInfoToModelListNode
   | LMStudioStartNode
   | LMStudioStopNode

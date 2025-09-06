@@ -60,6 +60,10 @@ import {
   SelectControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Select";
 import {
+  ModelInfoListControl,
+  ModelInfoListControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/ModelInfoListControl";
+import {
   SliderControl,
   SliderControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Slider";
@@ -116,6 +120,7 @@ const controlViews = new Map<Ctor, ControlViewComponent>([
   [CheckBoxControl, CheckBoxControlView],
   [ButtonControl, ButtonControlView],
   [SelectControl, SelectControlView],
+  [ModelInfoListControl, ModelInfoListControlView],
   [ListControl, ListControlView],
   [SwitchControl, SwitchControlView],
   [SliderControl, SliderControlView],

@@ -3,14 +3,16 @@ import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { MessagePortNode } from 'renderer/nodeEditor/types/Node/MessagePortNode'
 import type { LMStudioChatPortEvent } from 'renderer/nodeEditor/types/Schemas/LMStudioChatPortEventOrNull'
-import {
-  type ChatHistoryData,
-  ChatHistoryData as ChatHistoryDataSchema,
-  type LLMPredictionConfig,
-  LLMPredictionConfig as LLMPredictionConfigSchema,
+import type {
+  ChatHistoryData,
+  LLMPredictionConfig,
 } from 'renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas'
+import type { ModelInfo } from 'renderer/nodeEditor/types/Schemas/lmstudio/ModelSchemas'
 import type { UChatCommandEventOrNull } from 'renderer/nodeEditor/types/Schemas/UChat/UChatCommand'
-import { createUChatMessageFromLMStudioFinishEvent, type UChatMessage } from 'renderer/nodeEditor/types/Schemas/UChat/UChatMessage'
+import {
+  createUChatMessageFromLMStudioFinishEvent,
+  type UChatMessage,
+} from 'renderer/nodeEditor/types/Schemas/UChat/UChatMessage'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { LMStudioChatRequestArgs } from 'shared/LMStudioType'
@@ -52,20 +54,18 @@ export class LMStudioChatNode extends MessagePortNode<
       },
       {
         key: 'modelKey',
-        typeName: 'string',
+        typeName: 'ModelKeyOrModelInfoOrNull',
         label: 'modelKey',
-        tooltip: 'Model key to use for the chat',
+        tooltip: 'Model key string or ModelInfo',
       },
       {
         key: 'chatHistoryData',
         typeName: 'ChatHistoryData',
-        schema: ChatHistoryDataSchema,
         tooltip: 'Chat history data',
       },
       {
         key: 'config',
         typeName: 'LLMPredictionConfig',
-        schema: LLMPredictionConfigSchema,
         tooltip: 'Prediction config',
       },
     ])
@@ -89,11 +89,15 @@ export class LMStudioChatNode extends MessagePortNode<
   }
 
   protected async buildRequestArgs(): Promise<LMStudioChatRequestArgs | null> {
-    const [modelKey, chatHistoryData, config] =
+    const [modelKeyOrInfo, chatHistoryData, config] =
       await this.dataflow.fetchInputMultiple<
-        [string, ChatHistoryData, LLMPredictionConfig]
+        [string | ModelInfo, ChatHistoryData, LLMPredictionConfig]
       >(this.id, ['modelKey', 'chatHistoryData', 'config'])
     if (!chatHistoryData) return null
+    const modelKey =
+      typeof modelKeyOrInfo === 'string'
+        ? modelKeyOrInfo
+        : modelKeyOrInfo?.modelKey
     this.onLog(
       `modelKey: ${modelKey} \n config: ${JSON.stringify(config)} \n chatHistoryData: ${JSON.stringify(chatHistoryData)} `
     )
@@ -128,7 +132,8 @@ export class LMStudioChatNode extends MessagePortNode<
         break
       case 'finish': {
         // LMStudio の完了イベントを UChatCommandEvent に変換（共通関数へ委譲）
-        const message: UChatMessage = createUChatMessageFromLMStudioFinishEvent(evt)
+        const message: UChatMessage =
+          createUChatMessageFromLMStudioFinishEvent(evt)
         this.command = { type: 'finish', text: evt.result.content, message }
         this.onLog(`Event: ${evt.type}`)
         this.dataflow.reset(this.id)

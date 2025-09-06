@@ -17,6 +17,7 @@ import type { SwitchControl } from "../nodes/Controls/input/Switch";
 import type { RunButtonControl } from "../nodes/Controls/RunButton";
 import type { ImageControl } from "../nodes/Controls/view/Image";
 import type { ProgressControl } from "../nodes/Controls/view/ProgressControl";
+import type { ModelInfoListControl } from "../nodes/Controls/input/ModelInfoListControl";
 
 export type NodeControl =
   | RunButtonControl
@@ -28,6 +29,7 @@ export type NodeControl =
   | CheckBoxControl
   | ButtonControl
   | SelectControl<any>
+  | ModelInfoListControl
   | ListControl<any>
   | SwitchControl
   | SliderControl

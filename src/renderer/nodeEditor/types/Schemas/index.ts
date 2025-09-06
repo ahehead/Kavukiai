@@ -4,7 +4,10 @@ import { ChatCommandEvent, ChatCommandEventOrNull } from "./ChatCommandEvent";
 import { ChatMessageItem, ChatMessageItemList } from "./ChatMessageItem";
 import * as DefaultSchema from "./DefaultSchema";
 import { LMStudioChatPortEventOrNull } from "./LMStudioChatPortEventOrNull";
-import { ChatHistoryData } from "./lmstudio/LMStudioSchemas";
+import {
+  ChatHistoryData,
+  LLMPredictionConfig,
+} from "./lmstudio/LMStudioSchemas";
 import * as ModelInfoSchemas from "./lmstudio/ModelSchemas";
 import * as StatusSchemas from "./lmstudio/StatusSchemas";
 import {
@@ -64,6 +67,7 @@ const registry = {
   ImageArrayOrNull,
   NodeImageOrArrayOrNull,
   ...PromptRecipe,
+  LLMPredictionConfig,
 } satisfies Record<string, TSchema>;
 
 export type SchemaKey = keyof typeof registry;
