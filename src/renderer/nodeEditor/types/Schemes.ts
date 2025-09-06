@@ -54,6 +54,7 @@ import type {
   TemplateWorkflowListNode,
   TestNode,
   UChatGetLastMessageNode,
+  UChatMessageByStringNode,
   UChatMessageNode,
   UChatNode,
   UChatRoleNode,
@@ -95,6 +96,7 @@ export type NodeTypes =
   | GetLastMessageNode
   | ChatMessageNode
   | RoleNode
+  | UChatMessageByStringNode
   | UChatMessageNode
   | UPartTextNode
   | BoolNode

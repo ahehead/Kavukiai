@@ -53,6 +53,7 @@ import {
   TemplateReplaceNode,
   TemplateWorkflowListNode,
   TestNode,
+  UChatMessageByStringNode,
   UChatNode,
   UnknownNode,
   UnLoadModelNode,
@@ -176,6 +177,7 @@ export const nodeFactories = {
     new ChatMessageListNode([], history, area, dataflow, controlflow),
   ChatMessage: () => new ChatMessageNode(),
   UChatMessage: () => new UChatMessageNode(),
+  UChatMessageByString: () => new UChatMessageByStringNode(),
   UPartText: ({ history, area, dataflow }) =>
     new UPartTextNode("", history, area, dataflow),
   Role: ({ history, area, dataflow }) =>
@@ -273,6 +275,7 @@ const rawMenu: RawMenuItem[] = [
     subitems: [
       { label: "UChat", factoryKey: "UChat" },
       { label: "UChatMessage", factoryKey: "UChatMessage" },
+      { label: "UChatMessageByString", factoryKey: "UChatMessageByString" },
       { label: "UChatRole", factoryKey: "UChatRole" },
       { label: "UPartText", factoryKey: "UPartText" },
       { label: "UChatToString", factoryKey: "UChatToString" },

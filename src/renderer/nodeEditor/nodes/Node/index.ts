@@ -3,6 +3,7 @@
 export { OpenAIToUChatCommandNode } from "./Chat/OpenAIToUChatCommandNode";
 export { ReverseRoleNode } from "./Chat/ReverseRoleNode";
 export { UChatGetLastMessageNode } from "./Chat/UChatGetLastMessageNode";
+export { UChatMessageByStringNode } from "./Chat/UChatMessageByStringNode";
 export { UChatMessageNode } from "./Chat/UChatMessageNode";
 export { UChatNode } from "./Chat/UChatNode";
 export { UChatRoleNode } from "./Chat/UChatRoleNode";
