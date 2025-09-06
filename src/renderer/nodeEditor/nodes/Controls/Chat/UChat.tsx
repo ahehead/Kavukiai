@@ -227,7 +227,7 @@ export function UChatMessageListControlView(props: {
     <Drag.NoDrag>
       <div
         ref={scrollContainerRef}
-        className="flex-1 w-full h-full min-h-0 overflow-y-auto pb-2 border-t border-gray-200 select-all"
+        className="flex-1 w-full h-full min-h-0 overflow-y-auto pb-2 border-t border-gray-200"
       >
         {messages.length === 0 && (
           <div className="w-full flex items-center justify-center ">
@@ -237,7 +237,7 @@ export function UChatMessageListControlView(props: {
         {messages.map((msg, index) => (
           <div key={messageKey(msg, index)} className="rounded group">
             <div className="group-hover:bg-node-header/30 py-1.5 px-3">
-              <strong className="block mb-1">
+              <strong className="block mb-1 select-text">
                 {msg.role}
                 {msg.model && (
                   <span className="ml-2 text-xs text-gray-400 font-light">
@@ -268,7 +268,7 @@ export function UChatMessageListControlView(props: {
                   </div>
                 </div>
               ) : (
-                <div className="break-all">
+                <div className="break-all select-text">
                   {msg.content.map((part, i) => {
                     if (part.type === 'text') {
                       return (

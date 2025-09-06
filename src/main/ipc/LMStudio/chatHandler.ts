@@ -24,7 +24,10 @@ async function handleChat(evt: IpcMainEvent, data: unknown): Promise<void> {
 
   // Listen for abort messages
   port.on("message", (e) => {
-    if (e.data?.type === "abort") controller.abort();
+    if (e.data?.type === "abort") {
+      controller.abort();
+      port.postMessage({ type: "error" });
+    }
   });
 
   try {
