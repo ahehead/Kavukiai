@@ -187,6 +187,21 @@
   }
 }
 
+/* Console の Monaco エディタ専用の背景色（テーマ競合回避のためスコープ適用） */
+.console-monaco .monaco-editor,
+.console-monaco .monaco-editor .overflow-guard,
+.console-monaco .monaco-editor .margin,
+.console-monaco .monaco-editor-background,
+.console-monaco .monaco-editor .monaco-scrollable-element,
+.console-monaco .monaco-editor .editor-background {
+  background: #f3f4f6 !important; /* Tailwind gray-100 相当 */
+}
+
+/* Console の選択色も読みやすいように微調整（任意） */
+.console-monaco .monaco-editor .selected-text {
+  background-color: rgba(37, 99, 235, 0.35) !important; /* #2563eb59 */
+}
+
 /* Tooltip用カスタムスクロールバー */
 .tooltip-scrollbar {
   /* Firefox 用 */

@@ -23,6 +23,8 @@ export class MultiLineStringNode extends SerializableInputsNode<
     dataflow: DataflowEngine<Schemes>
   ) {
     super('MultiLineString')
+    this.width = 240
+    this.height = 180
     this.addOutputPort({
       key: 'out',
       typeName: 'string',

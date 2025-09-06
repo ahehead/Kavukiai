@@ -60,6 +60,7 @@ export class UChatNode
       {
         key: "exec2",
         label: "Response",
+        showControl: false,
         onClick: () => this.controlflow.execute(this.id, "exec2"),
       },
       { key: "event", typeName: "UChatCommandEventOrNull", label: "Event" },
@@ -68,7 +69,7 @@ export class UChatNode
         label: "Reset",
         onClick: () => this.controlflow.execute(this.id, "exec3"),
       },
-      { key: "newValue", typeName: "UChat", label: "New UChat Value" },
+      { key: "newValue", typeName: "UChat", label: "Reset UChat" },
     ]);
     this.addOutputPort([
       {
@@ -158,9 +159,8 @@ export class UChatNode
       this.id,
       "event"
     );
-    if (!event) {
-      return;
-    }
+    if (!event) return;
+
     switch (event.type) {
       case "start":
         this.deltaFunc.start(event.message);

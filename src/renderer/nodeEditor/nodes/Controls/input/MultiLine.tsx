@@ -1,13 +1,12 @@
-import { type JSX, useRef } from 'react'
-import { textAreaStyles } from 'renderer/nodeEditor/nodes/components/common/NodeControlParts'
+import { Editor } from '@monaco-editor/react'
+import type { JSX } from 'react'
 import {
   BaseControl,
   type ControlOptions,
   useControlValue,
 } from 'renderer/nodeEditor/types'
-import { Drag } from 'rete-react-plugin'
+
 import type { ControlJson } from 'shared/JsonType'
-import { useStopWheel } from '../../util/useStopWheel'
 
 export interface MultiLineControlParams extends ControlOptions<string> {
   value: string
@@ -56,28 +55,31 @@ export function TextAreaControllView(props: {
 }): JSX.Element {
   const control = props.data
   const uiText = useControlValue(control)
-  const ref = useRef<HTMLTextAreaElement | null>(null)
 
-  Drag.useNoDrag(ref) // areaのdragを無効化
-  useStopWheel(ref) // テキストエリアでのホイール拡大を無効化
-
-  const onChangeHandle = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value
+  const onChangeHandle = (value: string | undefined) => {
+    const newValue = value ?? ''
     control.addHistory(uiText, newValue) // 履歴登録
     control.setValue(newValue)
   }
 
   return (
-    <textarea
-      ref={ref}
+    <Editor
+      width="100%"
+      height="100%"
       value={uiText}
-      readOnly={!control.opts.editable}
-      // controlをクリック時に、右クリックメニューを閉じるために発火。dataは間違えている。
-      onPointerDown={(_e) => control.opts.area?.emit({ type: "nodepicked", data: { id: control.id } })}
+      theme="vs"
       onChange={control.opts.editable ? onChangeHandle : undefined}
-      className={textAreaStyles({ editable: control.opts.editable })}
-      placeholder="..."
-      rows={1}
+      options={{
+        wordWrap: 'on',
+        minimap: { enabled: false },
+        lineNumbers: 'off',
+        glyphMargin: false,
+        folding: false,
+        renderWhitespace: 'none',
+        automaticLayout: true,
+        renderLineHighlight: 'none',
+        renderLineHighlightOnlyWhenFocus: false,
+      }}
     />
   )
 }

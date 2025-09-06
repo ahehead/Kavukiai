@@ -190,8 +190,9 @@ export function ConsoleControlView(props: {
               width="100%"
               height="100%"
               value={value}
-              theme="logViewerLight"
+              theme="vs"
               language="plaintext"
+              className="console-monaco"
               onMount={(editor) => {
                 editorRef.current = editor
                 const model = editor.getModel()
