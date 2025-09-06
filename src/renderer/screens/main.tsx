@@ -1,25 +1,15 @@
 import { useCallback, useEffect } from 'react'
-import { Link, Outlet, useNavigate } from 'react-router-dom'
-import { MenuButton } from 'renderer/components/UIButton'
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from 'renderer/components/ui/dropdown-menu'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { ImportPngDialog } from 'renderer/features/dragdrop_workflow/importPngDialog'
 import { useDragDrop } from 'renderer/features/dragdrop_workflow/useDragDrop'
+import { usePngImportWorkflow } from 'renderer/features/dragdrop_workflow/usePngImportWorkflow'
 import { useFileOperations } from 'renderer/features/file/useFileOperations'
 import useMainStore from 'renderer/features/main-store/MainStore'
 import useNodeEditorSetup from 'renderer/features/nodeEditor_setup/useNodeEditorSetup'
 import { exportPngWithData } from 'renderer/features/png/exportPng'
-import { importWorkflowFromPng } from 'renderer/features/png/importPng'
 import { electronApiService } from 'renderer/features/services/appService'
 import TabBar from 'renderer/features/tab/TabBar'
-import { notify } from 'renderer/features/toast-notice/notify'
-import { createFile } from 'shared/AppType'
+import { TitleBar } from 'renderer/features/titlebar/TitleBar'
 import { Toaster } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
 
@@ -153,64 +143,32 @@ export function MainScreen() {
     handleDrop,
   } = useDragDrop(getPointerPosition)
 
-  const runImportFromPng = useCallback(async () => {
-    if (!dropInfo) return null
-    return await importWorkflowFromPng(dropInfo.filePath)
-  }, [dropInfo])
-
-  // dialogで新規ファイル作成を選択
-  const handleImportAsNew = useCallback(async () => {
-    setCurrentFileState()
-    const data = await runImportFromPng()
-    if (!data) return
-    const { fileName, workflow } = data
-    addFile(await createFile(fileName, workflow))
-    // dialogを閉じる
-    setImportDialogOpen(false)
-    setDropInfo(null)
-    notify('success', `新規ファイルを作成しました: ${fileName}`)
-  }, [addFile, runImportFromPng])
-
-  const handleImportToCurrent = useCallback(async () => {
-    const data = await runImportFromPng()
-    if (!data || !dropInfo) return
-    const { workflow } = data
-    // 現在のエディタにワークフローを貼り付け
-    await pasteWorkflowAtPosition(workflow, dropInfo.pointer)
-    setImportDialogOpen(false)
-    setDropInfo(null)
-    notify('success', 'ワークフローを現在のエディタに貼り付けました')
-  }, [dropInfo, pasteWorkflowAtPosition, runImportFromPng])
+  const { handleImportAsNew, handleImportToCurrent } = usePngImportWorkflow({
+    dropInfo,
+    setDropInfo,
+    setImportDialogOpen,
+    addFile,
+    pasteWorkflowAtPosition,
+    setCurrentFileState,
+  })
 
   return (
     <div className="flex flex-col fixed inset-0">
       {/* タイトルバー メニューバー*/}
-      <div className="flex titlebar bg-titlebar">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <MenuButton>File</MenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                onClick={async () => await saveFile(activeFileId)}
-              >
-                Save
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={async () => await saveFileAs(activeFileId)}
-              >
-                Save As
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLoadFile}>Open</DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <MenuButton>
-          <Link to="/settings">Settings</Link>
-        </MenuButton>
-        <MenuButton onClick={handleSaveAsPng}>Export as PNG</MenuButton>
-      </div>
+      <TitleBar
+        onSave={async () => {
+          await saveFile(activeFileId)
+        }}
+        onSaveAs={async () => {
+          await saveFileAs(activeFileId)
+        }}
+        onOpen={async () => {
+          await handleLoadFile()
+        }}
+        onExportPng={async () => {
+          await handleSaveAsPng()
+        }}
+      />
       {/* メインコンテンツ */}
       <main className="flex flex-1 flex-col">
         {/* ファイルがない場合の画面 */}
