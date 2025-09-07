@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { getTemplateById } from "renderer/features/templatesSidebar/data/templates";
 import { notify } from "renderer/features/toast-notice/notify";
 import { electronApiService } from "../services/appService";
 
@@ -22,6 +23,37 @@ export function useDragDrop(
     async (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       const pointer = { x: e.clientX, y: e.clientY };
+
+      // 1) Custom MIME from template sidebar
+      const custom = e.dataTransfer.getData("application/x-workflow-template");
+      if (custom) {
+        try {
+          const { id } = JSON.parse(custom) as { id: string };
+          const t = getTemplateById(id);
+          if (!t) return;
+          if (t.type !== "PNGWorkflow") {
+            notify("error", "このテンプレートタイプはまだドロップに未対応です");
+            return;
+          }
+          // Fetch the bundled asset, write to temp, then reuse PNG pipeline
+          const res = await fetch(t.src);
+          const blob = await res.blob();
+          const fileName = `${t.title || t.id}.png`;
+          const file = new File([blob], fileName, { type: "image/png" });
+          let filePath = electronApiService.getPathForFile(file) || "";
+          if (!filePath) {
+            filePath = await electronApiService.ensurePathForFile(file);
+          }
+          console.log({ filePath });
+          setDropInfo({ filePath, pointer });
+          setImportDialogOpen(true);
+          return;
+        } catch {
+          // fallthrough to file-based handling
+        }
+      }
+
+      // 2) Native file drop
       const item = e.dataTransfer.files?.[0];
       if (!item) return;
       const isPng = item.type === "image/png" || /\.png$/i.test(item.name);

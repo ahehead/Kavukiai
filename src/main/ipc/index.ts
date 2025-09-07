@@ -6,6 +6,7 @@ import { registerReadWorkflowRefHandler } from "./ComfyUI/readWorkflowRefHandler
 import { registerComfyUIRunRecipeHandler } from "./ComfyUI/runRecipeHandler";
 import { registerCloseConfirmHandler } from "./close-confirm";
 import { registerExportPngHandler } from "./export-png";
+import { registerWriteTempFile } from "./filepath";
 import { registerImportPngHandler } from "./import-png";
 import { registerLMStudioChatHandler } from "./LMStudio/chatHandler";
 import { registerLMStudioHandlers } from "./LMStudio/ipcHandlers";
@@ -35,5 +36,6 @@ export function registerIpcHandlers(): void {
   registerReadWorkflowRefHandler();
   registerExportPngHandler();
   registerImportPngHandler();
+  registerWriteTempFile();
   // registerOtherServiceHandlers();
 }

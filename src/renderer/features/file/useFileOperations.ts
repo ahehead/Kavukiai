@@ -20,6 +20,24 @@ export function useFileOperations(
   updateFile: (id: File["id"], updates: Partial<File>) => void,
   clearHistory: (id: File["id"]) => void
 ) {
+  // createFile + addFile の共通処理をまとめたヘルパー
+  // 返り値: 生成された File オブジェクト
+  const createAndAddFile = useCallback(
+    async (
+      title: string,
+      graph?: GraphJsonData,
+      path: string | null = null
+    ): Promise<File> => {
+      const file = await createFile(
+        title,
+        graph as GraphJsonData | undefined,
+        path
+      );
+      addFile(file);
+      return file;
+    },
+    [addFile]
+  );
   const saveFileAs = useCallback(
     async (fileId: string | null): Promise<boolean> => {
       if (!fileId) return true;
@@ -65,7 +83,7 @@ export function useFileOperations(
       }
 
       // ファイルの新規作成追加
-      addFile(await createFile(fileName, f.graph, filePath));
+      await createAndAddFile(fileName, f.graph, filePath);
       notify("success", `新しく名前を付けて保存しました: ${fileName}`);
       return true;
     },
@@ -76,6 +94,7 @@ export function useFileOperations(
       updateFile,
       clearHistory,
       clearEditorHistory,
+      createAndAddFile,
     ]
   );
   const saveFile = useCallback(
@@ -146,9 +165,9 @@ export function useFileOperations(
         return;
       }
       // ファイルの新規作成追加
-      addFile(await createFile(fileName, json, filePath));
+      await createAndAddFile(fileName, json, filePath);
     },
-    [files, setCurrentFileState, addFile, setActiveFileId]
+    [files, setCurrentFileState, createAndAddFile, setActiveFileId]
   );
 
   const closeFile = useCallback(
@@ -186,8 +205,15 @@ export function useFileOperations(
     // 新規作成前に、現在のファイル状態を保存
     setCurrentFileState();
     const title = `workspace-${files.length + 1}`;
-    addFile(await createFile(title));
-  }, [addFile, setCurrentFileState]);
+    await createAndAddFile(title);
+  }, [createAndAddFile, setCurrentFileState, files.length]);
 
-  return { saveFile, saveFileAs, loadFile, closeFile, newFile };
+  return {
+    saveFile,
+    saveFileAs,
+    loadFile,
+    closeFile,
+    newFile,
+    createAndAddFile,
+  };
 }

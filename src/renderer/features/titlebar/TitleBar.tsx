@@ -34,6 +34,9 @@ export function TitleBar({ onSave, onSaveAs, onOpen, onExportPng }: TitleBarProp
         <Link to="/settings">Settings</Link>
       </MenuButton>
       <MenuButton onClick={onExportPng}>Export as PNG</MenuButton>
+      <MenuButton>
+        <Link to="/?templates=open">Templates</Link>
+      </MenuButton>
     </div>
   )
 }

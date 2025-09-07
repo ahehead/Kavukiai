@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate, useSearchParams } from 'react-router-dom'
 import { ImportPngDialog } from 'renderer/features/dragdrop_workflow/importPngDialog'
 import { useDragDrop } from 'renderer/features/dragdrop_workflow/useDragDrop'
 import { usePngImportWorkflow } from 'renderer/features/dragdrop_workflow/usePngImportWorkflow'
@@ -7,8 +7,11 @@ import { useFileOperations } from 'renderer/features/file/useFileOperations'
 import useMainStore from 'renderer/features/main-store/MainStore'
 import useNodeEditorSetup from 'renderer/features/nodeEditor_setup/useNodeEditorSetup'
 import { exportPngWithData } from 'renderer/features/png/exportPng'
+import { importWorkflowFromPngUrl } from 'renderer/features/png/importPng'
 import { electronApiService } from 'renderer/features/services/appService'
 import TabBar from 'renderer/features/tab/TabBar'
+import { getTemplateById } from 'renderer/features/templatesSidebar/data/templates'
+import TemplateSheet from 'renderer/features/templatesSidebar/TemplateSheet'
 import { TitleBar } from 'renderer/features/titlebar/TitleBar'
 import { Toaster } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
@@ -49,7 +52,7 @@ export function MainScreen() {
     getPointerPosition,
   } = useNodeEditorSetup(activeFileId, getGraphAndHistory, setGraphAndHistory)
 
-  const { saveFile, saveFileAs, closeFile, loadFile, newFile } =
+  const { saveFile, saveFileAs, closeFile, loadFile, newFile, createAndAddFile } =
     useFileOperations(
       files,
       activeFileId,
@@ -68,19 +71,16 @@ export function MainScreen() {
     const unsub = electronApiService.onFileLoadedRequest(
       async (_e, fileData) => await loadFile(fileData)
     )
-    return () => {
-      unsub()
-    }
+    return () => { unsub() }
   }, [loadFile])
 
   const nav = useNavigate()
+  const [sp, setSp] = useSearchParams()
 
   useEffect(() => {
     // 設定画面オープン指示
     const unsubOpen = electronApiService.onOpenSettings(() => nav('/settings'))
-    return () => {
-      unsubOpen()
-    }
+    return () => { unsubOpen() }
   }, [nav])
 
   useEffect(() => {
@@ -88,9 +88,7 @@ export function MainScreen() {
     const unsubSave = electronApiService.onSaveGraphInitiate(
       async () => await saveFile(activeFileId)
     )
-    return () => {
-      unsubSave()
-    }
+    return () => { unsubSave() }
   }, [activeFileId, saveFile])
 
   useEffect(() => {
@@ -98,9 +96,7 @@ export function MainScreen() {
     const unsubSaveAs = electronApiService.onSaveAsGraphInitiate(
       async () => await saveFileAs(activeFileId)
     )
-    return () => {
-      unsubSaveAs()
-    }
+    return () => { unsubSaveAs() }
   }, [activeFileId, saveFileAs])
 
   // 画面をPNGで保存
@@ -109,9 +105,29 @@ export function MainScreen() {
     await exportPngWithData(ref, activeFileId, getFileById)
   }, [ref, activeFileId, getFileById])
 
-  const handleNewFile = async () => {
-    newFile()
-  }
+  const handleNewFile = async () => await newFile()
+
+  // 新規作成（テンプレートから）
+  const handleCreateFromTemplate = useCallback(
+    async (templateId: string) => {
+      const t = getTemplateById(templateId)
+      if (!t) return
+      if (t.type !== 'PNGWorkflow') return
+      // Import PNG from URL and create new file
+      const data = await importWorkflowFromPngUrl(
+        t.src,
+        `${t.title || t.id}.png`
+      )
+      if (!data) return
+      const { fileName, workflow } = data
+      setCurrentFileState()
+      await createAndAddFile(fileName, workflow)
+      // Close sheet
+      sp.delete('templates')
+      setSp(sp, { replace: true })
+    },
+    [createAndAddFile, setSp, sp, setCurrentFileState]
+  )
 
   // タブ選択
   const handleSelect = (id: string) => {
@@ -182,7 +198,14 @@ export function MainScreen() {
                   </button>
                 </li>
                 <li className="mb-2 bg-background rounded hover:bg-gray-100">
-                  <button className="px-4 py-2" onClick={handleNewFile}>
+                  <button
+                    className="px-4 py-2"
+                    onClick={() => {
+                      const next = new URLSearchParams(sp)
+                      next.set('templates', 'open')
+                      setSp(next)
+                    }}
+                  >
                     ・ テンプレートから作成
                   </button>
                 </li>
@@ -218,6 +241,9 @@ export function MainScreen() {
           />
         </div>
         <Outlet />
+
+        {/* Templates Sheet (query-driven) */}
+        <TemplateSheet onCreateFromTemplate={handleCreateFromTemplate} />
 
         {/* トースター通知 */}
         <Toaster richColors={true} expand={true} offset={5} />
