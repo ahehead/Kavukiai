@@ -1,3 +1,4 @@
+import lmstudioTemplate from "src/resources/public/templates/LMStudio/LMStudio_test_.png?url";
 import stringTemplatePng from "../../../../resources/public/templates/String/string_templete.png?url";
 import type { TemplateMeta, TemplatesByGenre } from "./types";
 
@@ -14,6 +15,15 @@ export const TEMPLATES: TemplateMeta[] = [
     type: "PNGWorkflow",
     src: stringTemplatePng,
     descriptionMd: "プロンプトに値を埋め込むときのパターン",
+  },
+  {
+    id: "lmstudio-template",
+    title: "LM Studio Template",
+    genre: "LM Studio",
+    tags: ["lmstudio", "local", "llm"],
+    type: "PNGWorkflow",
+    src: lmstudioTemplate,
+    descriptionMd: "LM Studio を使うテンプレート",
   },
 ];
 
