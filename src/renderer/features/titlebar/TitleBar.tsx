@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from 'renderer/components/ui/dropdown-menu'
+import { useUiStore } from 'renderer/features/ui/uiStore'
 
 export interface TitleBarProps {
   onSave: () => Promise<void>
@@ -16,6 +17,7 @@ export interface TitleBarProps {
 }
 
 export function TitleBar({ onSave, onSaveAs, onOpen, onExportPng }: TitleBarProps) {
+  const openTemplates = useUiStore(s => s.openTemplates)
   return (
     <div className="flex titlebar bg-titlebar">
       <DropdownMenu>
@@ -34,9 +36,7 @@ export function TitleBar({ onSave, onSaveAs, onOpen, onExportPng }: TitleBarProp
         <Link to="/settings">Settings</Link>
       </MenuButton>
       <MenuButton onClick={onExportPng}>Export as PNG</MenuButton>
-      <MenuButton>
-        <Link to="/?templates=open">Templates</Link>
-      </MenuButton>
+      <MenuButton onClick={openTemplates}>Templates</MenuButton>
     </div>
   )
 }

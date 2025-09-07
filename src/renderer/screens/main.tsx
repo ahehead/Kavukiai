@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react'
-import { Outlet, useNavigate, useSearchParams } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { ImportPngDialog } from 'renderer/features/dragdrop_workflow/importPngDialog'
 import { useDragDrop } from 'renderer/features/dragdrop_workflow/useDragDrop'
 import { usePngImportWorkflow } from 'renderer/features/dragdrop_workflow/usePngImportWorkflow'
@@ -13,6 +13,7 @@ import TabBar from 'renderer/features/tab/TabBar'
 import { getTemplateById } from 'renderer/features/templatesSidebar/data/templates'
 import TemplateSheet from 'renderer/features/templatesSidebar/TemplateSheet'
 import { TitleBar } from 'renderer/features/titlebar/TitleBar'
+import { useUiStore } from 'renderer/features/ui/uiStore'
 import { Toaster } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
 
@@ -52,35 +53,46 @@ export function MainScreen() {
     getPointerPosition,
   } = useNodeEditorSetup(activeFileId, getGraphAndHistory, setGraphAndHistory)
 
-  const { saveFile, saveFileAs, closeFile, loadFile, newFile, createAndAddFile } =
-    useFileOperations(
-      files,
-      activeFileId,
-      setCurrentFileState,
-      clearEditorHistory,
-      getFileById,
-      setActiveFileId,
-      addFile,
-      removeFile,
-      updateFile,
-      clearHistory
-    )
+  const {
+    saveFile,
+    saveFileAs,
+    closeFile,
+    loadFile,
+    newFile,
+    createAndAddFile,
+  } = useFileOperations(
+    files,
+    activeFileId,
+    setCurrentFileState,
+    clearEditorHistory,
+    getFileById,
+    setActiveFileId,
+    addFile,
+    removeFile,
+    updateFile,
+    clearHistory
+  )
 
   // mainからのファイル読み込み通知を受け取り、ファイルを開く
   useEffect(() => {
     const unsub = electronApiService.onFileLoadedRequest(
       async (_e, fileData) => await loadFile(fileData)
     )
-    return () => { unsub() }
+    return () => {
+      unsub()
+    }
   }, [loadFile])
 
   const nav = useNavigate()
-  const [sp, setSp] = useSearchParams()
+  const openTemplates = useUiStore(s => s.openTemplates)
+  const closeTemplates = useUiStore(s => s.closeTemplates)
 
   useEffect(() => {
     // 設定画面オープン指示
     const unsubOpen = electronApiService.onOpenSettings(() => nav('/settings'))
-    return () => { unsubOpen() }
+    return () => {
+      unsubOpen()
+    }
   }, [nav])
 
   useEffect(() => {
@@ -88,7 +100,9 @@ export function MainScreen() {
     const unsubSave = electronApiService.onSaveGraphInitiate(
       async () => await saveFile(activeFileId)
     )
-    return () => { unsubSave() }
+    return () => {
+      unsubSave()
+    }
   }, [activeFileId, saveFile])
 
   useEffect(() => {
@@ -96,7 +110,9 @@ export function MainScreen() {
     const unsubSaveAs = electronApiService.onSaveAsGraphInitiate(
       async () => await saveFileAs(activeFileId)
     )
-    return () => { unsubSaveAs() }
+    return () => {
+      unsubSaveAs()
+    }
   }, [activeFileId, saveFileAs])
 
   // 画面をPNGで保存
@@ -123,10 +139,9 @@ export function MainScreen() {
       setCurrentFileState()
       await createAndAddFile(fileName, workflow)
       // Close sheet
-      sp.delete('templates')
-      setSp(sp, { replace: true })
+      closeTemplates()
     },
-    [createAndAddFile, setSp, sp, setCurrentFileState]
+    [createAndAddFile, closeTemplates, setCurrentFileState]
   )
 
   // タブ選択
@@ -198,14 +213,7 @@ export function MainScreen() {
                   </button>
                 </li>
                 <li className="mb-2 bg-background rounded hover:bg-gray-100">
-                  <button
-                    className="px-4 py-2"
-                    onClick={() => {
-                      const next = new URLSearchParams(sp)
-                      next.set('templates', 'open')
-                      setSp(next)
-                    }}
-                  >
+                  <button className="px-4 py-2" onClick={openTemplates}>
                     ・ テンプレートから作成
                   </button>
                 </li>

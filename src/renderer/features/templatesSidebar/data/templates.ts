@@ -13,7 +13,7 @@ export const TEMPLATES: TemplateMeta[] = [
     tags: ["format", "pattern"],
     type: "PNGWorkflow",
     src: stringTemplatePng,
-    descriptionMd: "テンプレートフォーマットパターン",
+    descriptionMd: "プロンプトに値を埋め込むときのパターン",
   },
 ];
 
