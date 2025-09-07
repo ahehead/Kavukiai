@@ -250,7 +250,7 @@ export function MainScreen() {
         </div>
         <Outlet />
 
-        {/* Templates Sheet (query-driven) */}
+        {/* Templates Sheet */}
         <TemplateSheet onCreateFromTemplate={handleCreateFromTemplate} />
 
         {/* トースター通知 */}
