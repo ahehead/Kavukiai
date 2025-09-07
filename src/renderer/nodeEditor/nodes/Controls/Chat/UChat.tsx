@@ -37,6 +37,8 @@ export class UChatControl extends BaseControl<
   UChatControlParams
 > {
   messages: UChat
+  // 現在ストリーミング中のメッセージ index（なければ null）
+  streamingIndex: number | null = null
   private streamBuffer = ''
 
   constructor(options: UChatControlParams) {
@@ -130,6 +132,7 @@ export class UChatControl extends BaseControl<
         prev = [...this.messages]
         index = this.messages.length
         this.messages = [...this.messages, base]
+        this.streamingIndex = index
         this.notify()
       },
       setInfo: (info: Partial<UChatMessage>) => {
@@ -154,6 +157,7 @@ export class UChatControl extends BaseControl<
         const msg = getMsg()
         if (!msg) return
         index = -1
+        this.streamingIndex = null
         Object.assign(msg, message)
         if (text) msg.content = [{ type: 'text', text: text }]
         const next = [...this.messages]
@@ -165,6 +169,7 @@ export class UChatControl extends BaseControl<
       stop: () => {
         inFlight = false
         index = -1
+        this.streamingIndex = null
       }
     }
   }
@@ -294,7 +299,7 @@ export function UChatMessageListControlView(props: {
               )}
             </div>
 
-            {msg.role !== 'system' && editIndex !== index && (
+            {msg.role !== 'system' && editIndex !== index && control.streamingIndex !== index && (
               <div className="flex justify-end items-center py-0.5">
                 <div
                   className={`flex gap-1 text-xs ${index !== messages.length - 1 ? 'opacity-0 group-hover:opacity-100 transition-opacity duration-200' : ''}`}
