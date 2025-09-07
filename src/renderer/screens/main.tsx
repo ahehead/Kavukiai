@@ -172,7 +172,7 @@ export function MainScreen() {
     setDropInfo,
     handleDragOver,
     handleDrop,
-  } = useDragDrop(getPointerPosition)
+  } = useDragDrop(getPointerPosition, pasteWorkflowAtPosition)
 
   const { handleImportAsNew, handleImportToCurrent } = usePngImportWorkflow({
     dropInfo,

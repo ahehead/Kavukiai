@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { getTemplateById } from "renderer/features/templatesSidebar/data/templates";
 import { notify } from "renderer/features/toast-notice/notify";
+import { importWorkflowFromPng } from "../png/importPng";
 import { electronApiService } from "../services/appService";
 
 export interface DropInfo {
@@ -9,7 +10,11 @@ export interface DropInfo {
 }
 
 export function useDragDrop(
-  getPointerPosition: () => { x: number; y: number }
+  getPointerPosition: () => { x: number; y: number },
+  pasteWorkflowAtPosition: (
+    workflow: any,
+    pointer: { x: number; y: number }
+  ) => Promise<void>
 ) {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [dropInfo, setDropInfo] = useState<DropInfo | null>(null);
@@ -44,9 +49,11 @@ export function useDragDrop(
           if (!filePath) {
             filePath = await electronApiService.ensurePathForFile(file);
           }
-          console.log({ filePath });
-          setDropInfo({ filePath, pointer });
-          setImportDialogOpen(true);
+          const data = await importWorkflowFromPng(filePath);
+          if (!data) return;
+          await pasteWorkflowAtPosition(data.workflow, pointer);
+          setDropInfo(null);
+          notify("success", "ワークフローを現在のエディタに貼り付けました");
           return;
         } catch {
           // fallthrough to file-based handling
