@@ -4,10 +4,6 @@ import {
 } from "renderer/nodeEditor/nodes/Controls/Button";
 // ChatMessageList
 import {
-  ChatMessageListControl,
-  ChatMessageListControlView,
-} from "renderer/nodeEditor/nodes/Controls/Chat/ChatMessageList";
-import {
   UChatControl,
   UChatMessageListControlView,
 } from "renderer/nodeEditor/nodes/Controls/Chat/UChat";
@@ -42,6 +38,10 @@ import {
   ListControl,
   ListControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/List";
+import {
+  ModelInfoListControl,
+  ModelInfoListControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/ModelInfoListControl";
 // MultiLine
 import {
   MultiLineControl,
@@ -59,10 +59,6 @@ import {
   SelectControl,
   SelectControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Select";
-import {
-  ModelInfoListControl,
-  ModelInfoListControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/ModelInfoListControl";
 import {
   SliderControl,
   SliderControlView,
@@ -116,7 +112,6 @@ const controlViews = new Map<Ctor, ControlViewComponent>([
   [MultiLineControl, TextAreaControllView],
   [ConsoleControl, ConsoleControlView],
   [InputValueControl, InputValueControlView],
-  [ChatMessageListControl, ChatMessageListControlView],
   [CheckBoxControl, CheckBoxControlView],
   [ButtonControl, ButtonControlView],
   [SelectControl, SelectControlView],

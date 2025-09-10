@@ -18,6 +18,7 @@ import {
   ComfyUINode,
   CounterLoopNode,
   CreateSelectNode,
+  GetModelInfoListNode,
   InspectorNode,
   JoinNode,
   JsonFilePathNode,
@@ -25,7 +26,6 @@ import {
   JsonSchemaNode,
   JsonSchemaToObjectNode,
   ListDownloadedModelsNode,
-  GetModelInfoListNode,
   LLMPredictionConfigNode,
   LMStudioChatNode,
   LMStudioLoadModelNode,
@@ -71,7 +71,6 @@ import { UChatToLMStudioNode } from "./Node/Chat/UChatToLMStudioNode";
 import { UChatToOpenAINode } from "./Node/Chat/UChatToOpenAINode";
 import { UChatToStringNode } from "./Node/Chat/UChatToStringNode";
 import { UPartTextNode } from "./Node/Chat/UPartTextNode";
-import { ChatMessageListNode } from "./Node/OpenAI/Chat/ChatContextNode";
 import { GetLastMessageNode } from "./Node/OpenAI/Chat/GetLastMessageNode";
 import { OpenAIToChatEventNode } from "./Node/OpenAI/Chat/OpenAIToChatEventNode";
 import { ArrayNode } from "./Node/Primitive/ArrayNode";
@@ -176,8 +175,6 @@ export const nodeFactories = {
   GetLastMessage: () => new GetLastMessageNode(),
   OpenAIToChatEvent: () => new OpenAIToChatEventNode(),
   OpenAIToUChatCommand: () => new OpenAIToUChatCommandNode(),
-  ChatMessageList: ({ history, area, dataflow, controlflow }) =>
-    new ChatMessageListNode([], history, area, dataflow, controlflow),
   ChatMessage: () => new ChatMessageNode(),
   UChatMessage: () => new UChatMessageNode(),
   UChatMessageByString: () => new UChatMessageByStringNode(),

@@ -5,7 +5,6 @@ import type { ReactArea2D } from "rete-react-plugin";
 import type {
   ArrayNode,
   BoolNode,
-  ChatMessageListNode,
   ChatMessageNode,
   CodeFenceNode,
   ComfyDesktopStartNode,
@@ -14,6 +13,7 @@ import type {
   CounterLoopNode,
   CreateSelectNode,
   GetLastMessageNode,
+  GetModelInfoListNode,
   IFNode,
   InspectorNode,
   JoinNode,
@@ -22,7 +22,6 @@ import type {
   JsonSchemaNode,
   JsonSchemaToObjectNode,
   ListDownloadedModelsNode,
-  GetModelInfoListNode,
   LLMPredictionConfigNode,
   LMStudioChatNode,
   LMStudioLoadModelNode,
@@ -91,7 +90,6 @@ export type NodeTypes =
   | InspectorNode
   | OpenAINode
   | ResponseCreateParamsBaseNode
-  | ChatMessageListNode
   | UChatToStringNode
   | UChatGetLastMessageNode
   | GetLastMessageNode

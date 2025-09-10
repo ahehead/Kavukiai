@@ -1,5 +1,4 @@
 import type { ButtonControl } from "../nodes/Controls/Button";
-import type { ChatMessageListControl } from "../nodes/Controls/Chat/ChatMessageList";
 import type { UChatControl } from "../nodes/Controls/Chat/UChat";
 import type { SelectWorkflowControl } from "../nodes/Controls/ComfyUI/SelectWorkflowControl";
 import type { WorkflowIOSelectControl } from "../nodes/Controls/ComfyUI/WorkflowIOSelectControl";
@@ -8,6 +7,7 @@ import type { CheckBoxControl } from "../nodes/Controls/input/CheckBox";
 import type { ImageFileInputControl } from "../nodes/Controls/input/ImageFileInput";
 import type { InputValueControl } from "../nodes/Controls/input/InputValue";
 import type { ListControl } from "../nodes/Controls/input/List";
+import type { ModelInfoListControl } from "../nodes/Controls/input/ModelInfoListControl";
 import type { MultiLineControl } from "../nodes/Controls/input/MultiLine";
 import type { PathInputControl } from "../nodes/Controls/input/PathInputControl";
 import type { PropertyInputControl } from "../nodes/Controls/input/PropertyInput";
@@ -17,7 +17,6 @@ import type { SwitchControl } from "../nodes/Controls/input/Switch";
 import type { RunButtonControl } from "../nodes/Controls/RunButton";
 import type { ImageControl } from "../nodes/Controls/view/Image";
 import type { ProgressControl } from "../nodes/Controls/view/ProgressControl";
-import type { ModelInfoListControl } from "../nodes/Controls/input/ModelInfoListControl";
 
 export type NodeControl =
   | RunButtonControl
@@ -25,7 +24,6 @@ export type NodeControl =
   | ConsoleControl
   | InputValueControl<string>
   | InputValueControl<number>
-  | ChatMessageListControl
   | CheckBoxControl
   | ButtonControl
   | SelectControl<any>
