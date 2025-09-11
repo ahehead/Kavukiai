@@ -1,10 +1,12 @@
 import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
+import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { SelectWorkflowControl } from '../../Controls/ComfyUI/SelectWorkflowControl'
+import { InputValueControl } from '../../Controls/input/InputValue'
 
 export class TemplateWorkflowListNode extends SerializableInputsNode<
   'TemplateWorkflowList',
@@ -13,7 +15,8 @@ export class TemplateWorkflowListNode extends SerializableInputsNode<
   { select: SelectWorkflowControl }
 > {
   constructor(
-    history: HistoryPlugin<Schemes>,
+    private area: AreaPlugin<Schemes, AreaExtra>,
+    private history: HistoryPlugin<Schemes>,
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
@@ -30,7 +33,16 @@ export class TemplateWorkflowListNode extends SerializableInputsNode<
         key: 'endpoint',
         typeName: 'string',
         label: 'Endpoint',
-      }])
+        control: new InputValueControl<string>({
+          label: 'Endpoint',
+          value: 'http://127.0.0.1:8000',
+          type: 'string',
+          history: this.history,
+          area: this.area,
+          onChange: () => this.dataflow.reset(this.id),
+        }),
+      },
+    ])
     this.addOutputPort({
       key: 'workflowRef',
       typeName: 'WorkflowRef',
@@ -47,11 +59,8 @@ export class TemplateWorkflowListNode extends SerializableInputsNode<
   }
 
   async execute(): Promise<void> {
-    const endpoint = await this.dataflow.fetchInputSingle<string>(
-      this.id,
-      'endpoint'
-    )
-    console.log('TemplateWorkflowListNode execute', endpoint)
+    const dfInputs = await this.dataflow.fetchInputs(this.id)
+    const endpoint = this.getInputValue<string>(dfInputs, 'endpoint')
     if (!endpoint) {
       await this.controls.select.setItems([])
       this.controls.select.setError('Endpoint is required')

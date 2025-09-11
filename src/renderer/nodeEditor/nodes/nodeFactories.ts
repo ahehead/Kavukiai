@@ -139,12 +139,12 @@ export const nodeFactories = {
     new ComfyDesktopStartNode(area, dataflow, controlflow),
   ComfyUIFreeMemory: ({ area, history, dataflow, controlflow }) =>
     new ComfyUIFreeMemoryNode(area, history, dataflow, controlflow),
-  PrepareWorkflowPrompt: ({ dataflow, controlflow }) =>
-    new PrepareWorkflowPromptNode(dataflow, controlflow),
+  PrepareWorkflowPrompt: ({ area, history, dataflow, controlflow }) =>
+    new PrepareWorkflowPromptNode(area, history, dataflow, controlflow),
   LoadWorkflowFile: ({ area, dataflow, controlflow }) =>
     new LoadWorkflowFileNode(area, dataflow, controlflow),
-  TemplateWorkflowList: ({ history, dataflow, controlflow }) =>
-    new TemplateWorkflowListNode(history, dataflow, controlflow),
+  TemplateWorkflowList: ({ area, history, dataflow, controlflow }) =>
+    new TemplateWorkflowListNode(area, history, dataflow, controlflow),
   UserWorkflowList: ({ history, dataflow, controlflow }) =>
     new UserWorkflowListNode(history, dataflow, controlflow),
   WorkflowInputs: ({ history, area, dataflow, controlflow }) =>

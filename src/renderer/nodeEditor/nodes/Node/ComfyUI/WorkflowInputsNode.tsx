@@ -29,7 +29,8 @@ export class WorkflowInputsNode extends SerializableInputsNode<
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('WorkflowInputs')
-
+    this.width = 380
+    this.height = 430
     this.addInputPort([
       {
         key: 'exec',
@@ -39,7 +40,7 @@ export class WorkflowInputsNode extends SerializableInputsNode<
       {
         key: 'workflow',
         typeName: 'object',
-        label: 'Workflow',
+        label: 'Workflow(API)',
       },
     ])
     this.addOutputPort([

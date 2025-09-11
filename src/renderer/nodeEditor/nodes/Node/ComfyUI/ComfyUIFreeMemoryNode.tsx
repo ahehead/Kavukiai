@@ -45,11 +45,12 @@ export class ComfyUIFreeMemoryNode extends SerializableInputsNode<
         typeName: 'string',
         label: 'Endpoint',
         control: new InputValueControl<string>({
+          label: 'Endpoint',
           value: 'http://127.0.0.1:8000',
           type: 'string',
           history: this.history,
           area: this.area,
-          onChange: () => this.dataflow?.reset(this.id),
+          onChange: () => this.dataflow.reset(this.id),
         }),
       },
       {

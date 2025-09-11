@@ -1,14 +1,17 @@
 import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import {
+  type AreaExtra,
   NodeStatus,
   type Schemes,
   SerializableInputsNode,
   type TypedSocket,
 } from 'renderer/nodeEditor/types'
-
+import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
+import type { HistoryPlugin } from 'rete-history-plugin'
 import { ConsoleControl } from '../../Controls/Console/Console'
+import { InputValueControl } from '../../Controls/input/InputValue'
 
 /**
  * PrepareWorkflowPromptNode
@@ -23,6 +26,8 @@ export class PrepareWorkflowPromptNode extends SerializableInputsNode<
   private lastWorkflowPrompt: unknown = null
 
   constructor(
+    private area: AreaPlugin<Schemes, AreaExtra>,
+    private history: HistoryPlugin<Schemes>,
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
@@ -36,8 +41,16 @@ export class PrepareWorkflowPromptNode extends SerializableInputsNode<
       {
         key: 'endpoint',
         typeName: 'string',
-        label: 'endpoint',
+        label: 'Endpoint',
         require: true,
+        control: new InputValueControl<string>({
+          label: 'Endpoint',
+          value: 'http://127.0.0.1:8000',
+          type: 'string',
+          history: this.history,
+          area: this.area,
+          onChange: () => this.dataflow.reset(this.id),
+        }),
       },
       {
         key: 'workflowRef',
@@ -48,7 +61,7 @@ export class PrepareWorkflowPromptNode extends SerializableInputsNode<
     ])
     this.addOutputPort([
       { key: 'exec', typeName: 'exec', label: 'Out' },
-      { key: 'workflowPrompt', typeName: 'object', label: 'WorkflowPrompt' },
+      { key: 'workflowPrompt', typeName: 'object', label: 'Workflow(API)' },
     ])
     this.addControl('console', new ConsoleControl({ isOpen: true }))
   }
