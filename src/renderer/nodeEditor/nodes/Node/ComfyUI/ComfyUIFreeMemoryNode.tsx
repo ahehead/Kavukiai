@@ -78,16 +78,12 @@ export class ComfyUIFreeMemoryNode extends SerializableInputsNode<
     this.addControl('console', new ConsoleControl({ isOpen: true }))
   }
 
-  data(): object {
-    return {}
-  }
-
   async execute(
     _input: 'exec',
     forward: (output: 'exec') => void
   ): Promise<void> {
     if (this.status === NodeStatus.RUNNING) return
-    await this.changeStatus(this.area, NodeStatus.RUNNING)
+    this.changeStatus(NodeStatus.RUNNING)
     try {
       const dfInputs: any = this.dataflow.fetchInputs(this.id)
 
@@ -109,13 +105,13 @@ export class ComfyUIFreeMemoryNode extends SerializableInputsNode<
         freeMemory,
       })
       this.controls.console.addValue('[OK] Memory freed')
-      this.setStatus(NodeStatus.COMPLETED)
+      this.changeStatus(NodeStatus.COMPLETED)
 
     } catch (e: any) {
       this.controls.console.addValue(`[ERROR] ${e?.message ?? e}`)
-      this.setStatus(NodeStatus.ERROR)
+      this.changeStatus(NodeStatus.ERROR)
     }
-    await this.area.update('node', this.id)
+
     forward('exec')
   }
 

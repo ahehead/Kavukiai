@@ -1,7 +1,5 @@
 import { useSyncExternalStore } from "react";
-import type { AreaPlugin } from "rete-area-plugin";
 import type { NodeControl } from "../NodeControl";
-import type { AreaExtra, Schemes } from "../Schemes";
 import type { TypedSocket } from "../Socket/TypedSocket";
 import { SizeNodeBase } from "./SizeNodeBase";
 
@@ -44,10 +42,7 @@ export abstract class StatusNodeBase<
     return this._status;
   }
 
-  async changeStatus(
-    _area: AreaPlugin<Schemes, AreaExtra>,
-    status: NodeStatus
-  ) {
+  changeStatus(status: NodeStatus) {
     this.setStatus(status);
     this.notify();
   }

@@ -1,9 +1,8 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { ConsoleControl } from 'renderer/nodeEditor/nodes/Controls/Console/Console'
-import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
+import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { NodeStatus, SerializableInputsNode } from 'renderer/nodeEditor/types'
 
-import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 
 export class TemplateReplaceNode extends SerializableInputsNode<
@@ -14,7 +13,6 @@ export class TemplateReplaceNode extends SerializableInputsNode<
 > {
   private result = ''
   constructor(
-    private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
@@ -42,12 +40,9 @@ export class TemplateReplaceNode extends SerializableInputsNode<
   }
 
   async execute(_: never, forward: (output: 'exec') => void): Promise<void> {
-    const { template, obj } = (await this.dataflow.fetchInputs(this.id)) as {
-      template?: string[]
-      obj?: Record<string, unknown>[]
-    }
-    const tpl = template?.[0] ?? ''
-    const data = obj?.[0] ?? {}
+    const [template, obj] = (await this.dataflow.fetchInputMultiple<[string, Record<string, unknown>]>(this.id, ["template", "obj"]))
+    const tpl = template ?? ''
+    const data = obj ?? {}
     let missing = false
     // allow spaces around key like {{   test   }}
     this.result = tpl.replace(/{{\s*([^{}]+?)\s*}}/g, (_m, key) => {
@@ -63,8 +58,7 @@ export class TemplateReplaceNode extends SerializableInputsNode<
       `Deserialized result: ${this.result}`
     )
     this.dataflow.reset(this.id)
-    await this.changeStatus(
-      this.area,
+    this.changeStatus(
       missing ? NodeStatus.WARNING : NodeStatus.IDLE
     )
     forward('exec')

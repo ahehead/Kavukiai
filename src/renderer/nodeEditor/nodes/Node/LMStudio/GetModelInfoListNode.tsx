@@ -1,16 +1,14 @@
 import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import {
-  type AreaExtra,
   type Schemes,
   SerializableInputsNode,
   type TypedSocket,
 } from 'renderer/nodeEditor/types'
 import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
 import type { ModelInfo } from 'renderer/nodeEditor/types/Schemas/lmstudio/ModelSchemas'
-import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
-import { ModelInfoListControl } from '../../Controls/input/ModelInfoListControl'
+import { ModelInfoListControl } from '../../Controls/LMStudio/ModelInfoListControl'
 
 export class GetModelInfoListNode extends SerializableInputsNode<
   'GetModelInfoList',
@@ -22,11 +20,12 @@ export class GetModelInfoListNode extends SerializableInputsNode<
   private selectedKey: string | null = null
 
   constructor(
-    private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('GetModelInfoList')
+    this.width = 380
+    this.height = 380
     this.addInputPort({
       key: 'exec',
       label: 'Get and create',
@@ -60,7 +59,7 @@ export class GetModelInfoListNode extends SerializableInputsNode<
     _forward: (output: 'exec') => void
   ): Promise<void> {
     if (this.status === NodeStatus.RUNNING) return
-    await this.changeStatus(this.area, NodeStatus.RUNNING)
+    this.changeStatus(NodeStatus.RUNNING)
     const result = await electronApiService.listDownloadedModels()
     if (result.status === 'success') {
       this.models = result.data
@@ -69,16 +68,15 @@ export class GetModelInfoListNode extends SerializableInputsNode<
       this.selectedKey = defKey
       this.controls.selectList.setList(this.models)
       this.controls.selectList.setSelectedKey(defKey)
-      this.setStatus(NodeStatus.COMPLETED)
+      this.changeStatus(NodeStatus.COMPLETED)
     } else {
       this.models = []
       this.selectedKey = null
       this.controls.selectList.setList([])
       this.controls.selectList.setSelectedKey(null)
-      this.setStatus(NodeStatus.ERROR)
+      this.changeStatus(NodeStatus.ERROR)
     }
     this.dataflow.reset(this.id)
-    await this.area.update('node', this.id)
   }
 
   serializeControlValue(): {

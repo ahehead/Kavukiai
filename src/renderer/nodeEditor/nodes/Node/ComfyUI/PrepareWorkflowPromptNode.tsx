@@ -1,14 +1,12 @@
 import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import {
-  type AreaExtra,
   NodeStatus,
   type Schemes,
   SerializableInputsNode,
   type TypedSocket,
 } from 'renderer/nodeEditor/types'
 
-import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import { ConsoleControl } from '../../Controls/Console/Console'
 
@@ -25,7 +23,6 @@ export class PrepareWorkflowPromptNode extends SerializableInputsNode<
   private lastWorkflowPrompt: unknown = null
 
   constructor(
-    private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
@@ -62,19 +59,19 @@ export class PrepareWorkflowPromptNode extends SerializableInputsNode<
 
   async execute(_: never, forward: (output: 'exec') => void): Promise<void> {
     if (this.status === NodeStatus.RUNNING) return
-    this.changeStatus(this.area, NodeStatus.RUNNING)
+    this.changeStatus(NodeStatus.RUNNING)
 
     const inputs = await this.dataflow.fetchInputs(this.id)
     const endpoint = this.getInputValue<string>(inputs, 'endpoint')
     const workflowRef = this.getInputValue<any>(inputs, 'workflowRef')
 
     if (!endpoint) {
-      this.changeStatus(this.area, NodeStatus.ERROR)
+      this.changeStatus(NodeStatus.ERROR)
       this.controls.console.addValue('Error: endpoint is empty')
       return
     }
     if (!workflowRef) {
-      this.changeStatus(this.area, NodeStatus.ERROR)
+      this.changeStatus(NodeStatus.ERROR)
       this.controls.console.addValue('Error: workflowRef is empty')
       return
     }
@@ -86,11 +83,11 @@ export class PrepareWorkflowPromptNode extends SerializableInputsNode<
       })
       this.lastWorkflowPrompt = data
       this.controls.console.addValue('Resolved workflowRef to API prompt')
-      this.changeStatus(this.area, NodeStatus.COMPLETED)
+      this.changeStatus(NodeStatus.COMPLETED)
       this.dataflow.reset(this.id)
       forward('exec')
     } catch (e: any) {
-      this.changeStatus(this.area, NodeStatus.ERROR)
+      this.changeStatus(NodeStatus.ERROR)
       this.controls.console.addValue(`Error: ${e?.message ?? String(e)}`)
     }
   }

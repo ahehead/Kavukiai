@@ -91,8 +91,8 @@ export const nodeFactories = {
     new StringNode("", history, area, dataflow),
   MultiLineString: ({ history, area, dataflow }) =>
     new MultiLineStringNode("", history, area, dataflow),
-  TemplateReplace: ({ area, dataflow, controlflow }) =>
-    new TemplateReplaceNode(area, dataflow, controlflow),
+  TemplateReplace: ({ dataflow, controlflow }) =>
+    new TemplateReplaceNode(dataflow, controlflow),
   JsonFilePath: ({ history, area, dataflow }) =>
     new JsonFilePathNode("", history, area, dataflow),
   StringForm: ({ history, area, dataflow, controlflow }: NodeDeps) =>
@@ -116,23 +116,20 @@ export const nodeFactories = {
     new ShowImageNode(area, dataflow, controlflow),
 
   // lmstudio nodes
-  ListDownloadedModels: ({ area, dataflow, controlflow }) =>
-    new ListDownloadedModelsNode(area, dataflow, controlflow),
-  GetModelInfoList: ({ area, dataflow, controlflow }) =>
-    new GetModelInfoListNode(area, dataflow, controlflow),
+  ListDownloadedModels: ({ dataflow, controlflow }) =>
+    new ListDownloadedModelsNode(dataflow, controlflow),
+  GetModelInfoList: ({ dataflow, controlflow }) =>
+    new GetModelInfoListNode(dataflow, controlflow),
   ModelInfoToModelList: () => new ModelInfoToModelListNode(),
   LMStudioChat: ({ area, dataflow, controlflow }) =>
     new LMStudioChatNode(area, dataflow, controlflow),
-  LMStudioStart: ({ area, controlflow }) =>
-    new LMStudioStartNode(area, controlflow),
-  LMStudioStop: ({ area, controlflow }) =>
-    new LMStudioStopNode(area, controlflow),
+  LMStudioStart: ({ controlflow }) => new LMStudioStartNode(controlflow),
+  LMStudioStop: ({ controlflow }) => new LMStudioStopNode(controlflow),
   LMStudioLoadModel: ({ area, dataflow, controlflow }) =>
     new LMStudioLoadModelNode(area, dataflow, controlflow),
-  ServerStatus: ({ area, dataflow, controlflow }) =>
-    new ServerStatusNode(area, dataflow, controlflow),
-  UnLoadModel: ({ area, controlflow }) =>
-    new UnLoadModelNode(area, controlflow),
+  ServerStatus: ({ dataflow, controlflow }) =>
+    new ServerStatusNode(dataflow, controlflow),
+  UnLoadModel: ({ controlflow }) => new UnLoadModelNode(controlflow),
   LLMPredictionConfig: ({ dataflow }) => new LLMPredictionConfigNode(dataflow),
 
   // ComfyUI
@@ -142,8 +139,8 @@ export const nodeFactories = {
     new ComfyDesktopStartNode(area, dataflow, controlflow),
   ComfyUIFreeMemory: ({ area, history, dataflow, controlflow }) =>
     new ComfyUIFreeMemoryNode(area, history, dataflow, controlflow),
-  PrepareWorkflowPrompt: ({ area, dataflow, controlflow }) =>
-    new PrepareWorkflowPromptNode(area, dataflow, controlflow),
+  PrepareWorkflowPrompt: ({ dataflow, controlflow }) =>
+    new PrepareWorkflowPromptNode(dataflow, controlflow),
   LoadWorkflowFile: ({ area, dataflow, controlflow }) =>
     new LoadWorkflowFileNode(area, dataflow, controlflow),
   TemplateWorkflowList: ({ history, dataflow, controlflow }) =>

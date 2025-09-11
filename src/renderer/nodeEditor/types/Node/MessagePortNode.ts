@@ -52,7 +52,7 @@ export abstract class MessagePortNode<
       this.onLog("Already running");
       return;
     }
-    await this.changeStatus(this.area, NodeStatus.RUNNING);
+    this.changeStatus(NodeStatus.RUNNING);
 
     const maybeArgs = await this.buildRequestArgs();
     if (!maybeArgs) {
@@ -80,8 +80,7 @@ export abstract class MessagePortNode<
       this.port = null;
     }
     this.onLog(`${kind === "error" ? "Error" : "Done"}: ${message}`);
-    await this.changeStatus(
-      this.area,
+    this.changeStatus(
       kind === "error" ? NodeStatus.ERROR : NodeStatus.COMPLETED
     );
     if (kind === "done") forward("exec" as ExecOutKey);

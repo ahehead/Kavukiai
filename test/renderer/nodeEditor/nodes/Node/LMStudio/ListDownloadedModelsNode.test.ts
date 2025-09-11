@@ -8,10 +8,8 @@ import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/
 import { ListDownloadedModelsNode } from "renderer/nodeEditor/nodes/Node/LMStudio/ListDownloadedModelsNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
-import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 
-const area = { update: vi.fn() } as unknown as AreaPlugin<Schemes, any>;
 const dataflow = {
   reset: vi.fn(),
   fetchInputSingle: vi.fn(),
@@ -21,7 +19,7 @@ const dataflow = {
 const controlflow = {} as ControlFlowEngine<Schemes>;
 
 function createNode() {
-  return new ListDownloadedModelsNode(area, dataflow, controlflow);
+  return new ListDownloadedModelsNode(dataflow, controlflow);
 }
 
 test("execute stores model list and forwards exec", async () => {

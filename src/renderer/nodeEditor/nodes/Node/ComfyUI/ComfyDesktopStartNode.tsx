@@ -97,7 +97,7 @@ export class ComfyDesktopStartNode extends SerializableInputsNode<
     forward: (output: 'exec') => void
   ): Promise<void> {
     if (this.status === NodeStatus.RUNNING) return
-    await this.changeStatus(this.area, NodeStatus.RUNNING)
+    this.changeStatus(NodeStatus.RUNNING)
     // gather inputs
     const dfInputs: any = this.dataflow.fetchInputs(this.id)
     const appPath = this.getInputValue<string>(dfInputs, 'appPath')
@@ -121,14 +121,14 @@ export class ComfyDesktopStartNode extends SerializableInputsNode<
         this.controls.console.addValue(
           `[OK] ComfyUI Desktop ready (port=${res.port})`
         )
-        this.setStatus(NodeStatus.COMPLETED)
+        this.changeStatus(NodeStatus.COMPLETED)
       } else {
         this.controls.console.addValue(`[ERROR] ${res.message}`)
-        this.setStatus(NodeStatus.ERROR)
+        this.changeStatus(NodeStatus.ERROR)
       }
     } catch (e: any) {
       this.controls.console.addValue(`[EXCEPTION] ${e?.message ?? e}`)
-      this.setStatus(NodeStatus.ERROR)
+      this.changeStatus(NodeStatus.ERROR)
     }
     await this.area.update('node', this.id)
     forward('exec')

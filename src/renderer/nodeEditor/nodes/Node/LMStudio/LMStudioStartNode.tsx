@@ -1,13 +1,11 @@
 import { electronApiService } from 'renderer/features/services/appService'
 import {
-  type AreaExtra,
   type Schemes,
   SerializableInputsNode,
   type TypedSocket,
 } from 'renderer/nodeEditor/types'
 import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
 
-import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import { ConsoleControl } from '../../Controls/Console/Console'
 
@@ -18,7 +16,6 @@ export class LMStudioStartNode extends SerializableInputsNode<
   { console: ConsoleControl }
 > {
   constructor(
-    private area: AreaPlugin<Schemes, AreaExtra>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('LMStudioStart')
@@ -42,16 +39,15 @@ export class LMStudioStartNode extends SerializableInputsNode<
   ): Promise<void> {
     if (this.status === NodeStatus.RUNNING) return
 
-    await this.changeStatus(this.area, NodeStatus.RUNNING)
+    this.changeStatus(NodeStatus.RUNNING)
     const result = await electronApiService.startServer()
     if (result.status === 'success') {
       this.controls.console.addValue(result.data)
-      this.setStatus(NodeStatus.COMPLETED)
+      this.changeStatus(NodeStatus.COMPLETED)
     } else {
       this.controls.console.addValue(`Error: ${result.message}`)
-      this.setStatus(NodeStatus.ERROR)
+      this.changeStatus(NodeStatus.ERROR)
     }
-    await this.area.update('node', this.id)
     forward('exec')
   }
 

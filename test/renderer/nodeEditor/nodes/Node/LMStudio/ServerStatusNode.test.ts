@@ -8,15 +8,13 @@ import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/
 import { ServerStatusNode } from "renderer/nodeEditor/nodes/Node/LMStudio/ServerStatusNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
-import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 
-const area = { update: vi.fn() } as unknown as AreaPlugin<Schemes, any>;
 const dataflow = { reset: vi.fn() } as unknown as DataflowEngine<Schemes>;
 const controlflow = {} as ControlFlowEngine<Schemes>;
 
 function createNode() {
-  return new ServerStatusNode(area, dataflow, controlflow);
+  return new ServerStatusNode(dataflow, controlflow);
 }
 
 test("execute fetches status and forwards exec", async () => {

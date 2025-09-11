@@ -24,7 +24,7 @@ export class LoadWorkflowFileNode extends SerializableInputsNode<
   private lastWorkflow: unknown = null
 
   constructor(
-    private area: AreaPlugin<Schemes, AreaExtra>,
+    _area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
@@ -55,13 +55,13 @@ export class LoadWorkflowFileNode extends SerializableInputsNode<
 
   async execute(_: never, forward: (output: 'exec') => void): Promise<void> {
     if (this.status === NodeStatus.RUNNING) return
-    this.changeStatus(this.area, NodeStatus.RUNNING)
+    this.changeStatus(NodeStatus.RUNNING)
 
     const inputs = await this.dataflow.fetchInputs(this.id)
     const path = this.getInputValue<string>(inputs, 'path')
 
     if (!path) {
-      this.changeStatus(this.area, NodeStatus.ERROR)
+      this.changeStatus(NodeStatus.ERROR)
       this.controls.console.addValue('Error: path is empty')
       return
     }
@@ -71,15 +71,15 @@ export class LoadWorkflowFileNode extends SerializableInputsNode<
       if (res?.status === 'success') {
         this.lastWorkflow = res.data
         this.controls.console.addValue('Loaded workflow json from path')
-        this.changeStatus(this.area, NodeStatus.COMPLETED)
+        this.changeStatus(NodeStatus.COMPLETED)
         this.dataflow.reset(this.id)
         forward('exec')
       } else {
-        this.changeStatus(this.area, NodeStatus.ERROR)
+        this.changeStatus(NodeStatus.ERROR)
         this.controls.console.addValue(`Error: ${(res as any)?.message || 'Failed to read json'}`)
       }
     } catch (e: any) {
-      this.changeStatus(this.area, NodeStatus.ERROR)
+      this.changeStatus(NodeStatus.ERROR)
       this.controls.console.addValue(`Error: ${e?.message ?? String(e)}`)
     }
   }

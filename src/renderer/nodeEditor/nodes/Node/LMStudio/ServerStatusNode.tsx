@@ -1,7 +1,6 @@
 import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import {
-  type AreaExtra,
   type Schemes,
   SerializableInputsNode,
   type TypedSocket,
@@ -9,7 +8,6 @@ import {
 import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
 
 import type { ServerStatusInfo } from 'renderer/nodeEditor/types/Schemas/lmstudio/StatusSchemas'
-import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import { ConsoleControl } from '../../Controls/Console/Console'
 
@@ -22,7 +20,6 @@ export class ServerStatusNode extends SerializableInputsNode<
   private info: ServerStatusInfo = { server: 'OFF', loadedModels: [] }
 
   constructor(
-    private area: AreaPlugin<Schemes, AreaExtra>,
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
@@ -48,18 +45,17 @@ export class ServerStatusNode extends SerializableInputsNode<
     forward: (output: 'exec') => void
   ): Promise<void> {
     if (this.status === NodeStatus.RUNNING) return
-    await this.changeStatus(this.area, NodeStatus.RUNNING)
+    this.changeStatus(NodeStatus.RUNNING)
     const result = await electronApiService.getServerStatus()
     if (result.status === 'success') {
       this.info = result.data
       this.dataflow.reset(this.id)
       this.controls.console.addValue(JSON.stringify(result.data))
-      this.setStatus(NodeStatus.COMPLETED)
+      this.changeStatus(NodeStatus.COMPLETED)
     } else {
       this.controls.console.addValue(`Error: ${result.message}`)
-      this.setStatus(NodeStatus.ERROR)
+      this.changeStatus(NodeStatus.ERROR)
     }
-    await this.area.update('node', this.id)
     forward('exec')
   }
 
