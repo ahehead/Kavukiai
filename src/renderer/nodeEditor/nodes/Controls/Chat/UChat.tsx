@@ -26,7 +26,6 @@ export interface DeltaStreamFunctions {
   setInfo(info: Partial<UChatMessage>): void
   pushDelta(delta: string): void
   finish(finalText?: string, message?: Partial<UChatMessage>): void
-  stop(): void
 }
 
 export interface UChatControlParams
@@ -100,11 +99,6 @@ export class UChatControl extends BaseControl<UChat, UChatControlParams> {
         this.opts.onChange?.(next);
         this.notify();
       },
-      stop: () => {
-        console.log('DeltaStreamFunctions stop');
-        this.session.stop();
-        this.notify();
-      }
     };
   }
 

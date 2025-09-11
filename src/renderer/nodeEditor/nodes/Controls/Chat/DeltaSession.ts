@@ -26,7 +26,6 @@ export class DeltaSession {
   setInfo(info: Partial<UChatMessage>) {
     const msg = this.store.value[this.index];
     if (!this.inFlight || !msg) return;
-    // Immer の autoFreeze により直接代入は例外になるため、Store 経由で不変更新
     this.store.modifyAt(this.index, { ...msg, ...info });
   }
 
@@ -35,7 +34,6 @@ export class DeltaSession {
     const msg = this.store.value[this.index];
     if (!msg || msg.role !== "assistant") return;
     this.buffer += chunk;
-    // 直接代入禁止: Store の不変更新を利用
     this.store.modifyAt(this.index, {
       ...msg,
       content: [{ type: "text", text: this.buffer }],
@@ -57,11 +55,6 @@ export class DeltaSession {
     this.buffer = "";
   }
 
-  stop() {
-    this.inFlight = false;
-    this.index = -1;
-    this.buffer = "";
-  }
   get streamingIndex() {
     return this.index >= 0 ? this.index : null;
   }

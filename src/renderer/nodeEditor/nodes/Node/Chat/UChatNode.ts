@@ -59,7 +59,7 @@ export class UChatNode
       { key: "newMessage", typeName: "UChatMessage", label: "New Message" },
       {
         key: "exec2",
-        label: "Response",
+        label: "Event",
         showControl: false,
         onClick: () => this.controlflow.execute(this.id, "exec2"),
       },
@@ -90,8 +90,8 @@ export class UChatNode
     const control = new UChatControl({
       value: initial,
       editable: true,
-      history: history,
-      area: area,
+      history,
+      area,
       onChange: () => {
         dataflow.reset(this.id);
       },
@@ -99,11 +99,6 @@ export class UChatNode
     this.deltaFunc = control.setupDeltaFunctions();
 
     this.addControl("chatContext", control);
-  }
-
-  // dataWithFetchが優先される
-  data() {
-    return {};
   }
 
   // systemPrompt入力からのみfetchする
