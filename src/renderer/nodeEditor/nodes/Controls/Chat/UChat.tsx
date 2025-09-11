@@ -18,6 +18,8 @@ import {
   type UPart,
 } from 'renderer/nodeEditor/types/Schemas/UChat/UChatMessage'
 import { Drag } from 'rete-react-plugin'
+import { ChatStore } from './ChatStore'
+import { DeltaSession } from './DeltaSession'
 
 export interface DeltaStreamFunctions {
   start(initial?: Partial<UChatMessage>): void
@@ -32,146 +34,88 @@ export interface UChatControlParams
   value: UChat
 }
 
-export class UChatControl extends BaseControl<
-  UChat,
-  UChatControlParams
-> {
-  messages: UChat
-  // 現在ストリーミング中のメッセージ index（なければ null）
-  streamingIndex: number | null = null
-  private streamBuffer = ''
+export class UChatControl extends BaseControl<UChat, UChatControlParams> {
+  private store: ChatStore;
+  private session: DeltaSession;
 
-  constructor(options: UChatControlParams) {
-    super(options)
-    this.messages = options.value ?? []
+  constructor(opts: UChatControlParams) {
+    super(opts);
+    this.store = new ChatStore(opts.value ?? []);
+    this.session = new DeltaSession(this.store);
   }
 
-  setValue(value: UChat): void {
-    this.messages = value
-    this.opts.onChange?.(value)
-    this.notify()
+  getValue() { return this.store.value; }
+  setValue(v: UChat) {
+    const prev = this.store.value;
+    this.store.setAll(v);
+    this.addHistory(prev, this.store.value);
+    this.opts.onChange?.(this.store.value);
+    this.notify();
   }
 
-  getValue(): UChat {
-    return this.messages
+  addMessage(m: UChatMessage) {
+    const prev = this.store.value;
+    this.store.add(m);
+    this.addHistory(prev, this.store.value);
+    this.opts.onChange?.(this.store.value);
+    this.notify();
+  }
+  modifyChatMessage(i: number, m: UChatMessage) {
+    const prev = this.store.value;
+    this.store.modifyAt(i, m);
+    this.addHistory(prev, this.store.value);
+    this.opts.onChange?.(this.store.value);
+    this.notify();
+  }
+  clear() {
+    const prev = this.store.value;
+    this.store.clear();
+    this.addHistory(prev, this.store.value);
+    this.opts.onChange?.(this.store.value);
+    this.notify();
   }
 
-  createSystemPromptMessage(text: string): UChatMessage {
-    // id を付与して安定したキーに利用
-    return { id: newId(), role: 'system', content: [{ type: 'text', text }] }
-  }
-
-  addMessage(msg: UChatMessage): void {
-    const prev = [...this.messages]
-    // id が無ければ付与
-    const withId = msg.id ? msg : { ...msg, id: newId() }
-    this.messages = [...this.messages, withId]
-    this.addHistory(prev, this.messages)
-    this.opts.onChange?.(this.messages)
-    this.notify()
-  }
-
-  modifyChatMessage(index: number, msg: UChatMessage): void {
-    const prev = [...this.messages]
-    const next = [...this.messages]
-    next[index] = msg
-    this.messages = next
-    this.addHistory(prev, next)
-    this.opts.onChange?.(next)
-    this.notify()
-  }
-
-  clear(): void {
-    const prev = [...this.messages]
-    this.messages = []
-    this.addHistory(prev, this.messages)
-    this.opts.onChange?.(this.messages)
-    this.notify()
-  }
-
-  getLastMessage(): UChatMessage | undefined {
-    return this.messages[this.messages.length - 1]
-  }
-
-  removeMessage(index: number): void {
-    const prev = [...this.messages]
-    const next = [...this.messages]
-    next.splice(index, 1)
-    this.messages = next
-    this.addHistory(prev, next)
-    this.opts.onChange?.(next)
-    this.notify()
-  }
-
-  // システムメッセージを追加したコピーを返す
-  getMessagesWithSystemPrompt(text: string): UChat {
-    const system = this.createSystemPromptMessage(text)
-    return [system, ...this.messages]
-  }
+  getMessagesWithSystemPrompt(text: string) { return this.store.withSystemPrompt(text); }
 
   setupDeltaFunctions(): DeltaStreamFunctions {
-    let index = -1
-    let prev: UChat = []
-    let inFlight = false
-    const getMsg = () => this.messages[index]
-
+    let prev: UChat = [];
     return {
-      start: (initial?: Partial<UChatMessage>) => {
-        if (inFlight) {
-          console.warn('Delta stream already started')
-          return
-        }
-        inFlight = true
-        this.streamBuffer = ''
-        const base: UChatMessage = {
-          role: 'assistant',
-          content: [{ type: 'text', text: '' }],
-          ...initial,
-          id: initial?.id ?? newId(),
-        }
-        prev = [...this.messages]
-        index = this.messages.length
-        this.messages = [...this.messages, base]
-        this.streamingIndex = index
-        this.notify()
+      start: (initial) => {
+        prev = [...this.store.value];
+        this.session.start(initial);
+        this.notify();
       },
-      setInfo: (info: Partial<UChatMessage>) => {
-        const msg = getMsg()
-        if (!msg) return
-        Object.assign(msg, info)
-        this.messages = [...this.messages]
-        this.notify()
+      setInfo: (info) => {
+        this.session.setInfo(info);
+        this.notify();
       },
-      pushDelta: (delta: string) => {
-        if (!inFlight) return
-        const msg = getMsg()
-        if (!msg || msg.role !== 'assistant') return
-        this.streamBuffer += delta
-        msg.content = [{ type: 'text', text: this.streamBuffer }]
-        this.messages = [...this.messages]
-        this.notify()
+      pushDelta: (d) => {
+        this.session.delta(d);
+        this.notify();
       },
-      finish: (text?: string, message?: UChatMessage) => {
-        if (!inFlight) return
-        inFlight = false
-        const msg = getMsg()
-        if (!msg) return
-        index = -1
-        this.streamingIndex = null
-        Object.assign(msg, message)
-        if (text) msg.content = [{ type: 'text', text: text }]
-        const next = [...this.messages]
-        this.messages = next
-        this.addHistory(prev, next)
-        this.opts.onChange?.(next)
-        this.notify()
+      finish: (text, message) => {
+        this.session.finish(text, message);
+        const next = this.store.value;
+        this.addHistory(prev, next);
+        this.opts.onChange?.(next);
+        this.notify();
       },
       stop: () => {
-        inFlight = false
-        index = -1
-        this.streamingIndex = null
+        console.log('DeltaStreamFunctions stop');
+        this.session.stop();
+        this.notify();
       }
-    }
+    };
+  }
+
+  get streamingIndex() { return this.session.streamingIndex; }
+
+  removeMessage(i: number) {
+    const prev = this.store.value;
+    this.store.removeAt(i);
+    this.addHistory(prev, this.store.value);
+    this.opts.onChange?.(this.store.value);
+    this.notify();
   }
 }
 
@@ -222,6 +166,8 @@ export function UChatMessageListControlView(props: {
 
   const lineCount = editText.split('\n').length
   const h = Math.min(600, Math.max(120, lineCount * 20))
+
+
 
   return (
     <Drag.NoDrag>
@@ -280,8 +226,19 @@ export function UChatMessageListControlView(props: {
               ) : (
                 <div className="break-all select-text">
                   {msg.content.map((part, i) => {
+                    // ストリーミング中かどうか（メッセージ単位）
+                    const isStreaming = control.streamingIndex === index;
                     if (part.type === 'text') {
-                      return (
+                      // ストリーミング中はMarkdownの再レイアウトを避けて<pre>で表示、
+                      // 完了後はMarkdownで整形して表示
+                      return isStreaming ? (
+                        <pre
+                          key={partKey(part, i)}
+                          className="whitespace-pre-wrap break-words select-text"
+                        >
+                          {part.text}
+                        </pre>
+                      ) : (
                         <Markdown key={partKey(part, i)} remarkPlugins={[remarkGfm]}>
                           {part.text}
                         </Markdown>
@@ -402,17 +359,6 @@ function renderFilePart(part: Extract<UPart, { type: 'file' }>, key: string | nu
     default:
       return null
   }
-}
-
-// --- key helpers ---
-function newId(): string {
-  try {
-    const g: any = globalThis as any
-    if (g?.crypto && typeof g.crypto.randomUUID === 'function') {
-      return g.crypto.randomUUID()
-    }
-  } catch { }
-  return `m_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
 }
 
 function messageKey(msg: UChatMessage, index: number): string | number {

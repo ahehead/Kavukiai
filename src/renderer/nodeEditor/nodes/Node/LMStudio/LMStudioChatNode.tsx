@@ -131,7 +131,6 @@ export class LMStudioChatNode extends MessagePortNode<
         forward('exec')
         break
       case 'finish': {
-        // LMStudio の完了イベントを UChatCommandEvent に変換（共通関数へ委譲）
         const message: UChatMessage =
           createUChatMessageFromLMStudioFinishEvent(evt)
         this.command = { type: 'finish', text: evt.result.content, message }
@@ -143,10 +142,6 @@ export class LMStudioChatNode extends MessagePortNode<
       case 'error':
         this.command = { type: 'error', message: evt.message }
         await this.logAndTerminate('error', evt.message, forward)
-        break
-      case 'abort':
-        this.command = { type: 'error', message: 'aborted' }
-        await this.logAndTerminate('error', 'aborted', forward)
         break
     }
   }

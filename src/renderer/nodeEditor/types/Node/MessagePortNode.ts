@@ -39,14 +39,8 @@ export abstract class MessagePortNode<
 
   /** 共通の停止ロジック */
   protected async stopExecution() {
-    if (this.status === NodeStatus.RUNNING && this.port) {
+    if (this.port) {
       this.port.postMessage({ type: "abort" });
-      this.port.close();
-      this.port = null;
-      this.onLog("Stop");
-      await this.changeStatus(this.area, NodeStatus.IDLE);
-    } else if (this.status === NodeStatus.RUNNING) {
-      await this.changeStatus(this.area, NodeStatus.IDLE);
     } else {
       this.onLog("Already stopped");
     }
@@ -110,7 +104,9 @@ export abstract class MessagePortNode<
   }
 
   async destroy() {
-    await this.stopExecution();
+    this.port?.postMessage({ type: "abort" });
+    this.port?.close();
+    this.port = null;
   }
 
   /* ========= サブクラスが実装するフック ========= */
