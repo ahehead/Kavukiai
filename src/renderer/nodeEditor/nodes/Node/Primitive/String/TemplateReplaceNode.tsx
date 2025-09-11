@@ -49,9 +49,11 @@ export class TemplateReplaceNode extends SerializableInputsNode<
     const tpl = template?.[0] ?? ''
     const data = obj?.[0] ?? {}
     let missing = false
-    this.result = tpl.replace(/{{(.*?)}}/g, (_m, key) => {
-      if (key in data) {
-        const v = (data as Record<string, unknown>)[key]
+    // allow spaces around key like {{   test   }}
+    this.result = tpl.replace(/{{\s*([^{}]+?)\s*}}/g, (_m, key) => {
+      const k = String(key).trim()
+      if (k in data) {
+        const v = (data as Record<string, unknown>)[k]
         return v !== undefined ? String(v) : ''
       }
       missing = true
@@ -78,6 +80,5 @@ export class TemplateReplaceNode extends SerializableInputsNode<
 
   deserializeControlValue(data: { result: string }): void {
     this.result = data.result
-    this.controls.console.addValue(`Deserialized result: ${this.result}`)
   }
 }
