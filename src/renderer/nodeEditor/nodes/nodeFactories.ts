@@ -11,7 +11,6 @@ import type {
 } from "../types/Schemes";
 import {
   BoolNode,
-  ChatMessageNode,
   CodeFenceNode,
   ComfyDesktopStartNode,
   ComfyUIFreeMemoryNode,
@@ -44,7 +43,6 @@ import {
   PrepareWorkflowPromptNode,
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
-  RoleNode,
   RunNode,
   SelectImageNode,
   ServerStatusNode,
@@ -71,8 +69,6 @@ import { UChatToLMStudioNode } from "./Node/Chat/UChatToLMStudioNode";
 import { UChatToOpenAINode } from "./Node/Chat/UChatToOpenAINode";
 import { UChatToStringNode } from "./Node/Chat/UChatToStringNode";
 import { UPartTextNode } from "./Node/Chat/UPartTextNode";
-import { GetLastMessageNode } from "./Node/OpenAI/Chat/GetLastMessageNode";
-import { OpenAIToChatEventNode } from "./Node/OpenAI/Chat/OpenAIToChatEventNode";
 import { ArrayNode } from "./Node/Primitive/ArrayNode";
 import { IFNode } from "./Node/Primitive/Flow/IFNode";
 
@@ -172,16 +168,11 @@ export const nodeFactories = {
   // chat
   UChatToString: () => new UChatToStringNode(),
   UChatGetLastMessage: () => new UChatGetLastMessageNode(),
-  GetLastMessage: () => new GetLastMessageNode(),
-  OpenAIToChatEvent: () => new OpenAIToChatEventNode(),
   OpenAIToUChatCommand: () => new OpenAIToUChatCommandNode(),
-  ChatMessage: () => new ChatMessageNode(),
   UChatMessage: () => new UChatMessageNode(),
   UChatMessageByString: () => new UChatMessageByStringNode(),
   UPartText: ({ history, area, dataflow }) =>
     new UPartTextNode("", history, area, dataflow),
-  Role: ({ history, area, dataflow }) =>
-    new RoleNode("user", history, area, dataflow),
   UChatToOpenAI: () => new UChatToOpenAINode(),
   UChatToLMStudio: () => new UChatToLMStudioNode(),
   UChat: ({ history, area, dataflow, controlflow }) =>

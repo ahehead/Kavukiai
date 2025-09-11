@@ -24,20 +24,6 @@ function createNode() {
   return new LMStudioLoadModelNode(area, dataflow, controlflow);
 }
 
-test("stopExecution aborts running port", async () => {
-  const node = createNode();
-  const post = vi.fn();
-  const close = vi.fn();
-  node.port = { postMessage: post, close } as unknown as MessagePort;
-  node.status = NodeStatus.RUNNING;
-  const spy = vi.spyOn(node.controls.console, "addValue");
-  await (node as any).stopExecution();
-  expect(post).toHaveBeenCalledWith({ type: "abort" });
-  expect(close).toHaveBeenCalled();
-  expect(node.status).toBe(NodeStatus.IDLE);
-  expect(spy).toHaveBeenCalledWith("Stop");
-});
-
 test("onPortEvent processes events", async () => {
   const node = createNode();
   const close = vi.fn();

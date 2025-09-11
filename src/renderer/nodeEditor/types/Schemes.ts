@@ -5,14 +5,12 @@ import type { ReactArea2D } from "rete-react-plugin";
 import type {
   ArrayNode,
   BoolNode,
-  ChatMessageNode,
   CodeFenceNode,
   ComfyDesktopStartNode,
   ComfyUIFreeMemoryNode,
   ComfyUINode,
   CounterLoopNode,
   CreateSelectNode,
-  GetLastMessageNode,
   GetModelInfoListNode,
   IFNode,
   InspectorNode,
@@ -37,13 +35,11 @@ import type {
   ObjectToStringNode,
   ObjectToYAMLStringNode,
   OpenAINode,
-  OpenAIToChatEventNode,
   OpenAIToUChatCommandNode,
   PrepareWorkflowPromptNode,
   ResponseCreateParamsBaseNode,
   ResponseTextConfigNode,
   ReverseRoleNode,
-  RoleNode,
   RunNode,
   SelectImageNode,
   ServerStatusNode,
@@ -92,9 +88,6 @@ export type NodeTypes =
   | ResponseCreateParamsBaseNode
   | UChatToStringNode
   | UChatGetLastMessageNode
-  | GetLastMessageNode
-  | ChatMessageNode
-  | RoleNode
   | UChatMessageByStringNode
   | UChatMessageNode
   | UPartTextNode
@@ -136,7 +129,6 @@ export type NodeTypes =
   | UserWorkflowListNode
   | WorkflowInputsNode
   | WorkflowOutputsNode
-  | OpenAIToChatEventNode
   | OpenAIToUChatCommandNode
   | UChatToOpenAINode
   | UChatToLMStudioNode

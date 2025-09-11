@@ -1,7 +1,5 @@
 import type { TSchema } from "@sinclair/typebox";
 import * as PromptRecipe from "shared/ComfyUIType";
-import { ChatCommandEvent, ChatCommandEventOrNull } from "./ChatCommandEvent";
-import { ChatMessageItem, ChatMessageItemList } from "./ChatMessageItem";
 import * as DefaultSchema from "./DefaultSchema";
 import { LMStudioChatPortEventOrNull } from "./LMStudioChatPortEventOrNull";
 import {
@@ -45,8 +43,6 @@ const registry = {
   ...EventsSchemas,
   OpenAIClientResponse,
   OpenAIClientResponseOrNull,
-  ChatMessageItem,
-  ChatMessageItemList,
   UChatRole,
   UFileRef,
   UPart,
@@ -58,8 +54,6 @@ const registry = {
   ChatHistoryData,
   ...ModelInfoSchemas,
   ...StatusSchemas,
-  ChatCommandEvent,
-  ChatCommandEventOrNull,
   LMStudioChatPortEventOrNull,
   NodeImage,
   NodeImageArray,
