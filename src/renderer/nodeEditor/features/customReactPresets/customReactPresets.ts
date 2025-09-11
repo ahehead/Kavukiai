@@ -38,10 +38,6 @@ import {
   ListControl,
   ListControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/List";
-import {
-  ModelInfoListControl,
-  ModelInfoListControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/ModelInfoListControl";
 // MultiLine
 import {
   MultiLineControl,
@@ -67,6 +63,10 @@ import {
   SwitchControl,
   SwitchControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Switch";
+import {
+  ModelInfoListControl,
+  ModelInfoListControlView,
+} from "renderer/nodeEditor/nodes/Controls/LMStudio/ModelInfoListControl";
 // RunButton
 import {
   RunButtonControl,

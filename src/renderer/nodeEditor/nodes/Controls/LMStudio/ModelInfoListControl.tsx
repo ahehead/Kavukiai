@@ -13,7 +13,6 @@ export interface ModelInfoListControlParams
   extends ControlOptions<string | null> {
   list: ModelInfo[]
   selectedKey?: string | null
-  selectLabel?: string
 }
 
 export class ModelInfoListControl extends BaseControl<
@@ -62,20 +61,14 @@ export class ModelInfoListControl extends BaseControl<
       data: {
         list: this.list,
         selectedKey: this.selectedKey,
-        label: this.opts.label,
-        editable: this.opts.editable,
-        selectLabel: this.opts.selectLabel,
       },
     }
   }
 
   override setFromJSON({ data }: ControlJson): void {
-    const { list, selectedKey, label, editable, selectLabel } = data as any
+    const { list, selectedKey, } = data as any
     this.list = list ?? []
     this.selectedKey = selectedKey ?? null
-    this.opts.label = label
-    this.opts.editable = editable
-    this.opts.selectLabel = selectLabel
     this.notify()
   }
 }
