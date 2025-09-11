@@ -17,7 +17,7 @@ export class SelectWorkflowControl extends BaseControl<
   SelectWorkflowControlParams
 > {
   source: 'userData' | 'template'
-  // 内部状態を一括管理し、変更時に新しいオブジェクト参照を生成して useSyncExternalStore の差分検知を確実にする
+
   private _state: {
     items: string[]
     selected: string | null
@@ -123,7 +123,7 @@ export function SelectWorkflowControlView({
 
   // cva: list コンテナ
   const listContainerStyles = cva(
-    'border rounded p-1 text-xs overflow-auto bg-node-bg flex flex-col gap-0.5',
+    'border rounded p-1 text-xs overflow-auto bg-node-bg flex flex-col gap-0.5 w-full h-full min-w-0 break-words',
     {
       variants: {
         loading: {
@@ -137,7 +137,7 @@ export function SelectWorkflowControlView({
 
   // cva: ワークフロー項目ボタン
   const workflowItemButton = cva(
-    'text-left px-2 py-1 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-node-accent transition-colors',
+    'w-full min-w-0 text-left px-2 py-1 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-node-accent transition-colors break-words',
     {
       variants: {
         selected: {
@@ -150,50 +150,40 @@ export function SelectWorkflowControlView({
   )
   return (
     <Drag.NoDrag>
-      <div className="flex flex-col w-full gap-1 h-full">
-        {/* Error message (moved to top) */}
-        <div
-          className={
-            'text-xs min-h-4 transition-colors empty:hidden ' +
-            (state.error ? 'text-red-500' : 'text-transparent')
-          }
-        >
-          {state.error}
-        </div>
-        {/* list */}
-        <div className="flex flex-col gap-1 w-full h-full">
-          <div className={listContainerStyles({ loading: state.loading })}>
-            {state.loading && (
-              <div className="text-muted-foreground italic px-1 py-0.5">
-                Loading...
-              </div>
-            )}
-            {!state.loading && state.items.length === 0 && (
-              <div className="text-muted-foreground italic px-1 py-0.5">
-                No workflows
-              </div>
-            )}
-            {!state.loading &&
-              state.items.map(it => {
-                const selected = state.selected === it
-                return (
-                  <button
-                    key={it}
-                    type="button"
-                    onClick={() => {
-                      const pre = state.selected
-                      data.addHistory(pre, it)
-                      data.select(it)
-                    }}
-                    className={cn(workflowItemButton({ selected }))}
-                  >
-                    {it}
-                  </button>
-                )
-              })}
-          </div>
+      {/* list */}
+      <div className="flex flex-col gap-1 w-full h-full">
+        <div className={listContainerStyles({ loading: state.loading })}>
+          {state.loading && (
+            <div className="text-muted-foreground italic px-1 py-0.5">
+              Loading...
+            </div>
+          )}
+          {!state.loading && state.items.length === 0 && (
+            <div className="text-muted-foreground italic px-1 py-0.5">
+              No workflows
+            </div>
+          )}
+          {!state.loading &&
+            state.items.map(it => {
+              const selected = state.selected === it
+              return (
+                <button
+                  key={it}
+                  type="button"
+                  onClick={() => {
+                    const pre = state.selected
+                    data.addHistory(pre, it)
+                    data.select(it)
+                  }}
+                  className={cn(workflowItemButton({ selected }))}
+                >
+                  {it}
+                </button>
+              )
+            })}
         </div>
       </div>
+
     </Drag.NoDrag>
   )
 }

@@ -225,17 +225,17 @@ dialog::backdrop {
   backdrop-filter: blur(5px);
 }
 
-/* ノードのコントロール部分に無理やり高さを伝搬させる。 */
+/* ノードのコントロール部分に無理やり高さと幅を伝搬させる。 */
 .control {
-  @apply flex min-h-0;
+  @apply flex min-h-0 w-full;
 }
 
 .control > span {
-  @apply flex flex-1 h-full;
+  @apply flex flex-1 h-full w-full;
 }
 
 .control > span > span {
-  @apply flex flex-1 h-full;
+  @apply flex flex-1 h-full w-full;
 }
 
 /* 縦に目一杯伸ばしたいコントロール に flex-1 を適用。
