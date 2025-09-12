@@ -143,10 +143,6 @@ export class WorkflowIOSelectControl extends BaseControl<
   }
 
   setWorkflow(workflow: unknown) {
-    // NOTE: workflow 自体は永続化しない方針。
-    // 以前は候補に存在しない selection をここで pruning していたが、
-    // 復元直後 (workflow 未設定 or 差分あり) に消えてしまう問題があったため保持する。
-    // UI 側で "missing" として表示し、ユーザーが手動で削除できるようにする。
     this.setValue({ workflow, selections: this.value.selections })
   }
 
@@ -212,12 +208,18 @@ export class WorkflowIOSelectControl extends BaseControl<
   }
 
   override toJSON(): ControlJson {
-    return { data: { selections: this.value.selections } }
+    // workflow も含めて保存
+    return {
+      data: {
+        workflow: this.value.workflow,
+        selections: this.value.selections
+      }
+    }
   }
 
   override setFromJSON({ data }: ControlJson) {
-    const { selections } = data as any
-    this.setValue({ workflow: undefined, selections })
+    const { selections = [], workflow } = data as any
+    this.setValue({ workflow, selections })
   }
 }
 
@@ -324,8 +326,6 @@ export function WorkflowIOSelectControlView({
                   <div className="flex-1">
                     <div className="text-xs text-muted-foreground">
                       {isInputs(cand) ? cand.path : cand.nodeId}
-                      {isInputs(cand) && (<> · type: {cand.inferredType}</>
-                      )}
                       {missing && (
                         <>
                           {' '}· <span className="text-amber-500">(missing)</span>
@@ -334,8 +334,15 @@ export function WorkflowIOSelectControlView({
                     </div>
                     <div className="font-medium">
                       {cand.nodeTitle}
-                      {isInputs(cand) && ` ·  + ${cand.propKey}`}
+                      {isInputs(cand) && `.${cand.propKey}`}
                     </div>
+                    {isInputs(cand) && (
+                      <div className="col-span-2 text-xs text-muted-foreground">
+                        <code>
+                          value: {String(cand.defaultValue)}
+                        </code>
+                      </div>
+                    )}
                   </div>
                 </label>
                 {selected && (
@@ -368,14 +375,6 @@ export function WorkflowIOSelectControlView({
                           <option value="number">number</option>
                           <option value="boolean">boolean</option>
                         </select>
-                      </div>
-                    )}
-                    {isInputs(cand) && (
-                      <div className="col-span-2 text-xs text-muted-foreground">
-                        default:{' '}
-                        <code>
-                          {String(cand.defaultValue)}
-                        </code>
                       </div>
                     )}
                   </div>
