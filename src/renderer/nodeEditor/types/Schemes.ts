@@ -1,73 +1,15 @@
 import type { GetSchemes } from "rete";
 import type { ContextMenuExtra } from "rete-context-menu-plugin";
 import type { ReactArea2D } from "rete-react-plugin";
-
-import type {
-  ArrayNode,
-  BoolNode,
-  CodeFenceNode,
-  ComfyDesktopStartNode,
-  ComfyUIFreeMemoryNode,
-  ComfyUINode,
-  CounterLoopNode,
-  CreateSelectNode,
-  GetModelInfoListNode,
-  IFNode,
-  InspectorNode,
-  JoinNode,
-  JsonFilePathNode,
-  JsonSchemaFormatNode,
-  JsonSchemaNode,
-  JsonSchemaToObjectNode,
-  ListDownloadedModelsNode,
-  LLMPredictionConfigNode,
-  LMStudioChatNode,
-  LMStudioLoadModelNode,
-  LMStudioStartNode,
-  LMStudioStopNode,
-  LoadWorkflowFileNode,
-  MergeWorkflowInputsDefaultsNode,
-  ModelInfoToModelListNode,
-  MultiLineStringNode,
-  NumberNode,
-  NumberToStringNode,
-  ObjectPickNode,
-  ObjectToStringNode,
-  ObjectToYAMLStringNode,
-  OpenAINode,
-  OpenAIToUChatCommandNode,
-  PrepareWorkflowPromptNode,
-  ResponseCreateParamsBaseNode,
-  ResponseTextConfigNode,
-  ReverseRoleNode,
-  RunNode,
-  SelectImageNode,
-  ServerStatusNode,
-  ShowImageNode,
-  StringFormNode,
-  StringNode,
-  TemplateReplaceNode,
-  TemplateWorkflowListNode,
-  TestNode,
-  UChatGetLastMessageNode,
-  UChatMessageByStringNode,
-  UChatMessageNode,
-  UChatNode,
-  UChatRoleNode,
-  UChatToLMStudioNode,
-  UChatToOpenAINode,
-  UChatToStringNode,
-  UnknownNode,
-  UnLoadModelNode,
-  UPartTextNode,
-  UserWorkflowListNode,
-  WorkflowInputsNode,
-  WorkflowOutputsNode,
-} from "../nodes/Node";
+import type { NodeFactoriesType } from "../nodes/nodeFactories";
 import type { Connection } from "./Connection/Connection";
 import type { BaseNode } from "./Node/BaseNode";
 import type { NodeControl } from "./NodeControl";
 import type { TypedSocket } from "./Socket/TypedSocket";
+
+export type NodeTypes = ReturnType<NodeFactoriesType[keyof NodeFactoriesType]>;
+
+export type NodeTypeKey = keyof NodeFactoriesType;
 
 export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
 
@@ -75,70 +17,6 @@ export type Schemes = GetSchemes<
   NodeTypes,
   Connection<NodeInterface, NodeInterface>
 >;
-
-export type NodeTypes =
-  | UnknownNode
-  | TestNode
-  | StringNode
-  | NumberNode
-  | RunNode
-  | MultiLineStringNode
-  | InspectorNode
-  | OpenAINode
-  | ResponseCreateParamsBaseNode
-  | UChatToStringNode
-  | UChatGetLastMessageNode
-  | UChatMessageByStringNode
-  | UChatMessageNode
-  | UPartTextNode
-  | BoolNode
-  | IFNode
-  | CounterLoopNode
-  | ArrayNode
-  | ObjectPickNode
-  | JsonSchemaToObjectNode
-  | JsonSchemaNode
-  | JsonSchemaFormatNode
-  | ResponseTextConfigNode
-  | TemplateReplaceNode
-  | StringFormNode
-  | JoinNode
-  | NumberToStringNode
-  | ObjectToStringNode
-  | ObjectToYAMLStringNode
-  | CodeFenceNode
-  | CreateSelectNode
-  | ShowImageNode
-  | SelectImageNode
-  | ListDownloadedModelsNode
-  | GetModelInfoListNode
-  | ModelInfoToModelListNode
-  | LMStudioStartNode
-  | LMStudioStopNode
-  | LMStudioLoadModelNode
-  | ServerStatusNode
-  | UnLoadModelNode
-  | LLMPredictionConfigNode
-  | ComfyUINode
-  | ComfyUIFreeMemoryNode
-  | ComfyDesktopStartNode
-  | PrepareWorkflowPromptNode
-  | LoadWorkflowFileNode
-  | MergeWorkflowInputsDefaultsNode
-  | TemplateWorkflowListNode
-  | UserWorkflowListNode
-  | WorkflowInputsNode
-  | WorkflowOutputsNode
-  | OpenAIToUChatCommandNode
-  | UChatToOpenAINode
-  | UChatToLMStudioNode
-  | UChatNode
-  | UChatRoleNode
-  | LMStudioChatNode
-  | JsonFilePathNode
-  | ReverseRoleNode;
-
-export type NodeTypeKey = NodeTypes["label"];
 
 // BaseNodeを埋めたもの
 export interface NodeInterface

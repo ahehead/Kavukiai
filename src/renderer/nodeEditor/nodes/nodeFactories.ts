@@ -1,14 +1,16 @@
+// NOTE: このファイルは nodeFactories から型を逆算する方式へ移行するため
+// 循環参照を避ける目的で Schemes.ts への依存を排除した。
+// ここでは Rete 関連のジェネリクスは any で受け、利用側(Schemes)で再度型付けされる。
 import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
 import type { DataflowEngine } from "../features/safe-dataflow/dataflowEngin";
-import type {
-  AreaExtra,
-  NodeTypeKey,
-  NodeTypes,
-  Schemes,
-} from "../types/Schemes";
+
+// forward style placeholder types
+type Schemes = any;
+type AreaExtra = any;
+
 import {
   BoolNode,
   CodeFenceNode,
@@ -80,270 +82,522 @@ export type NodeDeps = {
   history: HistoryPlugin<Schemes, HistoryActions<Schemes>>;
   message?: string;
 };
+// ===== Factory + Meta 定義 =====================================
+// カテゴリ & サブカテゴリ情報を meta に付与し、メニュー構築を自動化する。
+export interface FactoryMeta {
+  category: string; // 第一階層 (例: "Primitive", "UChat")
+  subcategory?: string; // 第二階層 (例: "String", "Flow")
+  label?: string; // 表示名。指定なければ factory key
+  devOnly?: boolean; // development のみ表示
+}
 
+type AnyNodeInstance = { label: string };
+type NodeFactory<N extends AnyNodeInstance = AnyNodeInstance> = (
+  deps: NodeDeps
+) => N;
+export type FactoryWithMeta<N extends AnyNodeInstance = AnyNodeInstance> =
+  NodeFactory<N> & {
+    meta: FactoryMeta;
+  };
+
+function define<N extends AnyNodeInstance>(
+  fn: (deps: NodeDeps) => N,
+  meta: FactoryMeta
+): FactoryWithMeta<N> {
+  (fn as any).meta = meta;
+  return fn as FactoryWithMeta<N>;
+}
+
+// nodeFactories 本体
 export const nodeFactories = {
-  Unknown: ({ message }) => new UnknownNode(message),
-  Test: () => new TestNode(),
-  Inspector: ({ dataflow, area, controlflow }) =>
-    new InspectorNode(dataflow, area, controlflow),
+  // Primitive / String
+  Unknown: define(
+    ({ message }: NodeDeps): UnknownNode => new UnknownNode(message),
+    {
+      category: "Debug",
+      devOnly: true,
+    }
+  ),
+  Test: define((_: NodeDeps): TestNode => new TestNode(), {
+    category: "Debug",
+    devOnly: true,
+  }),
+  Inspector: define(
+    ({ dataflow, area, controlflow }: NodeDeps): InspectorNode =>
+      new InspectorNode(dataflow, area, controlflow),
+    { category: "Inspector" }
+  ),
 
-  String: ({ history, area, dataflow }) =>
-    new StringNode("", history, area, dataflow),
-  MultiLineString: ({ history, area, dataflow }) =>
-    new MultiLineStringNode("", history, area, dataflow),
-  TemplateReplace: ({ dataflow, controlflow }) =>
-    new TemplateReplaceNode(dataflow, controlflow),
-  JsonFilePath: ({ history, area, dataflow }) =>
-    new JsonFilePathNode("", history, area, dataflow),
-  StringForm: ({ history, area, dataflow, controlflow }: NodeDeps) =>
-    new StringFormNode("", history, area, dataflow, controlflow),
-  Join: ({ dataflow }) => new JoinNode(dataflow),
-  NumberToString: () => new NumberToStringNode(),
-  ObjectToString: () => new ObjectToStringNode(),
-  ObjectToYAMLString: () => new ObjectToYAMLStringNode(),
-  CodeFence: ({ dataflow }) => new CodeFenceNode(dataflow),
+  String: define(
+    ({ history, area, dataflow }: NodeDeps): StringNode =>
+      new StringNode("", history, area, dataflow),
+    { category: "Primitive", subcategory: "String" }
+  ),
+  MultiLineString: define(
+    ({ history, area, dataflow }: NodeDeps): MultiLineStringNode =>
+      new MultiLineStringNode("", history, area, dataflow),
+    { category: "Primitive", subcategory: "String" }
+  ),
+  TemplateReplace: define(
+    ({ dataflow, controlflow }: NodeDeps): TemplateReplaceNode =>
+      new TemplateReplaceNode(dataflow, controlflow),
+    { category: "Primitive", subcategory: "String" }
+  ),
+  JsonFilePath: define(
+    ({ history, area, dataflow }: NodeDeps): JsonFilePathNode =>
+      new JsonFilePathNode("", history, area, dataflow),
+    { category: "Primitive", subcategory: "String" }
+  ),
+  StringForm: define(
+    ({ history, area, dataflow, controlflow }: NodeDeps): StringFormNode =>
+      new StringFormNode("", history, area, dataflow, controlflow),
+    { category: "Primitive", subcategory: "String" }
+  ),
+  Join: define(({ dataflow }: NodeDeps): JoinNode => new JoinNode(dataflow), {
+    category: "Primitive",
+    subcategory: "String",
+  }),
+  NumberToString: define(
+    (_: NodeDeps): NumberToStringNode => new NumberToStringNode(),
+    {
+      category: "Primitive",
+      subcategory: "String",
+    }
+  ),
+  ObjectToString: define(
+    (_: NodeDeps): ObjectToStringNode => new ObjectToStringNode(),
+    {
+      category: "Primitive",
+      subcategory: "String",
+    }
+  ),
+  ObjectToYAMLString: define(
+    (_: NodeDeps): ObjectToYAMLStringNode => new ObjectToYAMLStringNode(),
+    {
+      category: "Primitive",
+      subcategory: "String",
+    }
+  ),
+  CodeFence: define(
+    ({ dataflow }: NodeDeps): CodeFenceNode => new CodeFenceNode(dataflow),
+    {
+      category: "Primitive",
+      subcategory: "String",
+    }
+  ),
 
-  Number: ({ history, area, dataflow }) =>
-    new NumberNode(0, history, area, dataflow),
-  Bool: ({ history, area, dataflow }) => new BoolNode(history, area, dataflow),
+  Number: define(
+    ({ history, area, dataflow }: NodeDeps): NumberNode =>
+      new NumberNode(0, history, area, dataflow),
+    { category: "Primitive" }
+  ),
+  Bool: define(
+    ({ history, area, dataflow }: NodeDeps): BoolNode =>
+      new BoolNode(history, area, dataflow),
+    { category: "Primitive" }
+  ),
 
-  Array: ({ area, dataflow }) => new ArrayNode(area, dataflow),
-  CreateSelect: ({ dataflow, controlflow }) =>
-    new CreateSelectNode(dataflow, controlflow),
-  SelectImage: ({ history, area, dataflow }) =>
-    new SelectImageNode(history, area, dataflow),
-  ShowImage: ({ area, dataflow, controlflow }) =>
-    new ShowImageNode(area, dataflow, controlflow),
+  Array: define(
+    ({ area, dataflow }: NodeDeps): ArrayNode => new ArrayNode(area, dataflow),
+    {
+      category: "Primitive",
+    }
+  ),
+  CreateSelect: define(
+    ({ dataflow, controlflow }: NodeDeps): CreateSelectNode =>
+      new CreateSelectNode(dataflow, controlflow),
+    { category: "Primitive" }
+  ),
+  SelectImage: define(
+    ({ history, area, dataflow }: NodeDeps): SelectImageNode =>
+      new SelectImageNode(history, area, dataflow),
+    { category: "Primitive", subcategory: "Image" }
+  ),
+  ShowImage: define(
+    ({ area, dataflow, controlflow }: NodeDeps): ShowImageNode =>
+      new ShowImageNode(area, dataflow, controlflow),
+    { category: "Primitive", subcategory: "Image" }
+  ),
 
   // lmstudio nodes
-  ListDownloadedModels: ({ dataflow, controlflow }) =>
-    new ListDownloadedModelsNode(dataflow, controlflow),
-  GetModelInfoList: ({ dataflow, controlflow }) =>
-    new GetModelInfoListNode(dataflow, controlflow),
-  ModelInfoToModelList: () => new ModelInfoToModelListNode(),
-  LMStudioChat: ({ area, dataflow, controlflow }) =>
-    new LMStudioChatNode(area, dataflow, controlflow),
-  LMStudioStart: ({ controlflow }) => new LMStudioStartNode(controlflow),
-  LMStudioStop: ({ controlflow }) => new LMStudioStopNode(controlflow),
-  LMStudioLoadModel: ({ area, dataflow, controlflow }) =>
-    new LMStudioLoadModelNode(area, dataflow, controlflow),
-  ServerStatus: ({ dataflow, controlflow }) =>
-    new ServerStatusNode(dataflow, controlflow),
-  UnLoadModel: ({ controlflow }) => new UnLoadModelNode(controlflow),
-  LLMPredictionConfig: ({ dataflow }) => new LLMPredictionConfigNode(dataflow),
+  ListDownloadedModels: define(
+    ({ dataflow, controlflow }: NodeDeps): ListDownloadedModelsNode =>
+      new ListDownloadedModelsNode(dataflow, controlflow),
+    { category: "LMStudio" }
+  ),
+  GetModelInfoList: define(
+    ({ dataflow, controlflow }: NodeDeps): GetModelInfoListNode =>
+      new GetModelInfoListNode(dataflow, controlflow),
+    { category: "LMStudio" }
+  ),
+  ModelInfoToModelList: define(
+    (_: NodeDeps): ModelInfoToModelListNode => new ModelInfoToModelListNode(),
+    { category: "LMStudio" }
+  ),
+  LMStudioChat: define(
+    ({ area, dataflow, controlflow }: NodeDeps): LMStudioChatNode =>
+      new LMStudioChatNode(area, dataflow, controlflow),
+    { category: "LMStudio" }
+  ),
+  LMStudioStart: define(
+    ({ controlflow }: NodeDeps): LMStudioStartNode =>
+      new LMStudioStartNode(controlflow),
+    { category: "LMStudio" }
+  ),
+  LMStudioStop: define(
+    ({ controlflow }: NodeDeps): LMStudioStopNode =>
+      new LMStudioStopNode(controlflow),
+    { category: "LMStudio" }
+  ),
+  LMStudioLoadModel: define(
+    ({ area, dataflow, controlflow }: NodeDeps): LMStudioLoadModelNode =>
+      new LMStudioLoadModelNode(area, dataflow, controlflow),
+    { category: "LMStudio" }
+  ),
+  ServerStatus: define(
+    ({ dataflow, controlflow }: NodeDeps): ServerStatusNode =>
+      new ServerStatusNode(dataflow, controlflow),
+    { category: "LMStudio" }
+  ),
+  UnLoadModel: define(
+    ({ controlflow }: NodeDeps): UnLoadModelNode =>
+      new UnLoadModelNode(controlflow),
+    { category: "LMStudio" }
+  ),
+  LLMPredictionConfig: define(
+    ({ dataflow }: NodeDeps): LLMPredictionConfigNode =>
+      new LLMPredictionConfigNode(dataflow),
+    { category: "LMStudio" }
+  ),
 
   // ComfyUI
-  ComfyUI: ({ area, dataflow, controlflow }) =>
-    new ComfyUINode(area, dataflow, controlflow),
-  ComfyDesktopStart: ({ area, dataflow, controlflow }) =>
-    new ComfyDesktopStartNode(area, dataflow, controlflow),
-  ComfyUIFreeMemory: ({ area, history, dataflow, controlflow }) =>
-    new ComfyUIFreeMemoryNode(area, history, dataflow, controlflow),
-  PrepareWorkflowPrompt: ({ area, history, dataflow, controlflow }) =>
-    new PrepareWorkflowPromptNode(area, history, dataflow, controlflow),
-  LoadWorkflowFile: ({ area, dataflow, controlflow }) =>
-    new LoadWorkflowFileNode(area, dataflow, controlflow),
-  TemplateWorkflowList: ({ area, history, dataflow, controlflow }) =>
-    new TemplateWorkflowListNode(area, history, dataflow, controlflow),
-  UserWorkflowList: ({ history, dataflow, controlflow }) =>
-    new UserWorkflowListNode(history, dataflow, controlflow),
-  WorkflowInputs: ({ history, area, dataflow, controlflow }) =>
-    new WorkflowInputsNode(history, area, dataflow, controlflow),
-  WorkflowOutputs: ({ history, area, dataflow, controlflow }) =>
-    new WorkflowOutputsNode(history, area, dataflow, controlflow),
-  MergeWorkflowInputsDefaults: () => new MergeWorkflowInputsDefaultsNode(),
+  ComfyUI: define(
+    ({ area, dataflow, controlflow }: NodeDeps): ComfyUINode =>
+      new ComfyUINode(area, dataflow, controlflow),
+    { category: "ComfyUI" }
+  ),
+  ComfyDesktopStart: define(
+    ({ area, dataflow, controlflow }: NodeDeps): ComfyDesktopStartNode =>
+      new ComfyDesktopStartNode(area, dataflow, controlflow),
+    { category: "ComfyUI" }
+  ),
+  ComfyUIFreeMemory: define(
+    ({
+      area,
+      history,
+      dataflow,
+      controlflow,
+    }: NodeDeps): ComfyUIFreeMemoryNode =>
+      new ComfyUIFreeMemoryNode(area, history, dataflow, controlflow),
+    { category: "ComfyUI" }
+  ),
+  PrepareWorkflowPrompt: define(
+    ({
+      area,
+      history,
+      dataflow,
+      controlflow,
+    }: NodeDeps): PrepareWorkflowPromptNode =>
+      new PrepareWorkflowPromptNode(area, history, dataflow, controlflow),
+    { category: "ComfyUI" }
+  ),
+  LoadWorkflowFile: define(
+    ({ area, dataflow, controlflow }: NodeDeps): LoadWorkflowFileNode =>
+      new LoadWorkflowFileNode(area, dataflow, controlflow),
+    { category: "ComfyUI" }
+  ),
+  TemplateWorkflowList: define(
+    ({
+      area,
+      history,
+      dataflow,
+      controlflow,
+    }: NodeDeps): TemplateWorkflowListNode =>
+      new TemplateWorkflowListNode(area, history, dataflow, controlflow),
+    { category: "ComfyUI" }
+  ),
+  UserWorkflowList: define(
+    ({ history, dataflow, controlflow }: NodeDeps): UserWorkflowListNode =>
+      new UserWorkflowListNode(history, dataflow, controlflow),
+    { category: "ComfyUI" }
+  ),
+  WorkflowInputs: define(
+    ({ history, area, dataflow, controlflow }: NodeDeps): WorkflowInputsNode =>
+      new WorkflowInputsNode(history, area, dataflow, controlflow),
+    { category: "ComfyUI" }
+  ),
+  WorkflowOutputs: define(
+    ({ history, area, dataflow, controlflow }: NodeDeps): WorkflowOutputsNode =>
+      new WorkflowOutputsNode(history, area, dataflow, controlflow),
+    { category: "ComfyUI" }
+  ),
+  MergeWorkflowInputsDefaults: define(
+    (_: NodeDeps): MergeWorkflowInputsDefaultsNode =>
+      new MergeWorkflowInputsDefaultsNode(),
+    { category: "ComfyUI" }
+  ),
 
   // OpenAI nodes
-  OpenAI: ({ area, dataflow, controlflow }) =>
-    new OpenAINode(area, dataflow, controlflow),
-  ResponseCreateParamsBase: ({ history, area, dataflow }) =>
-    new ResponseCreateParamsBaseNode(history, area, dataflow),
-  JsonSchemaFormat: ({ history, area, dataflow }) =>
-    new JsonSchemaFormatNode(history, area, dataflow),
-  ResponseTextConfig: () => new ResponseTextConfigNode(),
+  OpenAI: define(
+    ({ area, dataflow, controlflow }: NodeDeps): OpenAINode =>
+      new OpenAINode(area, dataflow, controlflow),
+    { category: "OpenAI" }
+  ),
+  ResponseCreateParamsBase: define(
+    ({ history, area, dataflow }: NodeDeps): ResponseCreateParamsBaseNode =>
+      new ResponseCreateParamsBaseNode(history, area, dataflow),
+    { category: "OpenAI" }
+  ),
+  JsonSchemaFormat: define(
+    ({ history, area, dataflow }: NodeDeps): JsonSchemaFormatNode =>
+      new JsonSchemaFormatNode(history, area, dataflow),
+    { category: "OpenAI" }
+  ),
+  ResponseTextConfig: define(
+    (_: NodeDeps): ResponseTextConfigNode => new ResponseTextConfigNode(),
+    {
+      category: "OpenAI",
+    }
+  ),
 
-  // chat
-  UChatToString: () => new UChatToStringNode(),
-  UChatGetLastMessage: () => new UChatGetLastMessageNode(),
-  OpenAIToUChatCommand: () => new OpenAIToUChatCommandNode(),
-  UChatMessage: () => new UChatMessageNode(),
-  UChatMessageByString: () => new UChatMessageByStringNode(),
-  UPartText: ({ history, area, dataflow }) =>
-    new UPartTextNode("", history, area, dataflow),
-  UChatToOpenAI: () => new UChatToOpenAINode(),
-  UChatToLMStudio: () => new UChatToLMStudioNode(),
-  UChat: ({ history, area, dataflow, controlflow }) =>
-    new UChatNode([], history, area, dataflow, controlflow),
-  UChatRole: ({ history, area, dataflow }) =>
-    new UChatRoleNode("user", history, area, dataflow),
-  ReverseRole: () => new ReverseRoleNode(),
+  // chat / UChat
+  UChatToString: define(
+    (_: NodeDeps): UChatToStringNode => new UChatToStringNode(),
+    {
+      category: "UChat",
+    }
+  ),
+  UChatGetLastMessage: define(
+    (_: NodeDeps): UChatGetLastMessageNode => new UChatGetLastMessageNode(),
+    {
+      category: "UChat",
+    }
+  ),
+  OpenAIToUChatCommand: define(
+    (_: NodeDeps): OpenAIToUChatCommandNode => new OpenAIToUChatCommandNode(),
+    {
+      category: "UChat",
+    }
+  ),
+  UChatMessage: define(
+    (_: NodeDeps): UChatMessageNode => new UChatMessageNode(),
+    { category: "UChat" }
+  ),
+  UChatMessageByString: define(
+    (_: NodeDeps) => new UChatMessageByStringNode(),
+    {
+      category: "UChat",
+    }
+  ),
+  UPartText: define(
+    ({ history, area, dataflow }: NodeDeps): UPartTextNode =>
+      new UPartTextNode("", history, area, dataflow),
+    { category: "UChat" }
+  ),
+  UChatToOpenAI: define(
+    (_: NodeDeps): UChatToOpenAINode => new UChatToOpenAINode(),
+    { category: "UChat" }
+  ),
+  UChatToLMStudio: define(
+    (_: NodeDeps): UChatToLMStudioNode => new UChatToLMStudioNode(),
+    {
+      category: "UChat",
+    }
+  ),
+  UChat: define(
+    ({ history, area, dataflow, controlflow }: NodeDeps): UChatNode =>
+      new UChatNode([], history, area, dataflow, controlflow),
+    { category: "UChat" }
+  ),
+  UChatRole: define(
+    ({ history, area, dataflow }: NodeDeps): UChatRoleNode =>
+      new UChatRoleNode("user", history, area, dataflow),
+    { category: "UChat" }
+  ),
+  ReverseRole: define((_: NodeDeps): ReverseRoleNode => new ReverseRoleNode(), {
+    category: "UChat",
+  }),
 
-  ObjectPick: ({ area, dataflow }) => new ObjectPickNode(area, dataflow),
-  JsonSchemaToObject: ({ editor, history, area, dataflow, controlflow }) =>
-    new JsonSchemaToObjectNode(editor, history, area, dataflow, controlflow),
-  JsonSchema: ({ history, area, dataflow }) =>
-    new JsonSchemaNode(history, area, dataflow),
+  ObjectPick: define(
+    ({ area, dataflow }: NodeDeps): ObjectPickNode =>
+      new ObjectPickNode(area, dataflow),
+    {
+      category: "Primitive",
+      subcategory: "Object",
+    }
+  ),
+  JsonSchemaToObject: define(
+    ({
+      editor,
+      history,
+      area,
+      dataflow,
+      controlflow,
+    }: NodeDeps): JsonSchemaToObjectNode =>
+      new JsonSchemaToObjectNode(editor, history, area, dataflow, controlflow),
+    { category: "Primitive", subcategory: "Object" }
+  ),
+  JsonSchema: define(
+    ({ history, area, dataflow }: NodeDeps): JsonSchemaNode =>
+      new JsonSchemaNode(history, area, dataflow),
+    { category: "Primitive", subcategory: "Object" }
+  ),
 
   // flow
-  IF: ({ history, area, dataflow }) => new IFNode(history, area, dataflow),
-  Run: ({ controlflow }) => new RunNode(controlflow),
-  CounterLoop: ({ history, area, dataflow, controlflow }) =>
-    new CounterLoopNode(1, history, area, dataflow, controlflow),
-} satisfies Record<NodeTypeKey, (deps: NodeDeps) => NodeTypes>;
+  IF: define(
+    ({ history, area, dataflow }: NodeDeps): IFNode =>
+      new IFNode(history, area, dataflow),
+    { category: "Primitive", subcategory: "Flow" }
+  ),
+  Run: define(
+    ({ controlflow }: NodeDeps): RunNode => new RunNode(controlflow),
+    {
+      category: "Primitive",
+      subcategory: "Flow",
+    }
+  ),
+  CounterLoop: define(
+    ({ history, area, dataflow, controlflow }: NodeDeps): CounterLoopNode =>
+      new CounterLoopNode(1, history, area, dataflow, controlflow),
+    { category: "Primitive", subcategory: "Flow" }
+  ),
+} as const satisfies Record<string, FactoryWithMeta>;
 
+// nodeFactories から型を抽出して Schemes.ts 側で利用するための補助型
+export type NodeFactoriesType = typeof nodeFactories;
+
+// ===== メニュー生成 =============================================
 export interface MenuItemDefinition {
   label: string;
   key: string;
   handler?: () => void;
-  factoryKey?: NodeTypeKey;
+  factoryKey?: string;
   subitems?: MenuItemDefinition[];
 }
 
-// types for building raw menu without keys
-type RawMenuItem = {
-  label: string;
-  factoryKey?: NodeTypeKey;
-  subitems?: RawMenuItem[];
-};
-// generate key from label
 const generateKey = (label: string): string =>
   label.toLowerCase().replace(/\s+/g, "-");
 
-// raw menu structure without explicit keys
-const rawMenu: RawMenuItem[] = [
-  {
-    label: "Primitive",
-    subitems: [
-      { label: "Bool", factoryKey: "Bool" },
-      { label: "CreateSelect", factoryKey: "CreateSelect" },
-      { label: "Array", factoryKey: "Array" },
-      { label: "Number", factoryKey: "Number" },
-      {
-        label: "String",
-        subitems: [
-          { label: "String", factoryKey: "String" },
-          { label: "MultiLineString", factoryKey: "MultiLineString" },
-          { label: "TemplateReplace", factoryKey: "TemplateReplace" },
-          { label: "JsonFilePath", factoryKey: "JsonFilePath" },
-          { label: "Join", factoryKey: "Join" },
-          { label: "StringForm", factoryKey: "StringForm" },
-          { label: "NumberToString", factoryKey: "NumberToString" },
-          { label: "ObjectToString", factoryKey: "ObjectToString" },
-          { label: "ObjectToYAMLString", factoryKey: "ObjectToYAMLString" },
-          { label: "CodeFence", factoryKey: "CodeFence" },
-        ],
-      },
-      {
-        label: "Object",
-        subitems: [
-          { label: "JsonSchema", factoryKey: "JsonSchema" },
-          { label: "JsonSchemaToObject", factoryKey: "JsonSchemaToObject" },
-          { label: "ObjectPick", factoryKey: "ObjectPick" },
-        ],
-      },
-      {
-        label: "Flow",
-        subitems: [
-          { label: "IF", factoryKey: "IF" },
-          { label: "Run", factoryKey: "Run" },
-          { label: "CounterLoop", factoryKey: "CounterLoop" },
-        ],
-      },
-      {
-        label: "Image",
-        subitems: [
-          { label: "SelectImage", factoryKey: "SelectImage" },
-          { label: "ShowImage", factoryKey: "ShowImage" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "UChat",
-    subitems: [
-      { label: "UChat", factoryKey: "UChat" },
-      { label: "UChatMessage", factoryKey: "UChatMessage" },
-      { label: "UChatMessageByString", factoryKey: "UChatMessageByString" },
-      { label: "UChatRole", factoryKey: "UChatRole" },
-      { label: "UPartText", factoryKey: "UPartText" },
-      { label: "UChatToString", factoryKey: "UChatToString" },
-      { label: "UChatGetLastMessage", factoryKey: "UChatGetLastMessage" },
-      { label: "UChatToOpenAI", factoryKey: "UChatToOpenAI" },
-      { label: "UChatToLMStudio", factoryKey: "UChatToLMStudio" },
-      { label: "OpenAIToUChatCommand", factoryKey: "OpenAIToUChatCommand" },
-      { label: "ReverseRole", factoryKey: "ReverseRole" },
-    ],
-  },
-  { label: "Inspector", factoryKey: "Inspector" },
-  {
-    label: "LMStudio",
-    subitems: [
-      { label: "ListDownloadedModels", factoryKey: "ListDownloadedModels" },
-      { label: "GetModelInfoList", factoryKey: "GetModelInfoList" },
-      { label: "ModelInfoToModelList", factoryKey: "ModelInfoToModelList" },
-      { label: "LMStudioChat", factoryKey: "LMStudioChat" },
-      { label: "LMStudioStart", factoryKey: "LMStudioStart" },
-      { label: "LMStudioStop", factoryKey: "LMStudioStop" },
-      { label: "LMStudioLoadModel", factoryKey: "LMStudioLoadModel" },
-      { label: "UnLoadModel", factoryKey: "UnLoadModel" },
-      { label: "ServerStatus", factoryKey: "ServerStatus" },
-      { label: "LLMPredictionConfig", factoryKey: "LLMPredictionConfig" },
-    ],
-  },
-  {
-    label: "OpenAI",
-    subitems: [
-      { label: "OpenAI", factoryKey: "OpenAI" },
-      {
-        label: "ResponseCreateParamsBase",
-        factoryKey: "ResponseCreateParamsBase",
-      },
-      { label: "JsonSchemaFormat", factoryKey: "JsonSchemaFormat" },
-
-      { label: "ResponseTextConfig", factoryKey: "ResponseTextConfig" },
-    ],
-  },
-  {
-    label: "ComfyUI",
-    subitems: [
-      { label: "ComfyUI", factoryKey: "ComfyUI" },
-      { label: "ComfyDesktopStart", factoryKey: "ComfyDesktopStart" },
-      { label: "ComfyUIFreeMemory", factoryKey: "ComfyUIFreeMemory" },
-      { label: "PrepareWorkflowPrompt", factoryKey: "PrepareWorkflowPrompt" },
-      { label: "LoadWorkflowFile", factoryKey: "LoadWorkflowFile" },
-      { label: "TemplateWorkflowList", factoryKey: "TemplateWorkflowList" },
-      { label: "UserWorkflowList", factoryKey: "UserWorkflowList" },
-      { label: "WorkflowInputs", factoryKey: "WorkflowInputs" },
-      { label: "WorkflowOutputs", factoryKey: "WorkflowOutputs" },
-      {
-        label: "MergeWorkflowInputsDefaults",
-        factoryKey: "MergeWorkflowInputsDefaults",
-      },
-    ],
-  },
-  // include Debug category only in development, placed at bottom
-  ...(process.env.NODE_ENV === "development"
-    ? ([
-        {
-          label: "Debug",
-          subitems: [
-            { label: "Test", factoryKey: "Test" },
-            { label: "Unknown", factoryKey: "Unknown" },
-          ],
-        },
-      ] as RawMenuItem[])
-    : []),
-];
-
-// assign keys and sort items with subitems first
-function assignKeys(items: RawMenuItem[]): MenuItemDefinition[] {
-  return items
-    .map((item) => ({
-      ...item,
-      key: generateKey(item.label),
-      subitems: item.subitems ? assignKeys(item.subitems) : undefined,
-    }))
-    .sort((a, b) => (b.subitems ? 1 : 0) - (a.subitems ? 1 : 0));
+interface CategoryMapNode {
+  items: { label: string; factoryKey: string }[];
+  subcats: Map<string, CategoryMapNode>;
 }
 
-export const contextMenuStructure = assignKeys(rawMenu);
+function buildMenuFromMeta(): MenuItemDefinition[] {
+  const categoryMap = new Map<string, CategoryMapNode>();
+  for (const [factoryKey, fn] of Object.entries(nodeFactories)) {
+    const meta = (fn as FactoryWithMeta).meta;
+    if (!meta) continue;
+    if (meta.devOnly && process.env.NODE_ENV !== "development") continue;
+    const category = meta.category;
+    const sub = meta.subcategory;
+    let catNode = categoryMap.get(category);
+    if (!catNode) {
+      catNode = { items: [], subcats: new Map() };
+      categoryMap.set(category, catNode);
+    }
+    if (sub) {
+      let subNode = catNode.subcats.get(sub);
+      if (!subNode) {
+        subNode = { items: [], subcats: new Map() };
+        catNode.subcats.set(sub, subNode);
+      }
+      subNode.items.push({ label: meta.label ?? factoryKey, factoryKey });
+    } else {
+      catNode.items.push({ label: meta.label ?? factoryKey, factoryKey });
+    }
+  }
+
+  // Build hierarchical structure
+  const menu: MenuItemDefinition[] = [];
+  for (const [category, catNode] of categoryMap.entries()) {
+    const subitems: MenuItemDefinition[] = [];
+    // subcategories first
+    for (const [sub, subNode] of catNode.subcats.entries()) {
+      subitems.push({
+        label: sub,
+        key: generateKey(sub),
+        subitems: subNode.items
+          .sort((a, b) => a.label.localeCompare(b.label))
+          .map((i) => ({
+            label: i.label,
+            key: generateKey(`${category}-${sub}-${i.label}`),
+            factoryKey: i.factoryKey,
+          })),
+      });
+    }
+    // direct items
+    for (const item of catNode.items.sort((a, b) =>
+      a.label.localeCompare(b.label)
+    )) {
+      subitems.push({
+        label: item.label,
+        key: generateKey(`${category}-${item.label}`),
+        factoryKey: item.factoryKey,
+      });
+    }
+
+    menu.push({
+      label: category,
+      key: generateKey(category),
+      subitems: subitems.length ? subitems : undefined,
+      factoryKey: subitems.length ? undefined : undefined,
+    });
+  }
+
+  // 並び順: 既存 UX に近いように手動ソート優先順リスト
+  const order = [
+    "Primitive",
+    "UChat",
+    "Inspector",
+    "LMStudio",
+    "OpenAI",
+    "ComfyUI",
+    "Debug",
+  ];
+  menu.sort((a, b) => {
+    const ia = order.indexOf(a.label);
+    const ib = order.indexOf(b.label);
+    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  });
+  return menu;
+}
+
+export const contextMenuStructure = buildMenuFromMeta();
+
+// ===== 開発時アサーション ========================================
+if (import.meta.env?.DEV) {
+  try {
+    for (const [key, factory] of Object.entries(nodeFactories)) {
+      // 一部重いノードを避けたい場合はスキップ条件をここで追加可能
+      const meta = (factory as any).meta as FactoryMeta | undefined;
+      if (!meta) continue;
+      // deps を最小限ダミーで供給 (コンストラクタが未使用の引数には undefined が入る)
+      const dummy: any = {
+        editor: undefined,
+        area: undefined,
+        dataflow: {
+          /* minimal stub */
+        } as any,
+        controlflow: undefined,
+        history: undefined,
+      };
+      let instanceLabel: string | undefined;
+      try {
+        const instance = (factory as any)(dummy);
+        instanceLabel = instance?.label;
+      } catch {
+        // 生成失敗はラベル検証だけなので握りつぶし
+      }
+      if (instanceLabel && instanceLabel !== key) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[nodeFactories] key '${key}' とインスタンス label '${instanceLabel}' 不一致`
+        );
+      }
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn("nodeFactories dev assertion failed", e);
+  }
+}

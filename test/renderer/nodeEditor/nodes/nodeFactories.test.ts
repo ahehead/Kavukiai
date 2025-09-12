@@ -8,7 +8,7 @@ describe("getContextMenuPath", () => {
   });
 
   it("returns empty for Inspector key", () => {
-    expect(getContextMenuPath("Inspector")).toBe("");
+    expect(getContextMenuPath("Inspector")).toBe("Inspector/");
   });
 
   it("returns Primitive/String for String key", () => {
