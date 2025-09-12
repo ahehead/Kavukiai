@@ -1,6 +1,3 @@
-// NOTE: このファイルは nodeFactories から型を逆算する方式へ移行するため
-// 循環参照を避ける目的で Schemes.ts への依存を排除した。
-// ここでは Rete 関連のジェネリクスは any で受け、利用側(Schemes)で再度型付けされる。
 import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
