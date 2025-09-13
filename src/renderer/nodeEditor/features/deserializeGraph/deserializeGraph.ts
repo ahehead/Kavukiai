@@ -6,7 +6,11 @@ import {
 } from "renderer/nodeEditor/types";
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 import type { GraphJsonData, InputPortJson } from "shared/JsonType";
-import { type NodeDeps, nodeFactories } from "../../nodes/nodeFactories";
+import {
+  getFactoryByTypeId,
+  type NodeDeps,
+  nodeFactories,
+} from "../../nodes/nodeFactories";
 import type { GroupPlugin } from "../group";
 
 // JSON からノードを生成してエディタに登録
@@ -40,11 +44,14 @@ export async function deserializeGraphIntoEditor({
       history,
     };
     // ノードごとのファクトリを取得
-    const factory = nodeFactories[type];
-    let node: NodeTypes | null = null;
+    const factory = getFactoryByTypeId(type) as unknown as
+      | ((deps: NodeDeps) => NodeTypes)
+      | undefined;
+    let node: NodeTypes;
 
     if (!factory) {
       console.warn(`Unknown node type: ${type}. Using UnknownNode.`);
+      // Fallback: Unknown node with message
       node = nodeFactories.Unknown({
         ...nodeDeps,
         message: `Unknown node type: ${type}`,

@@ -1,5 +1,3 @@
-import type { NodeTypeKey } from "renderer/nodeEditor/types";
-
 // グラフデータの型定義
 export interface GraphJsonData {
   version: string; // バージョン情報
@@ -11,7 +9,8 @@ export interface GraphJsonData {
 
 export type NodeJson = {
   id: string;
-  type: NodeTypeKey; // ノードの種類
+  // ノードの種類（安定ID）。例: "core:String", "comfyui:LoadWorkflowFile"
+  type: string;
   position: { x: number; y: number };
   size: { width?: number; height?: number }; // サイズ、なければ自然なサイズ
   inputs?: { [key: string]: InputPortJson }; // 入力ポートの情報

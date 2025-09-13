@@ -9,6 +9,9 @@ export abstract class BaseNode<
   Controls extends { [key in string]?: NodeControl }
 > extends StatusNodeBase<L, Inputs, Outputs, Controls> {
   declare readonly label: L;
+  // Stable identifier for serialization/deserialization: "namespace:name"
+  // Assigned by factory wrappers at creation time.
+  typeId!: string;
 
   protected constructor(label: L, initialStatus: NodeStatus = NodeStatus.IDLE) {
     super(label, initialStatus);

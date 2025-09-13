@@ -87,7 +87,8 @@ function buildNodeBaseData(
 ): NodeJson {
   return {
     id: node.id,
-    type: node.label,
+    // 保存時は安定ID（namespace:name）を書く
+    type: (node as any).typeId ?? (node as any).label,
     position: { x: position.x, y: position.y },
     size: { width: node.width, height: node.height },
   };

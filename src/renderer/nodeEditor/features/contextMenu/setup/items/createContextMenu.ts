@@ -1,15 +1,11 @@
 import type { NodeEditor } from "rete";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 import {
+  getFactoryByTypeId,
   type MenuItemDefinition,
   type NodeDeps,
-  nodeFactories,
 } from "../../../../nodes/nodeFactories";
-import type {
-  NodeTypeKey,
-  NodeTypes,
-  Schemes,
-} from "../../../../types/Schemes";
+import type { NodeTypes, Schemes } from "../../../../types/Schemes";
 
 // afterCreate フック用の文脈
 type AfterCreateContext = {
@@ -70,12 +66,14 @@ function createHandler(
   options?: CreateMenuOptions
 ): () => Promise<void> {
   return async () => {
-    const factoryKey = itemDef.factoryKey as NodeTypeKey | undefined;
+    const factoryKey = itemDef.factoryKey as string | undefined; // typeId
     if (!factoryKey) return;
-    const nodeFactory = nodeFactories[factoryKey];
+    const nodeFactory = getFactoryByTypeId(factoryKey) as unknown as (
+      deps: NodeDeps
+    ) => NodeTypes;
 
     if (!nodeFactory) {
-      console.error(`Node factory not found for key: ${factoryKey}`);
+      console.error(`Node factory not found for id: ${factoryKey}`);
       return;
     }
 
