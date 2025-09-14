@@ -1,4 +1,4 @@
-import lmstudioTemplate from "src/resources/public/templates/LMStudio/LMStudio_test_.png?url";
+import lmstudioTemplate from "src/resources/public/templates/LMStudio/LMStudio_template.png?url";
 import stringTemplatePng from "../../../../resources/public/templates/String/template_replace_string.png?url";
 import type { TemplateMeta, TemplatesByGenre } from "./types";
 
