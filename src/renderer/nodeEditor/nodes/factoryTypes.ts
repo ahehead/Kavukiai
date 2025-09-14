@@ -19,12 +19,12 @@ export type NodeDeps = {
 export interface FactoryMeta {
   categories: string[]; // 空配列 => ルート直下扱い
   op: string; // 不変な論理操作名 (必須)。保存される typeId の後半部に使用
-  label?: string; // UI 表示名。指定なければ op を初期表示にしてもよい
+  label?: string; // UI 表示名
   devOnly?: boolean; // development のみ表示
   namespace?: string; // 省略時は "core"
   /**
    * 正規化後に自動付与される一意 ID。`${namespace}:${op}` 形式。
-   * 定義側で指定しない（互換のため旧フィールド id を廃止）。
+   * 定義側で指定しない
    */
   typeId?: string;
 }
