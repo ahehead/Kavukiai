@@ -14,7 +14,7 @@ import { ImageControl } from '../../Controls/view/Image'
 import { ProgressControl } from '../../Controls/view/ProgressControl'
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
-// コントロール等の確認と、型チェック回避用のNode。
+// コントロール等の確認用のNode。
 export class TestNode extends SerializableInputsNode<
   'Test',
   object,

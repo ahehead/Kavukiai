@@ -1,86 +1,5 @@
-import {
-  ButtonControl,
-  ButtonControlView,
-} from "renderer/nodeEditor/nodes/Controls/Button";
-// ChatMessageList
-import {
-  UChatControl,
-  UChatMessageListControlView,
-} from "renderer/nodeEditor/nodes/Controls/Chat/UChat";
-import {
-  SelectWorkflowControl,
-  SelectWorkflowControlView,
-} from "renderer/nodeEditor/nodes/Controls/ComfyUI/SelectWorkflowControl";
-import {
-  WorkflowIOSelectControl,
-  WorkflowIOSelectControlView,
-} from "renderer/nodeEditor/nodes/Controls/ComfyUI/WorkflowIOSelectControl";
-// Console
-import {
-  ConsoleControl,
-  ConsoleControlView,
-} from "renderer/nodeEditor/nodes/Controls/Console/Console";
-// CheckBox
-import {
-  CheckBoxControl,
-  CheckBoxControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/CheckBox";
-import {
-  ImageFileInputControl,
-  ImageFileInputControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/ImageFileInput";
-// InputValue
-import {
-  InputValueControl,
-  InputValueControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/InputValue";
-import {
-  ListControl,
-  ListControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/List";
-// MultiLine
-import {
-  MultiLineControl,
-  TextAreaControllView,
-} from "renderer/nodeEditor/nodes/Controls/input/MultiLine";
-import {
-  PathInputControl,
-  PathInputControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/PathInputControl";
-import {
-  PropertyInputControl,
-  PropertyInputControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/PropertyInput";
-import {
-  SelectControl,
-  SelectControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/Select";
-import {
-  SliderControl,
-  SliderControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/Slider";
-import {
-  SwitchControl,
-  SwitchControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/Switch";
-import {
-  ModelInfoListControl,
-  ModelInfoListControlView,
-} from "renderer/nodeEditor/nodes/Controls/LMStudio/ModelInfoListControl";
-// RunButton
-import {
-  RunButtonControl,
-  RunButtonControlView,
-} from "renderer/nodeEditor/nodes/Controls/RunButton";
-import {
-  ImageControl,
-  ImageControlView,
-} from "renderer/nodeEditor/nodes/Controls/view/Image";
-// Progress control
-import {
-  ProgressControl,
-  ProgressControlView,
-} from "renderer/nodeEditor/nodes/Controls/view/ProgressControl";
+// Control views are now sourced from the central registry.
+import { controlViews } from "renderer/nodeEditor/nodes/Controls/registry";
 import {
   CustomExecSocket,
   CustomSocket,
@@ -102,32 +21,9 @@ import type { HistoryPlugin } from "rete-history-plugin";
 import { Presets as ReactPresets } from "rete-react-plugin";
 import { getConnectionSockets } from "../socket_type_restriction/canCreateConnection";
 
-type Ctor<T = unknown> = new (...a: any[]) => T;
-// React コンポーネント型を明確に定義
-type ControlViewComponent = React.ComponentType<any>;
+type Ctor<T = any> = new (...a: any[]) => T;
 
-// control の View をコントロール クラスをキーにマッピング
-const controlViews = new Map<Ctor, ControlViewComponent>([
-  [RunButtonControl, RunButtonControlView],
-  [MultiLineControl, TextAreaControllView],
-  [ConsoleControl, ConsoleControlView],
-  [InputValueControl, InputValueControlView],
-  [CheckBoxControl, CheckBoxControlView],
-  [ButtonControl, ButtonControlView],
-  [SelectControl, SelectControlView],
-  [ModelInfoListControl, ModelInfoListControlView],
-  [ListControl, ListControlView],
-  [SwitchControl, SwitchControlView],
-  [SliderControl, SliderControlView],
-  [PropertyInputControl, PropertyInputControlView],
-  [UChatControl, UChatMessageListControlView],
-  [ImageControl, ImageControlView],
-  [ImageFileInputControl, ImageFileInputControlView],
-  [ProgressControl, ProgressControlView],
-  [PathInputControl, PathInputControlView],
-  [WorkflowIOSelectControl, WorkflowIOSelectControlView],
-  [SelectWorkflowControl, SelectWorkflowControlView],
-]);
+// controlViews は registry.ts から取得
 
 export function customReactPresets(
   editor: NodeEditor<Schemes>,
@@ -151,6 +47,7 @@ export function customReactPresets(
       },
       control: (data: any) => {
         const payload = data.payload as { constructor: Ctor };
+        // Cast constructor to index signature acceptable for Map lookup
         return controlViews.get(payload.constructor) ?? null;
       },
       node: () => createCustomNode(area, history),
