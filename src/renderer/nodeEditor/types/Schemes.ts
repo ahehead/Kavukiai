@@ -1,31 +1,30 @@
 import type { GetSchemes } from "rete";
 import type { ContextMenuExtra } from "rete-context-menu-plugin";
 import type { ReactArea2D } from "rete-react-plugin";
-import type { NodeFactoriesType } from "../nodes/nodeFactories";
 import type { Connection } from "./Connection/Connection";
 import type { BaseNode } from "./Node/BaseNode";
 import type { NodeControl } from "./NodeControl";
 import type { TypedSocket } from "./Socket/TypedSocket";
 
-export type NodeTypes = ReturnType<NodeFactoriesType[keyof NodeFactoriesType]>;
-
-export type NodeTypeKey = keyof NodeFactoriesType;
-
-export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
-
-export type Schemes = GetSchemes<
-  NodeTypes,
-  Connection<NodeInterface, NodeInterface>
->;
-
-// BaseNodeを埋めたもの
 export interface NodeInterface
   extends BaseNode<
-    NodeTypeKey,
+    string,
     { [key in string]?: TypedSocket },
     { [key in string]?: TypedSocket },
     { [key in string]?: NodeControl }
-  > {}
+  > {
+  destroy?: () => void | Promise<void>;
+}
+
+export type NodeTypes = NodeInterface;
+
+// Rete Schemes 定義
+export type Schemes = GetSchemes<
+  NodeInterface,
+  Connection<NodeInterface, NodeInterface>
+>;
+
+export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
 
 export const ExecList = [
   "exec",
