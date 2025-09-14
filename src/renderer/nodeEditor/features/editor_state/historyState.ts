@@ -5,7 +5,7 @@ import type { AreaPlugin } from "rete-area-plugin";
 import { AreaExtensions } from "rete-area-plugin";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
 import type { GraphJsonData } from "shared/JsonType";
-import type { AreaExtra, Schemes } from "../../types/Schemes";
+import type { AreaExtra, Schemes } from "../../types/ReteSchemes";
 import { deserializeGraphIntoEditor } from "../deserializeGraph/deserializeGraph";
 import type { GroupPlugin } from "../group";
 import { serializeGraph } from "../serializeGraph/serializeGraph";

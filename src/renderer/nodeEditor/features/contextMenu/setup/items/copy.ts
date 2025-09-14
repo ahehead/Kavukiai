@@ -4,7 +4,11 @@ import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 import type { GraphJsonData } from "../../../../../../shared/JsonType";
-import type { AreaExtra, NodeTypes, Schemes } from "../../../../types/Schemes";
+import type {
+  AreaExtra,
+  NodeTypes,
+  Schemes,
+} from "../../../../types/ReteSchemes";
 export function createCopyItem(
   context: NodeTypes,
   editor: NodeEditor<Schemes>,

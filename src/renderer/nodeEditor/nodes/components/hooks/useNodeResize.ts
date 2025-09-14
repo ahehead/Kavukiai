@@ -3,7 +3,11 @@ import { useCallback } from "react";
 import { NodeMinHeight, NodeMinWidth } from "renderer/nodeEditor/types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryAction, HistoryPlugin } from "rete-history-plugin";
-import type { AreaExtra, NodeInterface, Schemes } from "../../../types/Schemes";
+import type {
+  AreaExtra,
+  NodeInterface,
+  Schemes,
+} from "../../../types/ReteSchemes";
 
 class SizeChangeHistory implements HistoryAction {
   constructor(

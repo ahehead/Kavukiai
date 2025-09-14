@@ -2,7 +2,7 @@ import { getSelectedNodes } from "renderer/nodeEditor/nodes/util/getSelectedNode
 import type { NodeEditor } from "rete";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 import { removeNodeWithConnections } from "../../../../nodes/util/removeNode";
-import type { Schemes } from "../../../../types/Schemes";
+import type { Schemes } from "../../../../types/ReteSchemes";
 
 export function createDeleteNodeItem(
   context: { id: string },

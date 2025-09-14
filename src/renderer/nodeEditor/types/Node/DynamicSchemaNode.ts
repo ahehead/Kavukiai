@@ -1,5 +1,5 @@
 import type { Connection } from "../Connection/Connection";
-import type { NodeInterface } from "../Schemes";
+import type { NodeInterface } from "../ReteSchemes";
 import type { TypedSocket } from "../Socket/TypedSocket";
 
 export type ConnectionParams = {

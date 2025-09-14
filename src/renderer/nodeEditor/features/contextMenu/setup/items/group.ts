@@ -1,6 +1,6 @@
 import type { NodeEditor } from "rete";
 import type { Item } from "rete-context-menu-plugin/_types/types";
-import type { NodeTypes, Schemes } from "../../../../types/Schemes";
+import type { NodeTypes, Schemes } from "../../../../types/ReteSchemes";
 import type { Group, GroupPlugin } from "../../../group";
 import { collectTargetNodes } from "./copy";
 

@@ -1,5 +1,5 @@
 import { type AreaPlugin, Drag } from "rete-area-plugin";
-import type { AreaExtra, Schemes } from "../../types/Schemes";
+import type { AreaExtra, Schemes } from "../../types/ReteSchemes";
 
 // ドラッグするキーの設定
 // Spaceキーの押下状態管理＋クリーンアップを返す

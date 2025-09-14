@@ -1,4 +1,4 @@
-import type { AreaExtra, Schemes } from "renderer/nodeEditor/types/Schemes";
+import type { AreaExtra, Schemes } from "renderer/nodeEditor/types/ReteSchemes";
 import type { AreaPlugin } from "rete-area-plugin";
 
 export function disableDoubleClickZoom(area: AreaPlugin<Schemes, AreaExtra>) {

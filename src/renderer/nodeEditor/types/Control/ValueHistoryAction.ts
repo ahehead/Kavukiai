@@ -1,6 +1,6 @@
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryAction } from "rete-history-plugin";
-import type { AreaExtra, Schemes } from "../Schemes";
+import type { AreaExtra, Schemes } from "../ReteSchemes";
 import type { BaseControl } from "./BaseControl";
 
 export class ValueHistoryAction<C extends BaseControl<T, any>, T>

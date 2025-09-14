@@ -4,8 +4,8 @@ import { ClassicPreset } from "rete";
 import type { BaseControl } from "../Control/BaseControl";
 import { TooltipInput } from "../Input";
 import type { NodeControl } from "../NodeControl";
+import { type ExecKey, isExecKey } from "../ReteSchemes";
 import { getSchema, type SchemaKey } from "../Schemas";
-import { type ExecKey, isExecKey } from "../Schemes";
 import { TypedSocket } from "../Socket/TypedSocket";
 
 const { Output } = ClassicPreset;

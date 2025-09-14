@@ -9,7 +9,7 @@ import type {
   AreaExtra,
   NodeInterface,
   Schemes,
-} from "../../../../types/Schemes";
+} from "../../../../types/ReteSchemes";
 
 export function createToggleInputControlMenuItem(
   context: NodeInterface,

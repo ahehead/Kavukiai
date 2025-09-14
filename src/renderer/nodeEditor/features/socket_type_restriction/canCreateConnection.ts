@@ -1,5 +1,8 @@
 import type { Connection, TooltipInput } from "renderer/nodeEditor/types";
-import type { NodeInterface, Schemes } from "renderer/nodeEditor/types/Schemes";
+import type {
+  NodeInterface,
+  Schemes,
+} from "renderer/nodeEditor/types/ReteSchemes";
 import type { TypedSocket } from "renderer/nodeEditor/types/Socket/TypedSocket";
 import type { NodeEditor } from "rete";
 

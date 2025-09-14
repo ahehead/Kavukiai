@@ -8,7 +8,11 @@ import {
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
-import type { AreaExtra, NodeInterface, Schemes } from "../../types/Schemes";
+import type {
+  AreaExtra,
+  NodeInterface,
+  Schemes,
+} from "../../types/ReteSchemes";
 import type { DataflowEngine } from "../safe-dataflow/dataflowEngin";
 import {
   canConnect,

@@ -1,5 +1,5 @@
 import { ClassicPreset } from "rete";
-import type { NodeInterface } from "../Schemes";
+import type { NodeInterface } from "../ReteSchemes";
 
 export class Connection<
   A extends NodeInterface,

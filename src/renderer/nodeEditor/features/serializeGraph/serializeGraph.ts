@@ -6,7 +6,7 @@ import type {
   GraphJsonData,
   NodeJson,
 } from "../../../../shared/JsonType";
-import type { AreaExtra, NodeTypes, Schemes } from "../../types/Schemes";
+import type { AreaExtra, NodeTypes, Schemes } from "../../types/ReteSchemes";
 import type { Group, GroupPlugin } from "../group";
 
 /**

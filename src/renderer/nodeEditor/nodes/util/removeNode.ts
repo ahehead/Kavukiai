@@ -1,4 +1,4 @@
-import type { Schemes } from "renderer/nodeEditor/types/Schemes";
+import type { Schemes } from "renderer/nodeEditor/types/ReteSchemes";
 import type { NodeEditor } from "rete";
 
 /**

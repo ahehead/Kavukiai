@@ -1,6 +1,6 @@
 import type { NodeEditor } from "rete";
-import type { Schemes } from "../../../../types/Schemes";
 import type { Item } from "rete-context-menu-plugin/_types/types";
+import type { Schemes } from "../../../../types/ReteSchemes";
 
 export function createDeleteConnectionItem(
   context: { id: string },

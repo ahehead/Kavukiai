@@ -4,5 +4,5 @@ export * from "./Control/ValueHistoryAction";
 export * from "./Input";
 export * from "./Node";
 export * from "./NodeControl";
-export * from "./Schemes";
+export * from "./ReteSchemes";
 export * from "./Socket/TypedSocket";
