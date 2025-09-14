@@ -7,6 +7,7 @@ export class TypedSocket extends ClassicPreset.Socket {
   readonly isExec: boolean;
   isConnected = false;
   tooltip?: string; // ツールチップの型情報
+  private listeners = new Set<() => void>();
 
   constructor(typeName: string, schema: TSchema) {
     super(typeName); // 省略型情報 this.name
@@ -25,7 +26,9 @@ ${JSON.stringify(schema, null, 2)}
   }
 
   setConnected(connected: boolean) {
+    if (this.isConnected === connected) return; // 状態が変わらなければ通知不要
     this.isConnected = connected;
+    this.notify();
   }
 
   /* 接続判定 */
@@ -62,5 +65,15 @@ ${JSON.stringify(schema, null, 2)}
 
   getSchema(): TSchema {
     return this.schema;
+  }
+
+  // --- subscribe / notify 機構 ---
+  subscribe(listener: () => void) {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  private notify() {
+    for (const l of this.listeners) l();
   }
 }

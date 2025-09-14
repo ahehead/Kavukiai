@@ -1,15 +1,20 @@
 import { NodeExecSocket } from 'renderer/nodeEditor/nodes/components/common/NodeSocketParts'
-import type { TypedSocket } from "../../types/Socket/TypedSocket"
+import { useSocketConnection } from 'renderer/nodeEditor/types/Socket/useTypedSocket'
+import type { TypedSocket } from '../../types/Socket/TypedSocket'
 
-export function CustomExecSocket<T extends TypedSocket>(
-  props: { data: T }
-): React.ReactElement {
-  const { data } = props
-
+export function CustomExecSocket<T extends TypedSocket>({
+  data,
+}: {
+  data: T
+}): React.ReactElement {
+  const isConnected = useSocketConnection(data)
   return (
     <NodeExecSocket
       title={data.name}
-      isConnected={data.isConnected}
-      className={'group-data-[show-control=true]:fill-white group-data-[show-control=true]:stroke-[var(--execSocket)]'} />
+      isConnected={isConnected}
+      className={
+        'group-data-[show-control=true]:fill-white group-data-[show-control=true]:stroke-[var(--execSocket)]'
+      }
+    />
   )
 }

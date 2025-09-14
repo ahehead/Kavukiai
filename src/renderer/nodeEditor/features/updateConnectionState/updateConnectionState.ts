@@ -51,7 +51,7 @@ export function registerConnectionPipeline(
         dataflow.reset(ctx.data.target);
         // 出力側のportのcontrolを非表示に
         hideTargetPortControl(targetPort);
-        await syncSocketState(area, ctx.data, isConnected, source, target);
+        await syncSocketState(isConnected, source, target);
         await updateDynamicSchemaNode(
           editor,
           area,
@@ -77,16 +77,12 @@ function hideTargetPortControl(targetPort: TooltipInput<TypedSocket>) {
  * 対応ノードを再描画する。
  */
 async function syncSocketState(
-  area: AreaPlugin<Schemes, AreaExtra>,
-  data: Schemes["Connection"],
   connected: boolean,
   source: TypedSocket,
   target: TypedSocket
 ): Promise<void> {
   source.setConnected(connected);
-  await area.update("node", data.source);
   target.setConnected(connected);
-  await area.update("node", data.target);
 }
 
 /**
