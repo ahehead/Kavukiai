@@ -16,7 +16,7 @@ export async function removeNodeWithConnections(
     }
   }
   const node = editor.getNode(nodeId);
-  if (node && "destroy" in node) node.destroy();
+  if (node) (node as any).destroy?.();
   await editor.removeNode(nodeId);
 }
 
@@ -25,9 +25,7 @@ export async function destroyAllNodes(
   editor: NodeEditor<Schemes>
 ): Promise<void> {
   for (const node of editor.getNodes()) {
-    if ("destroy" in node) {
-      await node.destroy();
-    }
+    await (node as any).destroy?.();
   }
 }
 

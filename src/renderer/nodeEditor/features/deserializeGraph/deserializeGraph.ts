@@ -6,11 +6,9 @@ import {
 } from "renderer/nodeEditor/types";
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 import type { GraphJsonData, InputPortJson } from "shared/JsonType";
-import {
-  getFactoryByTypeId,
-  type NodeDeps,
-  nodeFactories,
-} from "../../nodes/nodeFactories";
+import { getFactoryByTypeId } from "../../nodes/factoryRegistry";
+import type { NodeDeps } from "../../nodes/factoryTypes";
+import { nodeFactories } from "../../nodes/nodeFactories";
 import type { GroupPlugin } from "../group";
 
 // JSON からノードを生成してエディタに登録
@@ -62,12 +60,20 @@ export async function deserializeGraphIntoEditor({
     }
 
     // ノードにdeserializeControlValueがあり、データがある場合はデータをセット
-    if ("deserializeControlValue" in node && data) {
+    if (
+      "deserializeControlValue" in node &&
+      typeof node.deserializeControlValue === "function" &&
+      data
+    ) {
       await node.deserializeControlValue(data as any);
     }
 
     // ノードにdeserializeInputsがあり、inputsデータがある場合はデータをセット
-    if ("deserializeInputs" in node && inputs) {
+    if (
+      "deserializeInputs" in node &&
+      typeof node.deserializeInputs === "function" &&
+      inputs
+    ) {
       node.deserializeInputs(inputs as Record<string, InputPortJson>);
     }
 

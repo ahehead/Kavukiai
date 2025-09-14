@@ -1,7 +1,7 @@
 import { notify } from "renderer/features/toast-notice/notify";
 import type { GroupPlugin } from "renderer/nodeEditor/features/group";
 import { pasteWorkflowAtPosition } from "renderer/nodeEditor/features/pasteWorkflow/pasteWorkflow";
-import type { NodeDeps } from "renderer/nodeEditor/nodes/nodeFactories";
+import type { NodeDeps } from "renderer/nodeEditor/nodes/factoryTypes";
 import type { Schemes } from "renderer/nodeEditor/types";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 import type { GraphJsonData } from "shared/JsonType";

@@ -2,18 +2,12 @@ import type { NodeEditor } from 'rete'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryActions, HistoryPlugin } from 'rete-history-plugin'
-import {
-  contextMenuStructure,
-  type NodeDeps,
-} from '../../../nodes/nodeFactories'
-import type {
-  AreaExtra,
-  NodeInterface,
-  Schemes,
-} from '../../../types/Schemes'
+import type { NodeDeps } from '../../../nodes/factoryTypes'
+import type { AreaExtra, NodeInterface, Schemes } from '../../../types/Schemes'
 import type { Group, GroupPlugin } from '../../group'
 import type { DataflowEngine } from '../../safe-dataflow/dataflowEngin'
 import { ContextMenuPlugin } from '..'
+import { contextMenuStructure } from '../menuTree'
 import { createCopyItem } from './items/copy'
 import { createNodeFactoryMenuItems } from './items/createContextMenu'
 import { createDeleteConnectionItem } from './items/createDeleteConnectionItem'
@@ -106,7 +100,6 @@ export function setupContextMenu({
 
       // ノードを右クリック
       if (isNode(context)) {
-
         // node のinputにcontrolがある場合、(showControlをtoggleする)メニュー項目を追加
         const inputlist = filterInputControls(context.inputs)
 
@@ -130,7 +123,7 @@ export function setupContextMenu({
             // コピー機能
             createCopyItem(context, editor, area),
             // node削除機能
-            createDeleteNodeItem(context, editor)
+            createDeleteNodeItem(context, editor),
           ],
         }
       }
@@ -148,5 +141,3 @@ export function setupContextMenu({
     },
   })
 }
-
-

@@ -50,8 +50,9 @@ export function createCustomNode(
     const inputs = Object.entries(data.inputs)
     const outputs = Object.entries(data.outputs)
     const controls = Object.entries(data.controls)
-    const { id, label, width, height } = data
-    const hierarchyPath = getContextMenuPath(label)
+    const { id, label, width, height, typeId } = data
+    // typeId (namespace:name) を利用してメニュー階層を取得
+    const hierarchyPath = getContextMenuPath(typeId)
     const selected = useSelectedValue(data)
     const status = useStatusValue(data)
     function sortByIndex<T extends [string, undefined | { index?: number }][]>(

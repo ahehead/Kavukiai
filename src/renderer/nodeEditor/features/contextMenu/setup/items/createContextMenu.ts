@@ -1,11 +1,9 @@
 import type { NodeEditor } from "rete";
 import type { Item } from "rete-context-menu-plugin/_types/types";
-import {
-  getFactoryByTypeId,
-  type MenuItemDefinition,
-  type NodeDeps,
-} from "../../../../nodes/nodeFactories";
+import { getFactoryByTypeId } from "../../../../nodes/factoryRegistry";
+import type { NodeDeps } from "../../../../nodes/factoryTypes";
 import type { NodeTypes, Schemes } from "../../../../types/Schemes";
+import type { MenuItemDefinition } from "../../menuTree";
 
 // afterCreate フック用の文脈
 type AfterCreateContext = {
@@ -40,7 +38,7 @@ export function createNodeFactoryMenuItems(
     const menuItem: Item = {
       label: itemDef.label,
       key: itemDef.key,
-      handler: itemDef.factoryKey
+      handler: itemDef.typeId
         ? createHandler(itemDef, editor, nodeDepsArgs, pointer, options)
         : () => void 0,
     };
@@ -66,7 +64,7 @@ function createHandler(
   options?: CreateMenuOptions
 ): () => Promise<void> {
   return async () => {
-    const factoryKey = itemDef.factoryKey as string | undefined; // typeId
+    const factoryKey = itemDef.typeId as string | undefined; // typeId
     if (!factoryKey) return;
     const nodeFactory = getFactoryByTypeId(factoryKey) as unknown as (
       deps: NodeDeps

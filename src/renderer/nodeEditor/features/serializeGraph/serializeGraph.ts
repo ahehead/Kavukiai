@@ -62,12 +62,15 @@ export function convertNodeToJson(
   }
 
   let nodeData = {};
-  if ("serializeControlValue" in node) {
+  if (
+    "serializeControlValue" in node &&
+    typeof node.serializeControlValue === "function"
+  ) {
     nodeData = node.serializeControlValue();
   }
 
   let inputsData = {};
-  if ("serializeInputs" in node) {
+  if ("serializeInputs" in node && typeof node.serializeInputs === "function") {
     inputsData = node.serializeInputs();
   }
 
