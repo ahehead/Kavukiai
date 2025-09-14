@@ -15,8 +15,7 @@
 
 ## ノード追加手順 (factoryList 主導版)
 
-1. [index.ts](Node/index.ts) のバニラインポート (export *) に新しい Node クラスを追加
-2. [nodeFactories.ts](nodeFactories.ts) の `factoryList` 末尾 (カテゴリ適切な位置) に `define((deps) => new YourNode(...), { op, categories, label })` を追加
+1. [nodeFactories.ts](../features/nodeFactory/nodeFactories.ts) の `factoryList` 末尾 (カテゴリ適切な位置) に `define((deps) => new YourNode(...), { op, categories, label })` を追加
 3. `op` は一意 & 将来互換用の安定キー。`typeId` は自動で `${namespace || "core"}:${op}` になります
 
 

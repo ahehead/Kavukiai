@@ -1,4 +1,4 @@
-import { UChatToStringNode } from "renderer/nodeEditor/nodes/Node";
+import { UChatToStringNode } from "renderer/nodeEditor/nodes/Node/Chat/UChatToStringNode";
 import type { UChat } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
 import { expect, test } from "vitest";
 

@@ -1,65 +1,64 @@
-import {
-  BoolNode,
-  CodeFenceNode,
-  ComfyDesktopStartNode,
-  ComfyUIFreeMemoryNode,
-  ComfyUINode,
-  CounterLoopNode,
-  CreateSelectNode,
-  GetModelInfoListNode,
-  InspectorNode,
-  JoinNode,
-  JsonFilePathNode,
-  JsonSchemaFormatNode,
-  JsonSchemaNode,
-  JsonSchemaToObjectNode,
-  ListDownloadedModelsNode,
-  LLMPredictionConfigNode,
-  LMStudioChatNode,
-  LMStudioLoadModelNode,
-  LMStudioStartNode,
-  LMStudioStopNode,
-  LoadWorkflowFileNode,
-  MergeWorkflowInputsDefaultsNode,
-  ModelInfoToModelListNode,
-  MultiLineStringNode,
-  NumberNode,
-  NumberToStringNode,
-  ObjectPickNode,
-  ObjectToStringNode,
-  ObjectToYAMLStringNode,
-  OpenAINode,
-  PrepareWorkflowPromptNode,
-  ResponseCreateParamsBaseNode,
-  ResponseTextConfigNode,
-  RunNode,
-  SelectImageNode,
-  ServerStatusNode,
-  ShowImageNode,
-  StringFormNode,
-  StringNode,
-  TemplateReplaceNode,
-  TemplateWorkflowListNode,
-  TestNode,
-  UChatMessageByStringNode,
-  UChatNode,
-  UnknownNode,
-  UnLoadModelNode,
-  UserWorkflowListNode,
-  WorkflowInputsNode,
-  WorkflowOutputsNode,
-} from "../../nodes/Node";
-import { OpenAIToUChatCommandNode } from "../../nodes/Node/Chat/OpenAIToUChatCommandNode";
-import { ReverseRoleNode } from "../../nodes/Node/Chat/ReverseRoleNode";
-import { UChatGetLastMessageNode } from "../../nodes/Node/Chat/UChatGetLastMessageNode";
-import { UChatMessageNode } from "../../nodes/Node/Chat/UChatMessageNode";
-import { UChatRoleNode } from "../../nodes/Node/Chat/UChatRoleNode";
-import { UChatToLMStudioNode } from "../../nodes/Node/Chat/UChatToLMStudioNode";
-import { UChatToOpenAINode } from "../../nodes/Node/Chat/UChatToOpenAINode";
-import { UChatToStringNode } from "../../nodes/Node/Chat/UChatToStringNode";
-import { UPartTextNode } from "../../nodes/Node/Chat/UPartTextNode";
-import { ArrayNode } from "../../nodes/Node/Primitive/ArrayNode";
-import { IFNode } from "../../nodes/Node/Primitive/Flow/IFNode";
+import { OpenAIToUChatCommandNode } from "renderer/nodeEditor/nodes/Node/Chat/OpenAIToUChatCommandNode";
+import { ReverseRoleNode } from "renderer/nodeEditor/nodes/Node/Chat/ReverseRoleNode";
+import { UChatGetLastMessageNode } from "renderer/nodeEditor/nodes/Node/Chat/UChatGetLastMessageNode";
+import { UChatMessageByStringNode } from "renderer/nodeEditor/nodes/Node/Chat/UChatMessageByStringNode";
+import { UChatMessageNode } from "renderer/nodeEditor/nodes/Node/Chat/UChatMessageNode";
+import { UChatNode } from "renderer/nodeEditor/nodes/Node/Chat/UChatNode";
+import { UChatRoleNode } from "renderer/nodeEditor/nodes/Node/Chat/UChatRoleNode";
+import { UChatToLMStudioNode } from "renderer/nodeEditor/nodes/Node/Chat/UChatToLMStudioNode";
+import { UChatToOpenAINode } from "renderer/nodeEditor/nodes/Node/Chat/UChatToOpenAINode";
+import { UChatToStringNode } from "renderer/nodeEditor/nodes/Node/Chat/UChatToStringNode";
+import { UPartTextNode } from "renderer/nodeEditor/nodes/Node/Chat/UPartTextNode";
+import { ComfyDesktopStartNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/ComfyDesktopStartNode";
+import { ComfyUIFreeMemoryNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/ComfyUIFreeMemoryNode";
+import { ComfyUINode } from "renderer/nodeEditor/nodes/Node/ComfyUI/ComfyUINode";
+import { LoadWorkflowFileNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/LoadWorkflowFileNode";
+import { MergeWorkflowInputsDefaultsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/MergeWorkflowInputsDefaultsNode";
+import { PrepareWorkflowPromptNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/PrepareWorkflowPromptNode";
+import { TemplateWorkflowListNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/TemplateWorkflowListNode";
+import { UserWorkflowListNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/UserWorkflowListNode";
+import { WorkflowInputsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowInputsNode";
+import { WorkflowOutputsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowOutputsNode";
+import { TestNode } from "renderer/nodeEditor/nodes/Node/Debug/TestNode";
+import { UnknownNode } from "renderer/nodeEditor/nodes/Node/Debug/UnknownNode";
+import { InspectorNode } from "renderer/nodeEditor/nodes/Node/InspectorNode";
+import { GetModelInfoListNode } from "renderer/nodeEditor/nodes/Node/LMStudio/GetModelInfoListNode";
+import { ListDownloadedModelsNode } from "renderer/nodeEditor/nodes/Node/LMStudio/ListDownloadedModelsNode";
+import { LLMPredictionConfigNode } from "renderer/nodeEditor/nodes/Node/LMStudio/LLMPredictionConfigNode";
+import { LMStudioChatNode } from "renderer/nodeEditor/nodes/Node/LMStudio/LMStudioChatNode";
+import { LMStudioLoadModelNode } from "renderer/nodeEditor/nodes/Node/LMStudio/LMStudioLoadModelNode";
+import { LMStudioStartNode } from "renderer/nodeEditor/nodes/Node/LMStudio/LMStudioStartNode";
+import { LMStudioStopNode } from "renderer/nodeEditor/nodes/Node/LMStudio/LMStudioStopNode";
+import { ModelInfoToModelListNode } from "renderer/nodeEditor/nodes/Node/LMStudio/ModelInfoToModelListNode";
+import { ServerStatusNode } from "renderer/nodeEditor/nodes/Node/LMStudio/ServerStatusNode";
+import { UnLoadModelNode } from "renderer/nodeEditor/nodes/Node/LMStudio/UnLoadModelNode";
+import { JsonSchemaFormatNode } from "renderer/nodeEditor/nodes/Node/OpenAI/JsonSchemaFormatNode";
+import { OpenAINode } from "renderer/nodeEditor/nodes/Node/OpenAI/OpenAI";
+import { ResponseCreateParamsBaseNode } from "renderer/nodeEditor/nodes/Node/OpenAI/ResponseCreateParamsBaseNode";
+import { ResponseTextConfigNode } from "renderer/nodeEditor/nodes/Node/OpenAI/ResponseTextConfigNode";
+import { ArrayNode } from "renderer/nodeEditor/nodes/Node/Primitive/ArrayNode";
+import { BoolNode } from "renderer/nodeEditor/nodes/Node/Primitive/BoolNode";
+import { CreateSelectNode } from "renderer/nodeEditor/nodes/Node/Primitive/CreateSelectNode";
+import { CounterLoopNode } from "renderer/nodeEditor/nodes/Node/Primitive/Flow/CounterLoopNode";
+import { IFNode } from "renderer/nodeEditor/nodes/Node/Primitive/Flow/IFNode";
+import { RunNode } from "renderer/nodeEditor/nodes/Node/Primitive/Flow/RunNode";
+import { SelectImageNode } from "renderer/nodeEditor/nodes/Node/Primitive/Image/SelectImageNode";
+import { ShowImageNode } from "renderer/nodeEditor/nodes/Node/Primitive/Image/ShowImageNode";
+import { NumberNode } from "renderer/nodeEditor/nodes/Node/Primitive/NumberNode";
+import { JsonSchemaNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/JsonSchemaNode";
+import { JsonSchemaToObjectNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/JsonSchemaToObject";
+import { ObjectPickNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/ObjectPickNode";
+import { CodeFenceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/CodeFenceNode";
+import { JoinNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/JoinNode";
+import { JsonFilePathNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/JsonFilePathNode";
+import { MultiLineStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/MultiLineStringNode";
+import { NumberToStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/NumberToStringNode";
+import { ObjectToStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/ObjectToStringNode";
+import { ObjectToYAMLStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/ObjectToYAMLStringNode";
+import { StringFormNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/StringFormNode";
+import { StringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/StringNode";
+import { TemplateReplaceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/TemplateReplaceNode";
+
 import type { FactoryWithMeta, NodeDeps } from "./factoryTypes";
 // ===== Factory + Meta 定義 =====================================
 // カテゴリ & サブカテゴリ情報を meta に付与し、メニュー構築を自動化する。

@@ -1,4 +1,4 @@
-import { ReverseRoleNode } from "renderer/nodeEditor/nodes/Node";
+import { ReverseRoleNode } from "renderer/nodeEditor/nodes/Node/Chat/ReverseRoleNode";
 import type { UChat } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
 import { expect, test } from "vitest";
 
