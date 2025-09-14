@@ -25,7 +25,8 @@ export class StringFormNode extends SerializableInputsNode<
     private controlFlow: ControlFlowEngine<Schemes>
   ) {
     super('StringForm')
-
+    this.width = 250
+    this.height = 180
     // 入力トリガー
     this.addInputPort({
       key: 'exec',
