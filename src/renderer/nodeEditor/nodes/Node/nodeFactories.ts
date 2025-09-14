@@ -59,10 +59,13 @@ import { StringFormNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/
 import { StringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/StringNode";
 import { TemplateReplaceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/TemplateReplaceNode";
 
-import type { FactoryWithMeta, NodeDeps } from "./factoryTypes";
+import type {
+  FactoryWithMeta,
+  NodeDeps,
+} from "../../features/nodeFactory/factoryTypes";
 // ===== Factory + Meta 定義 =====================================
 // カテゴリ & サブカテゴリ情報を meta に付与し、メニュー構築を自動化する。
-import { define } from "./factoryTypes";
+import { define } from "../../features/nodeFactory/factoryTypes";
 
 export const factoryList = [
   // Primitive / String

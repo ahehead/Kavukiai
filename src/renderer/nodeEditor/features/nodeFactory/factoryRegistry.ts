@@ -1,5 +1,5 @@
+import { factoryList } from "../../nodes/Node/nodeFactories";
 import type { FactoryMeta, FactoryWithMeta } from "./factoryTypes";
-import { factoryList } from "./nodeFactories";
 
 // ===== レジストリ: typeId(namespace:name) -> factory =======================
 const registry = new Map<string, FactoryWithMeta>();

@@ -6,10 +6,10 @@ import {
 } from "renderer/nodeEditor/types";
 import { isDynamicSchemaNode } from "renderer/nodeEditor/types/Node/DynamicSchemaNode";
 import type { GraphJsonData, InputPortJson } from "shared/JsonType";
+import { nodeFactories } from "../../nodes/Node/nodeFactories";
 import type { GroupPlugin } from "../group";
 import { getFactoryByTypeId } from "../nodeFactory/factoryRegistry";
 import type { NodeDeps } from "../nodeFactory/factoryTypes";
-import { nodeFactories } from "../nodeFactory/nodeFactories";
 
 // JSON からノードを生成してエディタに登録
 export type DeserializeGraphArgs = NodeDeps & {
