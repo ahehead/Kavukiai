@@ -237,17 +237,17 @@ export const factoryList = [
   define(
     ({ area, dataflow, controlflow }: NodeDeps): LMStudioChatNode =>
       new LMStudioChatNode(area, dataflow, controlflow),
-    { categories: ["LMStudio"], op: "LMStudioChat", label: "LMStudioChat" }
+    { categories: ["LMStudio"], op: "LMStudioChat", label: "LMStudioClient" }
   ),
   define(
     ({ controlflow }: NodeDeps): LMStudioStartNode =>
       new LMStudioStartNode(controlflow),
-    { categories: ["LMStudio"], op: "LMStudioStart", label: "LMStudioStart" }
+    { categories: ["LMStudio"], op: "LMStudioStart", label: "ServerStart" }
   ),
   define(
     ({ controlflow }: NodeDeps): LMStudioStopNode =>
       new LMStudioStopNode(controlflow),
-    { categories: ["LMStudio"], op: "LMStudioStop", label: "LMStudioStop" }
+    { categories: ["LMStudio"], op: "LMStudioStop", label: "ServerStop" }
   ),
   define(
     ({ area, dataflow, controlflow }: NodeDeps): LMStudioLoadModelNode =>
@@ -255,7 +255,7 @@ export const factoryList = [
     {
       categories: ["LMStudio"],
       op: "LMStudioLoadModel",
-      label: "LMStudioLoadModel",
+      label: "LoadModel",
     }
   ),
   define(
