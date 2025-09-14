@@ -30,7 +30,8 @@ export class JsonSchemaNode
     dataflow: DataflowEngine<Schemes>
   ) {
     super('JsonSchema')
-
+    this.width = 300
+    this.height = 180
     this.addOutputPort({
       key: 'out',
       typeName: 'JsonSchema',
@@ -53,7 +54,7 @@ export class JsonSchemaNode
   }
 
   setSchema(schema: TSchema) {
-    this.outputs.out?.socket.setSchema('object', schema)
+    this.outputs.out?.socket.setSchema('JsonSchema', schema)
   }
 
   data(): { out: TSchema } {
@@ -68,8 +69,6 @@ export class JsonSchemaNode
     }
     return Type.Object(props)
   }
-
-  async execute(): Promise<void> { }
 
   serializeControlValue(): { data: { items: PropertyItem[] } } {
     return { data: { items: this.controls.props.getValue() } }

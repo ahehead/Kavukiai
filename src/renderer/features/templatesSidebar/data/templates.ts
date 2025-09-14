@@ -1,5 +1,5 @@
 import lmstudioTemplate from "src/resources/public/templates/LMStudio/LMStudio_test_.png?url";
-import stringTemplatePng from "../../../../resources/public/templates/String/string_templete.png?url";
+import stringTemplatePng from "../../../../resources/public/templates/String/template_replace_string.png?url";
 import type { TemplateMeta, TemplatesByGenre } from "./types";
 
 // NOTE: Add your bundled assets here. Example of importing URLs with Vite:
