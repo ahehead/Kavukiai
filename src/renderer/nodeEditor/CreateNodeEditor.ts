@@ -37,6 +37,7 @@ import { selectableNodes, selector } from "./features/nodeSelection/selectable";
 import { pasteWorkflowAtPosition } from "./features/pasteWorkflow/pasteWorkflow";
 import { DataflowEngine } from "./features/safe-dataflow/dataflowEngin";
 import { registerConnectionPipeline } from "./features/updateConnectionState/updateConnectionState";
+import { destroyAllNodes } from "./nodes/util/removeNode";
 import { type AreaExtra, ExecList, isExecKey, type Schemes } from "./types";
 
 export async function createNodeEditor(container: HTMLElement) {
@@ -145,9 +146,7 @@ export async function createNodeEditor(container: HTMLElement) {
   // 外部に公開するAPI
   return {
     destroy: async () => {
-      for (const node of editor.getNodes()) {
-        if ("destroy" in node) await node.destroy();
-      }
+      destroyAllNodes(editor);
       area.destroy();
       cleanupDragPan();
       cleanupDeleteKey();
