@@ -22,6 +22,7 @@ export enum IpcChannel {
 
   SaveGraphInitiate = "save-graph-initiate",
   SaveAsGraphInitiate = "save-as-graph-initiate",
+  CloseFileInitiate = "close-file-initiate",
   ShowSaveDialog = "show-save-dialog",
   ShowOpenPathDialog = "show-open-path-dialog",
   SaveJsonGraph = "save-json-graph",

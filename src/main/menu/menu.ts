@@ -22,6 +22,11 @@ export function createAppMenu(window: BrowserWindow) {
           },
         },
         {
+          label: "Close",
+          accelerator: "CmdOrCtrl+W",
+          click: () => window.webContents.send(IpcChannel.CloseFileInitiate),
+        },
+        {
           label: "Save",
           accelerator: "CmdOrCtrl+S",
           click: () => window.webContents.send(IpcChannel.SaveGraphInitiate),

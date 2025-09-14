@@ -39,6 +39,19 @@ export const fileOperationsApi = {
     return () =>
       ipcRenderer.removeListener(IpcChannel.SaveAsGraphInitiate, listener);
   },
+  // mainからのファイルを閉じるリクエスト（Ctrl/Cmd+W）
+  onCloseFileInitiate: (callback: () => Promise<void>): (() => void) => {
+    const listener = async () => {
+      try {
+        await callback();
+      } catch (e) {
+        console.error("onCloseFileInitiate callback error:", e);
+      }
+    };
+    ipcRenderer.on(IpcChannel.CloseFileInitiate, listener);
+    return () =>
+      ipcRenderer.removeListener(IpcChannel.CloseFileInitiate, listener);
+  },
   // ダイアログを開く
   showSaveDialog: (title: string): Promise<string | null> =>
     ipcRenderer.invoke(IpcChannel.ShowSaveDialog, title),

@@ -115,6 +115,16 @@ export function MainScreen() {
     }
   }, [activeFileId, saveFileAs])
 
+  useEffect(() => {
+    // mainからの「ファイルを閉じる」指示（Ctrl/Cmd+W）
+    const unsubClose = electronApiService.onCloseFileInitiate(async () => {
+      if (activeFileId) await closeFile(activeFileId)
+    })
+    return () => {
+      unsubClose()
+    }
+  }, [activeFileId, closeFile])
+
   // 画面をPNGで保存
   const handleSaveAsPng = useCallback(async () => {
     setCurrentFileState()
