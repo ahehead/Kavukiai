@@ -13,12 +13,12 @@
   2. [TestNode.ts](Node/Debug/TestNode.tsx)のコントロールに追加
   3. [customReactPresets](../features/customReactPresets/customReactPresets.ts)に追加
 
-## ノードの追加後の登録方法
+## ノード追加手順 (factoryList 主導版)
 
-1. [index.ts](Node/index.ts)のバニラインポートに追加
-2. [Schemes.ts](../types/Schemes.ts)のNodeTypesに追加
-3. [nodeFactories.ts](nodeFactories.ts)にコンストラクタの生成を記述,右クリックに追加
-4. LMStudioノードの場合は LMStudio カテゴリに追加する
+1. [index.ts](Node/index.ts) のバニラインポート (export *) に新しい Node クラスを追加
+2. [nodeFactories.ts](nodeFactories.ts) の `factoryList` 末尾 (カテゴリ適切な位置) に `define((deps) => new YourNode(...), { op, categories, label })` を追加
+3. `op` は一意 & 将来互換用の安定キー。`typeId` は自動で `${namespace || "core"}:${op}` になります
+
 
 ### レイヤーをまたぐノード
 
