@@ -138,19 +138,19 @@ export const factoryList = [
     label: "Join",
   }),
   define((_: NodeDeps): NumberToStringNode => new NumberToStringNode(), {
-    categories: ["Primitive", "String"],
+    categories: ["Primitive", "Number"],
     op: "NumberToString",
     label: "NumberToString",
   }),
   define((_: NodeDeps): ObjectToStringNode => new ObjectToStringNode(), {
-    categories: ["Primitive", "String"],
+    categories: ["Primitive", "Object"],
     op: "ObjectToString",
     label: "ObjectToString",
   }),
   define(
     (_: NodeDeps): ObjectToYAMLStringNode => new ObjectToYAMLStringNode(),
     {
-      categories: ["Primitive", "String"],
+      categories: ["Primitive", "Object"],
       op: "ObjectToYAMLString",
       label: "ObjectToYAMLString",
     }
@@ -167,12 +167,12 @@ export const factoryList = [
   define(
     ({ history, area, dataflow }: NodeDeps): NumberNode =>
       new NumberNode(0, history, area, dataflow),
-    { categories: ["Primitive"], op: "Number", label: "Number" }
+    { categories: ["Primitive", "Number"], op: "Number", label: "Number" }
   ),
   define(
     ({ history, area, dataflow }: NodeDeps): BoolNode =>
       new BoolNode(history, area, dataflow),
-    { categories: ["Primitive"], op: "Bool", label: "Bool" }
+    { categories: ["Primitive", "Boolean"], op: "Bool", label: "Bool" }
   ),
 
   define(
@@ -282,7 +282,7 @@ export const factoryList = [
   define(
     ({ area, dataflow, controlflow }: NodeDeps): ComfyUINode =>
       new ComfyUINode(area, dataflow, controlflow),
-    { categories: ["ComfyUI"], op: "ComfyUI", label: "ComfyUI" }
+    { categories: ["ComfyUI"], op: "ComfyUI", label: "ComfyUIClient" }
   ),
   define(
     ({ area, dataflow, controlflow }: NodeDeps): ComfyDesktopStartNode =>
@@ -377,7 +377,7 @@ export const factoryList = [
   define(
     ({ area, dataflow, controlflow }: NodeDeps): OpenAINode =>
       new OpenAINode(area, dataflow, controlflow),
-    { categories: ["OpenAI"], op: "OpenAI", label: "OpenAI" }
+    { categories: ["OpenAI"], op: "OpenAI", label: "OpenAIClient" }
   ),
   define(
     ({ history, area, dataflow }: NodeDeps): ResponseCreateParamsBaseNode =>
