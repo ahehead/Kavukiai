@@ -1,7 +1,3 @@
-import type { FactoryWithMeta, NodeDeps } from "./factoryTypes";
-// ===== Factory + Meta 定義 =====================================
-// カテゴリ & サブカテゴリ情報を meta に付与し、メニュー構築を自動化する。
-import { define } from "./factoryTypes";
 import {
   BoolNode,
   CodeFenceNode,
@@ -52,18 +48,22 @@ import {
   UserWorkflowListNode,
   WorkflowInputsNode,
   WorkflowOutputsNode,
-} from "./Node";
-import { OpenAIToUChatCommandNode } from "./Node/Chat/OpenAIToUChatCommandNode";
-import { ReverseRoleNode } from "./Node/Chat/ReverseRoleNode";
-import { UChatGetLastMessageNode } from "./Node/Chat/UChatGetLastMessageNode";
-import { UChatMessageNode } from "./Node/Chat/UChatMessageNode";
-import { UChatRoleNode } from "./Node/Chat/UChatRoleNode";
-import { UChatToLMStudioNode } from "./Node/Chat/UChatToLMStudioNode";
-import { UChatToOpenAINode } from "./Node/Chat/UChatToOpenAINode";
-import { UChatToStringNode } from "./Node/Chat/UChatToStringNode";
-import { UPartTextNode } from "./Node/Chat/UPartTextNode";
-import { ArrayNode } from "./Node/Primitive/ArrayNode";
-import { IFNode } from "./Node/Primitive/Flow/IFNode";
+} from "../../nodes/Node";
+import { OpenAIToUChatCommandNode } from "../../nodes/Node/Chat/OpenAIToUChatCommandNode";
+import { ReverseRoleNode } from "../../nodes/Node/Chat/ReverseRoleNode";
+import { UChatGetLastMessageNode } from "../../nodes/Node/Chat/UChatGetLastMessageNode";
+import { UChatMessageNode } from "../../nodes/Node/Chat/UChatMessageNode";
+import { UChatRoleNode } from "../../nodes/Node/Chat/UChatRoleNode";
+import { UChatToLMStudioNode } from "../../nodes/Node/Chat/UChatToLMStudioNode";
+import { UChatToOpenAINode } from "../../nodes/Node/Chat/UChatToOpenAINode";
+import { UChatToStringNode } from "../../nodes/Node/Chat/UChatToStringNode";
+import { UPartTextNode } from "../../nodes/Node/Chat/UPartTextNode";
+import { ArrayNode } from "../../nodes/Node/Primitive/ArrayNode";
+import { IFNode } from "../../nodes/Node/Primitive/Flow/IFNode";
+import type { FactoryWithMeta, NodeDeps } from "./factoryTypes";
+// ===== Factory + Meta 定義 =====================================
+// カテゴリ & サブカテゴリ情報を meta に付与し、メニュー構築を自動化する。
+import { define } from "./factoryTypes";
 
 export const factoryList = [
   // Primitive / String

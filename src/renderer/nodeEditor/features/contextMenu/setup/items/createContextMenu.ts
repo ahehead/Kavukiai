@@ -1,8 +1,8 @@
 import type { NodeEditor } from "rete";
 import type { Item } from "rete-context-menu-plugin/_types/types";
-import { getFactoryByTypeId } from "../../../../nodes/factoryRegistry";
-import type { NodeDeps } from "../../../../nodes/factoryTypes";
 import type { NodeTypes, Schemes } from "../../../../types/ReteSchemes";
+import { getFactoryByTypeId } from "../../../nodeFactory/factoryRegistry";
+import type { NodeDeps } from "../../../nodeFactory/factoryTypes";
 import type { MenuItemDefinition } from "../../menuTree";
 
 // afterCreate フック用の文脈

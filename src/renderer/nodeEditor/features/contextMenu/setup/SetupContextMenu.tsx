@@ -2,9 +2,13 @@ import type { NodeEditor } from 'rete'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryActions, HistoryPlugin } from 'rete-history-plugin'
-import type { NodeDeps } from '../../../nodes/factoryTypes'
-import type { AreaExtra, NodeInterface, Schemes } from '../../../types/ReteSchemes'
+import type {
+  AreaExtra,
+  NodeInterface,
+  Schemes,
+} from '../../../types/ReteSchemes'
 import type { Group, GroupPlugin } from '../../group'
+import type { NodeDeps } from '../../nodeFactory/factoryTypes'
 import type { DataflowEngine } from '../../safe-dataflow/dataflowEngin'
 import { ContextMenuPlugin } from '..'
 import { contextMenuStructure } from '../menuTree'

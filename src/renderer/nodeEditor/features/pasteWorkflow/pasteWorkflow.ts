@@ -1,7 +1,7 @@
 import { notify } from "renderer/features/toast-notice/notify";
 import { deserializeGraphIntoEditor } from "renderer/nodeEditor/features/deserializeGraph/deserializeGraph";
 import type { GroupPlugin } from "renderer/nodeEditor/features/group";
-import type { NodeDeps } from "renderer/nodeEditor/nodes/factoryTypes";
+import type { NodeDeps } from "renderer/nodeEditor/features/nodeFactory/factoryTypes";
 import type { Schemes } from "renderer/nodeEditor/types";
 import { getUID } from "rete";
 import type {

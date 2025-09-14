@@ -2,8 +2,8 @@ import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryActions, HistoryPlugin } from "rete-history-plugin";
-import type { DataflowEngine } from "../features/safe-dataflow/dataflowEngin";
-import type { AreaExtra, NodeInterface, Schemes } from "../types";
+import type { AreaExtra, NodeInterface, Schemes } from "../../types";
+import type { DataflowEngine } from "../safe-dataflow/dataflowEngin";
 
 export type NodeDeps = {
   editor: NodeEditor<Schemes>;

@@ -1,4 +1,4 @@
-import { getRegisteredFactories } from "renderer/nodeEditor/nodes/factoryRegistry";
+import { getRegisteredFactories } from "renderer/nodeEditor/features/nodeFactory/factoryRegistry";
 
 export interface MenuItemDefinition {
   label: string;

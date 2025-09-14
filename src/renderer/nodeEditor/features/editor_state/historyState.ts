@@ -1,4 +1,4 @@
-import type { NodeDeps } from "renderer/nodeEditor/nodes/factoryTypes";
+import type { NodeDeps } from "renderer/nodeEditor/features/nodeFactory/factoryTypes";
 import { destroyAllNodes } from "renderer/nodeEditor/nodes/util/removeNode";
 import type { NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
