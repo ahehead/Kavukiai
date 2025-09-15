@@ -15,11 +15,11 @@ import { ComfyUINode } from "renderer/nodeEditor/nodes/Node/ComfyUI/ComfyUINode"
 import { GetCheckpointsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/GetCheckpointsNode";
 import { LoadWorkflowFileNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/LoadWorkflowFileNode";
 import { MergeWorkflowInputsDefaultsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/MergeWorkflowInputsDefaultsNode";
-import { PrepareWorkflowPromptNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/PrepareWorkflowPromptNode";
 import { TemplateWorkflowListNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/TemplateWorkflowListNode";
 import { UserWorkflowListNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/UserWorkflowListNode";
 import { WorkflowInputsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowInputsNode";
 import { WorkflowOutputsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowOutputsNode";
+import { WorkflowRefToApiWorkflowNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowRefToApiWorkflowNode";
 import { TestNode } from "renderer/nodeEditor/nodes/Node/Debug/TestNode";
 import { UnknownNode } from "renderer/nodeEditor/nodes/Node/Debug/UnknownNode";
 import { InspectorNode } from "renderer/nodeEditor/nodes/Node/InspectorNode";
@@ -315,12 +315,12 @@ export const factoryList = [
       history,
       dataflow,
       controlflow,
-    }: NodeDeps): PrepareWorkflowPromptNode =>
-      new PrepareWorkflowPromptNode(area, history, dataflow, controlflow),
+    }: NodeDeps): WorkflowRefToApiWorkflowNode =>
+      new WorkflowRefToApiWorkflowNode(area, history, dataflow, controlflow),
     {
       categories: ["ComfyUI"],
-      op: "PrepareWorkflowPrompt",
-      label: "PrepareWorkflowPrompt",
+      op: "WorkflowRefToApiWorkflow",
+      label: "WorkflowRefToApiWorkflow",
     }
   ),
   define(
