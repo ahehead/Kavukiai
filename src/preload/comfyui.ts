@@ -39,6 +39,14 @@ export const comfyuiApi = {
     if (res?.status === "success") return res.data as string[];
     throw new Error(res?.message || "Failed to list template workflows");
   },
+  getCheckpoints: async (endpoint: string): Promise<string[]> => {
+    const res = await ipcRenderer.invoke(
+      IpcChannel.ListComfyCheckpoints,
+      endpoint
+    );
+    if (res?.status === "success") return res.data as string[];
+    throw new Error(res?.message || "Failed to list checkpoints");
+  },
   launchDesktop: async (
     opts: LaunchOpts = {}
   ): Promise<LaunchComfyDesktopResult> => {

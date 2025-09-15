@@ -46,6 +46,7 @@ export enum IpcChannel {
   PortComfyUIRunRecipe = "port-comfyui-run-recipe",
   ListComfyUserWorkflows = "list-comfy-user-workflows",
   ListComfyTemplateWorkflows = "list-comfy-template-workflows",
+  ListComfyCheckpoints = "list-comfy-checkpoints",
   LaunchComfyDesktop = "launch-comfy-desktop",
   ReadWorkflowRef = "read-workflow-ref",
   ComfyUIFreeMemory = "comfyui-free-memory",

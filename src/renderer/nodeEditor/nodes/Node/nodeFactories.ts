@@ -12,6 +12,7 @@ import { UPartTextNode } from "renderer/nodeEditor/nodes/Node/Chat/UPartTextNode
 import { ComfyDesktopStartNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/ComfyDesktopStartNode";
 import { ComfyUIFreeMemoryNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/ComfyUIFreeMemoryNode";
 import { ComfyUINode } from "renderer/nodeEditor/nodes/Node/ComfyUI/ComfyUINode";
+import { GetCheckpointsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/GetCheckpointsNode";
 import { LoadWorkflowFileNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/LoadWorkflowFileNode";
 import { MergeWorkflowInputsDefaultsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/MergeWorkflowInputsDefaultsNode";
 import { PrepareWorkflowPromptNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/PrepareWorkflowPromptNode";
@@ -343,6 +344,11 @@ export const factoryList = [
       op: "TemplateWorkflowList",
       label: "TemplateWorkflowList",
     }
+  ),
+  define(
+    ({ area, history, dataflow, controlflow }: NodeDeps): GetCheckpointsNode =>
+      new GetCheckpointsNode(area, history, dataflow, controlflow),
+    { categories: ["ComfyUI"], op: "GetCheckpoints", label: "GetCheckpoints" }
   ),
   define(
     ({ history, dataflow, controlflow }: NodeDeps): UserWorkflowListNode =>

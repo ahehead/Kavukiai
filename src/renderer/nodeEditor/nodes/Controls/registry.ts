@@ -55,6 +55,10 @@ import {
   SelectControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Select";
 import {
+  SelectStringListControl,
+  SelectStringListControlView,
+} from "renderer/nodeEditor/nodes/Controls/input/SelectStringListControl";
+import {
   SliderControl,
   SliderControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Slider";
@@ -101,6 +105,7 @@ export const controlDefinitions = [
   { ctor: PathInputControl, view: PathInputControlView },
   { ctor: WorkflowIOSelectControl, view: WorkflowIOSelectControlView },
   { ctor: SelectWorkflowControl, view: SelectWorkflowControlView },
+  { ctor: SelectStringListControl, view: SelectStringListControlView },
 ] as const;
 
 // Map used by React preset customization.
