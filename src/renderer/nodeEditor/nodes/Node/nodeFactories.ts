@@ -53,6 +53,7 @@ import { CodeFenceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/C
 import { JoinNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/JoinNode";
 import { JsonFilePathNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/JsonFilePathNode";
 import { MultiLineStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/MultiLineStringNode";
+import { DefaultStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/DefaultStringNode";
 import { NumberToStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/NumberToStringNode";
 import { ObjectToStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/ObjectToStringNode";
 import { ObjectToYAMLStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/ObjectToYAMLStringNode";
@@ -506,6 +507,15 @@ export const factoryList = [
       categories: ["Primitive", "Object"],
       op: "JsonSchema",
       label: "JsonSchema",
+    }
+  ),
+  define(
+    ({ history, area, dataflow }: NodeDeps): DefaultStringNode =>
+      new DefaultStringNode(history, area, dataflow),
+    {
+      categories: ["Primitive", "String"],
+      op: "DefaultString",
+      label: "DefaultString",
     }
   ),
 
