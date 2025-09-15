@@ -100,7 +100,7 @@ async function handleRunRecipe(
     port.postMessage(msg);
   };
   const api = getComfyApiClient(recipe.endpoint, {
-    forceWs: recipe.opts?.forceWs ?? true,
+    forceWs: recipe.opts?.forceWs,
     wsTimeout: recipe.opts?.wsTimeout ?? 5000,
   });
   // finish イベントで受け取った raw data / promptId を保持し、run() 完了後にまとめて result を送信する方式へ変更
