@@ -50,10 +50,10 @@ import { JsonSchemaNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/
 import { JsonSchemaToObjectNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/JsonSchemaToObject";
 import { ObjectPickNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/ObjectPickNode";
 import { CodeFenceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/CodeFenceNode";
+import { DefaultStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/DefaultStringNode";
 import { JoinNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/JoinNode";
 import { JsonFilePathNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/JsonFilePathNode";
 import { MultiLineStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/MultiLineStringNode";
-import { DefaultStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/DefaultStringNode";
 import { NumberToStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/NumberToStringNode";
 import { ObjectToStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/ObjectToStringNode";
 import { ObjectToYAMLStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/ObjectToYAMLStringNode";
@@ -282,8 +282,8 @@ export const factoryList = [
 
   // ComfyUI
   define(
-    ({ area, dataflow, controlflow }: NodeDeps): ComfyUINode =>
-      new ComfyUINode(area, dataflow, controlflow),
+    ({ area, history, dataflow, controlflow }: NodeDeps): ComfyUINode =>
+      new ComfyUINode(area, history, dataflow, controlflow),
     { categories: ["ComfyUI"], op: "ComfyUI", label: "ComfyUIClient" }
   ),
   define(

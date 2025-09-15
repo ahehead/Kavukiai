@@ -3,9 +3,13 @@ import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { MessagePortNode } from 'renderer/nodeEditor/types/Node/MessagePortNode'
 import type { NodeImageArray } from 'renderer/nodeEditor/types/Schemas/NodeImage'
-import { createNodeImageFromBlob, createNodeImageFromUrl } from 'renderer/nodeEditor/types/Schemas/NodeImage'
+import {
+  createNodeImageFromBlob,
+  createNodeImageFromUrl,
+} from 'renderer/nodeEditor/types/Schemas/NodeImage'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
+import type { HistoryPlugin } from 'rete-history-plugin'
 import type {
   ComfyUIRunRequestArgs,
   PromptRecipe,
@@ -15,6 +19,7 @@ import type {
 } from 'shared/ComfyUIType'
 import type { ComfyUIPortEvent } from 'shared/ComfyUIType/port-events'
 import { ConsoleControl } from '../../Controls/Console/Console'
+import { InputValueControl } from '../../Controls/input/InputValue'
 import { ProgressControl } from '../../Controls/view/ProgressControl'
 
 export class ComfyUINode extends MessagePortNode<
@@ -38,6 +43,7 @@ export class ComfyUINode extends MessagePortNode<
 
   constructor(
     area: AreaPlugin<Schemes, AreaExtra>,
+    private history: HistoryPlugin<Schemes>,
     dataflow: DataflowEngine<Schemes>,
     protected controlflow: ControlFlowEngine<Schemes>
   ) {
@@ -53,8 +59,26 @@ export class ComfyUINode extends MessagePortNode<
         label: 'Cancel',
         onClick: () => this.controlflow.execute(this.id, 'exec2'),
       },
-      { key: 'endpoint', typeName: 'string', label: 'Endpoint', require: true },
-      { key: 'workflow', typeName: 'object', label: 'Workflow(API)', require: true },
+      {
+        key: 'endpoint',
+        typeName: 'string',
+        label: 'Endpoint',
+        require: true,
+        control: new InputValueControl<string>({
+          label: 'Endpoint',
+          value: 'http://127.0.0.1:8000',
+          type: 'string',
+          history: this.history,
+          area: this.area,
+          onChange: () => this.dataflow.reset(this.id),
+        }),
+      },
+      {
+        key: 'workflow',
+        typeName: 'object',
+        label: 'Workflow(API)',
+        require: true,
+      },
       { key: 'inputs', typeName: 'WorkflowInputs', label: 'Inputs' },
       { key: 'outputs', typeName: 'WorkflowOutputs', label: 'Outputs' },
       { key: 'opts', typeName: 'PromptRunOpts', label: 'Run Opts' },
@@ -91,7 +115,9 @@ export class ComfyUINode extends MessagePortNode<
         'opts',
         'bypass',
       ])
-    this.controls.console.addValue(`Inputs: ${JSON.stringify({ endpoint, workflow, inputs, outputs, opts, bypass }, null, 2)}`);
+    this.controls.console.addValue(
+      `Inputs: ${JSON.stringify({ endpoint, workflow, inputs, outputs, opts, bypass }, null, 2)}`
+    )
     // inputs は Optional 化されたため endpoint / workflow のみ必須
     if (!endpoint || !workflow) return null
 
@@ -126,7 +152,8 @@ export class ComfyUINode extends MessagePortNode<
         break
       case 'progress':
         this.controls.progress.setValue(Math.round((evt.progress ?? 0) * 100))
-        if (evt.detail) this.controls.console.addValue(`Progress NodeID: ${evt.detail}`)
+        if (evt.detail)
+          this.controls.console.addValue(`Progress NodeID: ${evt.detail}`)
         break
       case 'preview':
         this.controls.console.addValue('Preview received')
@@ -141,9 +168,11 @@ export class ComfyUINode extends MessagePortNode<
       case 'result': {
         let imgs: NodeImageArray | null = null
         if ('paths' in evt.result) {
-          imgs = evt.result.paths.map((path) => createNodeImageFromUrl(path))
+          imgs = evt.result.paths.map(path => createNodeImageFromUrl(path))
         } else if ('buffers' in evt.result) {
-          imgs = evt.result.buffers.map((buffer) => createNodeImageFromBlob(new Blob([buffer])))
+          imgs = evt.result.buffers.map(buffer =>
+            createNodeImageFromBlob(new Blob([buffer]))
+          )
         }
         this.images = imgs
         this.dataflow.reset(this.id)
