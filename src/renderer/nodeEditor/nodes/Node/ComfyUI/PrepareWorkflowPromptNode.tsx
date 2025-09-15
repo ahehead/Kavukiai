@@ -104,4 +104,13 @@ export class PrepareWorkflowPromptNode extends SerializableInputsNode<
       this.controls.console.addValue(`Error: ${e?.message ?? String(e)}`)
     }
   }
+
+  serializeControlValue() {
+    return { data: { workflow: this.lastWorkflowPrompt } }
+  }
+
+  deserializeControlValue(data: any) {
+    console.log('PrepareWorkflowPromptNode deserialize', data)
+    this.lastWorkflowPrompt = data?.workflow ?? null
+  }
 }
