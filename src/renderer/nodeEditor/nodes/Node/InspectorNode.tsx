@@ -36,6 +36,8 @@ export class InspectorNode
     public controlflow: ControlFlowEngine<Schemes>
   ) {
     super('Inspector')
+    this.width = 230
+    this.height = 250
 
     this.addInputPort([
       {
