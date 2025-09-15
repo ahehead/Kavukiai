@@ -32,6 +32,8 @@ export class WorkflowRefToApiWorkflowNode extends SerializableInputsNode<
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('WorkflowRefToApiWorkflow')
+    this.width = 250
+    this.height = 300
     this.addInputPort([
       {
         key: 'exec',
@@ -110,7 +112,6 @@ export class WorkflowRefToApiWorkflowNode extends SerializableInputsNode<
   }
 
   deserializeControlValue(data: any) {
-    console.log('WorkflowRefToApiWorkflowNode deserialize', data)
     this.lastWorkflowPrompt = data?.workflow ?? null
   }
 }
