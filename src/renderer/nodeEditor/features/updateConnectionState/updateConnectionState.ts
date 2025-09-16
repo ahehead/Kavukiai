@@ -73,6 +73,7 @@ async function hideTargetPortControl(
   targetPort: TooltipInput<TypedSocket>,
   nodeId: string
 ) {
+  if (!targetPort.showControl) return;
   targetPort.showControl = false;
   await area.update("node", nodeId);
 }
