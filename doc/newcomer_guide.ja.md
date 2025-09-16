@@ -20,8 +20,11 @@ src/
 │  ├─ components/      # 汎用コンポーネント
 │  ├─ hooks/           # React フック
 │  ├─ nodeEditor/      # ノードエディタ
-│  └─ screens/         # 画面コンポーネント
+│  ├─ screens/         # 画面コンポーネント
+│  └─ styles/          # グローバルスタイル
 ├─ resources/          # アイコン等の静的リソース
+│  ├─ build/           # ビルド用リソース
+│  └─ public/          # 配信用の静的ファイル
 └─ shared/             # 型定義や共通ユーティリティ
 ```
 
@@ -30,6 +33,7 @@ src/
 - `preload/` : contextBridge を通じて `window.App` へ公開される API を実装します。
 - `renderer/` : React で構築されたフロントエンド。`components/` や `nodeEditor/` に UI 部品やノードエディタを配置しています。
 - `shared/` : メイン・レンダラー両方で利用する型や定数をまとめています。
+  - API キー関連の型は `shared/ApiKeysType.ts` を参照。
 
 ## 3. 主要スクリプト
 
@@ -48,7 +52,8 @@ src/
 2. **IPC 通信の追加方法**
    - `src/preload/README_ipc.md` に手順が簡潔にまとめられています。新しい通信チャンネルを追加する際は `shared/ApiType.ts` と `src/main/ipc` を中心に変更します。
 3. **アプリ設定と状態管理**
-   - `src/main/features/file/conf.ts` では `electron-conf` を利用した設定ファイル管理の実装例を見ることができます。レンダラー側では zustand を用いた状態管理 (`src/renderer/features/dirty-check` 等) を確認してください。
+   - メイン側の設定保存/暗号化は `src/main/features/file/conf.ts`（`electron-conf` + `safeStorage`）を参照。
+   - レンダラー側は Zustand によるストア管理（`src/renderer/features/main-store`、`src/renderer/features/setting_view`、`src/renderer/features/dirty-check` など）。
 4. **ビルド・リリースフロー**
    - `electron-builder.ts` や `src/lib/electron-app/release` に、パッケージ生成や配布物作成用スクリプトがあります。リリース手順を理解する際の参考になります。
 
@@ -64,4 +69,6 @@ OpenAI や LMStudio などメインプロセス側の機能を利用するノー
 4. レンダラーでは `electronApiService` を通じて呼び出し、ノード内で結果を処理する。
 
 `ListDownloadedModelsNode` がこれらの手順を踏んだ実装例となっています。
+
+補足: ノードのファクトリ登録やカテゴリ分けの流れは `src/renderer/nodeEditor/nodes/README_node.md` も参照してください。
 

@@ -27,6 +27,11 @@ LMstudioやComfyUIやOpenAI APIのようなAIを組み合わせて、検証で�
 
 ## フォルダ構成
 ```
+
+## 関連ドキュメント
+- 現状仕様（実装済みの機能）: `doc/spec_current.ja.md`
+- 構想と今後の計画: `doc/spec_vision.ja.md`
+- 処理フロー（Mermaid 図）: `doc/flows_mermaid.ja.md`
 src/
 ├─ lib/                # 共通設定・ユーティリティ
 ├─ main/               # メインプロセス
@@ -40,17 +45,20 @@ src/
 │  ├─ hooks/           # React フック
 │  ├─ lib/             # フロント共通ユーティリティ
 │  ├─ nodeEditor/      # ノードUI全体
-│  └─ screens/         # 画面コンポーネント
+│  ├─ screens/         # 画面コンポーネント
+│  └─ styles/          # グローバルスタイル等
 ├─ resources/          # 画像・アイコン等
-└─ shared/             # mainプロセスとrenderプロセス共通要素。アプリ全体の型がここ。
+│  ├─ build/           # アイコン等のビルド用リソース
+│  └─ public/          # アプリで配信する静的アセット
+└─ shared/             # main/render 共有。アプリ全体の型・定数など
 ```
 
 ### nodeEditorフォルダ
 Rete.js + React で実装したノードベースUI
-- CreateNodeEditor.ts   : エディタとプラグイン設定
-- features/             : コンテキストメニューなど拡張機能
-- nodes/                : ノード実装やカスタムコントロールを含む
-- types/                : `Schemes`, `AreaExtra` 型定義
+- features/             : コンテキストメニューやパン、シリアライズ等の拡張
+- nodes/                : ノード実装・コントロール・共通UI・ユーティリティ
+- nodes/Node/nodeFactories.ts : ノード生成関数（ファクトリ群）
+- types/                : `Schemes`, `AreaExtra` ほか型定義
 ## 機能要件・仕様
 ### デスクトップアプリ
 
@@ -90,6 +98,8 @@ Ctrlで選択個別解除、
 
 
 ・複数のファイルをタブで並べる。タブを選択すると、rete.jsのeditorの状態を切り替えて表示を変える。
+
+・PNG へスナップショットをエクスポート／インポート（メタ情報埋め込み）できる。
 
 ### 設定画面
 
