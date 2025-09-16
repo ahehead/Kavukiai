@@ -23,6 +23,8 @@ export class ShowImageNode extends SerializableInputsNode<
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('ShowImage')
+    this.width = 360
+    this.height = 420
     this.addInputPort([
       {
         key: 'exec',
