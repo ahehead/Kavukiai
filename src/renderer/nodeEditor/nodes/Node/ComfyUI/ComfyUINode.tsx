@@ -97,10 +97,12 @@ export class ComfyUINode extends MessagePortNode<
   }
 
   protected async buildRequestArgs(): Promise<ComfyUIRunRequestArgs | null> {
-    const [endpoint, workflow, inputs, outputs, opts, bypass] =
+    const endpointDf = await this.dataflow.fetchInputSingle<string>(this.id, 'endpoint')
+    const endpoint = this.inputs.endpoint?.getShowValue<string>() ?? endpointDf ?? ""
+
+    const [workflow, inputs, outputs, opts, bypass] =
       await this.dataflow.fetchInputMultiple<
         [
-          string | undefined,
           unknown,
           WorkflowInputs | undefined,
           WorkflowOutputs | undefined,
@@ -108,7 +110,6 @@ export class ComfyUINode extends MessagePortNode<
           string[] | undefined,
         ]
       >(this.id, [
-        'endpoint',
         'workflow',
         'inputs',
         'outputs',
@@ -118,12 +119,11 @@ export class ComfyUINode extends MessagePortNode<
     this.controls.console.addValue(
       `Inputs: ${JSON.stringify({ endpoint, workflow, inputs, outputs, opts, bypass }, null, 2)}`
     )
-    // inputs は Optional 化されたため endpoint / workflow のみ必須
+
     if (!endpoint || !workflow) return null
 
     const recipe: PromptRecipe = {
       endpoint,
-      // runtime では unknown から渡るため any キャスト (schema 側で保証される前提)
       workflow: workflow as any,
       ...(inputs ? { inputs } : {}),
       ...(outputs ? { outputs } : {}),
