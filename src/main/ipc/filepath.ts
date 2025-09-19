@@ -7,7 +7,7 @@ export const registerWriteTempFile = () => {
   ipcMain.handle(
     IpcChannel.WriteTempFile,
     async (_e, { name, data }: { name: string; data: Buffer }) => {
-      const full = path.join(app.getPath("temp"), `drop-${Date.now()}-${name}`);
+      const full = path.join(app.getPath("temp"), `${Date.now()}-${name}`);
       await fs.writeFile(full, data);
       return full;
     }
