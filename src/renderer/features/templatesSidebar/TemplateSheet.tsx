@@ -37,7 +37,7 @@ export function TemplateSheet({
   }, [isOpen])
 
   const byGenre = useMemo(() => groupByGenre(TEMPLATES), [])
-  // const anchors = useMemo(() => Object.keys(byGenre), [byGenre])
+  const anchors = useMemo(() => Object.keys(byGenre), [byGenre])
   const overlayRef = useRef<HTMLDivElement | null>(null)
   const [isDragging, setIsDragging] = useState(false)
 
@@ -84,7 +84,7 @@ export function TemplateSheet({
         </div>
 
         {/* Genre anchors */}
-        {/* <div className="flex gap-2 overflow-auto px-3 py-2 border-b">
+        <div className="flex gap-2 overflow-auto px-3 py-2 border-b">
           {anchors.length > 0 ? (
             anchors.map(g => (
               <a
@@ -100,7 +100,7 @@ export function TemplateSheet({
               No templates yet
             </div>
           )}
-        </div> */}
+        </div>
 
         {/* Content */}
         <div className="h-[calc(100%-88px)] overflow-auto p-3 space-y-6">
