@@ -50,7 +50,6 @@ export function MainScreen() {
     setCurrentFileState,
     clearEditorHistory,
     pasteWorkflowAtPosition,
-    getPointerPosition,
   } = useNodeEditorSetup(activeFileId, getGraphAndHistory, setGraphAndHistory)
 
   const {
@@ -182,7 +181,7 @@ export function MainScreen() {
     setDropInfo,
     handleDragOver,
     handleDrop,
-  } = useDragDrop(getPointerPosition, pasteWorkflowAtPosition)
+  } = useDragDrop(pasteWorkflowAtPosition)
 
   const { handleImportAsNew, handleImportToCurrent } = usePngImportWorkflow({
     dropInfo,
