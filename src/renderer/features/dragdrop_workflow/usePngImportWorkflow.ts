@@ -29,7 +29,7 @@ export function usePngImportWorkflow({
     setDropInfo(null);
   }, [setDropInfo, setImportDialogOpen]);
 
-  // PNG or JSON からワークフロー部分を抽出 (従来PNGのみだった処理を拡張)
+  // PNG or JSON からワークフロー部分を抽出
   const runImportFromPngAndJSON = useCallback(async () => {
     if (!dropInfo) return null;
     if (dropInfo.type === "png") {
@@ -39,8 +39,10 @@ export function usePngImportWorkflow({
     // JSON の場合は既に dropInfo に workflow オブジェクトがある前提
     if (dropInfo.type === "json") {
       if (!dropInfo.jsonWorkflow) return null;
-      const fileName = `${dropInfo.fileName || "imported"}.json`;
-      return { fileName, workflow: dropInfo.jsonWorkflow };
+      return {
+        fileName: dropInfo.fileName || "imported",
+        workflow: dropInfo.jsonWorkflow,
+      };
     }
     return null;
   }, [dropInfo]);
