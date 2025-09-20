@@ -1,4 +1,9 @@
-// グラフデータの型定義
+// グラフデータの型定義 (インターフェース) と TypeBox スキーマ
+// 既存の TS 型はそのまま維持しつつ、JSON インポート時のバリデーション用に
+// TypeBox スキーマを追加する。
+// NOTE: 既存コードとの互換性のため interface / type は変更しない。
+
+import { type Static, Type } from "@sinclair/typebox";
 export interface GraphJsonData {
   version: string; // バージョン情報
   nodes: NodeJson[]; // ノード情報の配列
@@ -44,3 +49,96 @@ export type GroupJson = {
   // NodeId は string 互換のため JSON 上は string[] とする
   links: string[];
 };
+
+// =============================
+// TypeBox Schemas
+// =============================
+
+// Control (任意 data: 任意のオブジェクト)
+export const ControlJsonSchema = Type.Object(
+  {
+    data: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
+  },
+  { additionalProperties: false }
+);
+
+export const InputPortJsonSchema = Type.Object(
+  {
+    isShowControl: Type.Boolean(),
+    control: Type.Optional(ControlJsonSchema),
+  },
+  { additionalProperties: false }
+);
+
+export const NodeJsonSchema = Type.Object(
+  {
+    id: Type.String(),
+    type: Type.String(),
+    position: Type.Object({ x: Type.Number(), y: Type.Number() }),
+    size: Type.Object(
+      {
+        width: Type.Optional(Type.Number()),
+        height: Type.Optional(Type.Number()),
+      },
+      { additionalProperties: false }
+    ),
+    inputs: Type.Optional(Type.Record(Type.String(), InputPortJsonSchema)),
+    data: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
+    parentId: Type.Optional(Type.String()),
+  },
+  { additionalProperties: false }
+);
+
+export const ConnectionJsonSchema = Type.Object(
+  {
+    id: Type.String(),
+    source: Type.String(),
+    sourceOutput: Type.String(),
+    target: Type.String(),
+    targetInput: Type.String(),
+  },
+  { additionalProperties: false }
+);
+
+export const GroupJsonSchema = Type.Object(
+  {
+    id: Type.String(),
+    text: Type.String(),
+    rect: Type.Object({
+      left: Type.Number(),
+      top: Type.Number(),
+      width: Type.Number(),
+      height: Type.Number(),
+    }),
+    links: Type.Array(Type.String()),
+  },
+  { additionalProperties: false }
+);
+
+export const GraphJsonDataSchema = Type.Object(
+  {
+    version: Type.String(),
+    nodes: Type.Array(NodeJsonSchema),
+    connections: Type.Array(ConnectionJsonSchema),
+    groups: Type.Optional(Type.Array(GroupJsonSchema)),
+    metadata: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
+  },
+  { additionalProperties: false }
+);
+
+export type GraphJsonDataValidated = Static<typeof GraphJsonDataSchema>; // 利用側で型としても使える
+
+// 簡易バリデーションヘルパー (throw せず result オブジェクトを返す)
+export function validateGraphJson(value: unknown): {
+  ok: boolean;
+  errors?: string[];
+  data?: GraphJsonDataValidated;
+} {
+  const check = GraphJsonDataSchema.Check(value as any);
+  if (check) return { ok: true, data: value as GraphJsonDataValidated };
+  // Collect errors (Type.Errors はジェネレータ)
+  const errors = [...GraphJsonDataSchema.Errors(value as any)].map(
+    (e) => `${e.path}: ${e.message}`
+  );
+  return { ok: false, errors };
+}

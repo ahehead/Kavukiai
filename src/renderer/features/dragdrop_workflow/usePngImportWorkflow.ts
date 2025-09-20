@@ -29,23 +29,33 @@ export function usePngImportWorkflow({
     setDropInfo(null);
   }, [setDropInfo, setImportDialogOpen]);
 
-  // 単体PNGからワークフロー部分を抽出
-  const runImportFromPng = useCallback(async () => {
+  // PNG or JSON からワークフロー部分を抽出 (従来PNGのみだった処理を拡張)
+  const runImportFromPngAndJSON = useCallback(async () => {
     if (!dropInfo) return null;
-    return await importWorkflowFromPng(dropInfo.filePath);
+    if (dropInfo.type === "png") {
+      if (!dropInfo.filePath) return null;
+      return await importWorkflowFromPng(dropInfo.filePath);
+    }
+    // JSON の場合は既に dropInfo に workflow オブジェクトがある前提
+    if (dropInfo.type === "json") {
+      if (!dropInfo.jsonWorkflow) return null;
+      const fileName = `${dropInfo.fileName || "imported"}.json`;
+      return { fileName, workflow: dropInfo.jsonWorkflow };
+    }
+    return null;
   }, [dropInfo]);
 
   // 新規ファイルとして読み込み
   const handleImportAsNew = useCallback(async () => {
     setCurrentFileState();
-    const data = await runImportFromPng();
+    const data = await runImportFromPngAndJSON();
     if (!data) return;
     addFile(await createFile(data.fileName, data.workflow));
     closeDialog();
     notify("success", `新規ファイルを作成しました: ${data.fileName}`);
   }, [
     addFile,
-    runImportFromPng,
+    runImportFromPngAndJSON,
     setCurrentFileState,
     setImportDialogOpen,
     setDropInfo,
@@ -53,7 +63,7 @@ export function usePngImportWorkflow({
 
   // 現在のエディタへ挿入
   const handleImportToCurrent = useCallback(async () => {
-    const data = await runImportFromPng();
+    const data = await runImportFromPngAndJSON();
     if (!data || !dropInfo) return;
     await pasteWorkflowAtPosition(data.workflow, dropInfo.pointer);
     closeDialog();
@@ -61,13 +71,13 @@ export function usePngImportWorkflow({
   }, [
     dropInfo,
     pasteWorkflowAtPosition,
-    runImportFromPng,
+    runImportFromPngAndJSON,
     setImportDialogOpen,
     setDropInfo,
   ]);
 
   return {
-    runImportFromPng,
+    runImportFromPng: runImportFromPngAndJSON,
     handleImportAsNew,
     handleImportToCurrent,
   };

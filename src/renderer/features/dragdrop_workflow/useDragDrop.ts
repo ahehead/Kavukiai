@@ -1,12 +1,20 @@
 import { useCallback, useState } from "react";
 import { getTemplateById } from "renderer/features/templatesSidebar/data/templates";
 import { notify } from "renderer/features/toast-notice/notify";
+import { validateGraphJson } from "shared/JsonType";
 import { importWorkflowFromPngUrl } from "../png/importPng";
 import { electronApiService } from "../services/appService";
 
+// DropInfo は PNG と JSON のどちらのワークフローインポートにも対応
 export interface DropInfo {
-  filePath: string;
+  type: "png" | "json";
   pointer: { x: number; y: number };
+  // PNG 専用: 一時保存されたファイルパス
+  filePath?: string;
+  // JSON 専用: 直接パースされた workflow オブジェクト
+  jsonWorkflow?: any; // TODO: 型定義化 (TypeBox) 可能なら shared/ に schema 追加
+  // 新規ファイル作成用のベース名 (拡張子除外)
+  fileName?: string;
 }
 
 export function useDragDrop(
@@ -23,57 +31,119 @@ export function useDragDrop(
     e.dataTransfer.dropEffect = "copy";
   }, []);
 
-  const handleDrop = useCallback(async (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const pointer = { x: e.clientX, y: e.clientY };
-
-    // 1) Custom MIME from template sidebar
-    const custom = e.dataTransfer.getData("application/x-workflow-template");
-    if (custom) {
+  // テンプレート(DnD)処理
+  const processTemplateDrop = useCallback(
+    async (customJson: string, pointer: { x: number; y: number }) => {
       try {
-        const { id } = JSON.parse(custom) as { id: string };
+        const { id } = JSON.parse(customJson) as { id: string };
         const t = getTemplateById(id);
-        if (!t) return;
+        if (!t) return true; // 処理済み (何もせず終了)
         if (t.type !== "PNGWorkflow") {
           notify("error", "このテンプレートタイプはまだドロップに未対応です");
-          return;
+          return true; // 分岐としては処理完了
         }
-        // Fetch → temp 保存 → インポート を共通関数で実行
         const data = await importWorkflowFromPngUrl(
           t.src,
           `${t.title || t.id}.png`
         );
-        if (!data) return;
+        if (!data) return true;
         await pasteWorkflowAtPosition(data.workflow, pointer);
         setDropInfo(null);
         notify("success", "ワークフローを現在のエディタに貼り付けました");
-        return;
+        return true; // handled
       } catch {
-        // fallthrough to file-based handling
+        // JSON.parse失敗など: 他処理へフォールスルー
+        return false;
       }
-    }
+    },
+    [pasteWorkflowAtPosition]
+  );
 
-    // 2) Native file drop
-    const item = e.dataTransfer.files?.[0];
-    if (!item) return;
-    const isPng = item.type === "image/png" || /\.png$/i.test(item.name);
+  // JSONファイル(DnD)処理
+  const processJsonFileDrop = useCallback(
+    async (file: File, pointer: { x: number; y: number }) => {
+      const lower = file.name.toLowerCase();
+      if (!lower.endsWith(".json")) return false;
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        const workflow = parsed?.workflow ?? parsed;
+        if (!workflow) {
+          notify("error", "JSON内にworkflowが見つかりません");
+          return true; // 処理済み (エラー)
+        }
+        const result = validateGraphJson(workflow);
+        if (!result.ok) {
+          notify(
+            "error",
+            `ワークフローJSONのバリデーション失敗: ${(result.errors || [])
+              .slice(0, 3)
+              .join("; ")}`
+          );
+          return true; // エラー扱い (handled)
+        }
+        const baseName = file.name.replace(/\.json$/i, "");
+        setDropInfo({
+          type: "json",
+          pointer,
+          jsonWorkflow: result.data,
+          fileName: baseName,
+        });
+        setImportDialogOpen(true);
+        return true;
+      } catch {
+        notify("error", "JSONの解析に失敗しました");
+        return true;
+      }
+    },
+    []
+  );
 
-    if (!isPng) {
-      notify("error", "PNG画像をドロップしてください");
-      return;
-    }
-    let filePath = electronApiService.getPathForFile(item) || "";
-    if (!filePath) {
-      filePath = await electronApiService.ensurePathForFile(item);
-    }
-    if (!filePath.toLowerCase().endsWith(".png")) {
-      notify("error", "PNG画像をドロップしてください");
-      return;
-    }
+  // PNGファイル(DnD)処理
+  const processPngFileDrop = useCallback(
+    async (file: File, pointer: { x: number; y: number }) => {
+      const isPng = file.type === "image/png" || /\.png$/i.test(file.name);
+      if (!isPng) return false;
+      let filePath = electronApiService.getPathForFile(file) || "";
+      if (!filePath) {
+        filePath = await electronApiService.ensurePathForFile(file);
+      }
+      if (!filePath.toLowerCase().endsWith(".png")) {
+        notify("error", "PNG画像をドロップしてください");
+        return true; // エラーだが処理済み
+      }
+      const baseName = file.name.replace(/\.png$/i, "");
+      setDropInfo({ type: "png", filePath, pointer, fileName: baseName });
+      setImportDialogOpen(true);
+      return true;
+    },
+    []
+  );
 
-    setDropInfo({ filePath, pointer });
-    setImportDialogOpen(true);
-  }, []);
+  const handleDrop = useCallback(
+    async (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      const pointer = { x: e.clientX, y: e.clientY };
+
+      // 1) カスタム MIME (テンプレート)
+      const custom = e.dataTransfer.getData("application/x-workflow-template");
+      if (custom) {
+        const handled = await processTemplateDrop(custom, pointer);
+        if (handled) return;
+      }
+
+      // 2) ネイティブファイル
+      const file = e.dataTransfer.files?.[0];
+      if (!file) return;
+
+      // JSON → PNG の順で判定 (両方 false ならエラー表示)
+      if (await processJsonFileDrop(file, pointer)) return;
+      if (await processPngFileDrop(file, pointer)) return;
+
+      notify("error", "PNG または JSON ワークフローをドロップしてください");
+    },
+    [processTemplateDrop, processJsonFileDrop, processPngFileDrop]
+  );
 
   return {
     importDialogOpen,
