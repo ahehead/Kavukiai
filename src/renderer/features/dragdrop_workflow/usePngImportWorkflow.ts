@@ -24,6 +24,11 @@ export function usePngImportWorkflow({
   pasteWorkflowAtPosition,
   setCurrentFileState,
 }: Deps) {
+  const closeDialog = useCallback(() => {
+    setImportDialogOpen(false);
+    setDropInfo(null);
+  }, [setDropInfo, setImportDialogOpen]);
+
   // 単体PNGからワークフロー部分を抽出
   const runImportFromPng = useCallback(async () => {
     if (!dropInfo) return null;
@@ -35,11 +40,9 @@ export function usePngImportWorkflow({
     setCurrentFileState();
     const data = await runImportFromPng();
     if (!data) return;
-    const { fileName, workflow } = data;
-    addFile(await createFile(fileName, workflow));
-    setImportDialogOpen(false);
-    setDropInfo(null);
-    notify("success", `新規ファイルを作成しました: ${fileName}`);
+    addFile(await createFile(data.fileName, data.workflow));
+    closeDialog();
+    notify("success", `新規ファイルを作成しました: ${data.fileName}`);
   }, [
     addFile,
     runImportFromPng,
@@ -52,10 +55,8 @@ export function usePngImportWorkflow({
   const handleImportToCurrent = useCallback(async () => {
     const data = await runImportFromPng();
     if (!data || !dropInfo) return;
-    const { workflow } = data;
-    await pasteWorkflowAtPosition(workflow, dropInfo.pointer);
-    setImportDialogOpen(false);
-    setDropInfo(null);
+    await pasteWorkflowAtPosition(data.workflow, dropInfo.pointer);
+    closeDialog();
     notify("success", "ワークフローを現在のエディタに貼り付けました");
   }, [
     dropInfo,
