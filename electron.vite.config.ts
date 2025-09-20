@@ -50,7 +50,6 @@ export default defineConfig({
 
     plugins: [
       tsconfigPaths,
-      // electron.vite.config.ts
       reactPlugin({
         babel: {
           plugins: ["babel-plugin-react-compiler"],
