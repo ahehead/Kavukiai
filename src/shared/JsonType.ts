@@ -4,6 +4,7 @@
 // NOTE: 既存コードとの互換性のため interface / type は変更しない。
 
 import { type Static, Type } from "@sinclair/typebox";
+import { Value } from "@sinclair/typebox/value";
 export interface GraphJsonData {
   version: string; // バージョン情報
   nodes: NodeJson[]; // ノード情報の配列
@@ -126,19 +127,8 @@ export const GraphJsonDataSchema = Type.Object(
   { additionalProperties: false }
 );
 
-export type GraphJsonDataValidated = Static<typeof GraphJsonDataSchema>; // 利用側で型としても使える
+export type GraphJsonDataValidated = Static<typeof GraphJsonDataSchema>;
 
-// 簡易バリデーションヘルパー (throw せず result オブジェクトを返す)
-export function validateGraphJson(value: unknown): {
-  ok: boolean;
-  errors?: string[];
-  data?: GraphJsonDataValidated;
-} {
-  const check = GraphJsonDataSchema.Check(value as any);
-  if (check) return { ok: true, data: value as GraphJsonDataValidated };
-  // Collect errors (Type.Errors はジェネレータ)
-  const errors = [...GraphJsonDataSchema.Errors(value as any)].map(
-    (e) => `${e.path}: ${e.message}`
-  );
-  return { ok: false, errors };
+export function parseGraphJson(value: unknown): GraphJsonData {
+  return Value.Parse(GraphJsonDataSchema, value);
 }

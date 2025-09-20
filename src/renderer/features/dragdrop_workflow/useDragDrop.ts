@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { getTemplateById } from "renderer/features/templatesSidebar/data/templates";
 import { notify } from "renderer/features/toast-notice/notify";
-import { validateGraphJson } from "shared/JsonType";
+import { type GraphJsonData, parseGraphJson } from "shared/JsonType";
 import { importWorkflowFromPngUrl } from "../png/importPng";
 import { electronApiService } from "../services/appService";
 
@@ -12,7 +12,7 @@ export interface DropInfo {
   // PNG 専用: 一時保存されたファイルパス
   filePath?: string;
   // JSON 専用: 直接パースされた workflow オブジェクト
-  jsonWorkflow?: any; // TODO: 型定義化 (TypeBox) 可能なら shared/ に schema 追加
+  jsonWorkflow?: GraphJsonData;
   // 新規ファイル作成用のベース名 (拡張子除外)
   fileName?: string;
 }
@@ -66,33 +66,27 @@ export function useDragDrop(
       if (!lower.endsWith(".json")) return false;
       try {
         const text = await file.text();
-        const parsed = JSON.parse(text);
-        const workflow = parsed?.workflow ?? parsed;
+        const workflow = JSON.parse(text);
         if (!workflow) {
           notify("error", "JSON内にworkflowが見つかりません");
           return true; // 処理済み (エラー)
         }
-        const result = validateGraphJson(workflow);
-        if (!result.ok) {
-          notify(
-            "error",
-            `ワークフローJSONのバリデーション失敗: ${(result.errors || [])
-              .slice(0, 3)
-              .join("; ")}`
-          );
-          return true; // エラー扱い (handled)
-        }
+        const result = parseGraphJson(workflow);
         const baseName = file.name.replace(/\.json$/i, "");
         setDropInfo({
           type: "json",
           pointer,
-          jsonWorkflow: result.data,
+          jsonWorkflow: result,
           fileName: baseName,
         });
         setImportDialogOpen(true);
         return true;
-      } catch {
-        notify("error", "JSONの解析に失敗しました");
+      } catch (e) {
+        const message =
+          typeof e === "object" && e !== null && "message" in e
+            ? (e as { message: string }).message
+            : String(e);
+        notify("error", `JSONの解析に失敗しました: ${message}`);
         return true;
       }
     },
