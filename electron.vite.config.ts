@@ -4,7 +4,6 @@ import reactPlugin from "@vitejs/plugin-react";
 import { codeInspectorPlugin } from "code-inspector-plugin";
 import { defineConfig, externalizeDepsPlugin } from "electron-vite";
 import injectProcessEnvPlugin from "rollup-plugin-inject-process-env";
-import babel from "vite-plugin-babel";
 import svgr from "vite-plugin-svgr";
 import tsconfigPathsPlugin from "vite-tsconfig-paths";
 import { main, resources } from "./package.json";
@@ -51,9 +50,9 @@ export default defineConfig({
 
     plugins: [
       tsconfigPaths,
-      reactPlugin(),
-      babel({
-        babelConfig: {
+      // electron.vite.config.ts
+      reactPlugin({
+        babel: {
           plugins: ["babel-plugin-react-compiler"],
         },
       }),
