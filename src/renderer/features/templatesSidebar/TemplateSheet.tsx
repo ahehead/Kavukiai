@@ -1,3 +1,4 @@
+import { Editor } from '@monaco-editor/react'
 import { XIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
@@ -74,7 +75,9 @@ export function TemplateSheet({
         onDragEnd={() => setIsDragging(false)}
       >
         <div className="flex items-center justify-between px-3 py-2 border-b">
-          <h2 className="text-sm font-semibold">Templates (ドラッグ＆ドロップ可能)</h2>
+          <h2 className="text-sm font-semibold">
+            Templates (ドラッグ＆ドロップ可能)
+          </h2>
           <button
             aria-label="Close"
             title="Close"
@@ -164,8 +167,7 @@ function TemplateCard({
     // Optional: use thumb as drag image
     const img =
       (e.currentTarget.querySelector('img') as HTMLImageElement) || null
-    if (img)
-      e.dataTransfer.setDragImage(img, 0, 0)
+    if (img) e.dataTransfer.setDragImage(img, 0, 0)
     onDragStart?.()
   }
   const handleDragEnd = () => {
@@ -182,14 +184,48 @@ function TemplateCard({
       onDragEnd={isPrompt ? undefined : handleDragEnd}
       title={t.title}
     >
-      <div className="aspect-video overflow-hidden rounded border bg-muted flex items-center justify-center">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={t.src}
-          alt={t.title}
-          className="object-cover w-full h-full"
-          loading="lazy"
-        />
+      {/* プレビュー */}
+      <div className="flex items-center justify-center border w-full h-[250px]">
+        {isPrompt ? (
+          // Prompt の場合は Monaco Editor をサムネイル領域に表示
+
+          <Editor
+            // aspect-video の中を埋める
+            width="100%"
+            height="100%"
+            value={t.src}
+            language="markdown"
+            theme="vs"
+            options={{
+              readOnly: true,
+              minimap: { enabled: false },
+              lineNumbers: 'off',
+              folding: false,
+              scrollBeyondLastLine: false,
+              renderLineHighlight: 'none',
+              overviewRulerLanes: 0,
+              overviewRulerBorder: false,
+              wordWrap: 'on',
+              wrappingStrategy: 'advanced',
+              glyphMargin: false,
+              scrollbar: { vertical: 'auto', horizontal: 'hidden' },
+              padding: { top: 4, bottom: 4 },
+              hover: { enabled: false },
+              fontSize: 12,
+              automaticLayout: true,
+            }}
+          />
+        ) : (
+          // PNGWorkflow 等: 既存の画像表示
+          // eslint-disable-next-line @next/next/no-img-element
+
+          <img
+            src={t.src}
+            alt={t.title}
+            className="object-cover w-full h-full"
+            loading="lazy"
+          />
+        )}
       </div>
       <div className="space-y-1">
         <div className="text-sm font-medium leading-tight">{t.title}</div>
@@ -218,7 +254,9 @@ function TemplateCard({
           <button
             className={cn(
               'flex-1 text-xs px-2 py-1 rounded border',
-              !isCopying ? 'hover:bg-accent/60' : 'opacity-50 cursor-not-allowed'
+              !isCopying
+                ? 'hover:bg-accent/60'
+                : 'opacity-50 cursor-not-allowed'
             )}
             disabled={isCopying}
             onClick={async () => {
@@ -253,10 +291,18 @@ function TemplateCard({
                 if (!isPng || isCopying) return
                 try {
                   setIsCopying(true)
-                  const wf = await importWorkflowFromPngUrl(t.src, `${t.id}.png`)
+                  const wf = await importWorkflowFromPngUrl(
+                    t.src,
+                    `${t.id}.png`
+                  )
                   if (!wf) return
-                  await navigator.clipboard.writeText(JSON.stringify(wf.workflow, null, 2))
-                  notify('success', 'ワークフローをクリップボードにコピーしました')
+                  await navigator.clipboard.writeText(
+                    JSON.stringify(wf.workflow, null, 2)
+                  )
+                  notify(
+                    'success',
+                    'ワークフローをクリップボードにコピーしました'
+                  )
                 } catch (e: any) {
                   notify('error', `コピーに失敗: ${e?.message ?? String(e)}`)
                 } finally {
