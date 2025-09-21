@@ -74,10 +74,10 @@ export function TemplateSheet({
         aria-label="Templates"
         onDragEnd={() => setIsDragging(false)}
       >
-        <div className="flex items-center justify-between px-3 py-2 border-b">
-          <h2 className="text-sm font-semibold">
-            Templates (ドラッグ＆ドロップ可能)
-          </h2>
+        <div className="flex items-center justify-between px-3 py-2 border-b gap-3">
+          <div className="flex items-center gap-3">
+            <h2 className="text-sm font-semibold whitespace-nowrap">Templates (ドラッグ＆ドロップ可能)</h2>
+          </div>
           <button
             aria-label="Close"
             title="Close"
@@ -142,9 +142,11 @@ function TemplateCard({
   onDragStart?: () => void
   onDragEnd?: () => void
 }) {
-  const isPng = t.type === 'PNGWorkflow' && /\.png($|\?)/i.test(t.src)
   const isPrompt = t.type === 'Prompt'
+  const isPng = !isPrompt && t.type === 'PNGWorkflow' && /\.png($|\?)/i.test(t.src)
   const [isCopying, setIsCopying] = useState(false)
+  // Prompt カード内でのみ使用するローカル言語トグル
+  const [promptLang, setPromptLang] = useState<'ja' | 'en'>('ja')
   // ボタン上でのドラッグ開始防止用フラグ
   const dragAllowedRef = useRef(false)
 
@@ -174,6 +176,11 @@ function TemplateCard({
     onDragEnd?.()
   }
 
+  const promptText = isPrompt
+    ? // Fallback: 無い場合は他言語を使う
+    t.prompt[promptLang] || t.prompt[promptLang === 'ja' ? 'en' : 'ja']
+    : ''
+
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: drag-and-drop card needs div with event handlers
     <div
@@ -185,44 +192,62 @@ function TemplateCard({
       title={t.title}
     >
       {/* プレビュー */}
-      <div className="flex items-center justify-center border w-full h-[250px]">
+      <div className="flex flex-col w-full relative">
         {isPrompt ? (
-          // Prompt の場合は Monaco Editor をサムネイル領域に表示
-
-          <Editor
-            // aspect-video の中を埋める
-            width="100%"
-            height="100%"
-            value={t.src}
-            language="markdown"
-            theme="vs"
-            options={{
-              readOnly: true,
-              minimap: { enabled: false },
-              lineNumbers: 'off',
-              folding: false,
-              scrollBeyondLastLine: false,
-              renderLineHighlight: 'none',
-              overviewRulerLanes: 0,
-              overviewRulerBorder: false,
-              wordWrap: 'on',
-              wrappingStrategy: 'advanced',
-              glyphMargin: false,
-              scrollbar: { vertical: 'auto', horizontal: 'hidden' },
-              padding: { top: 4, bottom: 4 },
-              hover: { enabled: false },
-              fontSize: 12,
-              automaticLayout: true,
-            }}
-          />
+          <>
+            {/* ローカル言語切り替え */}
+            <div className="flex items-center gap-1 pt-1">
+              {(['ja', 'en'] as const).map(lang => (
+                <button
+                  key={lang}
+                  type="button"
+                  className={cn(
+                    'text-[10px] px-2 py-0.5 border-x border-t transition',
+                    promptLang === lang
+                      ? 'bg-accent/30 text-foreground'
+                      : 'bg-background hover:bg-muted'
+                  )}
+                  onClick={() => setPromptLang(lang)}
+                  title={`Switch prompt language to ${lang.toUpperCase()}`}
+                >
+                  {lang === 'ja' ? '日本語' : 'EN'}
+                </button>
+              ))}
+            </div>
+            <div className='border'>
+              <Editor
+                width="100%"
+                height="250px"
+                value={promptText}
+                language="markdown"
+                theme="vs"
+                options={{
+                  readOnly: true,
+                  minimap: { enabled: false },
+                  lineNumbers: 'off',
+                  folding: false,
+                  scrollBeyondLastLine: false,
+                  renderLineHighlight: 'none',
+                  overviewRulerLanes: 0,
+                  overviewRulerBorder: false,
+                  wordWrap: 'on',
+                  wrappingStrategy: 'advanced',
+                  glyphMargin: false,
+                  scrollbar: { vertical: 'auto', horizontal: 'hidden' },
+                  padding: { top: 4, bottom: 4 },
+                  hover: { enabled: false },
+                  fontSize: 12,
+                  automaticLayout: true,
+                }}
+              />
+            </div>
+          </>
         ) : (
-          // PNGWorkflow 等: 既存の画像表示
           // eslint-disable-next-line @next/next/no-img-element
-
           <img
             src={t.src}
             alt={t.title}
-            className="object-cover w-full h-full"
+            className="object-cover w-full h-full border"
             loading="lazy"
           />
         )}
@@ -263,9 +288,11 @@ function TemplateCard({
               if (isCopying) return
               try {
                 setIsCopying(true)
-                // src には ?raw で読み込んだテキストが入っている想定
-                await navigator.clipboard.writeText(t.src)
-                notify('success', 'プロンプトをクリップボードにコピーしました')
+                await navigator.clipboard.writeText(promptText)
+                notify(
+                  'success',
+                  `プロンプト(${promptLang.toUpperCase()})をクリップボードにコピーしました`
+                )
               } catch (e: any) {
                 notify('error', `コピーに失敗: ${e?.message ?? String(e)}`)
               } finally {
@@ -291,10 +318,8 @@ function TemplateCard({
                 if (!isPng || isCopying) return
                 try {
                   setIsCopying(true)
-                  const wf = await importWorkflowFromPngUrl(
-                    t.src,
-                    `${t.id}.png`
-                  )
+                  // t is guaranteed to have src in this branch
+                  const wf = await importWorkflowFromPngUrl(t.src, `${t.id}.png`)
                   if (!wf) return
                   await navigator.clipboard.writeText(
                     JSON.stringify(wf.workflow, null, 2)
