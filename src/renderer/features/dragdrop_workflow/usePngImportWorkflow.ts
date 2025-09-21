@@ -30,7 +30,7 @@ export function usePngImportWorkflow({
   }, [setDropInfo, setImportDialogOpen]);
 
   // PNG or JSON からワークフロー部分を抽出
-  const runImportFromPngAndJSON = useCallback(async () => {
+  const runImportFromPngOrJSON = useCallback(async () => {
     if (!dropInfo) return null;
     if (dropInfo.type === "png") {
       if (!dropInfo.filePath) return null;
@@ -50,14 +50,14 @@ export function usePngImportWorkflow({
   // 新規ファイルとして読み込み
   const handleImportAsNew = useCallback(async () => {
     setCurrentFileState();
-    const data = await runImportFromPngAndJSON();
+    const data = await runImportFromPngOrJSON();
     if (!data) return;
     addFile(await createFile(data.fileName, data.workflow));
     closeDialog();
     notify("success", `新規ファイルを作成しました: ${data.fileName}`);
   }, [
     addFile,
-    runImportFromPngAndJSON,
+    runImportFromPngOrJSON,
     setCurrentFileState,
     setImportDialogOpen,
     setDropInfo,
@@ -65,7 +65,7 @@ export function usePngImportWorkflow({
 
   // 現在のエディタへ挿入
   const handleImportToCurrent = useCallback(async () => {
-    const data = await runImportFromPngAndJSON();
+    const data = await runImportFromPngOrJSON();
     if (!data || !dropInfo) return;
     await pasteWorkflowAtPosition(data.workflow, dropInfo.pointer);
     closeDialog();
@@ -73,13 +73,13 @@ export function usePngImportWorkflow({
   }, [
     dropInfo,
     pasteWorkflowAtPosition,
-    runImportFromPngAndJSON,
+    runImportFromPngOrJSON,
     setImportDialogOpen,
     setDropInfo,
   ]);
 
   return {
-    runImportFromPng: runImportFromPngAndJSON,
+    runImportFromPng: runImportFromPngOrJSON,
     handleImportAsNew,
     handleImportToCurrent,
   };
