@@ -140,6 +140,7 @@ function TemplateCard({
   onDragEnd?: () => void
 }) {
   const isPng = t.type === 'PNGWorkflow' && /\.png($|\?)/i.test(t.src)
+  const isPrompt = t.type === 'Prompt'
   const [isCopying, setIsCopying] = useState(false)
   // ボタン上でのドラッグ開始防止用フラグ
   const dragAllowedRef = useRef(false)
@@ -175,10 +176,10 @@ function TemplateCard({
     // biome-ignore lint/a11y/noStaticElementInteractions: drag-and-drop card needs div with event handlers
     <div
       className="rounded border w-full bg-card hover:shadow-lg transition p-2 space-y-2"
-      draggable
+      draggable={!isPrompt}
       onMouseDown={handleMouseDown}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      onDragStart={isPrompt ? undefined : handleDragStart}
+      onDragEnd={isPrompt ? undefined : handleDragEnd}
       title={t.title}
     >
       <div className="aspect-video overflow-hidden rounded border bg-muted flex items-center justify-center">
@@ -212,41 +213,71 @@ function TemplateCard({
         )}
       </div>
       <div className="pt-1 flex gap-2">
-        <button
-          className={cn(
-            'flex-1 text-xs px-2 py-1 rounded border',
-            isPng && !isCopying
-              ? 'hover:bg-accent/60'
-              : 'opacity-50 cursor-not-allowed'
-          )}
-          disabled={!isPng || isCopying}
-          onClick={async () => {
-            if (!isPng || isCopying) return
-            try {
-              setIsCopying(true)
-              const wf = await importWorkflowFromPngUrl(t.src, `${t.id}.png`)
-              if (!wf) return
-              await navigator.clipboard.writeText(JSON.stringify(wf.workflow, null, 2))
-              notify('success', 'ワークフローをクリップボードにコピーしました')
-            } catch (e: any) {
-              notify('error', `コピーに失敗: ${e?.message ?? String(e)}`)
-            } finally {
-              setIsCopying(false)
-            }
-          }}
-        >
-          {isCopying ? 'コピー中...' : 'コピー'}
-        </button>
-        <button
-          className={cn(
-            'flex-1 text-xs px-2 py-1 rounded border',
-            isPng ? 'hover:bg-accent/60' : 'opacity-50 cursor-not-allowed'
-          )}
-          onClick={() => isPng && onCreate?.()}
-          disabled={!isPng}
-        >
-          新規作成
-        </button>
+        {/* Prompt タイプ: コピーのみ */}
+        {isPrompt && (
+          <button
+            className={cn(
+              'flex-1 text-xs px-2 py-1 rounded border',
+              !isCopying ? 'hover:bg-accent/60' : 'opacity-50 cursor-not-allowed'
+            )}
+            disabled={isCopying}
+            onClick={async () => {
+              if (isCopying) return
+              try {
+                setIsCopying(true)
+                // src には ?raw で読み込んだテキストが入っている想定
+                await navigator.clipboard.writeText(t.src)
+                notify('success', 'プロンプトをクリップボードにコピーしました')
+              } catch (e: any) {
+                notify('error', `コピーに失敗: ${e?.message ?? String(e)}`)
+              } finally {
+                setIsCopying(false)
+              }
+            }}
+          >
+            {isCopying ? 'コピー中...' : 'コピー'}
+          </button>
+        )}
+        {/* PNGWorkflow タイプ: 既存の2ボタン (コピー + 新規作成) */}
+        {!isPrompt && (
+          <>
+            <button
+              className={cn(
+                'flex-1 text-xs px-2 py-1 rounded border',
+                isPng && !isCopying
+                  ? 'hover:bg-accent/60'
+                  : 'opacity-50 cursor-not-allowed'
+              )}
+              disabled={!isPng || isCopying}
+              onClick={async () => {
+                if (!isPng || isCopying) return
+                try {
+                  setIsCopying(true)
+                  const wf = await importWorkflowFromPngUrl(t.src, `${t.id}.png`)
+                  if (!wf) return
+                  await navigator.clipboard.writeText(JSON.stringify(wf.workflow, null, 2))
+                  notify('success', 'ワークフローをクリップボードにコピーしました')
+                } catch (e: any) {
+                  notify('error', `コピーに失敗: ${e?.message ?? String(e)}`)
+                } finally {
+                  setIsCopying(false)
+                }
+              }}
+            >
+              {isCopying ? 'コピー中...' : 'コピー'}
+            </button>
+            <button
+              className={cn(
+                'flex-1 text-xs px-2 py-1 rounded border',
+                isPng ? 'hover:bg-accent/60' : 'opacity-50 cursor-not-allowed'
+              )}
+              onClick={() => isPng && onCreate?.()}
+              disabled={!isPng}
+            >
+              新規作成
+            </button>
+          </>
+        )}
       </div>
     </div>
   )

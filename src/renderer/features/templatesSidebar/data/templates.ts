@@ -1,4 +1,5 @@
 import lmstudioTemplate from "src/resources/public/templates/LMStudio/LMStudio_template.png?url";
+import basicSystemPrompt from "../../../../resources/public/templates/Prompt/system_basic.md?raw";
 import stringTemplatePng from "../../../../resources/public/templates/String/template_replace_string.png?url";
 import type { TemplateMeta, TemplatesByGenre } from "./types";
 
@@ -24,6 +25,17 @@ export const TEMPLATES: TemplateMeta[] = [
     type: "PNGWorkflow",
     src: lmstudioTemplate,
     descriptionMd: "LM Studio を使うテンプレート",
+  },
+  {
+    id: "prompt-system-basic",
+    title: "Basic System Prompt",
+    genre: "Prompt",
+    tags: ["prompt", "system", "base"],
+    type: "Prompt",
+    // Prompt タイプでは src に生テキストを保持 (?raw)
+    src: basicSystemPrompt,
+    // プレースホルダ ${DOMAIN}, ${STYLE} をそのまま表示するためエスケープ
+    descriptionMd: `汎用システムプロンプトの基本形。\${DOMAIN} や \${STYLE} を差し替えて利用します。`,
   },
 ];
 
