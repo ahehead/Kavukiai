@@ -1,3 +1,4 @@
+import comfyuiTemplate from "src/resources/public/templates/ComfyUI/ComfyUI_Template.png?url";
 import lmstudioTemplate from "src/resources/public/templates/LMStudio/LMStudio_template.png?url";
 import basicSystemPromptEn from "../../../../resources/public/templates/Prompt/system_basic.en.md?raw";
 import basicSystemPromptJa from "../../../../resources/public/templates/Prompt/system_basic.md?raw";
@@ -26,6 +27,15 @@ export const TEMPLATES: TemplateMeta[] = [
     type: "PNGWorkflow",
     src: lmstudioTemplate,
     descriptionMd: "LM Studio を使うテンプレート",
+  },
+  {
+    id: "comfyui-template",
+    title: "ComfyUI Template",
+    genre: "ComfyUI",
+    tags: ["comfyui", "image", "workflow"],
+    type: "PNGWorkflow",
+    src: comfyuiTemplate,
+    descriptionMd: "ComfyUI を使うテンプレート",
   },
   {
     id: "prompt-system-basic",
