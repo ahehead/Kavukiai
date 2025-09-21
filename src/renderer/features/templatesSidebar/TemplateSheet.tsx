@@ -2,6 +2,8 @@ import { XIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { importWorkflowFromPngUrl } from 'renderer/features/png/importPng'
+import { notify } from 'renderer/features/toast-notice/notify'
 import { useUiStore } from 'renderer/features/ui/uiStore'
 import { cn } from 'renderer/lib/utils'
 import { groupByGenre, TEMPLATES } from './data/templates'
@@ -72,7 +74,7 @@ export function TemplateSheet({
         onDragEnd={() => setIsDragging(false)}
       >
         <div className="flex items-center justify-between px-3 py-2 border-b">
-          <h2 className="text-sm font-semibold">Templates</h2>
+          <h2 className="text-sm font-semibold">Templates (ドラッグ＆ドロップ可能)</h2>
           <button
             aria-label="Close"
             title="Close"
@@ -138,8 +140,21 @@ function TemplateCard({
   onDragEnd?: () => void
 }) {
   const isPng = t.type === 'PNGWorkflow' && /\.png($|\?)/i.test(t.src)
+  const [isCopying, setIsCopying] = useState(false)
+  // ボタン上でのドラッグ開始防止用フラグ
+  const dragAllowedRef = useRef(false)
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement | null
+    dragAllowedRef.current = !target?.closest('button')
+  }
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    // 直前の mousedown でボタン上だった場合はキャンセル
+    if (!dragAllowedRef.current) {
+      e.preventDefault()
+      return
+    }
     e.dataTransfer.setData(
       'application/x-workflow-template',
       JSON.stringify({ id: t.id })
@@ -149,11 +164,7 @@ function TemplateCard({
     const img =
       (e.currentTarget.querySelector('img') as HTMLImageElement) || null
     if (img)
-      e.dataTransfer.setDragImage(
-        img,
-        Math.floor(img.width / 2),
-        Math.floor(img.height / 2)
-      )
+      e.dataTransfer.setDragImage(img, 0, 0)
     onDragStart?.()
   }
   const handleDragEnd = () => {
@@ -165,6 +176,7 @@ function TemplateCard({
     <div
       className="rounded border w-full bg-card hover:shadow-lg transition p-2 space-y-2"
       draggable
+      onMouseDown={handleMouseDown}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       title={t.title}
@@ -199,10 +211,35 @@ function TemplateCard({
           <Markdown remarkPlugins={[remarkGfm]}>{t.descriptionMd}</Markdown>
         )}
       </div>
-      <div className="pt-1">
+      <div className="pt-1 flex gap-2">
         <button
           className={cn(
-            'w-full text-xs px-2 py-1 rounded border',
+            'flex-1 text-xs px-2 py-1 rounded border',
+            isPng && !isCopying
+              ? 'hover:bg-accent/60'
+              : 'opacity-50 cursor-not-allowed'
+          )}
+          disabled={!isPng || isCopying}
+          onClick={async () => {
+            if (!isPng || isCopying) return
+            try {
+              setIsCopying(true)
+              const wf = await importWorkflowFromPngUrl(t.src, `${t.id}.png`)
+              if (!wf) return
+              await navigator.clipboard.writeText(JSON.stringify(wf.workflow, null, 2))
+              notify('success', 'ワークフローをクリップボードにコピーしました')
+            } catch (e: any) {
+              notify('error', `コピーに失敗: ${e?.message ?? String(e)}`)
+            } finally {
+              setIsCopying(false)
+            }
+          }}
+        >
+          {isCopying ? 'コピー中...' : 'コピー'}
+        </button>
+        <button
+          className={cn(
+            'flex-1 text-xs px-2 py-1 rounded border',
             isPng ? 'hover:bg-accent/60' : 'opacity-50 cursor-not-allowed'
           )}
           onClick={() => isPng && onCreate?.()}
