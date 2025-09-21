@@ -74,7 +74,7 @@ export function TemplateSheet({
         aria-label="Templates"
         onDragEnd={() => setIsDragging(false)}
       >
-        <div className="flex items-center justify-between px-3 py-2 border-b gap-3">
+        <div className="flex items-center justify-between px-3 py-2 bg-node-header gap-3">
           <div className="flex items-center gap-3">
             <h2 className="text-sm font-semibold whitespace-nowrap">Templates (ドラッグ＆ドロップ可能)</h2>
           </div>
@@ -88,43 +88,53 @@ export function TemplateSheet({
           </button>
         </div>
 
-        {/* Genre anchors */}
-        <div className="flex gap-2 overflow-auto px-3 py-2 border-b">
+        {/* Genre anchors  */}
+        <div className="flex gap-2 overflow-auto px-3 pt-2 pb-2">
           {anchors.length > 0 ? (
-            anchors.map(g => (
-              <a
-                key={g}
-                href={`#genre-${encodeURIComponent(g)}`}
-                className="text-xs px-2 py-1 rounded bg-muted hover:bg-muted/80"
-              >
-                {g}
-              </a>
-            ))
+            anchors.map(g => {
+              const sectionId = `genre-${encodeURIComponent(g)}`
+              return (
+                <button
+                  key={g}
+                  type="button"
+                  className="text-xs px-2 py-1 rounded bg-muted hover:bg-muted/80 action:ring-2 action:ring-ring"
+                  onClick={() => {
+                    const el = document.getElementById(sectionId)
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    }
+                  }}
+                >
+                  {g}
+                </button>
+              )
+            })
           ) : (
-            <div className="text-xs text-muted-foreground">
-              No templates yet
-            </div>
+            <div className="text-xs text-muted-foreground">No templates yet</div>
           )}
         </div>
 
         {/* Content */}
-        <div className="h-[calc(100%-88px)] overflow-auto p-3 space-y-6">
-          {Object.entries(byGenre).map(([genre, items]) => (
-            <section key={genre} id={`genre-${genre}`} className="space-y-2">
-              <div className="text-sm font-semibold">{genre}</div>
-              <div className="grid grid-cols-1 gap-3">
-                {items.map(t => (
-                  <TemplateCard
-                    key={t.id}
-                    t={t}
-                    onCreate={() => onCreateFromTemplate?.(t.id)}
-                    onDragStart={() => setIsDragging(true)}
-                    onDragEnd={() => setIsDragging(false)}
-                  />
-                ))}
-              </div>
-            </section>
-          ))}
+        <div className="h-[calc(100%-88px)] overflow-auto pt-1.5 px-3 space-y-6">
+          {Object.entries(byGenre).map(([genre, items]) => {
+            const sectionId = `genre-${encodeURIComponent(genre)}`
+            return (
+              <section key={genre} id={sectionId} className="space-y-2">
+                <div className="text-sm font-semibold">{genre}</div>
+                <div className="grid grid-cols-1 gap-3">
+                  {items.map(t => (
+                    <TemplateCard
+                      key={t.id}
+                      t={t}
+                      onCreate={() => onCreateFromTemplate?.(t.id)}
+                      onDragStart={() => setIsDragging(true)}
+                      onDragEnd={() => setIsDragging(false)}
+                    />
+                  ))}
+                </div>
+              </section>
+            )
+          })}
         </div>
       </aside>
     </>
@@ -253,9 +263,17 @@ function TemplateCard({
         )}
       </div>
       <div className="space-y-1">
-        <div className="text-sm font-medium leading-tight">{t.title}</div>
-        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-          {t.type}
+        {/* タイトルとタイプを横並びにし、タイトルは長い場合省略表示 */}
+        <div className="flex items-center gap-2">
+          <div
+            className="text-sm font-medium leading-tight min-w-0 truncate"
+            title={t.title}
+          >
+            {t.title}
+          </div>
+          <div className="text-[10px] rounded uppercase tracking-wide  bg-node-label shrink-0 px-1.5">
+            {t.type}
+          </div>
         </div>
         {t.tags && t.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-1">
