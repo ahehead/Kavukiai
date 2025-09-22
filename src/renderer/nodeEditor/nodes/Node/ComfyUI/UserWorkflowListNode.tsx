@@ -1,10 +1,12 @@
 import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
+import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/SerializableInputsNode'
+import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { SelectWorkflowControl } from '../../Controls/ComfyUI/SelectWorkflowControl'
+import { InputValueControl } from '../../Controls/input/InputValue'
 
 export class UserWorkflowListNode extends SerializableInputsNode<
   'UserWorkflowList',
@@ -13,7 +15,8 @@ export class UserWorkflowListNode extends SerializableInputsNode<
   { select: SelectWorkflowControl }
 > {
   constructor(
-    history: HistoryPlugin<Schemes>,
+    private area: AreaPlugin<Schemes, AreaExtra>,
+    private history: HistoryPlugin<Schemes>,
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
@@ -28,7 +31,15 @@ export class UserWorkflowListNode extends SerializableInputsNode<
         key: 'endpoint',
         typeName: 'string',
         label: 'Endpoint',
-      }
+        control: new InputValueControl<string>({
+          label: 'Endpoint',
+          value: 'http://127.0.0.1:8000',
+          type: 'string',
+          history: this.history,
+          area: this.area,
+          onChange: () => this.dataflow.reset(this.id),
+        }),
+      },
     ])
     this.addOutputPort({
       key: 'workflowRef',
@@ -39,7 +50,7 @@ export class UserWorkflowListNode extends SerializableInputsNode<
       'select',
       new SelectWorkflowControl({
         history,
-        source: 'template',
+        source: 'userData',
         onChange: () => this.dataflow.reset(this.id),
       })
     )
@@ -47,10 +58,11 @@ export class UserWorkflowListNode extends SerializableInputsNode<
 
   async execute(): Promise<void> {
     // exec 押下でリスト取得
-    const endpoint = await this.dataflow.fetchInputSingle<string>(
+    const df = await this.dataflow.fetchInputSingle<string>(
       this.id,
       'endpoint'
     )
+    const endpoint = this.inputs.endpoint?.getShowValue<string>() ?? df ?? ""
     if (!endpoint) {
       await this.controls.select.setItems([])
       this.controls.select.setError('Endpoint is required')
