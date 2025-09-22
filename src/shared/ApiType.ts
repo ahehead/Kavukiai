@@ -49,6 +49,9 @@ export enum IpcChannel {
   ListComfyCheckpoints = "list-comfy-checkpoints",
   LaunchComfyDesktop = "launch-comfy-desktop",
   ReadWorkflowRef = "read-workflow-ref",
+  // New (refactored) ComfyUI workflow resolution steps
+  ReadWorkflowJson = "read-workflow-json",
+  ToApiPromptStrict = "to-api-prompt-strict",
   ComfyUIFreeMemory = "comfyui-free-memory",
 
   // PNG export with embedded data

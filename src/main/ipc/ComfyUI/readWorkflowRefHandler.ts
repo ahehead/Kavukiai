@@ -1,15 +1,17 @@
 import { ipcMain } from "electron";
 import { IpcChannel, type IpcResult } from "shared/ApiType";
-import { getComfyApiClient, getWorkflow } from "./comfyApiClient";
-import { ComfyTemplatesClient } from "./comfyTemplatesClient";
 import { toApiPromptStrict } from "./graph-to-prompt-strict";
+import { resolveWorkflowJson } from "./workflowResolver";
 
 export type ReadWorkflowRefArgs = {
   endpoint: string; // 明示的に受け取る (renderer 側で他ノードから供給)
   workflowRef: { source: "userData" | "template"; name: string };
 };
 
-/** workflowRef -> 実体 JSON を取得する , さらにapi用prompt方式に変換する　IPC handler */
+/**
+ * (Deprecated) workflowRef -> apiPrompt 直接変換する旧ハンドラ
+ * 新: IpcChannel.ReadWorkflowJson + IpcChannel.ToApiPromptStrict を段階的に利用してください。
+ */
 export function registerReadWorkflowRefHandler(): void {
   ipcMain.handle(
     IpcChannel.ReadWorkflowRef,
@@ -28,16 +30,4 @@ export function registerReadWorkflowRefHandler(): void {
       }
     }
   );
-}
-
-async function resolveWorkflowJson(
-  endpoint: string,
-  workflowRef: { source: "userData" | "template"; name: string }
-): Promise<any> {
-  if (workflowRef.source === "template") {
-    const client = new ComfyTemplatesClient(endpoint);
-    return client.getTemplate(workflowRef.name);
-  }
-  const api = getComfyApiClient(endpoint);
-  return getWorkflow(api, workflowRef.name);
 }

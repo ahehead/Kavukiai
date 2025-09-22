@@ -1,5 +1,5 @@
 // comfy/graph-to-prompt-strict.ts
-type GuiWorkflow = {
+export type GuiWorkflow = {
   version?: number; // 0.4 or 1.0
   nodes: GuiNode[];
   links?: any[]; // 0.4: tuple[], 1.0: object[]

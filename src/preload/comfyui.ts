@@ -60,4 +60,20 @@ export const comfyuiApi = {
     if (res?.status === "success") return res.data;
     throw new Error(res?.message || "Failed to read workflowRef");
   },
+  readWorkflowJson: async (args: {
+    endpoint: string;
+    workflowRef: { source: "userData" | "template"; name: string };
+  }): Promise<any> => {
+    const res = await ipcRenderer.invoke(IpcChannel.ReadWorkflowJson, args);
+    if (res?.status === "success") return res.data;
+    throw new Error(res?.message || "Failed to read workflow json");
+  },
+  toApiPromptStrict: async (args: {
+    endpoint: string;
+    workflow: unknown;
+  }): Promise<any> => {
+    const res = await ipcRenderer.invoke(IpcChannel.ToApiPromptStrict, args);
+    if (res?.status === "success") return res.data;
+    throw new Error(res?.message || "Failed to convert workflow to apiPrompt");
+  },
 };
