@@ -1,6 +1,6 @@
 import { ipcMain } from "electron";
 import { IpcChannel, type IpcResult } from "shared/ApiType";
-import { getComfyApiClient, listWorkflows } from "./comfyApiClient";
+import { getComfyApiClient } from "./comfyApiClient";
 import { ComfyTemplatesClient } from "./comfyTemplatesClient";
 
 export function registerComfyUIWorkflowListHandlers(): void {
@@ -9,9 +9,8 @@ export function registerComfyUIWorkflowListHandlers(): void {
     async (_e, endpoint: string): Promise<IpcResult<string[]>> => {
       try {
         const api = getComfyApiClient(endpoint);
-        const entries = await listWorkflows(api);
-        const names = entries.map((e) => e.name).filter(Boolean);
-        return { status: "success", data: names };
+        const list = await api.listUserData("workflows");
+        return { status: "success", data: list };
       } catch (err: any) {
         console.error("Error listing comfy user workflows:", err);
         return { status: "error", message: String(err?.message ?? err) };
