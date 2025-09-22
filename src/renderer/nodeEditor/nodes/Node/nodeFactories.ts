@@ -352,8 +352,13 @@ export const factoryList = [
     { categories: ["ComfyUI"], op: "GetCheckpoints", label: "GetCheckpoints" }
   ),
   define(
-    ({ history, dataflow, controlflow }: NodeDeps): UserWorkflowListNode =>
-      new UserWorkflowListNode(history, dataflow, controlflow),
+    ({
+      area,
+      history,
+      dataflow,
+      controlflow,
+    }: NodeDeps): UserWorkflowListNode =>
+      new UserWorkflowListNode(area, history, dataflow, controlflow),
     {
       categories: ["ComfyUI"],
       op: "UserWorkflowList",
