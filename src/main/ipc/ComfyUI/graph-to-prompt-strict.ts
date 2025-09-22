@@ -281,6 +281,18 @@ export async function toApiPromptStrict(
   const { baseUrl, strictTypes = true, fillDefaults = false } = opts;
   const info = new ObjectInfoCache(baseUrl);
 
+  // 除外したいノード種別（結果 JSON には出さない）
+  const EXCLUDE_CLASS_TYPES = new Set([
+    "Note",
+    "MarkdownNote",
+    // PrimitiveNode は値をインライン展開するため出力から除外
+    "PrimitiveNode",
+  ]);
+
+  // 参照用: id -> node
+  const nodeMap = new Map<string, GuiNode>();
+  for (const n of wf.nodes ?? []) nodeMap.set(asId(n.id), n);
+
   // 出力名逆引き/入力リンク逆引きを構築
   // 出力スロット逆引き（現状未使用だが保持）
   const _outSlotIndex = buildOutputSlotIndex(wf.nodes ?? []);
@@ -328,7 +340,57 @@ export async function toApiPromptStrict(
             )}`
           );
         }
-        inputs[inName] = ref; // ["srcNodeId", "出力名"]
+        // リンク元ノード（値インライン展開の判定用）
+        const [srcId] = ref;
+        const srcNode = nodeMap.get(srcId);
+        const rawType = await info.getInputType(classType, inName);
+        const expectType = normalizeScalarType(rawType);
+
+        const isScalarExpected = expectType ? isScalarType(expectType) : false;
+
+        // スカラー入力に対するリンクの場合でも widgets_values の位置合わせのため
+        // 期待型がスカラーなら popNextMatching を実行して消費（値は破棄）
+        if (isScalarExpected && wvArr) {
+          // 破棄目的なので戻り値は使わない
+          popNextMatching(wvArr, expectType);
+        }
+
+        if (srcNode && srcNode.type === "PrimitiveNode") {
+          // PrimitiveNode からのリンクは値をインライン化
+          // PrimitiveNode の widgets_values は配列先頭に値が入る想定
+          let pVal: any;
+          if (Array.isArray(srcNode.widgets_values)) {
+            pVal = srcNode.widgets_values[0];
+          } else if (
+            srcNode.widgets_values &&
+            typeof srcNode.widgets_values === "object"
+          ) {
+            // オブジェクト形式は出力 widget 名をキーにしている可能性があるが
+            // 一般的には配列が使われる。安全側で最初のプロパティを拾う。
+            const firstKey = Object.keys(srcNode.widgets_values as any)[0];
+            pVal = (srcNode.widgets_values as any)[firstKey];
+          }
+
+          // 型調整: INT/FLOAT なのに文字列数字なら number 化
+          if (
+            (expectType === "INT" || expectType === "FLOAT") &&
+            typeof pVal === "string" &&
+            pVal.trim() !== "" &&
+            !Number.isNaN(Number(pVal))
+          ) {
+            const num = Number(pVal);
+            if (expectType === "INT") {
+              pVal = Math.trunc(num);
+            } else {
+              pVal = num;
+            }
+          }
+
+          inputs[inName] = pVal;
+        } else {
+          // 通常リンク: [srcNodeId, 出力スロット番号]
+          inputs[inName] = ref; // ["srcNodeId", number]
+        }
         continue;
       }
 
@@ -454,8 +516,10 @@ export async function toApiPromptStrict(
       }
     }
 
-    // API 形式へ
-    result[nid] = { class_type: classType, inputs };
+    // API 形式へ（除外リストに入っていなければ結果登録）
+    if (!EXCLUDE_CLASS_TYPES.has(classType)) {
+      result[nid] = { class_type: classType, inputs };
+    }
   }
 
   return result;
