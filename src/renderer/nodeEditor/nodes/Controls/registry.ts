@@ -82,6 +82,10 @@ import {
   ProgressControl,
   ProgressControlView,
 } from "renderer/nodeEditor/nodes/Controls/view/ProgressControl";
+import {
+  InspectorViewControl,
+  InspectorViewControlView,
+} from "./Console/InspectorView";
 
 // 1. Append new entries here when adding a Control.
 // 2. If you need specialized generic variants (e.g., InputValueControl<string>) extend the NodeControl type below.
@@ -106,6 +110,7 @@ export const controlDefinitions = [
   { ctor: WorkflowIOSelectControl, view: WorkflowIOSelectControlView },
   { ctor: SelectWorkflowControl, view: SelectWorkflowControlView },
   { ctor: SelectStringListControl, view: SelectStringListControlView },
+  { ctor: InspectorViewControl, view: InspectorViewControlView },
 ] as const;
 
 // Map used by React preset customization.

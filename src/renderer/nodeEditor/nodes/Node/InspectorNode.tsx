@@ -12,7 +12,7 @@ import type {
 } from 'renderer/nodeEditor/types/Node/DynamicSchemaNode'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
-import { MultiLineControl } from '../Controls/input/MultiLine'
+import { InspectorViewControl } from '../Controls/Console/InspectorView'
 import { formatValue } from '../util/formatValue'
 
 // View String ノード
@@ -27,7 +27,7 @@ export class InspectorNode
       exec: TypedSocket
       outputAny: TypedSocket
     },
-    { view: MultiLineControl }
+    { view: InspectorViewControl }
   >
   implements DynamicSchemaNode {
   constructor(
@@ -43,7 +43,7 @@ export class InspectorNode
       {
         key: 'exec',
         label: 'scan',
-        onClick: async () => this.controlflow.execute(this.id, 'exec')
+        onClick: async () => this.controlflow.execute(this.id, 'exec'),
       },
       {
         key: 'inputAny',
@@ -63,10 +63,7 @@ export class InspectorNode
       },
     ])
 
-    this.addControl(
-      'view',
-      new MultiLineControl({ value: '', editable: false }),
-    )
+    this.addControl('view', new InspectorViewControl({ value: '' }))
   }
 
   data(inputs: { inputAny?: any[] }): { outputAny: any | undefined } {
@@ -84,11 +81,7 @@ export class InspectorNode
       'inputAny'
     )
     if (inputAny === null) return
-
     this.controls.view.setValue(formatValue(inputAny))
-
-    await this.area.update('control', this.controls.view.id)
-
     forward('exec')
   }
 

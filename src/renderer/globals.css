@@ -187,20 +187,7 @@
   }
 }
 
-/* Console の Monaco エディタ専用の背景色（テーマ競合回避のためスコープ適用） */
-.console-monaco .monaco-editor,
-.console-monaco .monaco-editor .overflow-guard,
-.console-monaco .monaco-editor .margin,
-.console-monaco .monaco-editor-background,
-.console-monaco .monaco-editor .monaco-scrollable-element,
-.console-monaco .monaco-editor .editor-background {
-  background: #f3f4f6 !important; /* Tailwind gray-100 相当 */
-}
 
-/* Console の選択色も読みやすいように微調整（任意） */
-.console-monaco .monaco-editor .selected-text {
-  background-color: rgba(37, 99, 235, 0.35) !important; /* #2563eb59 */
-}
 
 /* Tooltip用カスタムスクロールバー */
 .tooltip-scrollbar {
@@ -269,11 +256,34 @@ dialog::backdrop {
   @apply flex-1;
 }
 
+.monaco-editor {
+  --vscode-focusBorder: transparent !important;
+}
+
+/* Console の Monaco エディタ専用の背景色（テーマ競合回避のためスコープ適用） */
+.console-monaco .monaco-editor,
+.console-monaco .monaco-editor .margin,
+.console-monaco .monaco-editor-background,
+.console-monaco .monaco-editor .editor-background {
+  background: #f3f4f6 !important; /* Tailwind gray-100 相当 */
+}
+
+/* Console の選択色も読みやすいように微調整（任意） */
+.console-monaco .monaco-editor .selected-text {
+  background-color: rgba(37, 99, 235, 0.35) !important; /* #2563eb59 */
+}
+
 /* ConsoleControl Monaco Editor 角丸 */
-.console-rounded, .console-rounded .monaco-editor, .console-rounded .monaco-editor .overflow-guard, .console-rounded .monaco-scrollable-element  {
+.console-rounded,
+.console-rounded .monaco-editor,
+.console-rounded .monaco-scrollable-element {
   border-radius: 0.5rem; /* rounded-md 相当 */
 }
-.console-rounded .monaco-scrollable-element, .console-rounded .monaco-editor-background, .console-rounded .monaco-editor, .console-rounded .overflow-guard {
+
+.console-rounded .monaco-scrollable-element,
+.console-rounded .monaco-editor-background,
+.console-rounded .monaco-editor,
+.console-rounded .overflow-guard {
   background-color: transparent; /* wrapper の bg を見せる */
 }
 /* Monaco デフォルトのフォーカス枠(青)を無効化 */
@@ -285,4 +295,11 @@ dialog::backdrop {
   outline: none !important;
   box-shadow: none !important;
   border-color: transparent !important;
+}
+
+.inspector-view .monaco-editor-background,
+.inspector-view .monaco-editor,
+.inspector-view .monaco-editor > .overflow-guard > .margin,
+.inspector-view .monaco-scrollable-element {
+  background: transparent !important; /* wrapper の bg を見せる */
 }
