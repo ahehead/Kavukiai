@@ -15,7 +15,7 @@ import type {
 import type { AreaPlugin } from 'rete-area-plugin'
 
 // 配列ノード: 6つの入力を配列化し返す
-export class ArrayNode
+export class ToArrayNode
   extends SerializableInputsNode<
     'Array',
     Record<string, TypedSocket>,
@@ -99,7 +99,7 @@ export class ArrayNode
     await this.updateInputsSchema(inputs, schemaName, schema)
     await this.updateOutSchema(
       'out',
-      `array<${schemaName}>`,
+      `<${schemaName}>Array`,
       Type.Array(schema)
     )
     this.schemaName = schemaName

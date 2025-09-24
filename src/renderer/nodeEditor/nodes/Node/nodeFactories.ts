@@ -37,7 +37,6 @@ import { JsonSchemaFormatNode } from "renderer/nodeEditor/nodes/Node/OpenAI/Json
 import { OpenAINode } from "renderer/nodeEditor/nodes/Node/OpenAI/OpenAI";
 import { ResponseCreateParamsBaseNode } from "renderer/nodeEditor/nodes/Node/OpenAI/ResponseCreateParamsBaseNode";
 import { ResponseTextConfigNode } from "renderer/nodeEditor/nodes/Node/OpenAI/ResponseTextConfigNode";
-import { ArrayNode } from "renderer/nodeEditor/nodes/Node/Primitive/ArrayNode";
 import { BoolNode } from "renderer/nodeEditor/nodes/Node/Primitive/BoolNode";
 import { CreateSelectNode } from "renderer/nodeEditor/nodes/Node/Primitive/CreateSelectNode";
 import { CounterLoopNode } from "renderer/nodeEditor/nodes/Node/Primitive/Flow/CounterLoopNode";
@@ -60,6 +59,7 @@ import { ObjectToYAMLStringNode } from "renderer/nodeEditor/nodes/Node/Primitive
 import { StringFormNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/StringFormNode";
 import { StringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/StringNode";
 import { TemplateReplaceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/TemplateReplaceNode";
+import { ToArrayNode } from "renderer/nodeEditor/nodes/Node/Primitive/ToArrayNode";
 
 import type {
   FactoryWithMeta,
@@ -178,11 +178,12 @@ export const factoryList = [
   ),
 
   define(
-    ({ area, dataflow }: NodeDeps): ArrayNode => new ArrayNode(area, dataflow),
+    ({ area, dataflow }: NodeDeps): ToArrayNode =>
+      new ToArrayNode(area, dataflow),
     {
       categories: ["Primitive"],
-      op: "Array",
-      label: "Array",
+      op: "ToArray",
+      label: "ToArray",
     }
   ),
   define(
