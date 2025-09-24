@@ -2,6 +2,7 @@ import comfyuiTemplate from "src/resources/public/templates/ComfyUI/ComfyUI_Temp
 import lmstudioTemplate from "src/resources/public/templates/LMStudio/LMStudio_template.png?url";
 import basicSystemPromptEn from "../../../../resources/public/templates/Prompt/system_basic.en.md?raw";
 import basicSystemPromptJa from "../../../../resources/public/templates/Prompt/system_basic.md?raw";
+import stringJoinPng from "../../../../resources/public/templates/String/string_join.png?url";
 import stringTemplatePng from "../../../../resources/public/templates/String/template_replace_string.png?url";
 import type { TemplateMeta, TemplatesByGenre } from "./types";
 
@@ -18,6 +19,15 @@ export const TEMPLATES: TemplateMeta[] = [
     type: "PNGWorkflow",
     src: stringTemplatePng,
     descriptionMd: "プロンプトに値を埋め込むときのパターン",
+  },
+  {
+    id: "string-join-01",
+    title: "String Join",
+    genre: "String",
+    tags: ["array", "join", "separator"],
+    type: "PNGWorkflow",
+    src: stringJoinPng,
+    descriptionMd: "配列の文字列を区切り文字で連結するパターン",
   },
   {
     id: "lmstudio-template",
