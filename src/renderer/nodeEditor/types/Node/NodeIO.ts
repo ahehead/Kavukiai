@@ -1,5 +1,5 @@
 import type { TSchema } from "@sinclair/typebox";
-import { ButtonControl } from "renderer/nodeEditor/nodes/Controls/Button";
+import { ButtonControl } from "renderer/nodeEditor/nodes/Controls/Button/Button";
 import { ClassicPreset } from "rete";
 import type { BaseControl } from "../Control/BaseControl";
 import { TooltipInput } from "../Input";

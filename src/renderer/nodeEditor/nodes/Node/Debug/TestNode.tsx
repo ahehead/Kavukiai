@@ -1,5 +1,5 @@
 import { SerializableInputsNode } from 'renderer/nodeEditor/types'
-import { ButtonControl } from '../../Controls/Button'
+import { ButtonControl } from '../../Controls/Button/Button'
 import { UChatControl } from '../../Controls/Chat/UChat'
 import { ConsoleControl } from '../../Controls/Console/Console'
 import { CheckBoxControl } from '../../Controls/input/CheckBox'

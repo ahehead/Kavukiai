@@ -1,4 +1,4 @@
-import { RunButtonControl } from 'renderer/nodeEditor/nodes/Controls/RunButton'
+import { RunButtonControl } from 'renderer/nodeEditor/nodes/Controls/Button/RunButton'
 import {
   type Schemes,
   SerializableInputsNode,

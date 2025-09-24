@@ -5,7 +5,11 @@
 import {
   ButtonControl,
   ButtonControlView,
-} from "renderer/nodeEditor/nodes/Controls/Button";
+} from "renderer/nodeEditor/nodes/Controls/Button/Button";
+import {
+  RunButtonControl,
+  RunButtonControlView,
+} from "renderer/nodeEditor/nodes/Controls/Button/RunButton";
 import {
   UChatControl,
   UChatMessageListControlView,
@@ -70,10 +74,6 @@ import {
   ModelInfoListControl,
   ModelInfoListControlView,
 } from "renderer/nodeEditor/nodes/Controls/LMStudio/ModelInfoListControl";
-import {
-  RunButtonControl,
-  RunButtonControlView,
-} from "renderer/nodeEditor/nodes/Controls/RunButton";
 import {
   ImageControl,
   ImageControlView,
