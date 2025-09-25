@@ -1,7 +1,7 @@
 // UChatMessageListControl.tsx
 
 import { Editor } from '@monaco-editor/react'
-import { Check, Copy, GitBranch, Pencil, Trash2, X } from 'lucide-react'
+import { Check, Copy, Pencil, Trash2, X } from 'lucide-react'
 import { type JSX, useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
