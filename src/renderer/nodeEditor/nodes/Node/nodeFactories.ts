@@ -105,7 +105,7 @@ export const factoryList = [
     {
       categories: ["Primitive", "String"],
       op: "MultiLineString",
-      label: "MultiLineString",
+      label: "Multi Line String",
     }
   ),
   define(
@@ -114,7 +114,7 @@ export const factoryList = [
     {
       categories: ["Primitive", "String"],
       op: "TemplateReplace",
-      label: "TemplateReplace",
+      label: "Template Replace",
     }
   ),
   define(
@@ -123,7 +123,7 @@ export const factoryList = [
     {
       categories: ["Primitive", "String"],
       op: "JsonFilePath",
-      label: "JsonFilePath",
+      label: "JSON File Path",
     }
   ),
   define(
@@ -132,7 +132,7 @@ export const factoryList = [
     {
       categories: ["Primitive", "String"],
       op: "StringForm",
-      label: "StringForm",
+      label: "String Form",
     }
   ),
   define(({ dataflow }: NodeDeps): JoinNode => new JoinNode(dataflow), {
@@ -143,19 +143,19 @@ export const factoryList = [
   define((_: NodeDeps): NumberToStringNode => new NumberToStringNode(), {
     categories: ["Primitive", "Number"],
     op: "NumberToString",
-    label: "NumberToString",
+    label: "Number To String",
   }),
   define((_: NodeDeps): ObjectToStringNode => new ObjectToStringNode(), {
     categories: ["Primitive", "Object"],
     op: "ObjectToString",
-    label: "ObjectToString",
+    label: "Object To String",
   }),
   define(
     (_: NodeDeps): ObjectToYAMLStringNode => new ObjectToYAMLStringNode(),
     {
       categories: ["Primitive", "Object"],
       op: "ObjectToYAMLString",
-      label: "ObjectToYAMLString",
+      label: "Object To YAML String",
     }
   ),
   define(
@@ -163,7 +163,7 @@ export const factoryList = [
     {
       categories: ["Primitive", "String"],
       op: "CodeFence",
-      label: "CodeFence",
+      label: "Code Fence",
     }
   ),
 
@@ -194,13 +194,17 @@ export const factoryList = [
     {
       categories: ["Primitive", "Array"],
       op: "ToArray",
-      label: "ToArray",
+      label: "To Array",
     }
   ),
   define(
     ({ dataflow, controlflow }: NodeDeps): CreateSelectNode =>
       new CreateSelectNode(dataflow, controlflow),
-    { categories: ["Primitive"], op: "CreateSelect", label: "CreateSelect" }
+    {
+      categories: ["Primitive"],
+      op: "CreateSelect",
+      label: "Create Select",
+    }
   ),
   define(
     ({ history, area, dataflow }: NodeDeps): SelectImageNode =>
@@ -208,7 +212,7 @@ export const factoryList = [
     {
       categories: ["Primitive", "Image"],
       op: "SelectImage",
-      label: "SelectImage",
+      label: "Select Image",
     }
   ),
   define(
@@ -217,7 +221,7 @@ export const factoryList = [
     {
       categories: ["Primitive", "Image"],
       op: "ShowImage",
-      label: "ShowImage",
+      label: "Show Image",
     }
   ),
 
@@ -228,7 +232,7 @@ export const factoryList = [
     {
       categories: ["LMStudio"],
       op: "ListDownloadedModels",
-      label: "ListDownloadedModels",
+      label: "List Downloaded Models",
     }
   ),
   define(
@@ -237,7 +241,7 @@ export const factoryList = [
     {
       categories: ["LMStudio"],
       op: "GetModelInfoList",
-      label: "GetModelInfoList",
+      label: "Get Model Info List",
     }
   ),
   define(
@@ -245,23 +249,35 @@ export const factoryList = [
     {
       categories: ["LMStudio"],
       op: "ModelInfoToModelList",
-      label: "ModelInfoToModelList",
+      label: "Model Info To Model List",
     }
   ),
   define(
     ({ area, dataflow, controlflow }: NodeDeps): LMStudioChatNode =>
       new LMStudioChatNode(area, dataflow, controlflow),
-    { categories: ["LMStudio"], op: "LMStudioChat", label: "LMStudioClient" }
+    {
+      categories: ["LMStudio"],
+      op: "LMStudioChat",
+      label: "LM Studio Client",
+    }
   ),
   define(
     ({ controlflow }: NodeDeps): LMStudioStartNode =>
       new LMStudioStartNode(controlflow),
-    { categories: ["LMStudio"], op: "LMStudioStart", label: "ServerStart" }
+    {
+      categories: ["LMStudio"],
+      op: "LMStudioStart",
+      label: "Server Start",
+    }
   ),
   define(
     ({ controlflow }: NodeDeps): LMStudioStopNode =>
       new LMStudioStopNode(controlflow),
-    { categories: ["LMStudio"], op: "LMStudioStop", label: "ServerStop" }
+    {
+      categories: ["LMStudio"],
+      op: "LMStudioStop",
+      label: "Server Stop",
+    }
   ),
   define(
     ({ area, dataflow, controlflow }: NodeDeps): LMStudioLoadModelNode =>
@@ -269,18 +285,26 @@ export const factoryList = [
     {
       categories: ["LMStudio"],
       op: "LMStudioLoadModel",
-      label: "LoadModel",
+      label: "Load Model",
     }
   ),
   define(
     ({ dataflow, controlflow }: NodeDeps): ServerStatusNode =>
       new ServerStatusNode(dataflow, controlflow),
-    { categories: ["LMStudio"], op: "ServerStatus", label: "ServerStatus" }
+    {
+      categories: ["LMStudio"],
+      op: "ServerStatus",
+      label: "Server Status",
+    }
   ),
   define(
     ({ controlflow }: NodeDeps): UnLoadModelNode =>
       new UnLoadModelNode(controlflow),
-    { categories: ["LMStudio"], op: "UnLoadModel", label: "UnLoadModel" }
+    {
+      categories: ["LMStudio"],
+      op: "UnLoadModel",
+      label: "Unload Model",
+    }
   ),
   define(
     ({ dataflow }: NodeDeps): LLMPredictionConfigNode =>
@@ -288,7 +312,7 @@ export const factoryList = [
     {
       categories: ["LMStudio"],
       op: "LLMPredictionConfig",
-      label: "LLMPredictionConfig",
+      label: "LLM Prediction Config",
     }
   ),
 
@@ -296,7 +320,7 @@ export const factoryList = [
   define(
     ({ area, history, dataflow, controlflow }: NodeDeps): ComfyUINode =>
       new ComfyUINode(area, history, dataflow, controlflow),
-    { categories: ["ComfyUI"], op: "ComfyUI", label: "ComfyUIClient" }
+    { categories: ["ComfyUI"], op: "ComfyUI", label: "ComfyUI Client" }
   ),
   define(
     ({ area, dataflow, controlflow }: NodeDeps): ComfyDesktopStartNode =>
@@ -304,7 +328,7 @@ export const factoryList = [
     {
       categories: ["ComfyUI"],
       op: "ComfyDesktopStart",
-      label: "ComfyDesktopStart",
+      label: "Comfy Desktop Start",
     }
   ),
   define(
@@ -318,7 +342,7 @@ export const factoryList = [
     {
       categories: ["ComfyUI"],
       op: "ComfyUIFreeMemory",
-      label: "ComfyUIFreeMemory",
+      label: "ComfyUI Free Memory",
     }
   ),
   define(
@@ -332,7 +356,7 @@ export const factoryList = [
     {
       categories: ["ComfyUI"],
       op: "WorkflowRefToApiWorkflow",
-      label: "WorkflowRefToApiWorkflow",
+      label: "Workflow Ref To API Workflow",
     }
   ),
   define(
@@ -341,7 +365,7 @@ export const factoryList = [
     {
       categories: ["ComfyUI"],
       op: "LoadWorkflowFile",
-      label: "LoadWorkflowFile",
+      label: "Load Workflow File",
     }
   ),
   define(
@@ -355,13 +379,17 @@ export const factoryList = [
     {
       categories: ["ComfyUI"],
       op: "TemplateWorkflowList",
-      label: "TemplateWorkflowList",
+      label: "Template Workflow List",
     }
   ),
   define(
     ({ area, history, dataflow, controlflow }: NodeDeps): GetCheckpointsNode =>
       new GetCheckpointsNode(area, history, dataflow, controlflow),
-    { categories: ["ComfyUI"], op: "GetCheckpoints", label: "GetCheckpoints" }
+    {
+      categories: ["ComfyUI"],
+      op: "GetCheckpoints",
+      label: "Get Checkpoints",
+    }
   ),
   define(
     ({
@@ -374,18 +402,26 @@ export const factoryList = [
     {
       categories: ["ComfyUI"],
       op: "UserWorkflowList",
-      label: "UserWorkflowList",
+      label: "User Workflow List",
     }
   ),
   define(
     ({ history, area, dataflow, controlflow }: NodeDeps): WorkflowInputsNode =>
       new WorkflowInputsNode(history, area, dataflow, controlflow),
-    { categories: ["ComfyUI"], op: "WorkflowInputs", label: "WorkflowInputs" }
+    {
+      categories: ["ComfyUI"],
+      op: "WorkflowInputs",
+      label: "Workflow Inputs",
+    }
   ),
   define(
     ({ history, area, dataflow, controlflow }: NodeDeps): WorkflowOutputsNode =>
       new WorkflowOutputsNode(history, area, dataflow, controlflow),
-    { categories: ["ComfyUI"], op: "WorkflowOutputs", label: "WorkflowOutputs" }
+    {
+      categories: ["ComfyUI"],
+      op: "WorkflowOutputs",
+      label: "Workflow Outputs",
+    }
   ),
   define(
     (_: NodeDeps): MergeWorkflowInputsDefaultsNode =>
@@ -393,7 +429,7 @@ export const factoryList = [
     {
       categories: ["ComfyUI"],
       op: "MergeWorkflowInputsDefaults",
-      label: "MergeWorkflowInputsDefaults",
+      label: "Merge Workflow Inputs Defaults",
     }
   ),
 
@@ -401,7 +437,7 @@ export const factoryList = [
   define(
     ({ area, dataflow, controlflow }: NodeDeps): OpenAINode =>
       new OpenAINode(area, dataflow, controlflow),
-    { categories: ["OpenAI"], op: "OpenAI", label: "OpenAIClient" }
+    { categories: ["OpenAI"], op: "OpenAI", label: "OpenAI Client" }
   ),
   define(
     ({ history, area, dataflow }: NodeDeps): ResponseCreateParamsBaseNode =>
@@ -409,7 +445,7 @@ export const factoryList = [
     {
       categories: ["OpenAI"],
       op: "ResponseCreateParamsBase",
-      label: "ResponseCreateParamsBase",
+      label: "Response Create Params Base",
     }
   ),
   define(
@@ -418,7 +454,7 @@ export const factoryList = [
     {
       categories: ["OpenAI"],
       op: "JsonSchemaFormat",
-      label: "JsonSchemaFormat",
+      label: "JSON Schema Format",
     }
   ),
   define(
@@ -426,7 +462,7 @@ export const factoryList = [
     {
       categories: ["OpenAI"],
       op: "ResponseTextConfig",
-      label: "ResponseTextConfig",
+      label: "Response Text Config",
     }
   ),
 
@@ -434,14 +470,14 @@ export const factoryList = [
   define((_: NodeDeps): UChatToStringNode => new UChatToStringNode(), {
     categories: ["UChat"],
     op: "UChatToString",
-    label: "UChatToString",
+    label: "UChat To String",
   }),
   define(
     (_: NodeDeps): UChatGetLastMessageNode => new UChatGetLastMessageNode(),
     {
       categories: ["UChat"],
       op: "UChatGetLastMessage",
-      label: "UChatGetLastMessage",
+      label: "UChat Get Last Message",
     }
   ),
   define(
@@ -449,33 +485,33 @@ export const factoryList = [
     {
       categories: ["UChat"],
       op: "OpenAIToUChatCommand",
-      label: "OpenAIToUChatCommand",
+      label: "OpenAI To UChat Command",
     }
   ),
   define((_: NodeDeps): UChatMessageNode => new UChatMessageNode(), {
     categories: ["UChat"],
     op: "UChatMessage",
-    label: "UChatMessage",
+    label: "UChat Message",
   }),
   define((_: NodeDeps) => new UChatMessageByStringNode(), {
     categories: ["UChat"],
     op: "UChatMessageByString",
-    label: "UChatMessageByString",
+    label: "UChat Message By String",
   }),
   define(
     ({ history, area, dataflow }: NodeDeps): UPartTextNode =>
       new UPartTextNode("", history, area, dataflow),
-    { categories: ["UChat"], op: "UPartText", label: "UPartText" }
+    { categories: ["UChat"], op: "UPartText", label: "U Part Text" }
   ),
   define((_: NodeDeps): UChatToOpenAINode => new UChatToOpenAINode(), {
     categories: ["UChat"],
     op: "UChatToOpenAI",
-    label: "UChatToOpenAI",
+    label: "UChat To OpenAI",
   }),
   define((_: NodeDeps): UChatToLMStudioNode => new UChatToLMStudioNode(), {
     categories: ["UChat"],
     op: "UChatToLMStudio",
-    label: "UChatToLMStudio",
+    label: "UChat To LM Studio",
   }),
   define(
     ({ history, area, dataflow, controlflow }: NodeDeps): UChatNode =>
@@ -485,12 +521,12 @@ export const factoryList = [
   define(
     ({ history, area, dataflow }: NodeDeps): UChatRoleNode =>
       new UChatRoleNode("user", history, area, dataflow),
-    { categories: ["UChat"], op: "UChatRole", label: "UChatRole" }
+    { categories: ["UChat"], op: "UChatRole", label: "UChat Role" }
   ),
   define((_: NodeDeps): ReverseRoleNode => new ReverseRoleNode(), {
     categories: ["UChat"],
     op: "ReverseRole",
-    label: "ReverseRole",
+    label: "Reverse Role",
   }),
 
   define(
@@ -499,7 +535,7 @@ export const factoryList = [
     {
       categories: ["Primitive", "Object"],
       op: "ObjectPick",
-      label: "ObjectPick",
+      label: "Object Pick",
     }
   ),
   define(
@@ -514,7 +550,7 @@ export const factoryList = [
     {
       categories: ["Primitive", "Object"],
       op: "JsonSchemaToObject",
-      label: "JsonSchemaToObject",
+      label: "JSON Schema To Object",
     }
   ),
   define(
@@ -523,7 +559,7 @@ export const factoryList = [
     {
       categories: ["Primitive", "Object"],
       op: "JsonSchema",
-      label: "JsonSchema",
+      label: "JSON Schema",
     }
   ),
   define(
@@ -532,7 +568,7 @@ export const factoryList = [
     {
       categories: ["Primitive", "String"],
       op: "DefaultString",
-      label: "DefaultString",
+      label: "Default String",
     }
   ),
 
@@ -557,7 +593,7 @@ export const factoryList = [
     {
       categories: ["Primitive", "Flow"],
       op: "CounterLoop",
-      label: "CounterLoop",
+      label: "Counter Loop",
     }
   ),
 ];
