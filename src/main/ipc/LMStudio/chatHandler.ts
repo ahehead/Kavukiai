@@ -26,6 +26,10 @@ async function handleChat(evt: IpcMainEvent, data: unknown): Promise<void> {
   port.on("message", (e) => {
     if (e.data?.type === "abort") {
       controller.abort();
+      console.log("LMStudio chat aborted:", id);
+      if (!port) {
+        console.warn("Port already closed");
+      }
     }
   });
 
