@@ -1,5 +1,6 @@
 import { type TSchema, Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
+import { restoreKind } from 'renderer/nodeEditor/nodes/util/restoreKind'
 import {
   type AreaExtra,
   type Schemes,
@@ -173,8 +174,6 @@ export class ToArrayNode
     }
   }
 
-  async execute(): Promise<void> { }
-
   serializeControlValue(): { schemaName: string; schema: TSchema } {
     return {
       schemaName: this.schemaName,
@@ -184,6 +183,6 @@ export class ToArrayNode
 
   deserializeControlValue(data: { schemaName: string; schema: TSchema }): void {
     this.schemaName = data.schemaName
-    this.schema = data.schema
+    this.schema = restoreKind(data.schema)
   }
 }

@@ -1,5 +1,5 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import { ToArrayNode } from 'renderer/nodeEditor/nodes/Node/Primitive/ToArrayNode'
+import { ToArrayNode } from 'renderer/nodeEditor/nodes/Node/Primitive/Array/ToArrayNode'
 import type { Schemes } from 'renderer/nodeEditor/types'
 import type { AreaPlugin } from 'rete-area-plugin'
 import { expect, test } from 'vitest'

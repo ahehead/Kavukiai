@@ -1,5 +1,7 @@
 import { type TSchema, Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
+import { ArrayViewControl } from 'renderer/nodeEditor/nodes/Controls/view/ArrayViewControl'
+import { restoreKind } from 'renderer/nodeEditor/nodes/util/restoreKind'
 import {
   type AreaExtra,
   type Schemes,
@@ -13,8 +15,6 @@ import type {
 import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
-import { ArrayViewControl } from '../../Controls/view/ArrayViewControl'
-import { restoreKind } from '../../util/restoreKind'
 
 export class ArrayNode
   extends SerializableInputsNode<
