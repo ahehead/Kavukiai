@@ -79,6 +79,10 @@ import {
   ImageControlView,
 } from "renderer/nodeEditor/nodes/Controls/view/Image";
 import {
+  ArrayViewControl,
+  ArrayViewControlView,
+} from "renderer/nodeEditor/nodes/Controls/view/ArrayViewControl";
+import {
   ProgressControl,
   ProgressControlView,
 } from "renderer/nodeEditor/nodes/Controls/view/ProgressControl";
@@ -104,6 +108,7 @@ export const controlDefinitions = [
   { ctor: PropertyInputControl, view: PropertyInputControlView },
   { ctor: UChatControl, view: UChatMessageListControlView },
   { ctor: ImageControl, view: ImageControlView },
+  { ctor: ArrayViewControl, view: ArrayViewControlView },
   { ctor: ImageFileInputControl, view: ImageFileInputControlView },
   { ctor: ProgressControl, view: ProgressControlView },
   { ctor: PathInputControl, view: PathInputControlView },

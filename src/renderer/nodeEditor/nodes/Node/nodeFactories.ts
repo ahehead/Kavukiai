@@ -37,6 +37,7 @@ import { JsonSchemaFormatNode } from "renderer/nodeEditor/nodes/Node/OpenAI/Json
 import { OpenAINode } from "renderer/nodeEditor/nodes/Node/OpenAI/OpenAI";
 import { ResponseCreateParamsBaseNode } from "renderer/nodeEditor/nodes/Node/OpenAI/ResponseCreateParamsBaseNode";
 import { ResponseTextConfigNode } from "renderer/nodeEditor/nodes/Node/OpenAI/ResponseTextConfigNode";
+import { ArrayNode } from "renderer/nodeEditor/nodes/Node/Primitive/ArrayNode";
 import { BoolNode } from "renderer/nodeEditor/nodes/Node/Primitive/BoolNode";
 import { CreateSelectNode } from "renderer/nodeEditor/nodes/Node/Primitive/CreateSelectNode";
 import { CounterLoopNode } from "renderer/nodeEditor/nodes/Node/Primitive/Flow/CounterLoopNode";
@@ -175,6 +176,16 @@ export const factoryList = [
     ({ history, area, dataflow }: NodeDeps): BoolNode =>
       new BoolNode(history, area, dataflow),
     { categories: ["Primitive", "Boolean"], op: "Bool", label: "Bool" }
+  ),
+
+  define(
+    ({ area, dataflow, controlflow }: NodeDeps): ArrayNode =>
+      new ArrayNode(area, dataflow, controlflow),
+    {
+      categories: ["Primitive"],
+      op: "Array",
+      label: "Array",
+    }
   ),
 
   define(
