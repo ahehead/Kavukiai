@@ -264,10 +264,6 @@ export function UChatMessageListControlView(props: {
                     {msg.stopReason ?? ''}
                   </span>
                   <ToolButton
-                    icon={<GitBranch size={14} />}
-                    onClick={() => { }}
-                  />
-                  <ToolButton
                     icon={<Copy size={14} />}
                     onClick={() => copyMessageToClipboard(index)}
                   />
