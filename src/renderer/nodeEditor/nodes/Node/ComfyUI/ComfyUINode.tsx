@@ -162,7 +162,7 @@ export class ComfyUINode extends MessagePortNode<
         this.controls.console.addValue(`Output: ${evt.key}`)
         break
       case 'finish':
-        // 新仕様では finish は完了通知のみ
+        // finish は完了通知のみ
         this.controls.console.addValue('Finished (awaiting result)')
         break
       case 'result': {
