@@ -20,7 +20,7 @@ export class ArrayNode
   extends SerializableInputsNode<
     'Array',
     { exec: TypedSocket; item: TypedSocket },
-    { exec: TypedSocket; items: TypedSocket },
+    { exec: TypedSocket; items: TypedSocket, exec2: TypedSocket },
     { itemsView: ArrayViewControl }
   >
   implements DynamicSchemaNode, SerializableDataNode {
@@ -46,6 +46,11 @@ export class ArrayNode
         label: 'item',
         tooltip: 'push で追加する要素',
       },
+      {
+        key: "exec2",
+        label: "clear",
+        onClick: () => this.controlflow.execute(this.id, "exec2")
+      }
     ])
 
     this.addOutputPort([
@@ -56,6 +61,7 @@ export class ArrayNode
         schema: Type.Array(this.schema),
         label: 'items',
       },
+      { key: "exec2", typeName: "exec", label: "cleared" }
     ])
 
     this.addControl(
@@ -72,13 +78,21 @@ export class ArrayNode
     return { items: this.controls.itemsView.getValue() }
   }
 
-  async execute(_: 'exec', forward: (output: 'exec') => void): Promise<void> {
-    const item = await this.dataflow.fetchInputSingle<any>(this.id, 'item')
-    if (item === null || item === undefined) {
+  async execute(input: 'exec' | 'exec2', forward: (output: 'exec' | 'exec2') => void): Promise<void> {
+    if (input === 'exec') {
+      const item = await this.dataflow.fetchInputSingle<any>(this.id, 'item')
+      if (item === null || item === undefined) {
+        return
+      }
+      this.controls.itemsView.pushItem(item)
+      forward('exec')
+    }
+    else if (input === 'exec2') {
+      this.controls.itemsView.clear()
+      forward("exec2")
       return
     }
-    this.controls.itemsView.pushItem(item)
-    forward('exec')
+
   }
 
   async onConnectionChangedSchema({
@@ -132,6 +146,6 @@ export class ArrayNode
     const items = Array.isArray(data.items) ? data.items : []
     this.controls.itemsView.setValue(items)
     this.schemaName = data.schemaName ?? 'any'
-    this.schema = restoreKind(data.schema) ?? Type.Any()
+    this.schema = data.schema ? restoreKind(data.schema) : Type.Any()
   }
 }
