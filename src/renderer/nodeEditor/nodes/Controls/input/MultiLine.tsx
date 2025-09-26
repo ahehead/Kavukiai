@@ -63,23 +63,25 @@ export function TextAreaControllView(props: {
   }
 
   return (
-    <Editor
-      width="100%"
-      height="100%"
-      value={uiText}
-      theme="vs"
-      onChange={control.opts.editable ? onChangeHandle : undefined}
-      options={{
-        wordWrap: 'on',
-        minimap: { enabled: false },
-        lineNumbers: 'off',
-        glyphMargin: false,
-        folding: false,
-        renderWhitespace: 'none',
-        automaticLayout: true,
-        renderLineHighlight: 'none',
-        renderLineHighlightOnlyWhenFocus: false,
-      }}
-    />
+    <div className='w-full h-full border border-input'>
+      <Editor
+        width="100%"
+        height="100%"
+        value={uiText}
+        theme="vs"
+        onChange={control.opts.editable ? onChangeHandle : undefined}
+        options={{
+          wordWrap: 'on',
+          minimap: { enabled: false },
+          lineNumbers: 'off',
+          glyphMargin: false,
+          folding: false,
+          renderWhitespace: 'none',
+          automaticLayout: true,
+          renderLineHighlight: 'none',
+          renderLineHighlightOnlyWhenFocus: false,
+        }}
+      />
+    </div>
   )
 }
