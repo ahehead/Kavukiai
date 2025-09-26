@@ -143,7 +143,7 @@ export class WorkflowIOSelectControl extends BaseControl<
   }
 
   setWorkflow(workflow: unknown) {
-    this.setValue({ workflow, selections: this.value.selections })
+    this.setValue({ workflow, selections: [] })
   }
 
   isInput(_candidate?: InputCandidate | OutputCandidate): _candidate is InputCandidate {
