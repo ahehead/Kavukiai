@@ -1,5 +1,7 @@
 import comfyuiTemplate from "src/resources/public/templates/ComfyUI/ComfyUI_Template.png?url";
 import lmstudioTemplate from "src/resources/public/templates/LMStudio/LMStudio_template.png?url";
+import eroWriterEN from "../../../../resources/public/templates/Prompt/ero_writer_template.en.md?raw";
+import eroWriterJA from "../../../../resources/public/templates/Prompt/ero_writer_template.md?raw";
 import basicSystemPromptEn from "../../../../resources/public/templates/Prompt/system_basic.en.md?raw";
 import basicSystemPromptJa from "../../../../resources/public/templates/Prompt/system_basic.md?raw";
 import stringJoinPng from "../../../../resources/public/templates/String/string_join.png?url";
@@ -58,7 +60,20 @@ export const TEMPLATES: TemplateMeta[] = [
       ja: basicSystemPromptJa,
       en: basicSystemPromptEn,
     },
-    descriptionMd: `汎用システムプロンプトの基本形。{{domain}} や {{style}} を差し替えて利用します。`,
+    descriptionMd: `汎用システムプロンプト。`,
+  },
+  {
+    id: "nsfw-porn-novel-writer",
+    title: "nsfw porn novel writer Template",
+    genre: "Prompt",
+    tags: ["prompt", "novel", "nsfw"],
+    type: "Prompt",
+    prompt: {
+      ja: eroWriterJA,
+      en: eroWriterEN,
+    },
+    descriptionMd:
+      "参照元: [goalseek_ad](https://github.com/kgmkm/goalseek_ad/blob/main/init_writer.txt)",
   },
 ];
 
