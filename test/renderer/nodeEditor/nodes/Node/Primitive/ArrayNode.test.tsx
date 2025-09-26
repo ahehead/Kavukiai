@@ -63,7 +63,7 @@ test('schema updates follow connection changes', async () => {
     isConnected: false,
     source: sourceSocket,
     target: itemSocket2,
-    data: {} as any,
+    data: { targetInput: "item" } as any,
   })
 
   expect(node.serializeControlValue().data.schemaName).toBe('any')

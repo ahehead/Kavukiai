@@ -98,11 +98,12 @@ export class ArrayNode
   async onConnectionChangedSchema({
     isConnected,
     source,
+    data
   }: ConnectionParams): Promise<string[]> {
     this.dataflow.reset(this.id)
     if (isConnected) {
       await this.applySchema(source.getName(), source.getSchema())
-    } else if (!this.inputs.item?.socket.isConnected) {
+    } else if (data.targetInput === 'item') {
       await this.applySchema('any', Type.Any())
     }
     await this.area.update('node', this.id)
