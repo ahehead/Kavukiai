@@ -63,11 +63,9 @@ export class GetModelInfoListNode extends SerializableInputsNode<
     const result = await electronApiService.listDownloadedModels()
     if (result.status === 'success') {
       this.models = result.data
-      // set list and default select top
-      const defKey = this.models[0]?.modelKey ?? null
-      this.selectedKey = defKey
+      this.selectedKey = null
       this.controls.selectList.setList(this.models)
-      this.controls.selectList.setSelectedKey(defKey)
+      this.controls.selectList.setSelectedKey(null)
       this.changeStatus(NodeStatus.COMPLETED)
     } else {
       this.models = []
