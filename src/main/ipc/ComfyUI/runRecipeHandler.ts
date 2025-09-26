@@ -245,6 +245,8 @@ async function handleRunRecipe(
       if (e.data?.type === "abort") {
         console.log("Aborting ComfyUI run");
         await api.interrupt();
+        await api.freeMemory(false, true);
+        send({ type: "error", message: "Aborted by user" });
       }
     });
 
