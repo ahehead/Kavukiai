@@ -70,7 +70,7 @@ export class LMStudioChatNode extends MessagePortNode<
       },
     ])
     this.addOutputPort([
-      { key: 'exec', typeName: 'exec', label: 'Out' },
+      { key: 'exec', typeName: 'exec', label: 'Event' },
       {
         key: 'command',
         typeName: 'UChatCommandEventOrNull',
@@ -80,9 +80,6 @@ export class LMStudioChatNode extends MessagePortNode<
     this.addControl('console', new ConsoleControl({}))
   }
 
-  async data() {
-    return {}
-  }
 
   async dataWithFetch(_fetchInputs: any) {
     return { command: this.command }
