@@ -239,6 +239,7 @@ async function handleRunRecipe(
         }
         const message = extractComfyErrorMessage(err);
         send({ type: "error", message });
+        api.interrupt();
       });
 
     port.on("message", async (e) => {
@@ -297,11 +298,7 @@ async function handleRunRecipe(
     console.log("[ComfyUI][run] finally closing port", {
       nodeId: id,
     });
-    try {
-      port.close();
-    } catch (e) {
-      console.log("[ComfyUI][run] port.close error", e);
-    }
+    port.close();
   }
 }
 
