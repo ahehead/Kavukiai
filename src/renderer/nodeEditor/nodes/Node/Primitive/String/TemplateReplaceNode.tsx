@@ -1,5 +1,6 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { ConsoleControl } from 'renderer/nodeEditor/nodes/Controls/Console/Console'
+import { evaluateTemplate } from 'renderer/nodeEditor/nodes/util/templatePlaceholders'
 import type { Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { NodeStatus, SerializableInputsNode } from 'renderer/nodeEditor/types'
 
@@ -40,26 +41,18 @@ export class TemplateReplaceNode extends SerializableInputsNode<
   }
 
   async execute(_: never, forward: (output: 'exec') => void): Promise<void> {
-    const [template, obj] = (await this.dataflow.fetchInputMultiple<[string, Record<string, unknown>]>(this.id, ["template", "obj"]))
-    const tpl = template ?? ''
-    const data = obj ?? {}
-    let missing = false
-    // allow spaces around key like {{   test   }}
-    this.result = tpl.replace(/{{\s*([^{}]+?)\s*}}/g, (_m, key) => {
-      const k = String(key).trim()
-      if (k in data) {
-        const v = (data as Record<string, unknown>)[k]
-        return v !== undefined ? String(v) : ''
-      }
-      missing = true
-      return ''
-    })
+    const [template, obj] = await this.dataflow.fetchInputMultiple<[
+      string,
+      Record<string, unknown>
+    ]>(this.id, ['template', 'obj'])
+    const { result, missingKeys } = evaluateTemplate(template, obj)
+    this.result = result
     this.controls.console.addValue(
       `Deserialized result: ${this.result}`
     )
     this.dataflow.reset(this.id)
     this.changeStatus(
-      missing ? NodeStatus.WARNING : NodeStatus.IDLE
+      missingKeys.length > 0 ? NodeStatus.WARNING : NodeStatus.IDLE
     )
     forward('exec')
   }

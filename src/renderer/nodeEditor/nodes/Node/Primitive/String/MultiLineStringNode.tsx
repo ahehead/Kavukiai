@@ -1,3 +1,4 @@
+import type { TSchema } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { MultiLineControl } from 'renderer/nodeEditor/nodes/Controls/input/MultiLine'
 import {
@@ -6,6 +7,10 @@ import {
   SerializableInputsNode,
   type TypedSocket,
 } from 'renderer/nodeEditor/types'
+import {
+  buildTemplateSchema,
+  parseTemplatePlaceholders,
+} from 'renderer/nodeEditor/nodes/util/templatePlaceholders'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'
 
@@ -13,9 +18,12 @@ import type { HistoryPlugin } from 'rete-history-plugin'
 export class MultiLineStringNode extends SerializableInputsNode<
   'MultiLineString',
   object,
-  { out: TypedSocket },
+  { out: TypedSocket; schema: TypedSocket },
   { textArea: MultiLineControl }
 > {
+  private currentSchema: TSchema = buildTemplateSchema([])
+  private schemaSignature = ''
+
   constructor(
     initial: string,
     history: HistoryPlugin<Schemes>,
@@ -25,28 +33,38 @@ export class MultiLineStringNode extends SerializableInputsNode<
     super('MultiLineString')
     this.width = 240
     this.height = 180
-    this.addOutputPort({
-      key: 'out',
-      typeName: 'string',
-    })
+    this.addOutputPort([
+      {
+        key: 'out',
+        typeName: 'string',
+      },
+      {
+        key: 'schema',
+        typeName: 'JsonSchema',
+        label: 'Schema',
+      },
+    ])
     this.addControl(
       'textArea',
       new MultiLineControl({
         value: initial,
         history,
         area,
-        onChange: (_v: string) => {
-          dataflow.reset(this.id) // この階層じゃないとなぜかnodeIdがおかしくなる
+        onChange: (value: string) => {
+          this.updateSchema(value)
+          dataflow.reset(this.id)
         },
       })
     )
+
+    this.updateSchema(initial)
   }
 
-  data(): { out: string } {
-    return { out: this.controls.textArea.getValue() || '' }
+  data(): { out: string; schema: TSchema } {
+    const value = this.controls.textArea.getValue() || ''
+    this.updateSchema(value)
+    return { out: value, schema: this.currentSchema }
   }
-
-  async execute(): Promise<void> { }
 
   serializeControlValue(): { data: { value: string } } {
     return {
@@ -58,5 +76,19 @@ export class MultiLineStringNode extends SerializableInputsNode<
 
   deserializeControlValue(data: { value: string }): void {
     this.controls.textArea.setValue(data.value)
+    this.updateSchema(data.value)
+  }
+
+  private updateSchema(template: string) {
+    const placeholders = parseTemplatePlaceholders(template)
+    const signature = placeholders.join('|')
+    if (signature === this.schemaSignature) {
+      return
+    }
+
+    this.schemaSignature = signature
+    const schema = buildTemplateSchema(placeholders)
+    this.currentSchema = schema
+    void this.outputs.schema?.socket.setSchema('JsonSchema', schema)
   }
 }
