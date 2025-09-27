@@ -38,6 +38,7 @@ import { OpenAINode } from "renderer/nodeEditor/nodes/Node/OpenAI/OpenAI";
 import { ResponseCreateParamsBaseNode } from "renderer/nodeEditor/nodes/Node/OpenAI/ResponseCreateParamsBaseNode";
 import { ResponseTextConfigNode } from "renderer/nodeEditor/nodes/Node/OpenAI/ResponseTextConfigNode";
 import { ArrayNode } from "renderer/nodeEditor/nodes/Node/Primitive/Array/ArrayNode";
+import { JoinNode } from "renderer/nodeEditor/nodes/Node/Primitive/Array/JoinNode";
 import { ToArrayNode } from "renderer/nodeEditor/nodes/Node/Primitive/Array/ToArrayNode";
 import { BoolNode } from "renderer/nodeEditor/nodes/Node/Primitive/BoolNode";
 import { CreateSelectNode } from "renderer/nodeEditor/nodes/Node/Primitive/CreateSelectNode";
@@ -52,7 +53,6 @@ import { JsonSchemaToObjectNode } from "renderer/nodeEditor/nodes/Node/Primitive
 import { ObjectPickNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/ObjectPickNode";
 import { CodeFenceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/CodeFenceNode";
 import { DefaultStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/DefaultStringNode";
-import { JoinNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/JoinNode";
 import { JsonFilePathNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/JsonFilePathNode";
 import { MultiLineStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/MultiLineStringNode";
 import { NumberToStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/NumberToStringNode";
@@ -136,7 +136,7 @@ export const factoryList = [
     }
   ),
   define(({ dataflow }: NodeDeps): JoinNode => new JoinNode(dataflow), {
-    categories: ["Primitive", "String"],
+    categories: ["Primitive", "Array"],
     op: "Join",
     label: "Join",
   }),
