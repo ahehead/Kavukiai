@@ -191,6 +191,7 @@ export function UChatMessageListControlView(props: {
                     width={'100%'}
                     height={h}
                     value={editText}
+                    wrapperProps={{ 'data-monaco-editor': 'true' }}
                     onChange={(value: string | undefined, _e) => setEditText(value ?? '')}
                     options={{
                       wordWrap: 'on',

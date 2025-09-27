@@ -15,6 +15,7 @@ import {
 } from "rete-history-plugin";
 import { ReactPlugin } from "rete-react-plugin";
 import type { GraphJsonData } from "../../shared/JsonType";
+import { setupClipboardShortcuts } from "./features/clipboardShortcuts/setupClipboardShortcuts";
 import { handleConnectionEvent } from "./features/connection_drop_menu";
 import { customContextMenuPreset } from "./features/contextMenu/setup/CustomContextMenuPreset";
 import { setupContextMenu } from "./features/contextMenu/setup/SetupContextMenu";
@@ -31,6 +32,7 @@ import {
 } from "./features/editor_state/historyState";
 import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
 import { GroupPlugin } from "./features/group";
+import type { NodeDeps } from "./features/nodeFactory/factoryTypes";
 import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
 import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
 import { selectableNodes, selector } from "./features/nodeSelection/selectable";
@@ -38,6 +40,7 @@ import { pasteWorkflowAtPosition } from "./features/pasteWorkflow/pasteWorkflow"
 import { DataflowEngine } from "./features/safe-dataflow/dataflowEngin";
 import { registerConnectionPipeline } from "./features/updateConnectionState/updateConnectionState";
 import { destroyAllNodes } from "./nodes/util/removeNode";
+import { screenToWorld } from "./nodes/util/screenToWorld";
 import { type AreaExtra, ExecList, isExecKey, type Schemes } from "./types";
 
 export async function createNodeEditor(container: HTMLElement) {
@@ -70,6 +73,14 @@ export async function createNodeEditor(container: HTMLElement) {
   const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
   // グループ化プラグイン
   const groupPlugin = new GroupPlugin<Schemes>(render);
+  // ノード依存関係の注入用オブジェクト
+  const nodeDeps: NodeDeps = {
+    editor,
+    area,
+    dataflow,
+    controlflow,
+    history,
+  };
   // 右クリックメニュー
   const contextMenu = setupContextMenu({
     editor,
@@ -134,14 +145,14 @@ export async function createNodeEditor(container: HTMLElement) {
   // なにもないところでコネクションを離すと右クリックメニューを開く
   handleConnectionEvent(connection, area);
 
-  function screenToWorld(clientX: number, clientY: number) {
-    const rect = area.container.getBoundingClientRect(); // AreaPluginに渡したコンテナ
-    const { x: tx, y: ty, k } = area.area.transform; // 平行移動(tx,ty) と ズーム(k)
-    return {
-      x: (clientX - rect.left - tx) / k,
-      y: (clientY - rect.top - ty) / k,
-    };
-  }
+  // コピー・ペースト機能
+  const { cleanup: cleanupClipboardShortcuts, setActiveEditor } =
+    setupClipboardShortcuts({
+      editor,
+      area,
+      nodeDeps,
+      groupPlugin,
+    });
 
   // 外部に公開するAPI
   return {
@@ -150,6 +161,7 @@ export async function createNodeEditor(container: HTMLElement) {
       area.destroy();
       cleanupDragPan();
       cleanupDeleteKey();
+      cleanupClipboardShortcuts();
       groupPlugin.clear();
     },
 
@@ -182,10 +194,15 @@ export async function createNodeEditor(container: HTMLElement) {
     ) => {
       await pasteWorkflowAtPosition({
         workflow,
-        pointerPosition: screenToWorld(pointerPosition.x, pointerPosition.y),
-        nodeDeps: { editor, area, dataflow, controlflow, history },
+        pointerPosition: screenToWorld(
+          area,
+          pointerPosition.x,
+          pointerPosition.y
+        ),
+        nodeDeps,
         groupPlugin,
       });
     },
+    setActiveEditor,
   };
 }

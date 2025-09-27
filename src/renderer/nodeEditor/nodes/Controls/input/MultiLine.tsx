@@ -69,6 +69,7 @@ export function TextAreaControllView(props: {
         height="100%"
         value={uiText}
         theme="vs"
+        wrapperProps={{ 'data-monaco-editor': 'true' }}
         onChange={control.opts.editable ? onChangeHandle : undefined}
         options={{
           wordWrap: 'on',

@@ -193,6 +193,7 @@ export function ConsoleControlView(props: {
               theme="vs"
               language="plaintext"
               className="console-monaco"
+              wrapperProps={{ 'data-monaco-editor': 'true' }}
               onMount={(editor) => {
                 editorRef.current = editor
                 const model = editor.getModel()

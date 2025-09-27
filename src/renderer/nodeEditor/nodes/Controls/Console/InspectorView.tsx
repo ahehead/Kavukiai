@@ -64,6 +64,7 @@ export function InspectorViewControlView({ data }: {
         height="100%"
         value={uiText}
         theme="vs"
+        wrapperProps={{ 'data-monaco-editor': 'true' }}
         onChange={data.opts.editable ? onChangeHandle : undefined}
         options={{
           wordWrap: 'on',
