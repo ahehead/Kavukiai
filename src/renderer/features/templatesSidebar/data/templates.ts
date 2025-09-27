@@ -1,13 +1,11 @@
 import comfyuiTemplate from "src/resources/public/templates/ComfyUI/ComfyUI_Template.png?url";
 import lmstudioTemplate from "src/resources/public/templates/LMStudio/LMStudio_template.png?url";
-import eroWriterEN from "src/resources/public/templates/Prompt/ero_writer_template.en.md?raw";
-import eroWriterJA from "src/resources/public/templates/Prompt/ero_writer_template.md?raw";
 import eroImagerEN from "src/resources/public/templates/Prompt/ero_imager_en.md?raw";
 import eroImagerJA from "src/resources/public/templates/Prompt/ero_imager_ja.md?raw";
-import basicSystemPromptEn from "src/resources/public/templates/Prompt/system_basic.en.md?raw";
-import basicSystemPromptJa from "src/resources/public/templates/Prompt/system_basic.md?raw";
+import eroWriterEN from "src/resources/public/templates/Prompt/ero_writer_template.en.md?raw";
+import eroWriterJA from "src/resources/public/templates/Prompt/ero_writer_template.md?raw";
+import stringTemplatePng from "src/resources/public/templates/String/replace_string.png?url";
 import stringJoinPng from "src/resources/public/templates/String/string_join.png?url";
-import stringTemplatePng from "src/resources/public/templates/String/template_replace_string.png?url";
 import type { TemplateMeta, TemplatesByGenre } from "./types";
 
 // NOTE: Add your bundled assets here. Example of importing URLs with Vite:
@@ -22,7 +20,8 @@ export const TEMPLATES: TemplateMeta[] = [
     tags: ["format", "pattern"],
     type: "PNGWorkflow",
     src: stringTemplatePng,
-    descriptionMd: "プロンプトに値を埋め込むときのパターン",
+    descriptionMd:
+      "{{ }} というプレースホルダーを使って文字列を置き換えることができる。",
   },
   {
     id: "string-join-01",
@@ -31,7 +30,7 @@ export const TEMPLATES: TemplateMeta[] = [
     tags: ["array", "join", "separator"],
     type: "PNGWorkflow",
     src: stringJoinPng,
-    descriptionMd: "配列の文字列を区切り文字で連結するパターン",
+    descriptionMd: "文字列の配列から、連結した文字列を作成する。",
   },
   {
     id: "lmstudio-template",
@@ -52,19 +51,6 @@ export const TEMPLATES: TemplateMeta[] = [
     descriptionMd: "ComfyUI を使うテンプレート",
   },
   {
-    id: "prompt-system-basic",
-    title: "Basic System Prompt",
-    genre: "Prompt",
-    tags: ["prompt", "system", "base"],
-    type: "Prompt",
-    // Multi-language prompt content.
-    prompt: {
-      ja: basicSystemPromptJa,
-      en: basicSystemPromptEn,
-    },
-    descriptionMd: `汎用システムプロンプト。`,
-  },
-  {
     id: "nsfw-porn-novel-writer",
     title: "nsfw porn novel writer Template",
     genre: "Prompt",
@@ -75,7 +61,7 @@ export const TEMPLATES: TemplateMeta[] = [
       en: eroWriterEN,
     },
     descriptionMd:
-      "参照元: [goalseek_ad](https://github.com/kgmkm/goalseek_ad/blob/main/init_writer.txt)",
+      "小説生成プロンプト。参照元: [goalseek_ad](https://github.com/kgmkm/goalseek_ad/blob/main/init_writer.txt)",
   },
   {
     id: "nsfw-porn-novel-image",
@@ -88,7 +74,7 @@ export const TEMPLATES: TemplateMeta[] = [
       en: eroImagerEN,
     },
     descriptionMd:
-      "参照元: [goalseek_ad](https://github.com/kgmkm/goalseek_ad/blob/main/init_imager.txt)",
+      "プロンプト生成プロンプト。参照元: [goalseek_ad](https://github.com/kgmkm/goalseek_ad/blob/main/init_imager.txt)",
   },
 ];
 
