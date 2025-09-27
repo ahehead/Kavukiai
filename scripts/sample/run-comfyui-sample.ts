@@ -14,7 +14,7 @@ import {
   type TSamplerName,
   type TSchedulerName,
 } from "@saintno/comfyui-sdk";
-import Workflow_2 from "../src/resources/build/sample/workflow_2.json";
+import Workflow_2 from "../../src/resources/build/sample/workflow_2.json";
 import { launchComfyDesktop } from "./comfyDesktop";
 
 const COMFYUI_URL = "http://localhost:8000";

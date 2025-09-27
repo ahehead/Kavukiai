@@ -1,6 +1,6 @@
 import { ComfyApi } from "@saintno/comfyui-sdk";
-import { toApiPromptStrict } from "../src/main/ipc/ComfyUI/graph-to-prompt-strict.ts";
-import sampleJson from "../src/resources/build/sample/default_api.json";
+import { toApiPromptStrict } from "../../src/main/ipc/ComfyUI/graph-to-prompt-strict.ts";
+import sampleJson from "../../src/resources/build/sample/default_api.json";
 
 async function main() {
   const api = new ComfyApi("http://localhost:8000");
