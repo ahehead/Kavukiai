@@ -78,17 +78,15 @@ export class JsonSchemaToObjectNode
   // トリガーで実行
   async execute(): Promise<void> {
     // スキーマを取得
-    const { schema } = (await this.dataflow.fetchInputs(this.id)) as {
-      schema?: TSchema[]
-    }
+    const schema = (await this.dataflow.fetchInputSingle<TSchema>(this.id, 'schema'))
     this.dataflow.reset(this.id)
     await this.removeDynamicPorts()
-    if (!schema || schema.length === 0 || !schema?.[0]) {
+    if (!schema) {
       this.setSchema(null)
       return
     }
-    this.setSchema(schema[0])
-    await this.buildDynamicPorts(schema[0])
+    this.setSchema(schema)
+    await this.buildDynamicPorts(schema)
   }
 
   // 動的なinputを削除
