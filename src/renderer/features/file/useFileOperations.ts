@@ -180,11 +180,11 @@ export function useFileOperations(
         if (response === CloseFileDialogResponse.Cancel) return;
         if (response === CloseFileDialogResponse.Confirm) {
           const ok = await saveFile(id);
-          if (!ok) return; // キャンセル/失敗なら中断
+          if (!ok) notify("error", "保存に失敗");
+          return; // 一旦キャンセルしないとバグる。historyやnodeの消去に不具合がでる。
         }
         // 「保存しない(response===1)」はそのまま破棄
       }
-
       // タブ削除 & 新規アクティブ決定
       const nextActive = getNewActiveFileId(files, id, activeFileId);
       removeFile(id);
