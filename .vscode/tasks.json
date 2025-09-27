@@ -2,15 +2,15 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "extract types (entry_result.ts, no comments)",
+      "label": "extract types (entry.ts, no comments)",
       "type": "shell",
       "command": "pnpm",
       "args": [
         "run",
         "extract-types",
-        "PredictionConfig",
+        "LLMPredictionConfig",
         "scripts/entry.ts",
-        "scripts/data/PredictionConfig.data.ts",
+        "scripts/data/LLMPredictionConfig.data.ts",
         "--no-comments"
       ],
       "options": {
