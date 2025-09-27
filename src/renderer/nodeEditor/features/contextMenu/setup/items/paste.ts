@@ -4,7 +4,7 @@ import type { NodeDeps } from "renderer/nodeEditor/features/nodeFactory/factoryT
 import { pasteWorkflowAtPosition } from "renderer/nodeEditor/features/pasteWorkflow/pasteWorkflow";
 import type { Schemes } from "renderer/nodeEditor/types";
 import type { Item } from "rete-context-menu-plugin/_types/types";
-import type { GraphJsonData } from "shared/JsonType";
+import { type GraphJsonData, parseGraphJson } from "shared/JsonType";
 
 export function createPasteItem(
   pointerPosition: { x: number; y: number },
@@ -27,27 +27,13 @@ export function createPasteItem(
 async function parseClipboardGraphJson(): Promise<GraphJsonData | null> {
   try {
     const clipboardData = await navigator.clipboard.readText();
-    const parsed = JSON.parse(clipboardData);
-    if (!isGraphJsonData(parsed)) {
-      console.warn("Clipboard JSON is not a valid GraphJsonData");
-      notify("error", "Clipboard JSON is not a valid GraphJsonData");
-      return null;
-    }
-    return parsed;
+    return parseGraphJson(JSON.parse(clipboardData));
   } catch (e) {
     // パースエラーや権限エラーを包含
     console.warn("Failed to read/parse clipboard as GraphJsonData", e);
     notify("error", "Failed to read/parse clipboard as GraphJsonData");
     return null;
   }
-}
-
-/**
- * GraphJsonData の最低限のバリデーション
- */
-function isGraphJsonData(data: unknown): data is GraphJsonData {
-  const d = data as Partial<GraphJsonData> | null | undefined;
-  return !!d && Array.isArray(d.nodes) && Array.isArray(d.connections);
 }
 
 /**
