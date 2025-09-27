@@ -37,6 +37,7 @@ export class JsonSchemaToObjectNode
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('JsonSchemaToObject')
+    this.width = 230
 
     this.addInputPort([
       {

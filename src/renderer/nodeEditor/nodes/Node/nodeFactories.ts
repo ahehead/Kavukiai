@@ -51,6 +51,7 @@ import { NumberNode } from "renderer/nodeEditor/nodes/Node/Primitive/NumberNode"
 import { JsonSchemaNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/JsonSchemaNode";
 import { JsonSchemaToObjectNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/JsonSchemaToObject";
 import { ObjectPickNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/ObjectPickNode";
+import { AutoTemplateReplaceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/AutoTemplateReplaceNode";
 import { CodeFenceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/CodeFenceNode";
 import { DefaultStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/DefaultStringNode";
 import { JsonFilePathNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/JsonFilePathNode";
@@ -115,6 +116,14 @@ export const factoryList = [
       categories: ["Primitive", "String"],
       op: "TemplateReplace",
       label: "Template Replace",
+    }
+  ),
+  define(
+    (_: NodeDeps): AutoTemplateReplaceNode => new AutoTemplateReplaceNode(),
+    {
+      categories: ["Primitive", "String"],
+      op: "AutoTemplateReplace",
+      label: "Auto Template Replace",
     }
   ),
   define(

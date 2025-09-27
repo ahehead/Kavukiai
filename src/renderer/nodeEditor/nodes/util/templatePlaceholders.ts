@@ -1,4 +1,4 @@
-import { Type, type TSchema } from "@sinclair/typebox";
+import { type TSchema, Type } from "@sinclair/typebox";
 
 const TEMPLATE_PLACEHOLDER_PATTERN = /{{\s*([^{}]+?)\s*}}/g;
 
