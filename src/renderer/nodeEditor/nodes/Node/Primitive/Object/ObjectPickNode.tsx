@@ -81,5 +81,4 @@ export class ObjectPickNode
     return { ...value }
   }
 
-  async execute(): Promise<void> { }
 }
