@@ -4,10 +4,18 @@ import reactPlugin from "@vitejs/plugin-react";
 import { codeInspectorPlugin } from "code-inspector-plugin";
 import { defineConfig, externalizeDepsPlugin } from "electron-vite";
 import injectProcessEnvPlugin from "rollup-plugin-inject-process-env";
+import type monacoEditorPluginType from "vite-plugin-monaco-editor";
+import monacoEditorPluginModule from "vite-plugin-monaco-editor";
 import svgr from "vite-plugin-svgr";
 import tsconfigPathsPlugin from "vite-tsconfig-paths";
 import { main, resources } from "./package.json";
 import { settings } from "./src/lib/electron-router-dom";
+
+const monacoEditorPlugin: typeof monacoEditorPluginType =
+  typeof monacoEditorPluginModule === "function"
+    ? monacoEditorPluginModule
+    : (monacoEditorPluginModule as { default: typeof monacoEditorPluginType })
+        .default;
 
 const [nodeModules, devFolder] = normalize(dirname(main)).split(/\/|\\/g);
 const devPath = [nodeModules, devFolder].join("/");
@@ -54,6 +62,9 @@ export default defineConfig({
         babel: {
           plugins: ["babel-plugin-react-compiler"],
         },
+      }),
+      monacoEditorPlugin({
+        languageWorkers: ["editorWorkerService"],
       }),
       tailwindcss(),
       svgr(),
