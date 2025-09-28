@@ -65,6 +65,7 @@ export default defineConfig({
       }),
       monacoEditorPlugin({
         languageWorkers: ["editorWorkerService"],
+        customDistPath: (_root, outDir) => resolve(outDir, "monacoeditorwork"),
       }),
       tailwindcss(),
       svgr(),
