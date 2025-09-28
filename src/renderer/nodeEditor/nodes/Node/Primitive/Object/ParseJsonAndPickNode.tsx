@@ -15,7 +15,7 @@ import type { NodeEditor } from 'rete'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 
-export class ParseJsonNode
+export class ParseJsonAndPickNode
   extends SerializableInputsNode<
     'ParseJson',
     { exec: TypedSocket; schema: TypedSocket; value: TypedSocket },
@@ -57,8 +57,7 @@ export class ParseJsonNode
       const { value } = await fetchInputs(['value'])
       const rawValue = value?.[0]
       if (!rawValue) throw new Error('No input value to parse')
-      const obj = Value.Parse(this.currentSchema, JSON.parse(rawValue))
-      return obj as Record<string, unknown>
+      return Value.Parse(this.currentSchema, JSON.parse(rawValue)) as Record<string, unknown>
     } catch (error) {
       console.error('[ParseJsonNode] Error parsing JSON:', error)
       this.changeStatus(NodeStatus.ERROR)
@@ -91,7 +90,7 @@ export class ParseJsonNode
       this.changeStatus(NodeStatus.ERROR)
 
       if (error instanceof Error) {
-        console.error([ParseJsonNode])
+        console.error([ParseJsonAndPickNode])
       } else {
         console.error('[ParseJsonNode] Unknown error during parse')
       }

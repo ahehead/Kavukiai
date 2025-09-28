@@ -51,7 +51,8 @@ import { NumberNode } from "renderer/nodeEditor/nodes/Node/Primitive/NumberNode"
 import { JsonSchemaNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/JsonSchemaNode";
 import { JsonSchemaToObjectNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/JsonSchemaToObject";
 import { ObjectPickNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/ObjectPickNode";
-import { ParseJsonNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/ParseJsonNode";
+import { ParseJsonAndPickNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/ParseJsonAndPickNode";
+import { ParseJsonToObjectNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/ParseJsonToObjectNode";
 import { AutoTemplateReplaceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/AutoTemplateReplaceNode";
 import { CodeFenceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/CodeFenceNode";
 import { DefaultStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/DefaultStringNode";
@@ -573,14 +574,19 @@ export const factoryList = [
     }
   ),
   define(
-    ({ editor, area, dataflow, controlflow }: NodeDeps): ParseJsonNode =>
-      new ParseJsonNode(editor, area, dataflow, controlflow),
+    ({ editor, area, dataflow, controlflow }: NodeDeps): ParseJsonAndPickNode =>
+      new ParseJsonAndPickNode(editor, area, dataflow, controlflow),
     {
       categories: ["Primitive", "Object"],
-      op: "ParseJson",
-      label: "Parse JSON",
+      op: "ParseJsonAndPick",
+      label: "Parse JSON And Pick",
     }
   ),
+  define((_: NodeDeps): ParseJsonToObjectNode => new ParseJsonToObjectNode(), {
+    categories: ["Primitive", "Object"],
+    op: "ParseJsonToObject",
+    label: "Parse JSON To Object",
+  }),
   define(
     ({ history, area, dataflow }: NodeDeps): DefaultStringNode =>
       new DefaultStringNode(history, area, dataflow),
