@@ -89,8 +89,7 @@ export class LLMPredictionConfigNode extends SerializableInputsNode<
       },
       {
         key: 'structured',
-        typeName: 'any',
-        schema: Type.Index(LLMPredictionConfig, ['structured']),
+        typeName: 'JsonSchema',
         label: 'structured',
       },
     ])
@@ -106,10 +105,14 @@ export class LLMPredictionConfigNode extends SerializableInputsNode<
     config: LLMPredictionConfig
   } {
     const cfg: Partial<LLMPredictionConfig> = {}
-    for (const key of Object.keys(this.inputs) as LLMPredictionConfigKey[]) {
+    for (const key of Object.keys(this.inputs).filter(k => k !== "structured") as LLMPredictionConfigKey[]) {
       const val = this.getInputValue(inputs, key)
-      if (val !== undefined) cfg[key] = val as any
+      if (val) cfg[key] = val
     }
+
+    const structured = this.getInputValue<Record<string, unknown>>(inputs, 'structured')
+    if (structured) cfg.structured = { type: "json", schema: structured }
+
     return { config: cfg as LLMPredictionConfig }
   }
 
