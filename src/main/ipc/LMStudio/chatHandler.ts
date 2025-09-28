@@ -20,7 +20,7 @@ async function handleChat(evt: IpcMainEvent, data: unknown): Promise<void> {
   const port = evt.ports[0];
   const controller = new AbortController();
   port.start();
-  console.log("LMStudio chat:", id, modelKey);
+  console.log("[LMStudio] chat started:", JSON.stringify(data, null, 2));
 
   // Listen for abort messages
   port.on("message", (e) => {
@@ -78,8 +78,9 @@ async function handleChat(evt: IpcMainEvent, data: unknown): Promise<void> {
       type: "finish",
       result: portResult,
     } as LMStudioChatPortEvent);
+    console.log("[LMStudio] chat finished:", id);
   } catch (error: any) {
-    console.error("LMStudio chat error:", error);
+    console.error("[LMStudio] chat error:", error);
     port.postMessage({
       type: "error",
       message: error.message ?? String(error),
