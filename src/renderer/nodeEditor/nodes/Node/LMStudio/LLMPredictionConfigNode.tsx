@@ -114,7 +114,7 @@ export class LLMPredictionConfigNode extends SerializableInputsNode<
 
     const structured = this.getInputValue<TSchema>(inputs, 'structured')
     if (structured)
-      cfg.structured = { type: 'json', schema: JSON.stringify(structured) }
+      cfg.structured = { type: 'json', schema: structured }
 
     return { config: cfg as LLMPredictionConfig }
   }
