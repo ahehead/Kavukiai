@@ -57,7 +57,7 @@ export class ParseJsonNode
       const { value } = await fetchInputs(['value'])
       const rawValue = value?.[0]
       if (!rawValue) throw new Error('No input value to parse')
-      const obj = Value.Parse(this.currentSchema, rawValue)
+      const obj = Value.Parse(this.currentSchema, JSON.parse(rawValue))
       return obj as Record<string, unknown>
     } catch (error) {
       console.error('[ParseJsonNode] Error parsing JSON:', error)
