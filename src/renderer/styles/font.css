@@ -1,6 +1,6 @@
 /*　入力用 日本語＋アイコン */
 @font-face {
-  font-family: "HackGen Nerd";
+  font-family: "HackGen NF";
   src: url("../../resources/public/font/HackGen35ConsoleNF-Regular.ttf") format("truetype");
   font-display: swap;
 }
