@@ -62,8 +62,8 @@ export class ObjectPickNode
     for (const key of Object.keys(this.outputs)) {
       this.removeOutput(key as never)
     }
-    if (schema && (schema as any).properties) {
-      const props = (schema as any).properties as Record<string, TSchema>
+    if (schema?.properties) {
+      const props = schema.properties as Record<string, TSchema>
       for (const [key, propSchema] of Object.entries(props)) {
         this.addOutputPort({
           key: key,
