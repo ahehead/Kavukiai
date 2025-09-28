@@ -32,13 +32,28 @@ export async function destroyAllNodes(
 /**
  * 指定したノードの、ソケットkeyにつながるコネクションを全て削除する
  */
-export async function removeLinkedSockets(
+export async function removeConnectionsFromInput(
   editor: NodeEditor<Schemes>,
   nodeId: string,
   key: string
 ): Promise<void> {
   for (const connection of [...editor.getConnections()]) {
     if (connection.target === nodeId && connection.targetInput === key) {
+      await editor.removeConnection(connection.id);
+    }
+  }
+}
+
+/**
+ * 指定したノードの、ソケットkeyにつながるコネクションを全て削除する
+ */
+export async function removeConnectionsFromOutput(
+  editor: NodeEditor<Schemes>,
+  nodeId: string,
+  key: string
+): Promise<void> {
+  for (const connection of [...editor.getConnections()]) {
+    if (connection.source === nodeId && connection.sourceOutput === key) {
       await editor.removeConnection(connection.id);
     }
   }

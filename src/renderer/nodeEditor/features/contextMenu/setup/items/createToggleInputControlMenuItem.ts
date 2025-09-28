@@ -4,7 +4,7 @@ import type { TypedSocket } from "renderer/nodeEditor/types/Socket/TypedSocket";
 import type { ClassicPreset, NodeEditor } from "rete";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { Item } from "rete-context-menu-plugin/_types/types";
-import { removeLinkedSockets } from "../../../../nodes/util/removeNode";
+import { removeConnectionsFromInput } from "../../../../nodes/util/removeNode";
 import type {
   AreaExtra,
   NodeInterface,
@@ -30,7 +30,7 @@ export function createToggleInputControlMenuItem(
       key: `${context.id}_${input.id}`,
       async handler() {
         // 接続されているコネクションを削除
-        await removeLinkedSockets(editor, context.id, key);
+        await removeConnectionsFromInput(editor, context.id, key);
         input.showControl = !input.showControl;
         // dataflowをリセット
         dataflow.reset(context.id);

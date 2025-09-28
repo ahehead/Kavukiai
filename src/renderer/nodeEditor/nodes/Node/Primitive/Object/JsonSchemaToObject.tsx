@@ -17,7 +17,7 @@ import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import { InputValueControl } from '../../../Controls/input/InputValue'
 import { SwitchControl } from '../../../Controls/input/Switch'
-import { removeLinkedSockets } from '../../../util/removeNode'
+import { removeConnectionsFromInput } from '../../../util/removeNode'
 
 export class JsonSchemaToObjectNode
   extends SerializableInputsNode<
@@ -92,7 +92,7 @@ export class JsonSchemaToObjectNode
   // 動的なinputを削除
   async removeDynamicPorts(): Promise<void> {
     for (const [key, _tooltip] of this.getDynamicInputs()) {
-      await removeLinkedSockets(this.editor, this.id, key)
+      await removeConnectionsFromInput(this.editor, this.id, key)
       this.removeInput(key)
     }
   }

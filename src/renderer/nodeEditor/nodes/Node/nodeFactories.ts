@@ -51,6 +51,7 @@ import { NumberNode } from "renderer/nodeEditor/nodes/Node/Primitive/NumberNode"
 import { JsonSchemaNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/JsonSchemaNode";
 import { JsonSchemaToObjectNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/JsonSchemaToObject";
 import { ObjectPickNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/ObjectPickNode";
+import { ParseJsonNode } from "renderer/nodeEditor/nodes/Node/Primitive/Object/ParseJsonNode";
 import { AutoTemplateReplaceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/AutoTemplateReplaceNode";
 import { CodeFenceNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/CodeFenceNode";
 import { DefaultStringNode } from "renderer/nodeEditor/nodes/Node/Primitive/String/DefaultStringNode";
@@ -569,6 +570,15 @@ export const factoryList = [
       categories: ["Primitive", "Object"],
       op: "JsonSchema",
       label: "JSON Schema",
+    }
+  ),
+  define(
+    ({ editor, area, dataflow, controlflow }: NodeDeps): ParseJsonNode =>
+      new ParseJsonNode(editor, area, dataflow, controlflow),
+    {
+      categories: ["Primitive", "Object"],
+      op: "ParseJson",
+      label: "Parse JSON",
     }
   ),
   define(
