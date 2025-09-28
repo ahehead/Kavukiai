@@ -1,4 +1,4 @@
-import { Type } from '@sinclair/typebox'
+import { type TSchema, Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import {
   type Schemes,
@@ -105,13 +105,16 @@ export class LLMPredictionConfigNode extends SerializableInputsNode<
     config: LLMPredictionConfig
   } {
     const cfg: Partial<LLMPredictionConfig> = {}
-    for (const key of Object.keys(this.inputs).filter(k => k !== "structured") as LLMPredictionConfigKey[]) {
+    for (const key of Object.keys(this.inputs).filter(
+      k => k !== 'structured'
+    ) as LLMPredictionConfigKey[]) {
       const val = this.getInputValue(inputs, key)
       if (val) cfg[key] = val
     }
 
-    const structured = this.getInputValue<Record<string, unknown>>(inputs, 'structured')
-    if (structured) cfg.structured = { type: "json", schema: structured }
+    const structured = this.getInputValue<TSchema>(inputs, 'structured')
+    if (structured)
+      cfg.structured = { type: 'json', schema: JSON.stringify(structured) }
 
     return { config: cfg as LLMPredictionConfig }
   }
