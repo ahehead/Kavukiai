@@ -87,6 +87,7 @@ export function GroupView({ group, getK, translate, emitContextMenu }: Props): R
   const onPointerMoveRoot = async (e: React.PointerEvent<HTMLDivElement>) => {
     // 編集中はドラッグ処理を無効化
     if (editing) return
+    if (!e.currentTarget.hasPointerCapture(e.pointerId)) return
     e.stopPropagation()
     if (!(e.buttons & 1)) return
     const k = getK ? getK() : 1
