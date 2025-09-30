@@ -25,6 +25,8 @@ export class JsonFilePathNode
     dataflow: DataflowEngine<Schemes>
   ) {
     super('JsonFilePath')
+    this.width = 280
+    this.height = 100
 
     this.addOutputPort({ key: 'out', typeName: 'string', label: 'path' })
 
