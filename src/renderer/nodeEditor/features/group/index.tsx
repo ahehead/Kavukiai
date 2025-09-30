@@ -291,7 +291,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     el.style.position = 'absolute'
 
     this.area.area.content.add(el) // Area の content レイヤに載せる
-    this.area.area.content.reorder(el, this.area.area.content.holder.firstChild) // 一番下に
+    this.ensureGroupStacking(el)
     g.element = el
     // React 側のビューをマウント
     const getK = () => this.area.area.transform.k ?? 1
@@ -322,6 +322,21 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     const el = g.element
     if (!el) return
     el.style.transform = `translate(${g.rect.left}px, ${g.rect.top}px)`
+  }
+
+
+  private ensureGroupStacking(el: HTMLDivElement) {
+    const holder = this.area.area.content.holder
+    const siblings = Array.from(holder.children)
+    const firstNonGroup = siblings.find(sibling => {
+      if (sibling === el) return false
+      if (!(sibling instanceof HTMLElement)) return true
+      return sibling.getAttribute('data-rete-group') !== 'true'
+    })
+    if (firstNonGroup) {
+      this.area.area.content.reorder(el, firstNonGroup)
+    }
+    // firstNonGroup が存在しない場合は、既にグループの中で末尾（＝最前面）なので何もしない
   }
 
 
