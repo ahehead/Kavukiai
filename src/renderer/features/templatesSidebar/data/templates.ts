@@ -4,7 +4,7 @@ import eroImagerEN from "src/resources/public/templates/Prompt/ero_imager_en.md?
 import eroImagerJA from "src/resources/public/templates/Prompt/ero_imager_ja.md?raw";
 import eroWriterEN from "src/resources/public/templates/Prompt/ero_writer_template.en.md?raw";
 import eroWriterJA from "src/resources/public/templates/Prompt/ero_writer_template.md?raw";
-import stringTemplatePng from "src/resources/public/templates/String/replace_string.png?url";
+import stringTemplatePng from "src/resources/public/templates/String/String_Template.png?url";
 import stringJoinPng from "src/resources/public/templates/String/string_join.png?url";
 import type { TemplateMeta, TemplatesByGenre } from "./types";
 
