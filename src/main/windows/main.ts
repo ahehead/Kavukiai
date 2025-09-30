@@ -1,23 +1,28 @@
-import { BrowserWindow } from "electron";
 import { join } from "node:path";
+import { BrowserWindow } from "electron";
+import { Conf } from "electron-conf";
 import { createWindow } from "lib/electron-app/factories/windows/create";
-import { ENVIRONMENT } from "shared/constants";
-import { displayName } from "~/package.json";
+import { createAppMenu } from "main/menu/menu";
 import {
   type ApplicationSettings,
   createDefaultApplicationSettings,
+  type WindowSettings,
 } from "main/types";
-import { Conf } from "electron-conf";
-import { createAppMenu } from "main/menu/menu";
+import { ENVIRONMENT } from "shared/constants";
+import { displayName } from "~/package.json";
 
 // windowの位置とサイズを保存するためのconf
 const conf = new Conf<ApplicationSettings>({
   name: "app-settings",
 });
 
-const windowSettings = {
-  ...createDefaultApplicationSettings().windowSettings,
-  ...conf.get("windowSettings"),
+const defaultWindowSettings = createDefaultApplicationSettings().windowSettings;
+const storedWindowSettings = conf.get("windowSettings");
+
+const windowSettings: WindowSettings = {
+  ...defaultWindowSettings,
+  ...(storedWindowSettings ?? {}),
+  alwaysOnTop: false, // 現在すべてのビルドで通常ウィンドウ表示
 };
 
 export async function MainWindow() {
