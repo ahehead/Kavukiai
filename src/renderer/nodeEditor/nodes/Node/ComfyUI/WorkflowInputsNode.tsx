@@ -34,7 +34,7 @@ export class WorkflowInputsNode extends SerializableInputsNode<
     this.addInputPort([
       {
         key: 'exec',
-        label: 'Create',
+        label: 'Scan',
         onClick: () => this.controlflow.execute(this.id, 'exec'),
       },
       {
