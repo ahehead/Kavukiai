@@ -1,5 +1,5 @@
 import comfyuiTemplate from "src/resources/public/templates/ComfyUI/ComfyUI_Template.png?url";
-import lmstudioTemplate from "src/resources/public/templates/LMStudio/LM_Studio_template.png?url";
+import lmstudioTemplate from "src/resources/public/templates/LMStudio/LM_Studio_Template.png?url";
 import eroImagerEN from "src/resources/public/templates/Prompt/ero_imager_en.md?raw";
 import eroImagerJA from "src/resources/public/templates/Prompt/ero_imager_ja.md?raw";
 import eroWriterEN from "src/resources/public/templates/Prompt/ero_writer_template.en.md?raw";
