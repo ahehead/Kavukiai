@@ -1,16 +1,12 @@
 // Minimal Group/Comment plugin (auto-size, no node-model x/y dependency)
 import type { AreaExtra } from 'renderer/nodeEditor/types'
-import {
-  type BaseSchemes,
-  type NodeId,
-  type Root,
-  Scope,
-} from 'rete'
+import { type BaseSchemes, type NodeId, type Root, Scope } from 'rete'
 import { AreaExtensions, AreaPlugin, type BaseArea } from 'rete-area-plugin'
 import type { ReactPlugin } from 'rete-react-plugin'
 import type { Renderer } from 'rete-react-plugin/_types/renderer'
 import type { GroupJson } from 'shared/JsonType'
 import { Group, MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from './Group'
+import { GroupOrderController } from './GroupOrderController'
 import { GroupView } from './GroupView'
 
 export { Group, MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from './Group'
@@ -41,6 +37,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
 > {
   private area!: AreaPlugin<Schemes, AreaExtra>
   public _groups = new Map<string, Group>()
+  private orderController?: GroupOrderController<Schemes>
   private renderer: Renderer
   constructor(render: ReactPlugin<Schemes, AreaExtra>) {
     super('group')
@@ -53,11 +50,21 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
 
   public set groups(value: Map<string, Group>) {
     this._groups = value
+    if (this.orderController) {
+      this.orderController.applyOrder(Array.from(this._groups.keys()))
+    }
   }
 
   setParent(scope: Scope<BaseArea<Schemes>, [Root<Schemes>]>): void {
     super.setParent(scope)
     this.area = this.parentScope<AreaPlugin<Schemes, AreaExtra>>(AreaPlugin)
+    this.orderController = new GroupOrderController(
+      () => this._groups,
+      (map: Map<string, Group>) => {
+        this._groups = map
+      },
+      () => this.area
+    )
 
     const translating = new Set<NodeId>()
     const translate = async (id: NodeId, x: number, y: number) => {
@@ -111,7 +118,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         }
 
         // 1) DOM パス上にグループ要素が含まれているか（信頼度高め）
-        if (event && "composedPath" in event) {
+        if (event && 'composedPath' in event) {
           const path = event.composedPath() as EventTarget[]
           for (const g of this.groups.values()) {
             if (g.element && path.includes(g.element)) {
@@ -173,6 +180,9 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       this.setElementPosition(g)
       // ここではイベントは発火しない（ロード時の副作用を避ける）
     }
+    if (this.orderController) {
+      this.orderController.applyOrder(Array.from(this._groups.keys()))
+    }
   }
 
   addGroup(text: string, links: NodeId[] = []) {
@@ -223,6 +233,26 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     const validNew = links.filter(id => this.area.nodeViews.has(id))
     g.addLinks(validNew)
     this.fitToLinks(g)
+  }
+
+  public bringGroupToFront(target: Group | string) {
+    this.orderController?.bringGroupToFront(target)
+  }
+
+  public bringGroupForward(target: Group | string) {
+    this.orderController?.bringGroupForward(target)
+  }
+
+  public sendGroupBackward(target: Group | string) {
+    this.orderController?.sendGroupBackward(target)
+  }
+
+  public sendGroupToBack(target: Group | string) {
+    this.orderController?.sendGroupToBack(target)
+  }
+
+  public applyGroupOrder(order: string[]) {
+    this.orderController?.applyOrder(order)
   }
 
   // ---- geometry helpers (view-based; never use model x/y)
@@ -291,9 +321,8 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     el.style.position = 'absolute'
 
     this.area.area.content.add(el) // Area の content レイヤに載せる
-    this.ensureGroupStacking(el)
+    this.orderController?.ensureGroupStacking(el)
     g.element = el
-    // React 側のビューをマウント
     const getK = () => this.area.area.transform.k ?? 1
     const translate = async (id: string, dx: number, dy: number) =>
       await this.translateGroup(id, dx, dy)
@@ -313,32 +342,15 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         translate={translate}
         emitContextMenu={emitContextMenu}
       />,
-      el,
+      el
     )
   }
-
 
   private setElementPosition(g: Group) {
     const el = g.element
     if (!el) return
     el.style.transform = `translate(${g.rect.left}px, ${g.rect.top}px)`
   }
-
-
-  private ensureGroupStacking(el: HTMLDivElement) {
-    const holder = this.area.area.content.holder
-    const siblings = Array.from(holder.children)
-    const firstNonGroup = siblings.find(sibling => {
-      if (sibling === el) return false
-      if (!(sibling instanceof HTMLElement)) return true
-      return sibling.getAttribute('data-rete-group') !== 'true'
-    })
-    if (firstNonGroup) {
-      this.area.area.content.reorder(el, firstNonGroup)
-    }
-    // firstNonGroup が存在しない場合は、既にグループの中で末尾（＝最前面）なので何もしない
-  }
-
 
   public clear() {
     // すべてのグループ要素からイベントを外して DOM を除去

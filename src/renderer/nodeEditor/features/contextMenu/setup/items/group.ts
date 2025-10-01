@@ -36,3 +36,36 @@ export function createDeleteGroupMenuItem(
     handler: () => groupPlugin.delete(group.id),
   };
 }
+
+export function orderGroupMenuItems(
+  group: Group,
+  groupPlugin: GroupPlugin<Schemes>
+): Item {
+  return {
+    label: "グループの順番",
+    key: "group-order-items",
+    handler: () => void 0,
+    subitems: [
+      {
+        label: "最前面へ移動",
+        key: "bring-to-front",
+        handler: () => groupPlugin.bringGroupToFront(group),
+      },
+      {
+        label: "一つ前へ移動",
+        key: "bring-forward",
+        handler: () => groupPlugin.bringGroupForward(group),
+      },
+      {
+        label: "一つ後ろへ移動",
+        key: "send-backward",
+        handler: () => groupPlugin.sendGroupBackward(group),
+      },
+      {
+        label: "最背面へ移動",
+        key: "send-to-back",
+        handler: () => groupPlugin.sendGroupToBack(group),
+      },
+    ],
+  };
+}

@@ -20,7 +20,7 @@ import {
   createToggleInputControlMenuItem,
   filterInputControls,
 } from './items/createToggleInputControlMenuItem'
-import { createDeleteGroupMenuItem, createGroupMenuItem } from './items/group'
+import { createDeleteGroupMenuItem, createGroupMenuItem, orderGroupMenuItems } from './items/group'
 import { createPasteItem } from './items/paste'
 
 type ContextMenuDependencies = {
@@ -97,6 +97,7 @@ export function setupContextMenu({
                 },
               }
             ),
+            orderGroupMenuItems(context.group, groupPlugin),
             createDeleteGroupMenuItem(context.group, groupPlugin),
           ],
         }
