@@ -1,4 +1,5 @@
 import comfyuiTemplate from "src/resources/public/templates/ComfyUI/ComfyUI_Template.png?url";
+import lmstudio_comfyui_template from "src/resources/public/templates/Hybrid/LM_Studio_And_ComfyUI_Template.png?url";
 import lmstudioTemplate from "src/resources/public/templates/LMStudio/LM_Studio_Template.png?url";
 import eroImagerEN from "src/resources/public/templates/Prompt/ero_imager_en.md?raw";
 import eroImagerJA from "src/resources/public/templates/Prompt/ero_imager_ja.md?raw";
@@ -7,7 +8,6 @@ import eroWriterJA from "src/resources/public/templates/Prompt/ero_writer_templa
 import stringTemplatePng from "src/resources/public/templates/String/String_Template.png?url";
 import stringJoinPng from "src/resources/public/templates/String/string_join.png?url";
 import type { TemplateMeta, TemplatesByGenre } from "./types";
-
 // NOTE: Add your bundled assets here. Example of importing URLs with Vite:
 //   import examplePng from "../../assets/templates/example/example.png?url";
 // For now, keep empty or use placeholders. Only PNGWorkflow supports "新規作成" at this time.
@@ -49,6 +49,16 @@ export const TEMPLATES: TemplateMeta[] = [
     type: "PNGWorkflow",
     src: comfyuiTemplate,
     descriptionMd: "ComfyUI のワークフローを書き換えるテンプレート",
+  },
+  {
+    id: "lmstudio-comfyui-hybrid",
+    title: "LM Studio + ComfyUI Hybrid Template",
+    genre: "Hybrid",
+    tags: ["lmstudio", "comfyui", "local", "llm", "image", "workflow"],
+    type: "PNGWorkflow",
+    src: lmstudio_comfyui_template,
+    descriptionMd:
+      "LM Studio と ComfyUI を組み合わせたテンプレート。LM Studio でテキスト生成を行い、その出力を ComfyUI に渡して画像生成を行う。",
   },
   {
     id: "nsfw-porn-novel-writer",
