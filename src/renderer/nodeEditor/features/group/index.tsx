@@ -111,6 +111,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         }
       }
 
+      // pointerdown イベントをgroup内なら置き換え
       if (ctx.type === 'pointerdown') {
         const { position, event } = ctx.data as {
           position: { x: number; y: number }
@@ -143,16 +144,28 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         }
       }
 
+      // editorのclearイベント
       if (ctx.type === 'clear') {
         this.clear()
         return ctx
       }
 
+      // ノードが削除された場合、grroup内のリンクを削除し、必要ならフィット
       if (ctx.type === 'noderemoved') {
         const { id } = ctx.data
         for (const g of this.groups.values()) {
           if (g.linkedTo(id)) {
             g.removeLink(id)
+            this.fitToLinks(g)
+          }
+        }
+      }
+
+      // ノードがリサイズされた場合、リンク済みノードならフィット
+      if (ctx.type === 'noderesized') {
+        const { id } = ctx.data
+        for (const g of this.groups.values()) {
+          if (g.linkedTo(id)) {
             this.fitToLinks(g)
           }
         }
