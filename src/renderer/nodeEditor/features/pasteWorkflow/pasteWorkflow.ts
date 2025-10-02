@@ -95,6 +95,7 @@ function remapConnections(
 
 // Remap group IDs and linked node IDs
 function remapGroups(
+  pointerPosition: { x: number; y: number },
   groups: GroupJson[] | undefined,
   idMap: Map<string, string>
 ): GroupJson[] | undefined {
@@ -103,6 +104,11 @@ function remapGroups(
     ...g,
     id: getUID(),
     links: g.links.map((l: string) => idMap.get(l) ?? l),
+    rect: {
+      ...g.rect,
+      left: g.rect.left + pointerPosition.x,
+      top: g.rect.top + pointerPosition.y,
+    },
   }));
 }
 
@@ -116,7 +122,7 @@ function createRemappedGraph(
     version: jsonData.version ?? "1.0",
     nodes: remapNodes(pointerPosition, jsonData.nodes, idMap),
     connections: remapConnections(jsonData.connections, idMap),
-    groups: remapGroups(jsonData.groups, idMap),
+    groups: remapGroups(pointerPosition, jsonData.groups, idMap),
     metadata: jsonData.metadata,
   };
 }
