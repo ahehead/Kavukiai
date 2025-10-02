@@ -48,7 +48,7 @@ export const TEMPLATES: TemplateMeta[] = [
     tags: ["comfyui", "image", "workflow"],
     type: "PNGWorkflow",
     src: comfyuiTemplate,
-    descriptionMd: "ComfyUI を使うテンプレート",
+    descriptionMd: "ComfyUI のワークフローを書き換えるテンプレート",
   },
   {
     id: "nsfw-porn-novel-writer",
