@@ -11,7 +11,7 @@ import { SelectStringListControl } from '../../Controls/input/SelectStringListCo
 
 export class GetCheckpointsNode extends SerializableInputsNode<
   'GetCheckpoints',
-  { exec: TypedSocket; endpoint: TypedSocket },
+  { exec: TypedSocket; exec2: TypedSocket; endpoint: TypedSocket },
   { key: TypedSocket },
   { endpoint: InputValueControl<string>; list: SelectStringListControl }
 > {
@@ -30,6 +30,11 @@ export class GetCheckpointsNode extends SerializableInputsNode<
         key: 'exec',
         label: 'Get',
         onClick: () => this.controlflow.execute(this.id, 'exec'),
+      },
+      {
+        key: 'exec2',
+        label: 'Clear',
+        onClick: () => this.controlflow.execute(this.id, 'exec2'),
       },
       {
         key: 'endpoint',
@@ -61,7 +66,14 @@ export class GetCheckpointsNode extends SerializableInputsNode<
     )
   }
 
-  async execute(): Promise<void> {
+  async execute(input: "exec" | "exec2"): Promise<void> {
+    if (input === "exec2") {
+      // クリア
+      await this.controls.list.setItems([])
+      this.changeStatus(NodeStatus.IDLE)
+      return
+    }
+    // exec 押下でリスト取得
     const dfInputs = await this.dataflow.fetchInputs(this.id)
     const endpoint = this.getInputValue<string>(dfInputs, 'endpoint')
     if (!endpoint) {
