@@ -8,8 +8,8 @@ import type { HistoryPlugin } from 'rete-history-plugin'
 import { SelectWorkflowControl } from '../../Controls/ComfyUI/SelectWorkflowControl'
 import { InputValueControl } from '../../Controls/input/InputValue'
 
-export class UserWorkflowListNode extends SerializableInputsNode<
-  'UserWorkflowList',
+export class FetchUserWorkflowsNode extends SerializableInputsNode<
+  'FetchUserWorkflows',
   { exec: TypedSocket; endpoint: TypedSocket },
   { workflowRef: TypedSocket },
   { select: SelectWorkflowControl }
@@ -20,13 +20,13 @@ export class UserWorkflowListNode extends SerializableInputsNode<
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
-    super('UserWorkflowList')
+    super('FetchUserWorkflows')
     this.width = 340
     this.height = 315
     this.addInputPort([
       {
         key: 'exec',
-        label: 'Refresh',
+        label: 'Fetch',
         onClick: () => this.controlflow.execute(this.id),
       },
       {

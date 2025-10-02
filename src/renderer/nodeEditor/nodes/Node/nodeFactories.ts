@@ -16,7 +16,7 @@ import { FetchCheckpointsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/Fet
 import { FetchTemplateWorkflowsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/FetchTemplateWorkflowsNode";
 import { LoadWorkflowFileNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/LoadWorkflowFileNode";
 import { MergeWorkflowInputsDefaultsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/MergeWorkflowInputsDefaultsNode";
-import { UserWorkflowListNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/UserWorkflowListNode";
+import { FetchUserWorkflowsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/UserWorkflowListNode";
 import { WorkflowInputsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowInputsNode";
 import { WorkflowOutputsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowOutputsNode";
 import { WorkflowRefToApiWorkflowNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowRefToApiWorkflowNode";
@@ -413,12 +413,12 @@ export const factoryList = [
       history,
       dataflow,
       controlflow,
-    }: NodeDeps): UserWorkflowListNode =>
-      new UserWorkflowListNode(area, history, dataflow, controlflow),
+    }: NodeDeps): FetchUserWorkflowsNode =>
+      new FetchUserWorkflowsNode(area, history, dataflow, controlflow),
     {
       categories: ["ComfyUI"],
-      op: "UserWorkflowList",
-      label: "User Workflow List",
+      op: "FetchUserWorkflows",
+      label: "Fetch User Workflows",
     }
   ),
   define(
