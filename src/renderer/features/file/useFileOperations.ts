@@ -8,6 +8,34 @@ import { CloseFileDialogResponse, type FileData } from "shared/ApiType";
 import { createFile, type File } from "shared/AppType";
 import type { GraphJsonData } from "shared/JsonType";
 
+const normalizeFilePath = (filePath: string): string =>
+  filePath.replace(/\\/g, "/");
+
+const isWindowsPlatform = (): boolean => {
+  if (typeof process !== "undefined" && typeof process.platform === "string") {
+    return process.platform === "win32";
+  }
+  if (typeof navigator !== "undefined") {
+    return /windows/i.test(navigator.userAgent);
+  }
+  return false;
+};
+
+const isSameFilePath = (
+  a: string | null | undefined,
+  b: string | null | undefined
+): boolean => {
+  if (!a || !b) return false;
+  const normalizedA = normalizeFilePath(a);
+  const normalizedB = normalizeFilePath(b);
+
+  if (isWindowsPlatform()) {
+    return normalizedA.toLowerCase() === normalizedB.toLowerCase();
+  }
+
+  return normalizedA === normalizedB;
+};
+
 export function useFileOperations(
   files: File[],
   activeFileId: string | null,
@@ -50,11 +78,13 @@ export function useFileOperations(
       const targetPath = await electronApiService.showSaveDialog(f.title);
       if (!targetPath) return false; // キャンセル
 
-      // グラフを保存（"Save As"は常に上書き確認対象外: lastHash未指定）
+      const isSamePhysicalPath = isSameFilePath(targetPath, f.path);
+
+      // グラフを保存（"Save As"は同一パス上書き時のみハッシュ比較を実行）
       const result = await electronApiService.saveGraphJsonData(
         targetPath,
         f.graph,
-        undefined
+        isSamePhysicalPath ? f.graphHash : undefined
       );
       if (result.status === "cancel") {
         notify("info", "保存キャンセル");
@@ -67,7 +97,7 @@ export function useFileOperations(
       const { filePath, fileName } = result.data;
 
       // 元と同じパスだと結局上書きした
-      if (f.path && targetPath === f.path) {
+      if (isSamePhysicalPath) {
         updateFile(fileId, {
           title: fileName,
           path: filePath,
@@ -83,7 +113,8 @@ export function useFileOperations(
       }
 
       // ファイルの新規作成追加
-      await createAndAddFile(fileName, f.graph, filePath);
+      const nextFile = await createAndAddFile(fileName, f.graph, filePath);
+      setActiveFileId(nextFile.id);
       notify("success", `新しく名前を付けて保存しました: ${fileName}`);
       return true;
     },
@@ -95,6 +126,7 @@ export function useFileOperations(
       clearHistory,
       clearEditorHistory,
       createAndAddFile,
+      setActiveFileId,
     ]
   );
   const saveFile = useCallback(
@@ -113,7 +145,9 @@ export function useFileOperations(
       }
 
       // 同じファイルを上書きするときだけ lastHash を送る
-      const lastHash = currentFilePath === f.path ? f.graphHash : undefined;
+      const lastHash = isSameFilePath(currentFilePath, f.path)
+        ? f.graphHash
+        : undefined;
 
       // グラフを保存
       const result = await electronApiService.saveGraphJsonData(
@@ -181,7 +215,7 @@ export function useFileOperations(
         if (response === CloseFileDialogResponse.Confirm) {
           const ok = await saveFile(id);
           if (!ok) notify("error", "保存に失敗");
-          return; // 一旦キャンセルしないとバグる。historyやnodeの消去に不具合がでる。
+          return; // 一旦キャンセルしないとバグる。historyやnodeの消去に不具合がでる。調査中
         }
         // 「保存しない(response===1)」はそのまま破棄
       }
