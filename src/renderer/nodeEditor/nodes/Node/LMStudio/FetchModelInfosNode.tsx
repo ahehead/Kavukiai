@@ -10,8 +10,8 @@ import type { ModelInfo } from 'renderer/nodeEditor/types/Schemas/lmstudio/Model
 import type { ControlFlowEngine } from 'rete-engine'
 import { ModelInfoListControl } from '../../Controls/LMStudio/ModelInfoListControl'
 
-export class GetModelInfoListNode extends SerializableInputsNode<
-  'GetModelInfoList',
+export class FetchModelInfosNode extends SerializableInputsNode<
+  'FetchModelInfos',
   { exec: TypedSocket },
   { modelInfo: TypedSocket },
   { selectList: ModelInfoListControl }
@@ -23,12 +23,12 @@ export class GetModelInfoListNode extends SerializableInputsNode<
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
-    super('GetModelInfoList')
+    super('FetchModelInfos')
     this.width = 380
     this.height = 380
     this.addInputPort({
       key: 'exec',
-      label: 'Get and create',
+      label: 'Fetch',
       onClick: () => this.controlflow.execute(this.id, 'exec'),
     })
     this.addOutputPort([

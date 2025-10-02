@@ -12,10 +12,10 @@ import { UPartTextNode } from "renderer/nodeEditor/nodes/Node/Chat/UPartTextNode
 import { ComfyDesktopStartNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/ComfyDesktopStartNode";
 import { ComfyUIFreeMemoryNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/ComfyUIFreeMemoryNode";
 import { ComfyUINode } from "renderer/nodeEditor/nodes/Node/ComfyUI/ComfyUINode";
-import { GetCheckpointsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/GetCheckpointsNode";
+import { FetchCheckpointsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/FetchCheckpointsNode";
+import { FetchTemplateWorkflowsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/FetchTemplateWorkflowsNode";
 import { LoadWorkflowFileNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/LoadWorkflowFileNode";
 import { MergeWorkflowInputsDefaultsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/MergeWorkflowInputsDefaultsNode";
-import { TemplateWorkflowListNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/TemplateWorkflowListNode";
 import { UserWorkflowListNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/UserWorkflowListNode";
 import { WorkflowInputsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowInputsNode";
 import { WorkflowOutputsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowOutputsNode";
@@ -23,7 +23,7 @@ import { WorkflowRefToApiWorkflowNode } from "renderer/nodeEditor/nodes/Node/Com
 import { TestNode } from "renderer/nodeEditor/nodes/Node/Debug/TestNode";
 import { UnknownNode } from "renderer/nodeEditor/nodes/Node/Debug/UnknownNode";
 import { InspectorNode } from "renderer/nodeEditor/nodes/Node/InspectorNode";
-import { GetModelInfoListNode } from "renderer/nodeEditor/nodes/Node/LMStudio/GetModelInfoListNode";
+import { FetchModelInfosNode } from "renderer/nodeEditor/nodes/Node/LMStudio/FetchModelInfosNode";
 import { ListDownloadedModelsNode } from "renderer/nodeEditor/nodes/Node/LMStudio/ListDownloadedModelsNode";
 import { LLMPredictionConfigNode } from "renderer/nodeEditor/nodes/Node/LMStudio/LLMPredictionConfigNode";
 import { LMStudioChatNode } from "renderer/nodeEditor/nodes/Node/LMStudio/LMStudioChatNode";
@@ -247,12 +247,12 @@ export const factoryList = [
     }
   ),
   define(
-    ({ dataflow, controlflow }: NodeDeps): GetModelInfoListNode =>
-      new GetModelInfoListNode(dataflow, controlflow),
+    ({ dataflow, controlflow }: NodeDeps): FetchModelInfosNode =>
+      new FetchModelInfosNode(dataflow, controlflow),
     {
       categories: ["LMStudio"],
-      op: "GetModelInfoList",
-      label: "Get Model Info List",
+      op: "FetchModelInfos",
+      label: "Fetch Model Infos",
     }
   ),
   define(
@@ -385,21 +385,26 @@ export const factoryList = [
       history,
       dataflow,
       controlflow,
-    }: NodeDeps): TemplateWorkflowListNode =>
-      new TemplateWorkflowListNode(area, history, dataflow, controlflow),
+    }: NodeDeps): FetchTemplateWorkflowsNode =>
+      new FetchTemplateWorkflowsNode(area, history, dataflow, controlflow),
     {
       categories: ["ComfyUI"],
-      op: "TemplateWorkflowList",
-      label: "Template Workflow List",
+      op: "FetchTemplateWorkflows",
+      label: "Fetch Template Workflows",
     }
   ),
   define(
-    ({ area, history, dataflow, controlflow }: NodeDeps): GetCheckpointsNode =>
-      new GetCheckpointsNode(area, history, dataflow, controlflow),
+    ({
+      area,
+      history,
+      dataflow,
+      controlflow,
+    }: NodeDeps): FetchCheckpointsNode =>
+      new FetchCheckpointsNode(area, history, dataflow, controlflow),
     {
       categories: ["ComfyUI"],
-      op: "GetCheckpoints",
-      label: "Get Checkpoints",
+      op: "FetchCheckpoints",
+      label: "Fetch Checkpoints",
     }
   ),
   define(

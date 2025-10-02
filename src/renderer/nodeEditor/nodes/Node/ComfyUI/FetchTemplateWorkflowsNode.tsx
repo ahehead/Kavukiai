@@ -8,8 +8,8 @@ import type { HistoryPlugin } from 'rete-history-plugin'
 import { SelectWorkflowControl } from '../../Controls/ComfyUI/SelectWorkflowControl'
 import { InputValueControl } from '../../Controls/input/InputValue'
 
-export class TemplateWorkflowListNode extends SerializableInputsNode<
-  'TemplateWorkflowList',
+export class FetchTemplateWorkflowsNode extends SerializableInputsNode<
+  'FetchTemplateWorkflows',
   { exec: TypedSocket; endpoint: TypedSocket },
   { workflowRef: TypedSocket },
   { select: SelectWorkflowControl }
@@ -20,13 +20,13 @@ export class TemplateWorkflowListNode extends SerializableInputsNode<
     private dataflow: DataflowEngine<Schemes>,
     private controlflow: ControlFlowEngine<Schemes>
   ) {
-    super('TemplateWorkflowList')
+    super('FetchTemplateWorkflows')
     this.width = 340
     this.height = 315
     this.addInputPort([
       {
         key: 'exec',
-        label: 'Refresh',
+        label: 'Fetch',
         onClick: () => this.controlflow.execute(this.id),
       },
       {
@@ -70,7 +70,6 @@ export class TemplateWorkflowListNode extends SerializableInputsNode<
     try {
       const list = await electronApiService.listTemplateWorkflows(endpoint)
       await this.controls.select.setItems(list)
-      // 成功時はエラークリア
       this.controls.select.setError('')
     } catch (e: any) {
       console.error('Error fetching template workflows:', e)
@@ -88,6 +87,7 @@ export class TemplateWorkflowListNode extends SerializableInputsNode<
   serializeControlValue() {
     return this.controls.select.toJSON()
   }
+
   deserializeControlValue(data: any) {
     this.controls.select.setFromJSON({ data })
   }
