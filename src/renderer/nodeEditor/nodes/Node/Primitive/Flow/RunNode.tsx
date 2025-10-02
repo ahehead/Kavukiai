@@ -9,12 +9,17 @@ import type { ControlFlowEngine } from 'rete-engine'
 // Run ノード
 export class RunNode extends SerializableInputsNode<
   'Run',
-  object,
+  { exec: TypedSocket },
   { exec: TypedSocket },
   { btn: RunButtonControl }
 > {
   constructor(private engine: ControlFlowEngine<Schemes>) {
     super('Run')
+    this.addInputPort({
+      key: 'exec',
+      typeName: 'exec',
+      label: 'bypass',
+    })
     this.addOutputPort({
       key: 'exec',
       typeName: 'exec',
@@ -29,10 +34,6 @@ export class RunNode extends SerializableInputsNode<
         },
       })
     )
-  }
-
-  data(): object {
-    return {}
   }
 
   async execute(_: never, forward: (output: 'exec') => void): Promise<void> {
