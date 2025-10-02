@@ -14,9 +14,9 @@ import { ComfyUIFreeMemoryNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/Co
 import { ComfyUINode } from "renderer/nodeEditor/nodes/Node/ComfyUI/ComfyUINode";
 import { FetchCheckpointsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/FetchCheckpointsNode";
 import { FetchTemplateWorkflowsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/FetchTemplateWorkflowsNode";
+import { FetchUserWorkflowsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/FetchUserWorkflowListNode";
 import { LoadWorkflowFileNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/LoadWorkflowFileNode";
 import { MergeWorkflowInputsDefaultsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/MergeWorkflowInputsDefaultsNode";
-import { FetchUserWorkflowsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/UserWorkflowListNode";
 import { WorkflowInputsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowInputsNode";
 import { WorkflowOutputsNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowOutputsNode";
 import { WorkflowRefToApiWorkflowNode } from "renderer/nodeEditor/nodes/Node/ComfyUI/WorkflowRefToApiWorkflowNode";
