@@ -21,6 +21,8 @@ export class UserWorkflowListNode extends SerializableInputsNode<
     private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('UserWorkflowList')
+    this.width = 340
+    this.height = 315
     this.addInputPort([
       {
         key: 'exec',
