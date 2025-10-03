@@ -99,6 +99,18 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         }
       }
 
+      // ノードが移動している途中のイベント
+      if (ctx.type === 'nodetranslate') {
+        const { id } = ctx.data
+        if (isTranslating(id)) return ctx // 自分で移動させている最中なら無視
+        for (const g of this.groups.values()) {
+          // 移動中のノードがリンク済みならフィット
+          if (g.linkedTo(id)) {
+            this.fitToLinks(g)
+          }
+        }
+      }
+
       // グループが移動している途中のイベント
       if (ctx.type === 'grouptranslated') {
         const { id, dx, dy } = ctx.data
