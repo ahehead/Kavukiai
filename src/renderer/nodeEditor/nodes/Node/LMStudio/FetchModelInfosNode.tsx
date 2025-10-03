@@ -12,7 +12,7 @@ import { ModelInfoListControl } from '../../Controls/LMStudio/ModelInfoListContr
 
 export class FetchModelInfosNode extends SerializableInputsNode<
   'FetchModelInfos',
-  { exec: TypedSocket },
+  { exec: TypedSocket, exec2: TypedSocket },
   { modelInfo: TypedSocket },
   { selectList: ModelInfoListControl }
 > {
@@ -26,11 +26,15 @@ export class FetchModelInfosNode extends SerializableInputsNode<
     super('FetchModelInfos')
     this.width = 380
     this.height = 380
-    this.addInputPort({
+    this.addInputPort([{
       key: 'exec',
       label: 'Fetch',
       onClick: () => this.controlflow.execute(this.id, 'exec'),
-    })
+    }, {
+      key: 'exec2',
+      label: 'Clear',
+      onClick: () => this.controlflow.execute(this.id, 'exec2'),
+    }])
     this.addOutputPort([
       { key: 'modelInfo', typeName: 'ModelInfoOrNull', label: 'ModelInfo' },
     ])
@@ -60,6 +64,15 @@ export class FetchModelInfosNode extends SerializableInputsNode<
   ): Promise<void> {
     if (this.status === NodeStatus.RUNNING) return
     this.changeStatus(NodeStatus.RUNNING)
+    if (_input === 'exec2') {
+      this.models = []
+      this.selectedKey = null
+      this.controls.selectList.setList([])
+      this.controls.selectList.setSelectedKey(null)
+      this.changeStatus(NodeStatus.IDLE)
+      this.dataflow.reset(this.id)
+      return
+    }
     const result = await electronApiService.listDownloadedModels()
     if (result.status === 'success') {
       this.models = result.data
