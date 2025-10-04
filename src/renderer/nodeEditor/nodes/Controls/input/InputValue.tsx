@@ -8,36 +8,42 @@ import {
 import { Drag } from 'rete-react-plugin'
 import type { ControlJson } from 'shared/JsonType'
 
-export interface InputValueActionParams<T> extends ControlOptions<T> {
-  value: T
+export interface InputValueActionParams<T>
+  extends ControlOptions<T | undefined> {
+  value?: T
   type?: 'string' | 'number'
   step?: number
 }
 
 // stringまたはnumber入力用コントロール
 export class InputValueControl<T extends string | number> extends BaseControl<
-  T,
+  T | undefined,
   InputValueActionParams<T>
 > {
-  value: T
+  value: T | undefined
   type: 'string' | 'number'
   step?: number
 
   constructor(options: InputValueActionParams<T>) {
     super(options)
     this.value = options.value
-    this.type =
-      options?.type ?? (typeof options.value === 'string' ? 'string' : 'number')
+    const inferredType =
+      typeof options.value === 'string'
+        ? 'string'
+        : typeof options.value === 'number'
+          ? 'number'
+          : 'string'
+    this.type = options?.type ?? inferredType
     this.step = options?.step
   }
 
-  setValue(value: T) {
+  setValue(value: T | undefined) {
     this.value = value
     this.opts.onChange?.(value)
     this.notify()
   }
 
-  getValue(): T {
+  getValue(): T | undefined {
     return this.value
   }
 
@@ -63,11 +69,30 @@ export function InputValueControlView<T extends string | number>({
 }): JSX.Element {
   const value = useControlValue(data)
 
+  const renderedValue =
+    value === undefined
+      ? ''
+      : data.type === 'number'
+        ? String(value)
+        : (value as string)
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value
-    const newValue = (
-      data.type === 'number' ? Number.parseFloat(rawValue) : rawValue
-    ) as T
+    let newValue: T | undefined
+
+    if (data.type === 'number') {
+      if (rawValue.trim() === '') {
+        newValue = undefined
+      } else {
+        const parsed = Number.parseFloat(rawValue)
+        if (Number.isNaN(parsed)) {
+          return
+        }
+        newValue = parsed as T
+      }
+    } else {
+      newValue = rawValue as T
+    }
 
     data.addHistory(value, newValue)
     data.setValue(newValue)
@@ -80,7 +105,7 @@ export function InputValueControlView<T extends string | number>({
           id={data.id}
           type={data.type === 'number' ? 'number' : 'text'}
           step={data.type === 'number' ? data.step : undefined}
-          value={value}
+          value={renderedValue}
           readOnly={!data.opts.editable}
           onFocus={() => data.addHistory(value, value)}
           onChange={data.opts.editable ? handleChange : undefined}

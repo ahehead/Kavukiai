@@ -78,8 +78,9 @@ export class CounterLoopNode
           editable: true,
           history,
           area,
-          onChange: (value: number) => {
-            this.counter = value;
+          onChange: (value) => {
+            const next = value ?? 0;
+            this.counter = next;
             this.dataflow.reset(this.id);
             this.controls.count.setValue(value);
           },
@@ -168,7 +169,7 @@ export class CounterLoopNode
   }
 
   serializeControlValue(): { data: { value: number } } {
-    const value = this.controls.count.getValue();
+    const value = this.controls.count.getValue() ?? 0;
     return { data: { value } };
   }
 
