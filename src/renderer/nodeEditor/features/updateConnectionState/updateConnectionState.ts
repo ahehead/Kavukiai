@@ -74,6 +74,7 @@ async function hideTargetPortControl(
   nodeId: string
 ) {
   if (!targetPort.showControl) return;
+  if (targetPort.socket.isExec) return; // Execは表示したまま
   targetPort.showControl = false;
   await area.update("node", nodeId);
 }
