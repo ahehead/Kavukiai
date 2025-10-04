@@ -72,6 +72,7 @@ export function TextAreaControllView(props: {
         wrapperProps={{ 'data-monaco-editor': 'true' }}
         onChange={control.opts.editable ? onChangeHandle : undefined}
         options={{
+          contextmenu: true,
           wordWrap: 'on',
           minimap: { enabled: false },
           lineNumbers: 'off',

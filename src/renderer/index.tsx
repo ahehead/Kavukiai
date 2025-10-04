@@ -5,13 +5,12 @@ import { AppRoutes } from './routes'
 
 import './globals.css'
 
-
 ///// Monaco Editor
 import { loader } from '@monaco-editor/react'
 
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
-import 'monaco-editor/esm/vs/basic-languages/markdown/markdown.contribution'
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
+import 'monaco-editor/esm/vs/editor/contrib/contextmenu/browser/contextmenu'
 
 self.MonacoEnvironment = {
   getWorker(_, _label) {
@@ -20,7 +19,7 @@ self.MonacoEnvironment = {
 }
 
 loader.config({ monaco })
-const mona = await loader.init();
+const mona = await loader.init()
 
 mona.editor.defineTheme('logViewerLight', {
   base: 'vs',
