@@ -8,7 +8,17 @@ import { hasSub, Menu } from './Menu'
 import { SubmenuWrapper } from './SubmenuWrapper'
 
 const menuItemButton = cva(
-  'inline-flex w-full gap-1 hover:bg-accent/60 px-1 py-1.25 transition-colors duration-290'
+  'inline-flex w-full gap-1 hover:bg-accent/60 px-1 py-1.25 transition-colors duration-290',
+  {
+    variants: {
+      isOpen: {
+        true: 'bg-accent/40',
+      },
+    },
+    defaultVariants: {
+      isOpen: false,
+    },
+  }
 )
 
 export type MenuItemProps = {
@@ -35,7 +45,7 @@ export const MenuItem: FC<MenuItemProps> = memo(
           role="menuitem"
           aria-haspopup={hasChildren ? 'menu' : undefined}
           aria-expanded={hasChildren ? isOpen : undefined}
-          className={menuItemButton()}
+          className={menuItemButton({ isOpen })}
           // Block earlier-phase events so underlying canvas/editor won't react
           onPointerDown={(e) => {
             e.preventDefault()
