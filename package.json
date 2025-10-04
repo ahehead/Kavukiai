@@ -2,7 +2,7 @@
   "displayName": "KavukiAI",
   "name": "kavukiai",
   "description": "Desktop app to play with local AI and other things in Node UI.",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "main": "./node_modules/.dev/main/index.js",
   "resources": "src/resources",
   "author": {
