@@ -570,8 +570,8 @@ export const factoryList = [
     }
   ),
   define(
-    ({ history, area, dataflow }: NodeDeps): JsonSchemaNode =>
-      new JsonSchemaNode(history, area, dataflow),
+    ({ history, area, dataflow, controlflow }: NodeDeps): JsonSchemaNode =>
+      new JsonSchemaNode(history, area, dataflow, controlflow),
     {
       categories: ["Primitive", "Schema"],
       op: "JsonSchema",

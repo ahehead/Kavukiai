@@ -9,6 +9,7 @@ import {
 import type { SerializableDataNode } from 'renderer/nodeEditor/types/Node/SerializableDataNode'
 import { defaultNodeSchemas } from 'renderer/nodeEditor/types/Schemas/DefaultSchema'
 import type { AreaPlugin } from 'rete-area-plugin'
+import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
 import {
   PropertyInputControl,
@@ -20,22 +21,31 @@ export class JsonSchemaNode
   extends SerializableInputsNode<
     'JsonSchema',
     object,
-    { out: TypedSocket },
+    { exec: TypedSocket; out: TypedSocket },
     { props: PropertyInputControl }
   >
   implements SerializableDataNode {
+  _isSetup = true
   constructor(
     history: HistoryPlugin<Schemes>,
     area: AreaPlugin<Schemes, AreaExtra>,
-    dataflow: DataflowEngine<Schemes>
+    dataflow: DataflowEngine<Schemes>,
+    private controlflow: ControlFlowEngine<Schemes>
   ) {
     super('JsonSchema')
     this.width = 700
     this.height = 280
-    this.addOutputPort({
-      key: 'out',
-      typeName: 'JsonSchema',
-    })
+    this.addOutputPort([
+      {
+        key: 'exec',
+        typeName: 'exec',
+        label: 'updated',
+      },
+      {
+        key: 'out',
+        typeName: 'JsonSchema',
+      },
+    ])
 
     this.addControl(
       'props',
@@ -47,9 +57,16 @@ export class JsonSchemaNode
         onChange: () => {
           dataflow.reset(this.id)
           this.setSchema(this.createSchema())
+          if (!this.isSetup) this.controlflow.execute(this.id, 'exec')
         },
       })
     )
+  }
+  get isSetup(): boolean {
+    return this._isSetup
+  }
+  set isSetup(v: boolean) {
+    this._isSetup = v
   }
 
   setSchema(schema: TSchema) {
@@ -58,6 +75,10 @@ export class JsonSchemaNode
 
   data(): { out: TSchema } {
     return { out: this.createSchema() }
+  }
+
+  async execute(_input: any, forward: (output: 'exec') => void): Promise<void> {
+    forward('exec')
   }
 
   createSchema(): TSchema {
@@ -105,5 +126,6 @@ export class JsonSchemaNode
   deserializeControlValue(data: { items: PropertyItem[] }): void {
     this.controls.props.setValue(data.items)
     this.setSchema(this.createSchema())
+    this.isSetup = false
   }
 }
