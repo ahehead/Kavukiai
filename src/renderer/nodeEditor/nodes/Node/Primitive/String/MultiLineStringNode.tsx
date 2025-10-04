@@ -2,15 +2,15 @@ import type { TSchema } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import { MultiLineControl } from 'renderer/nodeEditor/nodes/Controls/input/MultiLine'
 import {
+  buildTemplateSchema,
+  parseTemplatePlaceholders,
+} from 'renderer/nodeEditor/nodes/util/templatePlaceholders'
+import {
   type AreaExtra,
   type Schemes,
   SerializableInputsNode,
   type TypedSocket,
 } from 'renderer/nodeEditor/types'
-import {
-  buildTemplateSchema,
-  parseTemplatePlaceholders,
-} from 'renderer/nodeEditor/nodes/util/templatePlaceholders'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'
 
