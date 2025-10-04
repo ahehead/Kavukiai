@@ -47,7 +47,6 @@ export class JsonSchemaNode
         onChange: () => {
           dataflow.reset(this.id)
           this.setSchema(this.createSchema())
-          this.area.update('node', this.id)
         },
       })
     )
@@ -65,9 +64,38 @@ export class JsonSchemaNode
     const items = this.controls.props.getValue()
     const props: Record<string, TSchema> = {}
     for (const item of items) {
-      props[item.key] = defaultNodeSchemas[item.typeStr]
+      const schema = this.createPropertySchema(item)
+      props[item.key] = item.required ? schema : Type.Optional(schema)
     }
     return Type.Object(props)
+  }
+
+  private createPropertySchema(item: PropertyItem): TSchema {
+    switch (item.typeStr) {
+      case 'string': {
+        const options =
+          item.required && typeof item.defaultValue === 'string'
+            ? { default: item.defaultValue }
+            : undefined
+        return Type.String(options)
+      }
+      case 'number': {
+        const options =
+          item.required && typeof item.defaultValue === 'number'
+            ? { default: item.defaultValue }
+            : undefined
+        return Type.Number(options)
+      }
+      case 'boolean': {
+        const options =
+          item.required && typeof item.defaultValue === 'boolean'
+            ? { default: item.defaultValue }
+            : undefined
+        return Type.Boolean(options)
+      }
+      default:
+        return defaultNodeSchemas[item.typeStr]
+    }
   }
 
   serializeControlValue(): { data: { items: PropertyItem[] } } {
