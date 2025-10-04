@@ -26,7 +26,7 @@ export class JsonSchemaNode
   implements SerializableDataNode {
   constructor(
     history: HistoryPlugin<Schemes>,
-    private area: AreaPlugin<Schemes, AreaExtra>,
+    area: AreaPlugin<Schemes, AreaExtra>,
     dataflow: DataflowEngine<Schemes>
   ) {
     super('JsonSchema')

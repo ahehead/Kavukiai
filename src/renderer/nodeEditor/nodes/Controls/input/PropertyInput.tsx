@@ -314,116 +314,106 @@ function PropertyItemRow({
 
   return (
     <div className="rounded border border-border/60 bg-background/60 px-3 py-2">
-      <div className="grid grid-cols-[minmax(10rem,1.6fr)_minmax(6rem,1fr)_minmax(6rem,max-content)_minmax(9rem,1.2fr)_auto] items-center gap-3">
-        <div className="flex flex-col gap-1">
-          <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            key
-          </span>
-          <span className="text-sm font-medium break-all">{item.key}</span>
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            type
-          </span>
-          <Select
-            value={item.typeStr}
-            onValueChange={val =>
-              onTypeChange(index, val as PropertyItem['typeStr'])
-            }
-            disabled={!editable}
-          >
-            <SelectTrigger className="h-8">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent className="rounded-0">
-              <SelectGroup>
-                <SelectLabel>Type</SelectLabel>
-                {TYPE_OPTIONS.map(option => (
-                  <SelectItem key={option} value={option}>
-                    {option}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            required
-          </span>
-          <div className="flex items-center gap-2">
-            <Switch
-              id={requiredSwitchId}
-              checked={item.required}
-              onCheckedChange={checked => onToggleRequired(index, checked)}
-              disabled={!editable}
-            />
-            <label
-              className="text-xs select-none"
-              htmlFor={requiredSwitchId}
-            >
-              {item.required ? 'required' : 'optional'}
-            </label>
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-stretch gap-3">
+        <div className="flex flex-col gap-2">
+          <div className="grid grid-cols-[minmax(10rem,1.6fr)_minmax(6rem,1fr)_minmax(6rem,max-content)_minmax(9rem,1.2fr)] items-center gap-3 text-[10px] uppercase tracking-wide text-muted-foreground">
+            <span>key</span>
+            <span>type</span>
+            <span>required</span>
+            <span>default</span>
           </div>
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            default
-          </span>
-          {item.required ? (
+          <div className="grid grid-cols-[minmax(10rem,1.6fr)_minmax(6rem,1fr)_minmax(6rem,max-content)_minmax(9rem,1.2fr)] items-center gap-3">
+            <span className="text-sm font-medium break-all">{item.key}</span>
+            <Select
+              value={item.typeStr}
+              onValueChange={val =>
+                onTypeChange(index, val as PropertyItem['typeStr'])
+              }
+              disabled={!editable}
+            >
+              <SelectTrigger className="h-8">
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent className="rounded-0">
+                <SelectGroup>
+                  <SelectLabel>Type</SelectLabel>
+                  {TYPE_OPTIONS.map(option => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
             <div className="flex items-center gap-2">
-              {item.typeStr === 'string' && (
-                <input
-                  type="text"
-                  value={
-                    typeof item.defaultValue === 'string'
-                      ? item.defaultValue
-                      : ''
-                  }
-                  placeholder={DEFAULT_INPUT_PLACEHOLDERS[item.typeStr]}
-                  onChange={e => onDefaultChange(index, e.target.value)}
-                  className="w-full px-2 py-1 border border-input rounded text-xs"
-                  disabled={!editable}
-                />
-              )}
-              {item.typeStr === 'number' && (
-                <input
-                  type="number"
-                  value={
-                    item.defaultValue === ''
-                      ? ''
-                      : String(item.defaultValue)
-                  }
-                  placeholder={DEFAULT_INPUT_PLACEHOLDERS[item.typeStr]}
-                  onChange={e => onDefaultNumberChange(index, e.target.value)}
-                  className="w-full px-2 py-1 border border-input rounded text-xs"
-                  disabled={!editable}
-                />
-              )}
-              {item.typeStr === 'boolean' && (
-                <div className="flex items-center gap-2">
-                  <Switch
-                    id={defaultSwitchId}
-                    checked={booleanDefault}
-                    onCheckedChange={checked =>
-                      onDefaultChange(index, checked)
+              <Switch
+                id={requiredSwitchId}
+                checked={item.required}
+                onCheckedChange={checked => onToggleRequired(index, checked)}
+                disabled={!editable}
+              />
+              <label
+                className="text-xs select-none"
+                htmlFor={requiredSwitchId}
+              >
+                {item.required ? 'required' : 'optional'}
+              </label>
+            </div>
+            {item.required ? (
+              <div className="flex items-center gap-2">
+                {item.typeStr === 'string' && (
+                  <input
+                    type="text"
+                    value={
+                      typeof item.defaultValue === 'string'
+                        ? item.defaultValue
+                        : ''
                     }
+                    placeholder={DEFAULT_INPUT_PLACEHOLDERS[item.typeStr]}
+                    onChange={e => onDefaultChange(index, e.target.value)}
+                    className="w-full px-2 py-1 border border-input rounded text-xs"
                     disabled={!editable}
                   />
-                  <label
-                    className="text-xs select-none"
-                    htmlFor={defaultSwitchId}
-                  >
-                    {booleanDefault ? 'true' : 'false'}
-                  </label>
-                </div>
-              )}
-            </div>
-          ) : (
-            <span className="text-xs text-muted-foreground">—</span>
-          )}
+                )}
+                {item.typeStr === 'number' && (
+                  <input
+                    type="number"
+                    value={
+                      item.defaultValue === ''
+                        ? ''
+                        : String(item.defaultValue)
+                    }
+                    placeholder={DEFAULT_INPUT_PLACEHOLDERS[item.typeStr]}
+                    onChange={e => onDefaultNumberChange(index, e.target.value)}
+                    className="w-full px-2 py-1 border border-input rounded text-xs"
+                    disabled={!editable}
+                  />
+                )}
+                {item.typeStr === 'boolean' && (
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      id={defaultSwitchId}
+                      checked={booleanDefault}
+                      onCheckedChange={checked =>
+                        onDefaultChange(index, checked)
+                      }
+                      disabled={!editable}
+                    />
+                    <label
+                      className="text-xs select-none"
+                      htmlFor={defaultSwitchId}
+                    >
+                      {booleanDefault ? 'true' : 'false'}
+                    </label>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <span className="text-xs text-muted-foreground">—</span>
+            )}
+          </div>
         </div>
-        <div className="flex items-center justify-end gap-1">
+        <div className="flex flex-row items-center justify-center gap-1">
           <button
             onClick={() => onMoveUp(index)}
             disabled={!editable || !canMoveUp}
