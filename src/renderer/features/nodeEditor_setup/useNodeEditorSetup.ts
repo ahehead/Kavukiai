@@ -40,7 +40,7 @@ export default function useNodeEditorSetup(
     };
   }, [editorApi, setCurrentFileState]);
 
-  const clearEditorHistory = useCallback(
+  const resetEditorStateFromGraph = useCallback(
     (graph: GraphJsonData) => {
       if (!editorApi) return;
       editorApi.resetEditorState({
@@ -50,6 +50,11 @@ export default function useNodeEditorSetup(
     },
     [editorApi]
   );
+
+  const clearHistoryState = useCallback(() => {
+    if (!editorApi) return;
+    editorApi.clearHistoryState();
+  }, [editorApi]);
 
   const pasteWorkflowAtPosition = useCallback(
     async (
@@ -70,7 +75,8 @@ export default function useNodeEditorSetup(
   return {
     ref,
     setCurrentFileState,
-    clearEditorHistory,
+    resetEditorStateFromGraph,
+    clearHistoryState,
     pasteWorkflowAtPosition,
     getPointerPosition,
   };

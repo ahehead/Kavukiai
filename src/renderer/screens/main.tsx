@@ -48,7 +48,8 @@ export function MainScreen() {
   const {
     ref,
     setCurrentFileState,
-    clearEditorHistory,
+    resetEditorStateFromGraph,
+    clearHistoryState,
     pasteWorkflowAtPosition,
   } = useNodeEditorSetup(activeFileId, getGraphAndHistory, setGraphAndHistory)
 
@@ -63,7 +64,8 @@ export function MainScreen() {
     files,
     activeFileId,
     setCurrentFileState,
-    clearEditorHistory,
+    resetEditorStateFromGraph,
+    clearHistoryState,
     getFileById,
     setActiveFileId,
     addFile,

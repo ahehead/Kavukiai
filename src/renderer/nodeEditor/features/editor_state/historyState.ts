@@ -38,6 +38,17 @@ export function initializeHistoryState(): HistoryState {
   };
 }
 
+export function clearHistoryState(
+  history: HistoryPlugin<Schemes, HistoryActions<Schemes>>
+): void {
+  history.clear();
+  const empty = initializeHistoryState();
+  (history as any).history.active = empty.active;
+  (history as any).history.produced = empty.produced.slice();
+  (history as any).history.reserved = empty.reserved.slice();
+  (history as any).history.limit = empty.limit;
+}
+
 // memo:historyプラグインの状態は公開されていないので、直接アクセスする
 export function getCurrentEditorState(
   editor: NodeEditor<Schemes>,

@@ -40,7 +40,8 @@ export function useFileOperations(
   files: File[],
   activeFileId: string | null,
   setCurrentFileState: () => void,
-  clearEditorHistory: (graph: GraphJsonData) => void,
+  resetEditorStateFromGraph: (graph: GraphJsonData) => void,
+  clearHistoryState: () => void,
   getFileById: (id: string) => File | undefined,
   setActiveFileId: (id: string | null) => void,
   addFile: (file: File) => void,
@@ -48,6 +49,8 @@ export function useFileOperations(
   updateFile: (id: File["id"], updates: Partial<File>) => void,
   clearHistory: (id: File["id"]) => void
 ) {
+  // resetEditorStateFromGraph は将来的な拡張で利用予定。現在は履歴だけクリアしている。
+  void resetEditorStateFromGraph;
   // createFile + addFile の共通処理をまとめたヘルパー
   // 返り値: 生成された File オブジェクト
   const createAndAddFile = useCallback(
@@ -106,7 +109,7 @@ export function useFileOperations(
         });
         clearHistory(fileId);
         if (fileId === activeFileId) {
-          clearEditorHistory(f.graph);
+          clearHistoryState();
         }
         notify("success", `保存しました: ${fileName}`);
         return true; // 保存成功
@@ -124,7 +127,7 @@ export function useFileOperations(
       setCurrentFileState,
       updateFile,
       clearHistory,
-      clearEditorHistory,
+      clearHistoryState,
       createAndAddFile,
       setActiveFileId,
     ]
@@ -173,7 +176,7 @@ export function useFileOperations(
       });
       clearHistory(fileId);
       if (fileId === activeFileId) {
-        clearEditorHistory(f.graph);
+        clearHistoryState();
       }
       notify("success", `保存しました: ${fileName}`);
       return true; // 保存成功
@@ -184,7 +187,7 @@ export function useFileOperations(
       setCurrentFileState,
       updateFile,
       clearHistory,
-      clearEditorHistory,
+      clearHistoryState,
     ]
   );
 

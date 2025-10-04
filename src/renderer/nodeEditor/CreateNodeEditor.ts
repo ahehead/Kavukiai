@@ -25,6 +25,7 @@ import { setupDeleteSelectedNodes } from "./features/deleteSelectedNodes/deleteS
 import { disableDoubleClickZoom } from "./features/disable_double_click_zoom/disableDoubleClickZoom";
 import { setupDragPan } from "./features/dragPan";
 import {
+  clearHistoryState,
   getCurrentEditorState,
   type NodeEditorState,
   patchHistoryAdd,
@@ -184,6 +185,8 @@ export async function createNodeEditor(container: HTMLElement) {
     // historyのaddをオーバーライドして、履歴が追加されたときにコールバックを実行する
     patchHistoryAdd: (callback: () => void) =>
       patchHistoryAdd(history, callback),
+
+    clearHistoryState: () => clearHistoryState(history),
 
     getPointerPosition: () => area.area.pointer,
 
