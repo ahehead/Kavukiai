@@ -564,7 +564,7 @@ export const factoryList = [
     }: NodeDeps): JsonSchemaToObjectNode =>
       new JsonSchemaToObjectNode(editor, history, area, dataflow, controlflow),
     {
-      categories: ["Primitive", "Object"],
+      categories: ["Primitive", "Schema"],
       op: "JsonSchemaToObject",
       label: "JSON Schema To Object",
     }
@@ -573,7 +573,7 @@ export const factoryList = [
     ({ history, area, dataflow }: NodeDeps): JsonSchemaNode =>
       new JsonSchemaNode(history, area, dataflow),
     {
-      categories: ["Primitive", "Object"],
+      categories: ["Primitive", "Schema"],
       op: "JsonSchema",
       label: "JSON Schema",
     }
@@ -582,13 +582,13 @@ export const factoryList = [
     ({ editor, area, dataflow, controlflow }: NodeDeps): ParseJsonAndPickNode =>
       new ParseJsonAndPickNode(editor, area, dataflow, controlflow),
     {
-      categories: ["Primitive", "Object"],
+      categories: ["Primitive", "Schema"],
       op: "ParseJsonAndPick",
       label: "Parse JSON And Pick",
     }
   ),
   define((_: NodeDeps): ParseJsonToObjectNode => new ParseJsonToObjectNode(), {
-    categories: ["Primitive", "Object"],
+    categories: ["Primitive", "Schema"],
     op: "ParseJsonToObject",
     label: "Parse JSON To Object",
   }),
