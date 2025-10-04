@@ -39,7 +39,7 @@ export class StringNode
         editable: true,
         history: history,
         area: area,
-        onChange: (_v: string) => {
+        onChange: () => {
           dataflow.reset(this.id)
         },
       })
