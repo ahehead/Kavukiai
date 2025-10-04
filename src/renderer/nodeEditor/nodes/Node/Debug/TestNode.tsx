@@ -6,10 +6,10 @@ import { CheckBoxControl } from '../../Controls/input/CheckBox'
 import { ImageFileInputControl } from '../../Controls/input/ImageFileInput'
 import { ListControl } from '../../Controls/input/List'
 import { PathInputControl } from '../../Controls/input/PathInputControl'
-import { PropertyInputControl } from '../../Controls/input/PropertyInput'
 import { SelectControl } from '../../Controls/input/Select'
 import { SliderControl } from '../../Controls/input/Slider'
 import { SwitchControl } from '../../Controls/input/Switch'
+import { PropertyInputControl } from '../../Controls/JsonSchema/PropertyInput'
 import { ImageControl } from '../../Controls/view/Image'
 import { ProgressControl } from '../../Controls/view/ProgressControl'
 
@@ -83,7 +83,7 @@ export class TestNode extends SerializableInputsNode<
     this.addControl(
       'propertyInput',
       new PropertyInputControl({
-        value: [{ key: 'example', typeStr: 'string' }],
+        value: [{ key: 'example', typeStr: 'string', required: false, defaultValue: '' }],
       })
     )
     this.addControl('image', new ImageControl({ value: [] }))

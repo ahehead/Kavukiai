@@ -13,7 +13,7 @@ import type { HistoryPlugin } from 'rete-history-plugin'
 import {
   PropertyInputControl,
   type PropertyItem,
-} from '../../../Controls/input/PropertyInput'
+} from '../../../Controls/JsonSchema/PropertyInput'
 
 // Node to build TSchema objects from property list
 export class JsonSchemaNode

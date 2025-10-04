@@ -51,10 +51,6 @@ import {
   PathInputControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/PathInputControl";
 import {
-  PropertyInputControl,
-  PropertyInputControlView,
-} from "renderer/nodeEditor/nodes/Controls/input/PropertyInput";
-import {
   SelectControl,
   SelectControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Select";
@@ -71,17 +67,21 @@ import {
   SwitchControlView,
 } from "renderer/nodeEditor/nodes/Controls/input/Switch";
 import {
+  PropertyInputControl,
+  PropertyInputControlView,
+} from "renderer/nodeEditor/nodes/Controls/JsonSchema/PropertyInput";
+import {
   ModelInfoListControl,
   ModelInfoListControlView,
 } from "renderer/nodeEditor/nodes/Controls/LMStudio/ModelInfoListControl";
 import {
-  ImageControl,
-  ImageControlView,
-} from "renderer/nodeEditor/nodes/Controls/view/Image";
-import {
   ArrayViewControl,
   ArrayViewControlView,
 } from "renderer/nodeEditor/nodes/Controls/view/ArrayViewControl";
+import {
+  ImageControl,
+  ImageControlView,
+} from "renderer/nodeEditor/nodes/Controls/view/Image";
 import {
   ProgressControl,
   ProgressControlView,
