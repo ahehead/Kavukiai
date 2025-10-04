@@ -30,8 +30,8 @@ export class JsonSchemaNode
     dataflow: DataflowEngine<Schemes>
   ) {
     super('JsonSchema')
-    this.width = 300
-    this.height = 180
+    this.width = 700
+    this.height = 280
     this.addOutputPort({
       key: 'out',
       typeName: 'JsonSchema',
