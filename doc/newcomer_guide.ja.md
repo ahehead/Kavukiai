@@ -44,6 +44,14 @@ src/
 - `pnpm lint` : `biome` による静的解析を行います。
 
 プロジェクトは Node.js `20` 系と `pnpm` を前提としています。初回セットアップでは `pnpm install` を実行してください。
+### PowerShellで文字化けしたとき
+Windows 環境で Get-Content などの出力が文字化けする場合は、ターミナルを開いた直後に次を実行してください。
+
+`powershell
+System.Text.UTF8Encoding+UTF8EncodingSealed = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+``r
+
+PowerShell のプロファイル ($PROFILE) に追記しておくと、毎回の手動設定が不要になります。
 
 ## 4. 今後学ぶべきポイント
 
@@ -71,4 +79,10 @@ OpenAI や LMStudio などメインプロセス側の機能を利用するノー
 `ListDownloadedModelsNode` がこれらの手順を踏んだ実装例となっています。
 
 補足: ノードのファクトリ登録やカテゴリ分けの流れは `src/renderer/nodeEditor/nodes/README_node.md` も参照してください。
+
+
+
+
+
+
 

@@ -2,6 +2,7 @@
 
 ## Dev Environment Tips
 - [doc](doc)folderにフォルダ構造など開発者向け文章あり
+- PowerShellで日本語が文字化けする場合は、ターミナル起動後に $OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 を実行してから "Get-Content" などのコマンドを使うと読みやすくなります。必要ならプロファイルに設定を追記してください。
 
 ## Testing Instructions
 - From the package root you can just call pnpm test run. The commit should pass all tests before you merge.
@@ -12,3 +13,4 @@
 
 ## PR
 PRする前に、最新版をpullして、pnpm test run, pnpm lintでチェックして。
+
