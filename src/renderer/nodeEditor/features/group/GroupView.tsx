@@ -73,6 +73,8 @@ export function GroupView({ group, getK, translate, emitContextMenu }: Props): R
   }
 
   const onPointerDownRoot = (e: React.PointerEvent<HTMLDivElement>) => {
+    // 左ボタン以外は無視
+    if (e.button !== 0) return
     // 編集中はドラッグ開始も無効化し、編集モードを終了、確定
     if (editing) {
       commit()
