@@ -1,8 +1,8 @@
+import { collectTargetNodes } from "renderer/nodeEditor/nodes/util/getSelectedNodes";
 import type { NodeEditor } from "rete";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 import type { NodeTypes, Schemes } from "../../../../types/ReteSchemes";
 import type { Group, GroupPlugin } from "../../../group";
-import { collectTargetNodes } from "./copy";
 
 /**
  * グループ化メニュー項目を生成
@@ -16,9 +16,11 @@ export function createGroupMenuItem(
     label: "グループ化",
     key: "grouping",
     handler: () => {
-      const nodeIds = collectTargetNodes(context, editor).map((n) => n.id);
       // TODO: グループ名は後でリネーム可能にする（暫定で 'Memo'）
-      groupPlugin.addGroup("Memo", nodeIds);
+      groupPlugin.addGroup(
+        "Memo",
+        collectTargetNodes(context, editor).map((n) => n.id)
+      );
     },
   };
 }
