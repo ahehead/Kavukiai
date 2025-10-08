@@ -11,6 +11,7 @@ interface ImportPngDialogProps {
   onOpenChange: (open: boolean) => void
   onImportAsNew: () => void
   onImportToCurrent: () => void
+  activeFileId: string | null
 }
 
 export function ImportPngDialog({
@@ -18,6 +19,7 @@ export function ImportPngDialog({
   onOpenChange,
   onImportAsNew,
   onImportToCurrent,
+  activeFileId
 }: ImportPngDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -38,19 +40,21 @@ export function ImportPngDialog({
               新規ファイルとして開きます。
             </span>
           </div>
-          <div className="flex flex-col gap-1">
-            <button
-              className="flex items-center gap-2 px-4 py-3 bg-gray-100 text-gray-800 rounded-md shadow hover:bg-gray-200 transition"
-              onClick={onImportToCurrent}
-              aria-label="現在のファイルに追加"
-            >
-              <FileInput size={20} />
-              <span className="font-semibold">現在のファイルに追加</span>
-            </button>
-            <span className="text-xs text-gray-500 ml-1 text-center">
-              現在の作業内容にWorkflowデータを追加します。
-            </span>
-          </div>
+          {activeFileId && (
+            <div className="flex flex-col gap-1">
+              <button
+                className="flex items-center gap-2 px-4 py-3 bg-gray-100 text-gray-800 rounded-md shadow hover:bg-gray-200 transition"
+                onClick={onImportToCurrent}
+                aria-label="現在のファイルに追加"
+              >
+                <FileInput size={20} />
+                <span className="font-semibold">現在のファイルに追加</span>
+              </button>
+              <span className="text-xs text-gray-500 ml-1 text-center">
+                現在の作業内容にWorkflowデータを追加します。
+              </span>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

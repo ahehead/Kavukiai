@@ -215,7 +215,10 @@ export function MainScreen() {
       <main className="flex flex-1 flex-col">
         {/* ファイルがない場合の画面 */}
         {files.length === 0 ? (
-          <div className="flex-1 flex items-center justify-center bg-blue-100 border-8 rounded-lg border-white">
+          // biome-ignore lint/a11y/noStaticElementInteractions: false positive
+          <div className="flex-1 flex items-center justify-center bg-blue-100 border-8 rounded-lg border-white"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}>
             <div className="flex flex-col items-start dialog-animate-up">
               <ul className="">
                 <li className="mb-2  rounded hover:bg-gray-100 bg-background">
@@ -273,6 +276,7 @@ export function MainScreen() {
         onOpenChange={setImportDialogOpen}
         onImportAsNew={handleImportAsNew}
         onImportToCurrent={handleImportToCurrent}
+        activeFileId={activeFileId}
       />
     </div>
   )
