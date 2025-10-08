@@ -1,4 +1,4 @@
-import { collectTargetNodes } from "renderer/nodeEditor/nodes/util/getSelectedNodes";
+import { createGroupFromSelection } from "renderer/nodeEditor/features/group/createGroup";
 import type { NodeEditor } from "rete";
 import type { Item } from "rete-context-menu-plugin/_types/types";
 import type { NodeTypes, Schemes } from "../../../../types/ReteSchemes";
@@ -17,10 +17,7 @@ export function createGroupMenuItem(
     key: "grouping",
     handler: () => {
       // TODO: グループ名は後でリネーム可能にする（暫定で 'Memo'）
-      groupPlugin.addGroup(
-        "Memo",
-        collectTargetNodes(context, editor).map((n) => n.id)
-      );
+      createGroupFromSelection(groupPlugin, context, editor);
     },
   };
 }
