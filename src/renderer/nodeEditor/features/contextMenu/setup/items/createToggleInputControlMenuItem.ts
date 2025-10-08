@@ -29,8 +29,10 @@ export function createToggleInputControlMenuItem(
       label: `${input.label ?? key}`,
       key: `${context.id}_${input.id}`,
       async handler() {
-        // 接続されているコネクションを削除
-        await removeConnectionsFromInput(editor, context.id, key);
+        if (!input.socket.isExec) {
+          // exec以外は接続されているコネクションを削除
+          await removeConnectionsFromInput(editor, context.id, key);
+        }
         input.showControl = !input.showControl;
         // dataflowをリセット
         dataflow.reset(context.id);
