@@ -9,8 +9,7 @@ import type { AreaPlugin } from "rete-area-plugin";
 import type { GraphJsonData } from "shared/JsonType";
 import { parseGraphJson } from "shared/JsonType";
 import type { AreaExtra, Schemes } from "../../types";
-
-type ActiveEditor = "rete" | "text";
+import { createGroup } from "../group/createGroup";
 
 type Options = {
   editor: NodeEditor<Schemes>;
@@ -21,7 +20,6 @@ type Options = {
 
 export type ClipboardShortcutAPI = {
   cleanup: () => void;
-  setActiveEditor: (mode: ActiveEditor) => void;
 };
 
 export function setupClipboardShortcuts({
@@ -30,34 +28,29 @@ export function setupClipboardShortcuts({
   nodeDeps,
   groupPlugin,
 }: Options): ClipboardShortcutAPI {
-  let activeEditor: ActiveEditor = "rete";
-
-  const setActiveEditor = (mode: ActiveEditor) => {
-    activeEditor = mode;
-  };
-
   const handler = async (event: KeyboardEvent) => {
     if (event.defaultPrevented) return;
     if (event.repeat) return;
+    const key = event.key.toLowerCase();
+    if (key === "g" && !(event.ctrlKey || event.metaKey)) {
+      if (!isTextInputTarget(event.target)) {
+        if (getSelectedNodes(editor).length === 0) return;
+        const g = createGroup(groupPlugin, editor);
+        if (g) notify("success", "Group created");
+        event.preventDefault();
+        return;
+      }
+    }
+
     if (!(event.ctrlKey || event.metaKey)) return;
 
-    const key = event.key.toLowerCase();
     if (key !== "c" && key !== "v") return;
 
-    if (isTextInputTarget(event.target)) {
-      setActiveEditor("text");
-      return;
-    }
-
-    if (activeEditor !== "rete") {
-      setActiveEditor("rete");
-    }
+    if (isTextInputTarget(event.target)) return;
 
     if (key === "c") {
       const handled = await copySelectedNodesToClipboard(editor, area);
-      if (handled) {
-        event.preventDefault();
-      }
+      if (handled) event.preventDefault();
       return;
     }
 
@@ -73,7 +66,6 @@ export function setupClipboardShortcuts({
     cleanup: () => {
       window.removeEventListener("keydown", handler);
     },
-    setActiveEditor,
   };
 }
 
@@ -94,9 +86,7 @@ async function copySelectedNodesToClipboard(
   area: AreaPlugin<Schemes, AreaExtra>
 ): Promise<boolean> {
   const selectedNodes = getSelectedNodes(editor);
-  if (selectedNodes.length === 0) {
-    return false;
-  }
+  if (selectedNodes.length === 0) return false;
 
   const jsonData = buildGraphJsonForCopy(editor, area, selectedNodes);
 

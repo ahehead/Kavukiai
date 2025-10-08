@@ -1,4 +1,7 @@
-import { collectTargetNodes } from "renderer/nodeEditor/nodes/util/getSelectedNodes";
+import {
+  collectTargetNodes,
+  getSelectedNodes,
+} from "renderer/nodeEditor/nodes/util/getSelectedNodes";
 import type { NodeInterface, Schemes } from "renderer/nodeEditor/types";
 import type { NodeEditor } from "rete";
 import type { GroupPlugin } from ".";
@@ -8,8 +11,12 @@ export function createGroupFromSelection(
   context: NodeInterface,
   editor: NodeEditor<Schemes>
 ) {
-  groupPlugin.addGroup(
-    "Memo",
-    collectTargetNodes(context, editor).map((n) => n.id)
-  );
+  groupPlugin.addGroup(collectTargetNodes(context, editor).map((n) => n.id));
+}
+
+export function createGroup(
+  groupPlugin: GroupPlugin<Schemes>,
+  editor: NodeEditor<Schemes>
+) {
+  return groupPlugin.addGroup(getSelectedNodes(editor).map((n) => n.id));
 }

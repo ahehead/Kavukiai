@@ -11,6 +11,8 @@ import { GroupView } from './GroupView'
 
 export { Group, MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from './Group'
 
+const DEFAULT_GROUP_LABEL = 'Memo'
+
 const DEFAULT_PADDING = 12
 // タイトル分の上方向の余白を追加（上だけ少し広めに）
 const EXTRA_TOP_PADDING = 60
@@ -210,7 +212,8 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     }
   }
 
-  addGroup(text: string, links: NodeId[] = []) {
+  addGroup(links: NodeId[] = [], text: string = DEFAULT_GROUP_LABEL) {
+    if (links.length === 0) return null
     const g = new Group(text)
     g.addLinks(links)
     this.mountElement(g)

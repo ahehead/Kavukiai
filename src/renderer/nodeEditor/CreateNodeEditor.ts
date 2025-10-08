@@ -147,13 +147,12 @@ export async function createNodeEditor(container: HTMLElement) {
   handleConnectionEvent(connection, area);
 
   // コピー・ペースト機能
-  const { cleanup: cleanupClipboardShortcuts, setActiveEditor } =
-    setupClipboardShortcuts({
-      editor,
-      area,
-      nodeDeps,
-      groupPlugin,
-    });
+  const { cleanup: cleanupClipboardShortcuts } = setupClipboardShortcuts({
+    editor,
+    area,
+    nodeDeps,
+    groupPlugin,
+  });
 
   // 外部に公開するAPI
   return {
@@ -206,6 +205,5 @@ export async function createNodeEditor(container: HTMLElement) {
         groupPlugin,
       });
     },
-    setActiveEditor,
   };
 }
