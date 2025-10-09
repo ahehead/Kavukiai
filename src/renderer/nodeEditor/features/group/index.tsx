@@ -79,15 +79,10 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       },
       () => this.area
     )
-
-    const translating = new Set<NodeId>()
     const translate = async (id: NodeId, x: number, y: number) => {
-      translating.add(id)
       const view = this.area.nodeViews.get(id)
       if (view) await this.area.translate(id, { x, y })
-      translating.delete(id)
     }
-    const isTranslating = (id: NodeId) => translating.has(id)
 
     // --- Area signals
     this.addPipe(async ctx => {
@@ -131,41 +126,8 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         if (!g) return ctx
         for (const linkId of g.links) {
           const v = this.area.nodeViews.get(linkId)
-          if (!v || isTranslating(linkId)) continue
+          if (!v) continue
           await translate(linkId, v.position.x + dx, v.position.y + dy)
-        }
-      }
-
-      // pointerdown イベントをgroup内なら置き換え
-      if (ctx.type === 'pointerdown') {
-        const { position, event } = ctx.data as {
-          position: { x: number; y: number }
-          event?: PointerEvent
-        }
-
-        // 1) DOM パス上にグループ要素が含まれているか（信頼度高め）
-        if (event && 'composedPath' in event) {
-          const path = event.composedPath() as EventTarget[]
-          for (const g of this.groups.values()) {
-            if (g.element && path.includes(g.element)) {
-              void this.emit({
-                type: 'grouppointerdown',
-                data: { group: g, position },
-              })
-              return // Area への pointerdown 伝播を止める
-            }
-          }
-        }
-
-        // 2) フォールバック: 幾何学的ヒットテスト（座標で判定）
-        for (const g of this.groups.values()) {
-          if (this.pointInGroup(g, position)) {
-            void this.emit({
-              type: 'grouppointerdown',
-              data: { group: g, position },
-            })
-            return // 伝播停止
-          }
         }
       }
 
@@ -342,15 +304,6 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       gw = g.rect.width,
       gh = g.rect.height
     return !(r.x > gl + gw || r.x + r.w < gl || r.y > gt + gh || r.y + r.h < gt)
-  }
-
-  private pointInGroup(g: Group, p: { x: number; y: number }): boolean {
-    return (
-      p.x >= g.rect.left &&
-      p.x <= g.rect.left + g.rect.width &&
-      p.y >= g.rect.top &&
-      p.y <= g.rect.top + g.rect.height
-    )
   }
 
   private mountElement(g: Group) {
