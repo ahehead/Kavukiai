@@ -72,7 +72,11 @@ type Requires<Schemes extends BaseSchemes> =
     }
   | { type: "unmount"; data: { element: HTMLElement } }
   | { type: "pointerdown"; data: { position: Position; event: PointerEvent } }
-  | { type: "nodepicked"; data: { id: string } };
+  | { type: "nodepicked"; data: { id: string } }
+  | {
+      type: "grouppointerdown";
+      data: { groupId: string; event: PointerEvent };
+    };
 
 /**
  * Plugin for context menu.
@@ -153,6 +157,13 @@ export class ContextMenuPlugin<Schemes extends BaseSchemes> extends Scope<
           void parent.emit({ type: "unmount", data: { element } });
         }
         // 右クリックメニューが開いているときにノード選択(nodepicked)された場合は解除
+      } else if (
+        context.type === "grouppointerdown" &&
+        element.style.display !== "none"
+      ) {
+        if (!context.data.event.composedPath().includes(element)) {
+          void parent.emit({ type: "unmount", data: { element } });
+        }
       } else if (
         context.type === "nodepicked" &&
         element.style.display !== "none"

@@ -34,7 +34,7 @@ type Produces =
   | {
     // グループがクリック（pointerdown）されたことを通知
     type: 'grouppointerdown'
-    data: { group: Group; position: { x: number; y: number } }
+    data: { groupId: string; event: PointerEvent }
   }
 
 // Group model moved to ./Group
@@ -327,6 +327,12 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         } as any,
       })
     }
+    const emitGroupPointerDown = (event: PointerEvent, group: Group) => {
+      void this.area.emit({
+        type: 'grouppointerdown',
+        data: { groupId: group.id, event },
+      } as any)
+    }
     const handleTextChange = (group: Group) => {
       this.fitToLinks(group)
     }
@@ -343,6 +349,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         getK={getK}
         translate={translate}
         emitContextMenu={emitContextMenu}
+        emitGroupPointerDown={emitGroupPointerDown}
         onTextChange={handleTextChange}
         onStyleChange={handleStyleChange}
       />,

@@ -68,6 +68,7 @@ type Props = {
   getK?: () => number
   translate?: (id: string, dx: number, dy: number) => Promise<void>
   emitContextMenu?: (e: MouseEvent, group: Group) => void
+  emitGroupPointerDown?: (event: PointerEvent, group: Group) => void
   onTextChange?: (group: Group) => void
   onStyleChange?: (
     group: Group,
@@ -82,6 +83,7 @@ export function GroupView({
   getK,
   translate,
   emitContextMenu,
+  emitGroupPointerDown,
   onTextChange,
   onStyleChange,
 }: Props): ReactElement {
@@ -214,6 +216,7 @@ export function GroupView({
   const onPointerDownRoot = (e: React.PointerEvent<HTMLDivElement>) => {
     // 左ボタン以外は無視
     if (e.button !== 0) return
+    emitGroupPointerDown?.(e.nativeEvent, group)
     // 編集中はドラッグ開始も無効化し、編集モードを終了、確定
     if (editing) {
       commit()
