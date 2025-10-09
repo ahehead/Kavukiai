@@ -159,6 +159,7 @@ export function createCustomNode(
               return (
                 // NodeのInputは二種類、ソケットとコントロールモードがある。
                 // 更にコントロールモードは、ラベルとコントロールを一行にするか二行にするかある。
+                // 更にexecソケット場合は、繋いだままコントロールを表示できる
                 <NodeInputPort key={key} data-testid={`input-${key}`}>
                   <div className="flex items-center">
                     <Presets.classic.RefSocket
