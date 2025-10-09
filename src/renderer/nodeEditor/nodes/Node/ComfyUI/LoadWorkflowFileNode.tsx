@@ -44,7 +44,7 @@ export class LoadWorkflowFileNode extends SerializableInputsNode<
     ])
     this.addOutputPort([
       { key: 'exec', typeName: 'exec', label: 'Out' },
-      { key: 'workflow', typeName: 'object', label: 'Workflow' },
+      { key: 'workflow', typeName: 'object', label: 'json' },
     ])
     this.addControl('console', new ConsoleControl({ isOpen: true }))
   }
