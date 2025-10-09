@@ -49,6 +49,8 @@ export type GroupJson = {
   rect: { left: number; top: number; width: number; height: number };
   // NodeId は string 互換のため JSON 上は string[] とする
   links: string[];
+  bgColor?: string;
+  fontColor?: string;
 };
 
 // =============================
@@ -112,6 +114,8 @@ export const GroupJsonSchema = Type.Object(
       height: Type.Number(),
     }),
     links: Type.Array(Type.String()),
+    bgColor: Type.Optional(Type.String()),
+    fontColor: Type.Optional(Type.String()),
   },
   { additionalProperties: false }
 );

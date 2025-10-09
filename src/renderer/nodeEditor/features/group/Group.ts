@@ -15,6 +15,21 @@ export type Rect = {
   height: number;
 };
 
+export type GroupStyleSnapshot = {
+  bgColor?: string;
+  fontColor?: string;
+};
+
+export type GroupStylePatch = {
+  bgColor?: string | null;
+  fontColor?: string | null;
+};
+
+export type GroupStyleChangeOptions = {
+  recordHistory?: boolean;
+  prevSnapshot?: GroupStyleSnapshot;
+};
+
 export class Group {
   id: string = crypto.randomUUID();
   // text は getter/setter 経由で更新通知を行う
@@ -29,14 +44,20 @@ export class Group {
     width: MIN_GROUP_WIDTH,
     height: MIN_GROUP_HEIGHT,
   };
+  #_bgColor?: string;
+  #_fontColor?: string;
   element!: HTMLElement;
   #_selected: boolean = false;
   // 外部購読者
   private listeners = new Set<() => void>();
 
-  constructor(text: string) {
+  constructor(text: string, style?: GroupStyleSnapshot) {
     this.#_text = text;
     this.recalculateHeaderMetrics(text);
+    if (style) {
+      this.#_bgColor = sanitizeColor(style.bgColor);
+      this.#_fontColor = sanitizeColor(style.fontColor);
+    }
   }
 
   get selected(): boolean {
@@ -118,6 +139,55 @@ export class Group {
     return this.#_topPadding;
   }
 
+  get bgColor(): string | undefined {
+    return this.#_bgColor;
+  }
+
+  set bgColor(value: string | undefined) {
+    const sanitized = sanitizeColor(value);
+    if (sanitized === this.#_bgColor) return;
+    this.#_bgColor = sanitized;
+    this.notify();
+  }
+
+  get fontColor(): string | undefined {
+    return this.#_fontColor;
+  }
+
+  set fontColor(value: string | undefined) {
+    const sanitized = sanitizeColor(value);
+    if (sanitized === this.#_fontColor) return;
+    this.#_fontColor = sanitized;
+    this.notify();
+  }
+
+  applyStyle(patch: GroupStylePatch): boolean {
+    let changed = false;
+    if (Object.hasOwn(patch, "bgColor")) {
+      const next = sanitizeColor(patch.bgColor ?? undefined);
+      if (next !== this.#_bgColor) {
+        this.#_bgColor = next;
+        changed = true;
+      }
+    }
+    if (Object.hasOwn(patch, "fontColor")) {
+      const next = sanitizeColor(patch.fontColor ?? undefined);
+      if (next !== this.#_fontColor) {
+        this.#_fontColor = next;
+        changed = true;
+      }
+    }
+    if (changed) this.notify();
+    return changed;
+  }
+
+  getStyleSnapshot(): GroupStyleSnapshot {
+    return {
+      bgColor: this.#_bgColor,
+      fontColor: this.#_fontColor,
+    };
+  }
+
   // --- rect updater (set all at once) ---
   updateRect(next: Rect) {
     const r = this.rect;
@@ -151,7 +221,7 @@ export class Group {
 
   // --- JSON serialization ---
   toJson(): GroupJson {
-    return {
+    const json: GroupJson = {
       id: this.id,
       text: this.text,
       rect: {
@@ -162,10 +232,16 @@ export class Group {
       },
       links: [...this.links],
     };
+    if (this.#_bgColor) json.bgColor = this.#_bgColor;
+    if (this.#_fontColor) json.fontColor = this.#_fontColor;
+    return json;
   }
 
   static fromJson(j: GroupJson): Group {
-    const g = new Group(j.text);
+    const g = new Group(j.text, {
+      bgColor: j.bgColor,
+      fontColor: j.fontColor,
+    });
     g.id = j.id;
     // 重複排除して順序維持
     const nextLinks = Array.from(new Set(j.links)) as NodeId[];
@@ -200,4 +276,12 @@ function clampGroupRectWidthHeight(width: number, height: number) {
 
 export interface GroupSerializable {
   toJson(): GroupJson;
+}
+
+function sanitizeColor(value: string | undefined | null): string | undefined {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  if (trimmed.length !== 9) return undefined;
+  const lower = trimmed.toLowerCase();
+  return /^#[0-9a-f]{8}$/.test(lower) ? lower : undefined;
 }

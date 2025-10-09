@@ -2,10 +2,18 @@
 import type { AreaExtra } from 'renderer/nodeEditor/types'
 import { type BaseSchemes, type NodeId, type Root, Scope } from 'rete'
 import { AreaExtensions, AreaPlugin, type BaseArea } from 'rete-area-plugin'
+import type { HistoryAction, HistoryPlugin } from 'rete-history-plugin'
 import type { ReactPlugin } from 'rete-react-plugin'
 import type { Renderer } from 'rete-react-plugin/_types/renderer'
 import type { GroupJson } from 'shared/JsonType'
-import { Group, MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from './Group'
+import {
+  Group,
+  type GroupStyleChangeOptions,
+  type GroupStylePatch,
+  type GroupStyleSnapshot,
+  MIN_GROUP_HEIGHT,
+  MIN_GROUP_WIDTH,
+} from './Group'
 import { GroupOrderController } from './GroupOrderController'
 import { GroupView } from './GroupView'
 
@@ -39,9 +47,15 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
   public _groups = new Map<string, Group>()
   private orderController?: GroupOrderController<Schemes>
   private renderer: Renderer
-  constructor(render: ReactPlugin<Schemes, AreaExtra>) {
+  private readonly history?: HistoryPlugin<Schemes, any>
+
+  constructor(
+    render: ReactPlugin<Schemes, AreaExtra>,
+    history?: HistoryPlugin<Schemes, any>
+  ) {
     super('group')
     this.renderer = render.renderer
+    this.history = history
   }
 
   public get groups() {
@@ -363,6 +377,13 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     const handleTextChange = (group: Group) => {
       this.fitToLinks(group)
     }
+    const handleStyleChange = (
+      group: Group,
+      patch: GroupStylePatch | undefined,
+      options?: GroupStyleChangeOptions
+    ) => {
+      this.updateGroupStyle(group, patch, options)
+    }
     this.renderer.mount(
       <GroupView
         group={g}
@@ -370,6 +391,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         translate={translate}
         emitContextMenu={emitContextMenu}
         onTextChange={handleTextChange}
+        onStyleChange={handleStyleChange}
       />,
       el
     )
@@ -388,4 +410,58 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     }
     this.groups.clear()
   }
+
+  public updateGroupStyle(
+    target: Group | string,
+    patch: GroupStylePatch | undefined,
+    options?: GroupStyleChangeOptions
+  ) {
+    const group = typeof target === 'string' ? this.groups.get(target) : target
+    if (!group) return
+    const prev = options?.prevSnapshot ?? group.getStyleSnapshot()
+    const hasPatch =
+      patch &&
+      (Object.hasOwn(patch, 'bgColor') || Object.hasOwn(patch, 'fontColor'))
+    if (hasPatch) {
+      group.applyStyle(patch)
+    }
+    if (!options?.recordHistory) return
+    if (!this.history) return
+    const next = group.getStyleSnapshot()
+    if (styleSnapshotsEqual(prev, next)) return
+    this.history.add(this.createStyleHistoryAction(group.id, prev, next))
+  }
+
+  private createStyleHistoryAction(
+    groupId: string,
+    prev: GroupStyleSnapshot,
+    next: GroupStyleSnapshot
+  ): HistoryAction {
+    return {
+      undo: async () => {
+        this.replaceGroupStyle(groupId, prev)
+      },
+      redo: async () => {
+        this.replaceGroupStyle(groupId, next)
+      },
+    }
+  }
+
+  private replaceGroupStyle(id: string, snapshot: GroupStyleSnapshot) {
+    const group = this.groups.get(id)
+    if (!group) return
+    group.applyStyle({
+      bgColor: snapshot.bgColor ?? null,
+      fontColor: snapshot.fontColor ?? null,
+    })
+  }
+}
+
+function styleSnapshotsEqual(
+  a: GroupStyleSnapshot,
+  b: GroupStyleSnapshot
+): boolean {
+  const bgEqual = (a.bgColor ?? undefined) === (b.bgColor ?? undefined)
+  const fontEqual = (a.fontColor ?? undefined) === (b.fontColor ?? undefined)
+  return bgEqual && fontEqual
 }

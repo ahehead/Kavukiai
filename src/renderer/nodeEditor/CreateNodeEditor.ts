@@ -73,7 +73,7 @@ export async function createNodeEditor(container: HTMLElement) {
   const connection = new ConnectionPlugin<Schemes, AreaExtra>();
   const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot });
   // グループ化プラグイン
-  const groupPlugin = new GroupPlugin<Schemes>(render);
+  const groupPlugin = new GroupPlugin<Schemes>(render, history);
   // ノード依存関係の注入用オブジェクト
   const nodeDeps: NodeDeps = {
     editor,
