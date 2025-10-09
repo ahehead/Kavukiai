@@ -42,7 +42,7 @@ const buttonVariants = cva(
     variants: {
       exec: {
         false: 'border-border hover:bg-accent/50 active:bg-accent/90 ',
-        true: 'border-[var(--execSocket)]/90 hover:bg-node-execSocket-light/50 active:bg-node-execSocket/90',
+        true: 'border-[var(--execSocket)]/90 hover:bg-node-execSocket-light/70 active:bg-node-execSocket/90 group-data-[is-connected=true]:bg-node-execSocket-light/40',
       },
     },
     defaultVariants: { exec: false },

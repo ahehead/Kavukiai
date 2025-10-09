@@ -16,7 +16,14 @@ import {
   NodeSocketsWrapper,
   NodeSocketTypeLabel,
 } from 'renderer/nodeEditor/nodes/components/common/NodeSocketParts'
-import { NodeMinWidth, useSelectedValue, useStatusValue } from 'renderer/nodeEditor/types'
+import {
+  type NodeControl,
+  NodeMinWidth,
+  type TypedSocket,
+  useSelectedValue,
+  useStatusValue,
+} from 'renderer/nodeEditor/types'
+import { useSocketConnection } from 'renderer/nodeEditor/types/Socket/useTypedSocket'
 import { NodeEditor } from 'rete'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'
@@ -34,7 +41,7 @@ type Props<S extends Schemes> = {
 
 export function createCustomNode(
   area: AreaPlugin<Schemes, AreaExtra>,
-  history: HistoryPlugin<Schemes>,
+  history: HistoryPlugin<Schemes>
 ) {
   return function CustomNode<Scheme extends Schemes>({
     data,
@@ -79,6 +86,27 @@ export function createCustomNode(
       }
     }
 
+    const InputControlWithSocketState = ({
+      key,
+      control,
+      socket,
+    }: {
+      key: string
+      control: NodeControl
+      socket: TypedSocket
+    }) => {
+      const isConnected = useSocketConnection(socket)
+      return (
+        <Presets.classic.RefControl
+          key={key}
+          name="input-control group"
+          emit={emit}
+          payload={control}
+          data-testid="input-control"
+          data-is-connected={isConnected}
+        />
+      )
+    }
 
     return (
       <NodeContainer
@@ -155,7 +183,6 @@ export function createCustomNode(
             {/* Inputs */}
             {inputs.map(([key, input]) => {
               if (!input) return null
-
               return (
                 // NodeのInputは二種類、ソケットとコントロールモードがある。
                 // 更にコントロールモードは、ラベルとコントロールを一行にするか二行にするかある。
@@ -220,12 +247,10 @@ export function createCustomNode(
                               )}
                             </ControlLabel>
                           )}
-                        <Presets.classic.RefControl
+                        <InputControlWithSocketState
                           key={key}
-                          name="input-control"
-                          emit={emit}
-                          payload={input.control}
-                          data-testid="input-control"
+                          control={input.control}
+                          socket={input.socket}
                         />
                       </>
                     )}
