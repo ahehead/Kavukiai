@@ -87,18 +87,15 @@ export function createCustomNode(
     }
 
     const InputControlWithSocketState = ({
-      key,
       control,
       socket,
     }: {
-      key: string
       control: NodeControl
       socket: TypedSocket
     }) => {
       const isConnected = useSocketConnection(socket)
       return (
         <Presets.classic.RefControl
-          key={key}
           name="input-control group"
           emit={emit}
           payload={control}
