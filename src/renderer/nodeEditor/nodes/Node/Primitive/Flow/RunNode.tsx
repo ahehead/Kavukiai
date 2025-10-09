@@ -15,6 +15,8 @@ export class RunNode extends SerializableInputsNode<
 > {
   constructor(private engine: ControlFlowEngine<Schemes>) {
     super('Run')
+    this.width = 230
+    this.height = 150
     this.addInputPort({
       key: 'exec',
       typeName: 'exec',
