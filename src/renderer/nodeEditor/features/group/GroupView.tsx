@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import type { Group } from './Group'
 
 type Props = {
@@ -7,10 +7,11 @@ type Props = {
   getK?: () => number
   translate?: (id: string, dx: number, dy: number) => Promise<void>
   emitContextMenu?: (e: MouseEvent, group: Group) => void
+  onTextChange?: (group: Group) => void
 }
 
 // Group を購読してタイトル等を描画する React コンポーネント
-export function GroupView({ group, getK, translate, emitContextMenu }: Props): ReactElement {
+export function GroupView({ group, getK, translate, emitContextMenu, onTextChange }: Props): ReactElement {
   // 外部ストアのスナップショットとして text を利用
   const text = useSyncExternalStore(
     group.subscribe,
@@ -26,14 +27,29 @@ export function GroupView({ group, getK, translate, emitContextMenu }: Props): R
   // インライン編集用のローカル状態
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(text)
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const lastX = useRef(0)
   const lastY = useRef(0)
+
+  const draftLineCount = useMemo(() => Math.max(1, draft.split(/\r?\n/).length), [draft])
 
   // 編集開始時にフォーカス
   useEffect(() => {
     if (editing) inputRef.current?.focus()
   }, [editing])
+
+  // 編集開始時/テキスト変更時に高さを自動調整
+  useEffect(() => {
+    if (!editing) return
+    const el = inputRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight}px`
+  }, [editing, draft])
+
+  useEffect(() => {
+    onTextChange?.(group)
+  }, [group, onTextChange, text])
 
   const startEdit = (e: React.PointerEvent) => {
     // グループのドラッグ開始を抑止
@@ -61,9 +77,9 @@ export function GroupView({ group, getK, translate, emitContextMenu }: Props): R
     setEditing(false)
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDownTextarea = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     stopPropagationKeys(e)
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       e.preventDefault()
       commit()
     } else if (e.key === 'Escape') {
@@ -119,25 +135,26 @@ export function GroupView({ group, getK, translate, emitContextMenu }: Props): R
       {/* タイトル行。クリックで編集モードに */}
       <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
         {editing ? (
-          <input
+          <textarea
             ref={inputRef}
             value={draft}
             onChange={e => setDraft(e.target.value)}
             onBlur={commit}
-            onKeyDown={onKeyDown}
+            onKeyDown={onKeyDownTextarea}
             // ポインタイベントの親伝播を止めてドラッグを防止
             onPointerDown={e => {
               e.stopPropagation()
               if (e.nativeEvent?.stopImmediatePropagation) e.nativeEvent.stopImmediatePropagation()
             }}
             aria-label="グループ名を編集"
-            className="w-full bg-transparent outline-none border border-neutral-400/60 dark:border-neutral-500/60 rounded px-2 py-1 focus:border-blue-500/70"
+            rows={draftLineCount}
+            className="w-full bg-transparent outline-none border border-neutral-400/60 dark:border-neutral-500/60 rounded px-2 py-1 focus:border-blue-500/70 resize-none"
           />
         ) : (
           <button
             type="button"
             title="クリックして名前を編集"
-            className="inline-flex min-h-7 items-center rounded px-1 hover:bg-neutral-900/5 dark:hover:bg-neutral-50/5 cursor-text select-none bg-transparent"
+            className="inline-flex min-h-7 items-start rounded px-1 hover:bg-neutral-900/5 dark:hover:bg-neutral-50/5 cursor-text select-text whitespace-pre-wrap text-left bg-transparent w-full"
             onPointerDown={startEdit}
             onClick={e => {
               // onPointerDownで編集開始済み。クリックは無効化してバブル抑止のみ。

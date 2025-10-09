@@ -14,8 +14,6 @@ export { Group, MIN_GROUP_HEIGHT, MIN_GROUP_WIDTH } from './Group'
 const DEFAULT_GROUP_LABEL = 'Memo'
 
 const DEFAULT_PADDING = 12
-// タイトル分の上方向の余白を追加（上だけ少し広めに）
-const EXTRA_TOP_PADDING = 60
 // min size constants are defined in Group.ts
 
 type Produces =
@@ -104,7 +102,6 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
       // ノードが移動している途中のイベント
       if (ctx.type === 'nodetranslate') {
         const { id } = ctx.data
-        if (isTranslating(id)) return ctx // 自分で移動させている最中なら無視
         for (const g of this.groups.values()) {
           // 移動中のノードがリンク済みならフィット
           if (g.linkedTo(id)) {
@@ -297,7 +294,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
     if (ids.length) {
       const bb = AreaExtensions.getBoundingBox(this.area, ids)
       const pad = DEFAULT_PADDING
-      const padTop = pad + EXTRA_TOP_PADDING
+      const padTop = pad + g.topPadding
       g.updateRect({
         left: bb.left - pad,
         top: bb.top - padTop,
@@ -310,7 +307,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         left: g.rect.left,
         top: g.rect.top,
         width: MIN_GROUP_WIDTH,
-        height: MIN_GROUP_HEIGHT,
+        height: Math.max(MIN_GROUP_HEIGHT, g.topPadding + DEFAULT_PADDING),
       })
     }
     this.setElementPosition(g)
@@ -363,12 +360,16 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         } as any,
       })
     }
+    const handleTextChange = (group: Group) => {
+      this.fitToLinks(group)
+    }
     this.renderer.mount(
       <GroupView
         group={g}
         getK={getK}
         translate={translate}
         emitContextMenu={emitContextMenu}
+        onTextChange={handleTextChange}
       />,
       el
     )

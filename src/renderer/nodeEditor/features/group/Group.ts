@@ -5,6 +5,9 @@ import type { GroupJson } from "shared/JsonType";
 export const MIN_GROUP_WIDTH = 120;
 export const MIN_GROUP_HEIGHT = 80;
 
+const HEADER_BASE_PADDING = 36;
+const HEADER_LINE_HEIGHT = 26;
+
 export type Rect = {
   left: number;
   top: number;
@@ -16,6 +19,8 @@ export class Group {
   id: string = crypto.randomUUID();
   // text は getter/setter 経由で更新通知を行う
   #_text = "";
+  #_lineCount = 1;
+  #_topPadding = HEADER_BASE_PADDING + HEADER_LINE_HEIGHT;
   links: NodeId[] = [];
   // 常に定義済みの矩形（linksが空なら最小サイズ、位置は保持）
   rect: Rect = {
@@ -31,6 +36,7 @@ export class Group {
 
   constructor(text: string) {
     this.#_text = text;
+    this.recalculateHeaderMetrics(text);
   }
 
   get selected(): boolean {
@@ -100,7 +106,16 @@ export class Group {
   set text(v: string) {
     if (v === this.#_text) return;
     this.#_text = v;
+    this.recalculateHeaderMetrics(v);
     this.notify();
+  }
+
+  get lineCount(): number {
+    return this.#_lineCount;
+  }
+
+  get topPadding(): number {
+    return this.#_topPadding;
   }
 
   // --- rect updater (set all at once) ---
@@ -166,6 +181,12 @@ export class Group {
       height,
     });
     return g;
+  }
+
+  private recalculateHeaderMetrics(text: string) {
+    const lines = Math.max(1, text.split(/\r?\n/).length);
+    this.#_lineCount = lines;
+    this.#_topPadding = HEADER_BASE_PADDING + lines * HEADER_LINE_HEIGHT;
   }
 }
 
