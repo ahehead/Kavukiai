@@ -1,0 +1,58 @@
+name: Issue Template
+description: テンプレート
+title: "[ジャンル] 話題タイトル"
+labels:
+  - feedback
+body:
+  - type: markdown
+    attributes:
+      value: |
+        気軽にどうぞ。
+  - type: checkboxes
+    id: category
+    attributes:
+      label: 話題のジャンル
+      description: 当てはまるものにチェックしてください。
+      options:
+        - label: こうするのはどうだろう（提案）
+        - label: こうするとこうなると思ったけど、実際はこうだった。これはどう？（デザインの提案）
+        - label: バグっぽい？環境はこれ、手順はこれ (バグ報告)
+        - label: バージョン / 良い点 / 気になった点 / 一言（旧なろう風）
+  - type: textarea
+    id: main
+    attributes:
+      label: 自由記述欄
+      description: 提案・意見・感想など。
+      placeholder: 例）ノードの実行ボタンをもう少し目立たせたいかも。
+  - type: textarea
+    id: expected
+    attributes:
+      label: デザインの提案
+      description: こうするとこうなると思ったけど、実際はこうだった。これはどう？
+      placeholder: 期待した動きと、起きたこと
+  - type: textarea
+    id: environment
+    attributes:
+      label: 環境
+      description: OSやバージョンなど必要そうなもの
+      placeholder: Windows 11 / Kavukiai v0.x.y / LM Studio 0.x
+  - type: textarea
+    id: version
+    attributes:
+      label: バージョン
+      description: 使用しているバージョン
+  - type: textarea
+    id: good
+    attributes:
+      label: 良い点
+      description: 良かったところ。
+  - type: textarea
+    id: concern
+    attributes:
+      label: 気になる点
+      description: 気になるところ。
+  - type: textarea
+    id: comment
+    attributes:
+      label: 一言
+      description: 一言
