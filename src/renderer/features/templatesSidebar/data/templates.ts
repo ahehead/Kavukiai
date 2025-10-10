@@ -7,6 +7,10 @@ import adultEditorEN from "src/resources/public/templates/Prompt/goalseek_adult_
 import adultEditorJA from "src/resources/public/templates/Prompt/goalseek_adult_editor.ja.md?raw";
 import adultWriterEN from "src/resources/public/templates/Prompt/goalseek_adult_writer.en.md?raw";
 import adultWriterJA from "src/resources/public/templates/Prompt/goalseek_adult_writer.ja.md?raw";
+import imageChatEN from "src/resources/public/templates/Prompt/image_chat.en.md?raw";
+import imageChatJA from "src/resources/public/templates/Prompt/image_chat.ja.md?raw";
+import interactiveGameEN from "src/resources/public/templates/Prompt/interactive_game.en.md?raw";
+import interactiveGameJA from "src/resources/public/templates/Prompt/interactive_game.ja.md?raw";
 import stringTemplatePng from "src/resources/public/templates/String/String_Template.png?url";
 import stringJoinPng from "src/resources/public/templates/String/string_join.png?url";
 import type { TemplateMeta, TemplatesByGenre } from "./types";
@@ -100,6 +104,32 @@ export const TEMPLATES: TemplateMeta[] = [
     },
     descriptionMd:
       "画像生成プロンプトの作成。参照元: [goalseek_ad](https://github.com/kgmkm/goalseek_ad/tree/main)",
+  },
+  {
+    id: "image-chat-prompt",
+    title: "Image Chat Prompt",
+    genre: "Prompt",
+    tags: ["prompt", "chat", "nsfw"],
+    type: "Prompt",
+    prompt: {
+      ja: imageChatJA,
+      en: imageChatEN,
+    },
+    descriptionMd:
+      "イメージプレイチャット用プロンプト。参照元: [robo-robo](https://note.com/robo_robo_9/n/nef5345f312d7)",
+  },
+  {
+    id: "interactive-text-adventure-game",
+    title: "Interactive Text Adventure Game",
+    genre: "Prompt",
+    tags: ["prompt", "game"],
+    type: "Prompt",
+    prompt: {
+      ja: interactiveGameJA,
+      en: interactiveGameEN,
+    },
+    descriptionMd:
+      "インタラクティブなテキストアドベンチャーゲーム用プロンプト。参照元: [ぬるぽらぼ](https://note.com/nullpolab/n/n738c84e2110e)",
   },
 ];
 
