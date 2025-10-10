@@ -1,6 +1,7 @@
 import type { GetSchemes } from "rete";
 import type { ContextMenuExtra } from "rete-context-menu-plugin";
 import type { ReactArea2D } from "rete-react-plugin";
+import type { GroupExtra } from "../features/group";
 import type { Connection } from "./Connection/Connection";
 import type { BaseNode } from "./Node/BaseNode";
 import type { NodeControl } from "./NodeControl";
@@ -24,7 +25,7 @@ export type Schemes = GetSchemes<
   Connection<NodeInterface, NodeInterface>
 >;
 
-export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra;
+export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra | GroupExtra;
 
 export const ExecList = [
   "exec",

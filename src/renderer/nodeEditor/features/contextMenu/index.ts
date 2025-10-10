@@ -5,7 +5,7 @@ import {
   BaseAreaPlugin,
   type RenderSignal,
 } from "rete-area-plugin";
-import type { Group } from "../group";
+import type { Group, GroupExtra } from "../group";
 export type Position = { x: number; y: number };
 
 /**
@@ -73,10 +73,7 @@ type Requires<Schemes extends BaseSchemes> =
   | { type: "unmount"; data: { element: HTMLElement } }
   | { type: "pointerdown"; data: { position: Position; event: PointerEvent } }
   | { type: "nodepicked"; data: { id: string } }
-  | {
-      type: "grouppointerdown";
-      data: { groupId: string; event: PointerEvent };
-    };
+  | GroupExtra;
 
 /**
  * Plugin for context menu.

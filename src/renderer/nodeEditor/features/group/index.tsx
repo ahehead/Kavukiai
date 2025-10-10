@@ -24,6 +24,11 @@ const DEFAULT_GROUP_LABEL = 'Memo'
 const DEFAULT_PADDING = 12
 // min size constants are defined in Group.ts
 
+export type GroupExtra = {
+  type: "grouppointerdown";
+  data: { groupId: string; event: PointerEvent };
+}
+
 type Produces =
   | { type: 'groupcreated'; data: Group }
   | { type: 'groupremoved'; data: Group }
@@ -31,11 +36,8 @@ type Produces =
     type: 'grouptranslated'
     data: { id: string; dx: number; dy: number; sources?: NodeId[] }
   }
-  | {
-    // グループがクリック（pointerdown）されたことを通知
-    type: 'grouppointerdown'
-    data: { groupId: string; event: PointerEvent }
-  }
+  | GroupExtra
+
 
 // Group model moved to ./Group
 
