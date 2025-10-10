@@ -29,3 +29,12 @@ export type TemplateMeta =
     };
 
 export type TemplatesByGenre = Record<string, TemplateMeta[]>;
+
+export type TemplateDragPayload = {
+  templateId: string;
+  templateType: TemplateType;
+  prompt?: {
+    language: keyof PromptContent;
+    content: string;
+  };
+};

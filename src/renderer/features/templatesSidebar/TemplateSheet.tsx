@@ -8,7 +8,15 @@ import { notify } from 'renderer/features/toast-notice/notify'
 import { useUiStore } from 'renderer/features/ui/uiStore'
 import { cn } from 'renderer/lib/utils'
 import { groupByGenre, TEMPLATES } from './data/templates'
-import type { TemplateMeta } from './data/types'
+import type { TemplateDragPayload, TemplateMeta } from './data/types'
+
+const TRANSPARENT_DRAG_IMAGE: HTMLImageElement | null = typeof window === 'undefined'
+  ? null
+  : (() => {
+    const img = new Image()
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
+    return img
+  })()
 
 type TemplateSheetProps = {
   // If provided, overrides query param. Otherwise query param controls visibility.
@@ -171,34 +179,51 @@ function TemplateCard({
       e.preventDefault()
       return
     }
+    const payload: TemplateDragPayload = {
+      templateId: t.id,
+      templateType: t.type,
+    }
+    if (isPrompt) {
+      payload.prompt = {
+        language: promptLang,
+        content: promptText,
+      }
+    }
+
     e.dataTransfer.setData(
       'application/x-workflow-template',
-      JSON.stringify({ id: t.id })
+      JSON.stringify(payload)
     )
     e.dataTransfer.effectAllowed = 'copy'
-    // Optional: use thumb as drag image
-    const img =
-      (e.currentTarget.querySelector('img') as HTMLImageElement) || null
-    if (img) e.dataTransfer.setDragImage(img, 0, 0)
+    if (isPrompt) {
+      if (TRANSPARENT_DRAG_IMAGE) {
+        e.dataTransfer.setDragImage(TRANSPARENT_DRAG_IMAGE, 0, 0)
+      }
+    } else {
+      const img =
+        (e.currentTarget.querySelector('.thumb') as HTMLImageElement) || null
+      if (img) e.dataTransfer.setDragImage(img, 0, 0)
+    }
     onDragStart?.()
   }
   const handleDragEnd = () => {
+    dragAllowedRef.current = false
     onDragEnd?.()
   }
 
   const promptText = isPrompt
-    ? // Fallback: 無い場合は他言語を使う
-    t.prompt[promptLang] || t.prompt[promptLang === 'ja' ? 'en' : 'ja']
+    ? t.prompt[promptLang] || t.prompt[promptLang === 'ja' ? 'en' : 'ja'] || ''
     : ''
+  const canDrag = isPrompt ? promptText.length > 0 : true
 
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: drag-and-drop card needs div with event handlers
     <div
       className="rounded border w-full bg-card hover:shadow-lg transition p-2 space-y-2"
-      draggable={!isPrompt}
+      draggable={canDrag}
       onMouseDown={handleMouseDown}
-      onDragStart={isPrompt ? undefined : handleDragStart}
-      onDragEnd={isPrompt ? undefined : handleDragEnd}
+      onDragStart={canDrag ? handleDragStart : undefined}
+      onDragEnd={canDrag ? handleDragEnd : undefined}
       title={t.title}
     >
       {/* プレビュー */}
@@ -257,7 +282,7 @@ function TemplateCard({
           <img
             src={t.src}
             alt={t.title}
-            className="object-cover w-full h-full border"
+            className="object-cover w-full h-full border thumb"
             loading="lazy"
           />
         )}

@@ -51,6 +51,7 @@ export function MainScreen() {
     resetEditorStateFromGraph,
     clearHistoryState,
     pasteWorkflowAtPosition,
+    createPromptNodeAtPosition,
   } = useNodeEditorSetup(activeFileId, getGraphAndHistory, setGraphAndHistory)
 
   const {
@@ -183,7 +184,7 @@ export function MainScreen() {
     setDropInfo,
     handleDragOver,
     handleDrop,
-  } = useDragDrop(pasteWorkflowAtPosition)
+  } = useDragDrop(pasteWorkflowAtPosition, createPromptNodeAtPosition)
 
   const { handleImportAsNew, handleImportToCurrent } = usePngImportWorkflow({
     dropInfo,

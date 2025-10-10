@@ -33,6 +33,7 @@ import {
 } from "./features/editor_state/historyState";
 import { GridLineSnapPlugin } from "./features/gridLineSnap/GridLine";
 import { GroupPlugin } from "./features/group";
+import { getFactoryByTypeId } from "./features/nodeFactory/factoryRegistry";
 import type { NodeDeps } from "./features/nodeFactory/factoryTypes";
 import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
 import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
@@ -40,6 +41,7 @@ import { selectableNodes, selector } from "./features/nodeSelection/selectable";
 import { pasteWorkflowAtPosition } from "./features/pasteWorkflow/pasteWorkflow";
 import { DataflowEngine } from "./features/safe-dataflow/dataflowEngin";
 import { registerConnectionPipeline } from "./features/updateConnectionState/updateConnectionState";
+import type { MultiLineStringNode } from "./nodes/Node/Primitive/String/MultiLineStringNode";
 import { destroyAllNodes } from "./nodes/util/removeNode";
 import { screenToWorld } from "./nodes/util/screenToWorld";
 import { type AreaExtra, ExecList, isExecKey, type Schemes } from "./types";
@@ -154,6 +156,37 @@ export async function createNodeEditor(container: HTMLElement) {
     groupPlugin,
   });
 
+  const multiLineFactory = getFactoryByTypeId("core:MultiLineString");
+
+  async function createPromptNodeAtPosition({
+    content,
+    pointerPosition,
+  }: {
+    content: string;
+    pointerPosition: { x: number; y: number };
+  }) {
+    if (!multiLineFactory) {
+      console.warn("MultiLineString node factory not found");
+      return;
+    }
+
+    const node = multiLineFactory(nodeDeps) as MultiLineStringNode;
+
+    await editor.addNode(node);
+
+    const worldPosition = screenToWorld(
+      area,
+      pointerPosition.x,
+      pointerPosition.y
+    );
+    await area.translate(node.id, worldPosition);
+
+    const textAreaControl = node.controls.textArea;
+    textAreaControl?.setValue(content);
+
+    return node;
+  }
+
   // 外部に公開するAPI
   return {
     destroy: async () => {
@@ -205,5 +238,7 @@ export async function createNodeEditor(container: HTMLElement) {
         groupPlugin,
       });
     },
+
+    createPromptNodeAtPosition,
   };
 }

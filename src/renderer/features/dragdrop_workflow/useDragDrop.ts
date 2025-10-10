@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { getTemplateById } from "renderer/features/templatesSidebar/data/templates";
+import type { TemplateDragPayload } from "renderer/features/templatesSidebar/data/types";
 import { notify } from "renderer/features/toast-notice/notify";
 import { type GraphJsonData, parseGraphJson } from "shared/JsonType";
 import { importWorkflowFromPngUrl } from "../png/importPng";
@@ -21,7 +22,11 @@ export function useDragDrop(
   pasteWorkflowAtPosition: (
     workflow: any,
     pointer: { x: number; y: number }
-  ) => Promise<void>
+  ) => Promise<void>,
+  createPromptNodeAtPosition: (params: {
+    content: string;
+    pointerPosition: { x: number; y: number };
+  }) => Promise<void>
 ) {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [dropInfo, setDropInfo] = useState<DropInfo | null>(null);
@@ -35,49 +40,100 @@ export function useDragDrop(
   const processTemplateDrop = useCallback(
     async (customJson: string, pointer: { x: number; y: number }) => {
       try {
-        const { id } = JSON.parse(customJson) as { id: string };
-        const t = getTemplateById(id);
-        if (!t) return true; // 処理済み (何もせず終了)
-        if (t.type !== "PNGWorkflow") {
-          notify("error", "このテンプレートタイプはまだドロップに未対応です");
-          return true; // 分岐としては処理完了
+        const parsed = JSON.parse(customJson) as
+          | TemplateDragPayload
+          | { id: string }
+          | undefined;
+
+        const payload: TemplateDragPayload | undefined =
+          parsed &&
+          typeof parsed === "object" &&
+          "templateId" in parsed &&
+          "templateType" in parsed
+            ? (parsed as TemplateDragPayload)
+            : undefined;
+
+        const templateId =
+          payload?.templateId ??
+          (parsed && typeof parsed === "object" && "id" in parsed
+            ? (parsed as { id: string }).id
+            : undefined);
+
+        if (!templateId) return true;
+
+        const template = getTemplateById(templateId);
+        if (!template) {
+          notify("error", "テンプレートが見つかりませんでした");
+          return true;
         }
-        const data = await importWorkflowFromPngUrl(
-          t.src,
-          `${t.title || t.id}.png`
-        );
-        if (!data) return true;
-        await pasteWorkflowAtPosition(data.workflow, pointer);
-        setDropInfo(null);
-        notify("success", "ワークフローを現在のエディタに貼り付けました");
-        return true; // handled
+
+        const templateType = payload?.templateType ?? template.type;
+
+        if (templateType === "PNGWorkflow" && template.type === "PNGWorkflow") {
+          const data = await importWorkflowFromPngUrl(
+            template.src,
+            `${template.title || template.id}.png`
+          );
+          if (!data) return true;
+          await pasteWorkflowAtPosition(data.workflow, pointer);
+          setDropInfo(null);
+          notify("success", "ワークフローを現在のエディタに貼り付けました");
+          return true;
+        }
+
+        if (templateType === "Prompt" && template.type === "Prompt") {
+          const lang = payload?.prompt?.language ?? "ja";
+          const altLang = lang === "ja" ? "en" : "ja";
+          const promptText =
+            payload?.prompt?.content ??
+            template.prompt[lang] ??
+            template.prompt[altLang];
+
+          if (!promptText) {
+            notify(
+              "error",
+              "このプロンプトテンプレートの内容を読み込めませんでした"
+            );
+            return true;
+          }
+
+          await createPromptNodeAtPosition({
+            content: promptText,
+            pointerPosition: pointer,
+          });
+          setDropInfo(null);
+          notify(
+            "success",
+            `${template.title ?? "Prompt"} の内容をノードとして追加しました`
+          );
+          return true;
+        }
+
+        notify("error", "このテンプレートタイプはまだドロップに未対応です");
+        return true;
       } catch {
         // JSON.parse失敗など: 他処理へフォールスルー
         return false;
       }
     },
-    [pasteWorkflowAtPosition]
+    [pasteWorkflowAtPosition, createPromptNodeAtPosition]
   );
 
   // JSONファイル(DnD)処理
   const processJsonFileDrop = useCallback(
     async (file: File, pointer: { x: number; y: number }) => {
-      const lower = file.name.toLowerCase();
-      if (!lower.endsWith(".json")) return false;
+      if (!file.name.toLowerCase().endsWith(".json")) return false;
       try {
-        const text = await file.text();
-        const workflow = JSON.parse(text);
+        const workflow = JSON.parse(await file.text());
         if (!workflow) {
           notify("error", "JSON内にworkflowが見つかりません");
           return true; // 処理済み (エラー)
         }
-        const result = parseGraphJson(workflow);
-        const baseName = file.name.replace(/\.json$/i, "");
         setDropInfo({
           type: "json",
           pointer,
-          jsonWorkflow: result,
-          fileName: baseName,
+          jsonWorkflow: parseGraphJson(workflow),
+          fileName: file.name.replace(/\.json$/i, ""),
         });
         setImportDialogOpen(true);
         return true;

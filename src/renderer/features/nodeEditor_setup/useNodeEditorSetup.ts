@@ -67,6 +67,17 @@ export default function useNodeEditorSetup(
     [editorApi]
   );
 
+  const createPromptNodeAtPosition = useCallback(
+    async (params: {
+      content: string;
+      pointerPosition: { x: number; y: number };
+    }) => {
+      if (!editorApi) return;
+      await editorApi.createPromptNodeAtPosition(params);
+    },
+    [editorApi]
+  );
+
   const getPointerPosition = useCallback(() => {
     if (!editorApi) return { x: 0, y: 0 };
     return editorApi.getPointerPosition();
@@ -79,5 +90,6 @@ export default function useNodeEditorSetup(
     clearHistoryState,
     pasteWorkflowAtPosition,
     getPointerPosition,
+    createPromptNodeAtPosition,
   };
 }
