@@ -1,10 +1,12 @@
 import comfyuiTemplate from "src/resources/public/templates/ComfyUI/ComfyUI_Template.png?url";
 import lmstudio_comfyui_template from "src/resources/public/templates/Hybrid/LM_Studio_And_ComfyUI_Template.png?url";
 import lmstudioTemplate from "src/resources/public/templates/LMStudio/LM_Studio_Template.png?url";
-import eroImagerEN from "src/resources/public/templates/Prompt/ero_imager_en.md?raw";
-import eroImagerJA from "src/resources/public/templates/Prompt/ero_imager_ja.md?raw";
-import eroWriterEN from "src/resources/public/templates/Prompt/ero_writer_template.en.md?raw";
-import eroWriterJA from "src/resources/public/templates/Prompt/ero_writer_template.md?raw";
+import adoultImagerEN from "src/resources/public/templates/Prompt/ero_imager_en.md?raw";
+import adoultImagerJA from "src/resources/public/templates/Prompt/ero_imager_ja.md?raw";
+import adultEditorEN from "src/resources/public/templates/Prompt/goalseek_adult_editor.en.md?raw";
+import adultEditorJA from "src/resources/public/templates/Prompt/goalseek_adult_editor.ja.md?raw";
+import adultWriterEN from "src/resources/public/templates/Prompt/goalseek_adult_writer.en.md?raw";
+import adultWriterJA from "src/resources/public/templates/Prompt/goalseek_adult_writer.ja.md?raw";
 import stringTemplatePng from "src/resources/public/templates/String/String_Template.png?url";
 import stringJoinPng from "src/resources/public/templates/String/string_join.png?url";
 import type { TemplateMeta, TemplatesByGenre } from "./types";
@@ -61,17 +63,30 @@ export const TEMPLATES: TemplateMeta[] = [
       "LM Studio と ComfyUI を組み合わせたテンプレート。LM Studio でテキスト生成を行い、その出力を ComfyUI に渡して画像生成を行う。",
   },
   {
+    id: "nsfw-porn-novel-editor",
+    title: "nefw porn novel editor Template",
+    genre: "Prompt",
+    tags: ["prompt", "novel", "nsfw"],
+    type: "Prompt",
+    prompt: {
+      ja: adultEditorJA,
+      en: adultEditorEN,
+    },
+    descriptionMd:
+      "小説編集者プロンプト。参照元: [goalseek_ad](https://github.com/kgmkm/goalseek_ad/tree/main)",
+  },
+  {
     id: "nsfw-porn-novel-writer",
     title: "nsfw porn novel writer Template",
     genre: "Prompt",
     tags: ["prompt", "novel", "nsfw"],
     type: "Prompt",
     prompt: {
-      ja: eroWriterJA,
-      en: eroWriterEN,
+      ja: adultWriterJA,
+      en: adultWriterEN,
     },
     descriptionMd:
-      "小説生成プロンプト。参照元: [goalseek_ad](https://github.com/kgmkm/goalseek_ad/blob/main/init_writer.txt)",
+      "小説生成プロンプト。参照元: [goalseek_ad](https://github.com/kgmkm/goalseek_ad/tree/main)",
   },
   {
     id: "nsfw-porn-novel-image",
@@ -80,11 +95,11 @@ export const TEMPLATES: TemplateMeta[] = [
     tags: ["prompt", "novel", "nsfw"],
     type: "Prompt",
     prompt: {
-      ja: eroImagerJA,
-      en: eroImagerEN,
+      ja: adoultImagerJA,
+      en: adoultImagerEN,
     },
     descriptionMd:
-      "プロンプト生成プロンプト。参照元: [goalseek_ad](https://github.com/kgmkm/goalseek_ad/blob/main/init_imager.txt)",
+      "画像生成プロンプトの作成。参照元: [goalseek_ad](https://github.com/kgmkm/goalseek_ad/tree/main)",
   },
 ];
 
