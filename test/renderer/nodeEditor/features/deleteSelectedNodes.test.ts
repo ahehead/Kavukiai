@@ -1,4 +1,5 @@
 import { setupDeleteSelectedNodes } from "renderer/nodeEditor/features/deleteSelectedNodes/deleteSelectedNodes";
+import type { GroupPlugin } from "renderer/nodeEditor/features/group";
 import { removeNodeWithConnections } from "renderer/nodeEditor/nodes/util/removeNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import type { NodeEditor } from "rete";
@@ -27,7 +28,28 @@ test("setupDeleteSelectedNodes removes selected nodes on Delete key press", asyn
     removeEventListener: vi.fn(),
   };
 
-  const cleanup = setupDeleteSelectedNodes(editor);
+  const deleteGroup = vi.fn();
+  const groupPlugin = {
+    groups: new Map([
+      [
+        "g1",
+        {
+          id: "g1",
+          selected: true,
+        },
+      ],
+      [
+        "g2",
+        {
+          id: "g2",
+          selected: false,
+        },
+      ],
+    ]),
+    delete: deleteGroup,
+  } as unknown as GroupPlugin<Schemes>;
+
+  const cleanup = setupDeleteSelectedNodes(editor, groupPlugin);
   // ハンドラはasyncでawaitを含むため、完了を待つ
   await listeners.keydown({ key: "Delete" });
 
@@ -35,6 +57,8 @@ test("setupDeleteSelectedNodes removes selected nodes on Delete key press", asyn
   expect(fn).toHaveBeenCalledTimes(2);
   expect(fn).toHaveBeenNthCalledWith(1, editor, "1");
   expect(fn).toHaveBeenNthCalledWith(2, editor, "3");
+  expect(deleteGroup).toHaveBeenCalledTimes(1);
+  expect(deleteGroup).toHaveBeenCalledWith("g1");
 
   cleanup();
 });

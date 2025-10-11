@@ -134,7 +134,7 @@ export async function createNodeEditor(container: HTMLElement) {
   // ダブルクリックでズームするのを無効化
   disableDoubleClickZoom(area);
 
-  const cleanupDeleteKey = setupDeleteSelectedNodes(editor);
+  const cleanupDeleteKey = setupDeleteSelectedNodes(editor, groupPlugin);
 
   // ノードの選択、追加
   const accumulating = accumulateOnShift();
