@@ -241,7 +241,10 @@ export function selectableGroups<T>(
   base: BaseAreaPlugin<Schemes, T>,
   groupPlugin: GroupPlugin<Schemes>,
   core: Selectable,
-  options: { accumulating: Accumulating; nodesSelectableApi?: SelectableApi<NodeId> }
+  options: {
+    accumulating: Accumulating;
+    nodesSelectableApi?: SelectableApi<NodeId>;
+  }
 ): SelectableApi<string> {
   let twitch: null | number = 0;
 
@@ -326,7 +329,6 @@ export function selectableGroups<T>(
       };
       if (core.isPicked({ id, label: "group" })) {
         core.translate(dx, dy);
-        options.nodesSelectableApi?.translateSelected?.(dx, dy);
       }
     } else if (ctx.type === "groupremoved") {
       const group = ctx.data as Group | undefined;
