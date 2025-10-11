@@ -106,6 +106,11 @@ export function GroupView({
     () => group.fontColor,
     () => group.fontColor
   )
+  const selected = useSyncExternalStore(
+    group.subscribe,
+    () => group.selected,
+    () => group.selected
+  )
 
   // インライン編集用のローカル状態
   const [editing, setEditing] = useState(false)
@@ -325,7 +330,12 @@ export function GroupView({
       onPointerDown={onPointerDownRoot}
       onPointerMove={onPointerMoveRoot}
       onContextMenu={onContextMenuRoot}
-      className="w-full h-full rounded-md border border-neutral-500/60 dark:border-neutral-600/60 bg-neutral-200/50 dark:bg-neutral-800/40 p-2"
+      data-selected={selected ? 'true' : undefined}
+      className={cn(
+        'w-full h-full rounded-md border border-neutral-500/60 dark:border-neutral-600/60 bg-neutral-200/50 dark:bg-neutral-800/40 p-2',
+        selected &&
+        'border-blue-500/70 dark:border-blue-400/70 ring-2 ring-blue-400/40 dark:ring-blue-500/30'
+      )}
     >
       {/* タイトル行。クリックで編集モードに */}
       <div className="flex items-start justify-between gap-2">

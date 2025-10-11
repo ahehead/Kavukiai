@@ -1,7 +1,9 @@
 // 公式Selectorをコピー改変
+
 import type { Schemes } from "renderer/nodeEditor/types";
 import { NodeEditor, type NodeId } from "rete";
 import type { BaseArea, BaseAreaPlugin } from "rete-area-plugin";
+import type { Group, GroupPlugin } from "../group";
 import type { PressedType } from "./accumulateOnShift";
 
 export type SelectorEntity = {
@@ -9,6 +11,15 @@ export type SelectorEntity = {
   id: string;
   unselect(): void;
   translate(dx: number, dy: number): void;
+};
+
+type SelectableId = string | number;
+
+export type SelectableApi<Id extends SelectableId = string> = {
+  select(id: Id, accumulate: boolean): void;
+  unselect(id: Id): void;
+  unselectAll(): void;
+  isSelected(id: Id): boolean;
 };
 
 /**
@@ -95,7 +106,7 @@ export function selectableNodes<T>(
   base: BaseAreaPlugin<Schemes, T>,
   core: Selectable,
   options: { accumulating: Accumulating }
-) {
+): SelectableApi<NodeId> {
   let editor: null | NodeEditor<Schemes> = null;
   const area = base as BaseAreaPlugin<Schemes, BaseArea<Schemes>>;
   const getEditor = () => {
@@ -214,5 +225,136 @@ export function selectableNodes<T>(
   return {
     select: add,
     unselect: remove,
+    unselectAll: () => {
+      core.unselectAll();
+    },
+    isSelected: (nodeId: NodeId) =>
+      core.isSelected({ id: nodeId, label: "node" }),
+  };
+}
+
+export function selectableGroups<T>(
+  base: BaseAreaPlugin<Schemes, T>,
+  groupPlugin: GroupPlugin<Schemes>,
+  core: Selectable,
+  options: { accumulating: Accumulating }
+): SelectableApi<string> {
+  let twitch: null | number = 0;
+
+  function selectGroup(group: Group | undefined) {
+    if (!group) return;
+    if (!group.selected) {
+      group.selected = true;
+    }
+  }
+
+  function unselectGroup(group: Group | undefined) {
+    if (!group) return;
+    if (group.selected) {
+      group.selected = false;
+    }
+  }
+
+  function add(groupId: string, accumulate: boolean) {
+    const group = groupPlugin.groups.get(groupId);
+    if (!group) return;
+
+    core.add(
+      {
+        label: "group",
+        id: group.id,
+        translate(dx, dy) {
+          void groupPlugin.translateGroup(group.id, dx, dy);
+        },
+        unselect() {
+          unselectGroup(group);
+        },
+      },
+      accumulate
+    );
+
+    selectGroup(group);
+  }
+
+  function remove(groupId: string) {
+    const group = groupPlugin.groups.get(groupId);
+    core.remove({ id: groupId, label: "group" });
+    if (group) {
+      unselectGroup(group);
+    }
+  }
+
+  base.addPipe((context) => {
+    if (!context || typeof context !== "object" || !("type" in context))
+      return context;
+
+    const ctx = context as any;
+
+    if (ctx.type === "grouppointerdown") {
+      const groupId = ctx.data.groupId as string;
+      const accumulate = options.accumulating.active();
+
+      if (accumulate === "Add") {
+        core.pick({ id: groupId, label: "group" });
+        add(groupId, true);
+      } else if (accumulate === "Toggle") {
+        const alreadySelected = core.isSelected({
+          id: groupId,
+          label: "group",
+        });
+        if (alreadySelected) {
+          core.release();
+          remove(groupId);
+        } else {
+          core.pick({ id: groupId, label: "group" });
+          add(groupId, true);
+        }
+      } else {
+        core.pick({ id: groupId, label: "group" });
+        add(groupId, false);
+      }
+      twitch = null;
+    } else if (ctx.type === "grouptranslated") {
+      const { id, dx, dy } = ctx.data as {
+        id: string;
+        dx: number;
+        dy: number;
+      };
+      if (core.isPicked({ id, label: "group" })) {
+        core.translate(dx, dy);
+      }
+    } else if (ctx.type === "groupremoved") {
+      const group = ctx.data as Group | undefined;
+      if (group) {
+        remove(group.id);
+      }
+    } else if (ctx.type === "clear") {
+      core.unselectAll();
+    } else if (ctx.type === "pointerdown") {
+      twitch = 0;
+    } else if (ctx.type === "pointermove") {
+      if (twitch !== null) twitch++;
+    } else if (ctx.type === "pointerup") {
+      const event = ctx.data.event as PointerEvent;
+      if (event.button !== 0) return context;
+      const target = event.target as HTMLElement;
+      if (target.getAttribute("data-testid") === "context-menu-item")
+        return context;
+      if (twitch !== null && twitch < 4) {
+        core.unselectAll();
+      }
+      twitch = null;
+    }
+    return context;
+  });
+
+  return {
+    select: add,
+    unselect: remove,
+    unselectAll: () => {
+      core.unselectAll();
+    },
+    isSelected: (groupId: string) =>
+      core.isSelected({ id: groupId, label: "group" }),
   };
 }

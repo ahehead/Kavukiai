@@ -37,7 +37,11 @@ import { getFactoryByTypeId } from "./features/nodeFactory/factoryRegistry";
 import type { NodeDeps } from "./features/nodeFactory/factoryTypes";
 import { accumulateOnShift } from "./features/nodeSelection/accumulateOnShift";
 import { RectSelectPlugin } from "./features/nodeSelection/RectSelectPlugin";
-import { selectableNodes, selector } from "./features/nodeSelection/selectable";
+import {
+  selectableGroups,
+  selectableNodes,
+  selector,
+} from "./features/nodeSelection/selectable";
 import { pasteWorkflowAtPosition } from "./features/pasteWorkflow/pasteWorkflow";
 import { DataflowEngine } from "./features/safe-dataflow/dataflowEngin";
 import { registerConnectionPipeline } from "./features/updateConnectionState/updateConnectionState";
@@ -133,13 +137,19 @@ export async function createNodeEditor(container: HTMLElement) {
   const cleanupDeleteKey = setupDeleteSelectedNodes(editor);
 
   // ノードの選択、追加
+  const accumulating = accumulateOnShift();
   const sn = selectableNodes(area, selector(), {
-    accumulating: accumulateOnShift(),
+    accumulating,
+  });
+  const sg = selectableGroups(area, groupPlugin, selector(), {
+    accumulating,
   });
 
   const rectSelect = new RectSelectPlugin({
     container,
     selectableNodes: sn,
+    selectableGroups: sg,
+    groupPlugin,
   });
 
   // 矩形選択
@@ -196,6 +206,7 @@ export async function createNodeEditor(container: HTMLElement) {
       cleanupDeleteKey();
       cleanupClipboardShortcuts();
       groupPlugin.clear();
+      accumulating.destroy();
     },
 
     // 現在のnode editorの状態を取得

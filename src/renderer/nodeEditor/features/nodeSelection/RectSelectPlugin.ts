@@ -1,7 +1,8 @@
-import { NodeEditor, Scope } from "rete";
+import { NodeEditor, type NodeId, Scope } from "rete";
 import { type Area2D, AreaExtensions, AreaPlugin } from "rete-area-plugin";
 import type { AreaExtra, Schemes } from "../../types";
-import type { selectableNodes } from "./selectable";
+import type { Group, GroupPlugin } from "../group";
+import type { SelectableApi } from "./selectable";
 
 type Point = { x: number; y: number };
 
@@ -12,7 +13,9 @@ export class RectSelectPlugin extends Scope<
   private area!: AreaPlugin<Schemes, AreaExtra>;
   private editor!: NodeEditor<Schemes>;
   private container: HTMLElement;
-  private selectableNodes: ReturnType<typeof selectableNodes> | null = null;
+  private selectableNodes: SelectableApi<NodeId> | null = null;
+  private selectableGroups: SelectableApi<string> | null = null;
+  private groupPlugin: GroupPlugin<Schemes> | null = null;
   private isDragging = false;
   private startPoint: Point = { x: 0, y: 0 };
 
@@ -22,11 +25,15 @@ export class RectSelectPlugin extends Scope<
 
   constructor(options: {
     container: HTMLElement;
-    selectableNodes: ReturnType<typeof selectableNodes> | null;
+    selectableNodes: SelectableApi<NodeId> | null;
+    selectableGroups?: SelectableApi<string> | null;
+    groupPlugin?: GroupPlugin<Schemes> | null;
   }) {
     super("node-selection-plugin");
     this.container = options.container;
     this.selectableNodes = options.selectableNodes;
+    this.selectableGroups = options.selectableGroups ?? null;
+    this.groupPlugin = options.groupPlugin ?? null;
   }
 
   setParent(scope: Scope<Area2D<Schemes>>) {
@@ -53,6 +60,7 @@ export class RectSelectPlugin extends Scope<
         };
         if (!context.data.event.shiftKey) {
           this.clearSelectedNodes();
+          this.clearSelectedGroups();
         }
         // 1) 全体を覆うオーバーレイを生成
         if (!this.overlayElement) {
@@ -114,6 +122,13 @@ export class RectSelectPlugin extends Scope<
         for (const node of selectedNodes) {
           this.selectableNodes?.select(node.id, true);
         }
+        const selectedGroups = this.filterGroupsInArea(
+          this.startPoint,
+          endPoint
+        );
+        for (const group of selectedGroups) {
+          this.selectableGroups?.select(group.id, true);
+        }
         this.startPoint = { x: 0, y: 0 };
         if (this.overlayElement) {
           this.overlayElement.remove();
@@ -127,10 +142,11 @@ export class RectSelectPlugin extends Scope<
   }
 
   private clearSelectedNodes() {
-    const nodes = this.editor.getNodes().filter((node) => node.selected);
-    for (const node of nodes) {
-      this.selectableNodes?.unselect(node.id);
-    }
+    this.selectableNodes?.unselectAll();
+  }
+
+  private clearSelectedGroups() {
+    this.selectableGroups?.unselectAll();
   }
 
   private filterNodesInArea(startPoint: Point, endPoint: Point) {
@@ -152,8 +168,24 @@ export class RectSelectPlugin extends Scope<
     });
   }
 
+  private filterGroupsInArea(startPoint: Point, endPoint: Point): Group[] {
+    if (!this.groupPlugin) return [];
+    const groups = Array.from(this.groupPlugin.groups.values());
+    const x1 = Math.min(startPoint.x, endPoint.x);
+    const x2 = Math.max(startPoint.x, endPoint.x);
+    const y1 = Math.min(startPoint.y, endPoint.y);
+    const y2 = Math.max(startPoint.y, endPoint.y);
+    return groups.filter((group) => {
+      const { left, top, width, height } = group.rect;
+      const right = left + width;
+      const bottom = top + height;
+      return left < x2 && right > x1 && top < y2 && bottom > y1;
+    });
+  }
+
   destroy() {
     this.clearSelectedNodes();
+    this.clearSelectedGroups();
     if (this.overlayElement) {
       this.overlayElement.remove();
       this.overlayElement = null;
