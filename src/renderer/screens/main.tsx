@@ -184,7 +184,11 @@ export function MainScreen() {
     setDropInfo,
     handleDragOver,
     handleDrop,
-  } = useDragDrop(pasteWorkflowAtPosition, createPromptNodeAtPosition)
+  } = useDragDrop(
+    pasteWorkflowAtPosition,
+    createPromptNodeAtPosition,
+    files.length > 0
+  )
 
   const { handleImportAsNew, handleImportToCurrent } = usePngImportWorkflow({
     dropInfo,

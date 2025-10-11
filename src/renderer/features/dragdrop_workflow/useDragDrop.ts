@@ -26,7 +26,8 @@ export function useDragDrop(
   createPromptNodeAtPosition: (params: {
     content: string;
     pointerPosition: { x: number; y: number };
-  }) => Promise<void>
+  }) => Promise<void>,
+  hasActiveFile: boolean
 ) {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [dropInfo, setDropInfo] = useState<DropInfo | null>(null);
@@ -52,6 +53,13 @@ export function useDragDrop(
         const templateType = parsed.templateType ?? template.type;
 
         if (templateType === "PNGWorkflow" && template.type === "PNGWorkflow") {
+          if (!hasActiveFile) {
+            notify(
+              "error",
+              "ワークフローを貼り付けるにはファイルを開くか作成してください"
+            );
+            return true;
+          }
           const data = await importWorkflowFromPngUrl(
             template.src,
             `${template.title || template.id}.png`
@@ -64,6 +72,13 @@ export function useDragDrop(
         }
 
         if (templateType === "Prompt" && template.type === "Prompt") {
+          if (!hasActiveFile) {
+            notify(
+              "error",
+              "プロンプトを追加するにはファイルを開くか作成してください"
+            );
+            return true;
+          }
           const lang = parsed.prompt?.language ?? "ja";
           const altLang = lang === "ja" ? "en" : "ja";
           const promptText =
@@ -98,7 +113,7 @@ export function useDragDrop(
         return false;
       }
     },
-    [pasteWorkflowAtPosition, createPromptNodeAtPosition]
+    [pasteWorkflowAtPosition, createPromptNodeAtPosition, hasActiveFile]
   );
 
   // JSONファイル(DnD)処理
