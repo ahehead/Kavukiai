@@ -14,7 +14,7 @@ const sourceSvg = path.resolve(
   "resources",
   "build",
   "iconsvg",
-  "icon3.svg"
+  "icon4.svg"
 );
 const outDir = path.resolve(rootDir, "src", "resources", "build", "icons");
 
