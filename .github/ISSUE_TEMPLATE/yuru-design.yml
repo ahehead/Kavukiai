@@ -1,0 +1,39 @@
+name: デザイン提案テンプレート
+description: 「こうするとこうなると思ったけど…」というデザインの気づきを共有するテンプレートです。
+title: "[デザイン] 話題タイトル"
+labels:
+  - feedback
+body:
+  - type: markdown
+    attributes:
+      value:
+  - type: textarea
+    id: context
+    attributes:
+      label: 状況・シナリオ
+      placeholder: 例）ノード編集画面で○○を操作していたとき。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待したこと
+      placeholder: 例）クリックすると右側に設定パネルが開くと思った。
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際に起きたこと
+      placeholder: 例）別ウィンドウが開いて操作が途切れた。
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: こうしてみるのはどう？
+      placeholder: 例）○○のようなモーダルにまとめると良さそう。
+  - type: textarea
+    id: reference
+    attributes:
+      label: 参考リンクや画像

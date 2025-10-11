@@ -1,0 +1,45 @@
+name: バグ報告テンプレート
+description: 不具合っぽい挙動を共有するテンプレートです。
+title: "[バグ] 現象タイトル"
+labels:
+  - feedback
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 起きていること
+      placeholder: 例）設定を保存するとアプリが落ちる。
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現だけ起こす手順
+      description:
+      placeholder: |
+        1. ○○画面を開く
+        2. △△ボタンを押す
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待していた動き等
+      placeholder: 例）設定が保存されてそのまま画面に戻る。
+  - type: textarea
+    id: environment
+    attributes:
+      label: 環境
+      description: OS / アプリバージョン / 関連ツールなど。
+      placeholder: 例）Windows 11 / Kavukiai v0.x.y / LM Studio 0.x
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: ログ・スクショ等
+      placeholder: ログは ``` で囲むと読みやすいです。

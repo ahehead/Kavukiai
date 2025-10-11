@@ -1,0 +1,27 @@
+name: 旧なろう風
+description: 感想欄
+title: "[感想]"
+labels:
+  - feedback
+body:
+  - type: markdown
+    attributes:
+      value:
+  - type: textarea
+    id: version
+    attributes:
+      label: バージョン
+      description: バージョン
+      placeholder: 例）Kavukiai v0.x.y
+  - type: textarea
+    id: good
+    attributes:
+      label: 良かった点
+  - type: textarea
+    id: concern
+    attributes:
+      label: 気になった点
+  - type: textarea
+    id: comment
+    attributes:
+      label: 一言

@@ -1,0 +1,16 @@
+name: 提案テンプレート
+description: 提案テンプレートです。
+title: "[提案] 話題タイトル"
+labels:
+  - feedback
+body:
+  - type: markdown
+    attributes:
+      value:
+  - type: textarea
+    id: idea
+    attributes:
+      label: 提案の概要
+      placeholder: 例）ノードの実行ボタンをもう少し目立たせたい。
+    validations:
+      required: true
