@@ -117,7 +117,9 @@ export function useFileOperations(
 
       // ファイルの新規作成追加
       const nextFile = await createAndAddFile(fileName, f.graph, filePath);
+      clearHistory(nextFile.id);
       setActiveFileId(nextFile.id);
+      clearHistoryState();
       notify("success", `新しく名前を付けて保存しました: ${fileName}`);
       return true;
     },
