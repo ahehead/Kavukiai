@@ -138,11 +138,14 @@ export async function createNodeEditor(container: HTMLElement) {
 
   // ノードの選択、追加
   const accumulating = accumulateOnShift();
-  const sn = selectableNodes(area, selector(), {
+  const nodeSelector = selector();
+  const groupSelector = selector();
+  const sn = selectableNodes(area, nodeSelector, {
     accumulating,
   });
-  const sg = selectableGroups(area, groupPlugin, selector(), {
+  const sg = selectableGroups(area, groupPlugin, groupSelector, {
     accumulating,
+    nodesSelectableApi: sn,
   });
 
   const rectSelect = new RectSelectPlugin({

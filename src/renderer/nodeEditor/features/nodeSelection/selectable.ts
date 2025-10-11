@@ -20,6 +20,7 @@ export type SelectableApi<Id extends SelectableId = string> = {
   unselect(id: Id): void;
   unselectAll(): void;
   isSelected(id: Id): boolean;
+  translateSelected?(dx: number, dy: number): void;
 };
 
 /**
@@ -230,6 +231,9 @@ export function selectableNodes<T>(
     },
     isSelected: (nodeId: NodeId) =>
       core.isSelected({ id: nodeId, label: "node" }),
+    translateSelected: (dx: number, dy: number) => {
+      core.translate(dx, dy);
+    },
   };
 }
 
@@ -237,7 +241,7 @@ export function selectableGroups<T>(
   base: BaseAreaPlugin<Schemes, T>,
   groupPlugin: GroupPlugin<Schemes>,
   core: Selectable,
-  options: { accumulating: Accumulating }
+  options: { accumulating: Accumulating; nodesSelectableApi?: SelectableApi<NodeId> }
 ): SelectableApi<string> {
   let twitch: null | number = 0;
 
@@ -322,11 +326,24 @@ export function selectableGroups<T>(
       };
       if (core.isPicked({ id, label: "group" })) {
         core.translate(dx, dy);
+        options.nodesSelectableApi?.translateSelected?.(dx, dy);
       }
     } else if (ctx.type === "groupremoved") {
       const group = ctx.data as Group | undefined;
       if (group) {
         remove(group.id);
+      }
+    } else if (ctx.type === "groupdoubleclicked") {
+      const groupId = ctx.data.groupId as string;
+      const group = groupPlugin.groups.get(groupId);
+      if (!group) return context;
+      twitch = null;
+      core.unselectAll();
+      options.nodesSelectableApi?.unselectAll();
+      add(groupId, false);
+      const nodeIds = Array.from(group.links ?? []);
+      for (const nodeId of nodeIds) {
+        options.nodesSelectableApi?.select(nodeId, true);
       }
     } else if (ctx.type === "clear") {
       core.unselectAll();

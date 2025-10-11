@@ -1,5 +1,5 @@
 import { MoreVertical } from 'lucide-react'
-import type { ReactElement } from 'react'
+import type { ReactElement, MouseEvent as ReactMouseEvent } from 'react'
 import {
   useCallback,
   useEffect,
@@ -69,6 +69,7 @@ type Props = {
   translate?: (id: string, dx: number, dy: number) => Promise<void>
   emitContextMenu?: (e: MouseEvent, group: Group) => void
   emitGroupPointerDown?: (event: PointerEvent, group: Group) => void
+  emitGroupDoubleClick?: (event: MouseEvent, group: Group) => void
   onTextChange?: (group: Group) => void
   onStyleChange?: (
     group: Group,
@@ -84,6 +85,7 @@ export function GroupView({
   translate,
   emitContextMenu,
   emitGroupPointerDown,
+  emitGroupDoubleClick,
   onTextChange,
   onStyleChange,
 }: Props): ReactElement {
@@ -330,6 +332,14 @@ export function GroupView({
       onPointerDown={onPointerDownRoot}
       onPointerMove={onPointerMoveRoot}
       onContextMenu={onContextMenuRoot}
+      onDoubleClick={(event: ReactMouseEvent<HTMLDivElement>) => {
+        event.stopPropagation()
+        event.preventDefault()
+        if (editing) return
+        if (emitGroupDoubleClick) {
+          emitGroupDoubleClick(event.nativeEvent, group)
+        }
+      }}
       data-selected={selected ? 'true' : undefined}
       className={cn(
         'w-full h-full rounded-md border border-neutral-500/60 dark:border-neutral-600/60 bg-neutral-200/50 dark:bg-neutral-800/40 p-2',

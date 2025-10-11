@@ -24,10 +24,15 @@ const DEFAULT_GROUP_LABEL = 'Memo'
 const DEFAULT_PADDING = 12
 // min size constants are defined in Group.ts
 
-export type GroupExtra = {
-  type: "grouppointerdown";
-  data: { groupId: string; event: PointerEvent };
-}
+export type GroupExtra =
+  | {
+    type: "grouppointerdown";
+    data: { groupId: string; event: PointerEvent };
+  }
+  | {
+    type: "groupdoubleclicked";
+    data: { groupId: string; event: MouseEvent };
+  };
 
 type Produces =
   | { type: 'groupcreated'; data: Group }
@@ -335,6 +340,12 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         data: { groupId: group.id, event },
       } as any)
     }
+    const emitGroupDoubleClick = (event: MouseEvent, group: Group) => {
+      void this.area.emit({
+        type: 'groupdoubleclicked',
+        data: { groupId: group.id, event },
+      } as any)
+    }
     const handleTextChange = (group: Group) => {
       this.fitToLinks(group)
     }
@@ -352,6 +363,7 @@ export class GroupPlugin<Schemes extends BaseSchemes> extends Scope<
         translate={translate}
         emitContextMenu={emitContextMenu}
         emitGroupPointerDown={emitGroupPointerDown}
+        emitGroupDoubleClick={emitGroupDoubleClick}
         onTextChange={handleTextChange}
         onStyleChange={handleStyleChange}
       />,
