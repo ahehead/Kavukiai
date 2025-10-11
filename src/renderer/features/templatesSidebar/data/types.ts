@@ -1,4 +1,7 @@
-export type TemplateType = "Prompt" | "WorkflowJSON" | "PNGWorkflow";
+import { Type } from "@sinclair/typebox";
+import { Value } from "@sinclair/typebox/value";
+
+export type TemplateType = "Prompt" | "PNGWorkflow";
 
 // Multi-language (ja/en) prompt content.
 export type PromptContent = {
@@ -38,3 +41,28 @@ export type TemplateDragPayload = {
     content: string;
   };
 };
+
+export const TemplateDragPayloadSchema = Type.Object({
+  templateId: Type.String(),
+  templateType: Type.Union([
+    Type.Literal("Prompt"),
+    Type.Literal("PNGWorkflow"),
+  ] as const),
+  prompt: Type.Optional(
+    Type.Object({
+      language: Type.Union([Type.Literal("ja"), Type.Literal("en")] as const),
+      content: Type.String(),
+    })
+  ),
+});
+
+export function parseTemplateDragPayload(
+  data: string
+): TemplateDragPayload | null {
+  try {
+    return Value.Parse(TemplateDragPayloadSchema, JSON.parse(data));
+  } catch (error) {
+    console.error("Failed to parse template drag payload:", error);
+    return null;
+  }
+}

@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { getTemplateById } from "renderer/features/templatesSidebar/data/templates";
-import type { TemplateDragPayload } from "renderer/features/templatesSidebar/data/types";
+import { parseTemplateDragPayload } from "renderer/features/templatesSidebar/data/types";
 import { notify } from "renderer/features/toast-notice/notify";
 import { type GraphJsonData, parseGraphJson } from "shared/JsonType";
 import { importWorkflowFromPngUrl } from "../png/importPng";
@@ -40,34 +40,16 @@ export function useDragDrop(
   const processTemplateDrop = useCallback(
     async (customJson: string, pointer: { x: number; y: number }) => {
       try {
-        const parsed = JSON.parse(customJson) as
-          | TemplateDragPayload
-          | { id: string }
-          | undefined;
+        const parsed = parseTemplateDragPayload(customJson);
+        if (!parsed) return true;
 
-        const payload: TemplateDragPayload | undefined =
-          parsed &&
-          typeof parsed === "object" &&
-          "templateId" in parsed &&
-          "templateType" in parsed
-            ? (parsed as TemplateDragPayload)
-            : undefined;
-
-        const templateId =
-          payload?.templateId ??
-          (parsed && typeof parsed === "object" && "id" in parsed
-            ? (parsed as { id: string }).id
-            : undefined);
-
-        if (!templateId) return true;
-
-        const template = getTemplateById(templateId);
+        const template = getTemplateById(parsed.templateId);
         if (!template) {
           notify("error", "テンプレートが見つかりませんでした");
           return true;
         }
 
-        const templateType = payload?.templateType ?? template.type;
+        const templateType = parsed.templateType ?? template.type;
 
         if (templateType === "PNGWorkflow" && template.type === "PNGWorkflow") {
           const data = await importWorkflowFromPngUrl(
@@ -82,10 +64,10 @@ export function useDragDrop(
         }
 
         if (templateType === "Prompt" && template.type === "Prompt") {
-          const lang = payload?.prompt?.language ?? "ja";
+          const lang = parsed.prompt?.language ?? "ja";
           const altLang = lang === "ja" ? "en" : "ja";
           const promptText =
-            payload?.prompt?.content ??
+            parsed.prompt?.content ??
             template.prompt[lang] ??
             template.prompt[altLang];
 
