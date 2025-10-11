@@ -93,7 +93,6 @@ export class WorkflowRefToApiWorkflowNode extends SerializableInputsNode<
 
     try {
       const workflow = await electronApiService.readWorkflowJson({ endpoint, workflowRef });
-      console.log(workflow)
       const apiPrompt = await electronApiService.toApiPromptStrict({ endpoint, workflow });
       this.lastWorkflowPrompt = apiPrompt;
       this.controls.console.addValue('Resolved workflowRef to API workflow')
