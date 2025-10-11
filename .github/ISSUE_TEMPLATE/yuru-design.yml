@@ -6,7 +6,8 @@ labels:
 body:
   - type: markdown
     attributes:
-      value:
+      value: |
+        デザインに関する気づきを共有していただきありがとうございます。以下の質問に沿って記入してください。
   - type: textarea
     id: context
     attributes:

@@ -6,7 +6,7 @@ labels:
 body:
   - type: markdown
     attributes:
-      value:
+      value: 提案
   - type: textarea
     id: idea
     attributes:

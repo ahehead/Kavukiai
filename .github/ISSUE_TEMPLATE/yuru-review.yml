@@ -6,7 +6,7 @@ labels:
 body:
   - type: markdown
     attributes:
-      value:
+      value: 感想
   - type: textarea
     id: version
     attributes:
