@@ -1,5 +1,5 @@
 登録先
-[templates.ts](../../../../renderer/features/templatesSidebar/data/templates.ts)に設定する
+[templates.ts](../../../renderer/features/templatesSidebar/data/templates.ts)に設定する
 
 プロンプト英訳ステップ
 1. deepleで翻訳、一時ファイルに保存。
