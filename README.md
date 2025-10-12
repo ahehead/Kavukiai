@@ -1,4 +1,4 @@
-![image](src/resources/public/templates/Hybrid/Charactor_Creater_Template3.png)
+![image](src/resources/public/templates/Hybrid/Charactor_Creater_Template5.png)
 
 [日本語](README.md) | [English](README.en.md) | [简体中文](README.zh-CN.md)
 
