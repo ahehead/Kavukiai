@@ -1,5 +1,6 @@
 import comfyuiTemplate from "src/resources/public/templates/ComfyUI/ComfyUI_Template.png?url";
 import lmstudio_comfyui_template from "src/resources/public/templates/Hybrid/LM_Studio_And_ComfyUI_Template.png?url";
+import jsonSchemaParseTemplatePng from "src/resources/public/templates/JsonSchema/JSON_Schema_Parse_Template.png?url";
 import lmstudioTemplate from "src/resources/public/templates/LMStudio/LM_Studio_Template.png?url";
 import adoultImagerEN from "src/resources/public/templates/Prompt/ero_imager_en.md?raw";
 import adoultImagerJA from "src/resources/public/templates/Prompt/ero_imager_ja.md?raw";
@@ -37,6 +38,16 @@ export const TEMPLATES: TemplateMeta[] = [
     type: "PNGWorkflow",
     src: stringJoinPng,
     descriptionMd: "文字列の配列から、連結した文字列を作成する。",
+  },
+  {
+    id: "json-schema-parse",
+    title: "JSON Schema Parse Template",
+    genre: "JSON Schema",
+    tags: ["json", "schema", "parse"],
+    type: "PNGWorkflow",
+    src: jsonSchemaParseTemplatePng,
+    descriptionMd:
+      "JSON Schema を使ってテキストから構造化データを抽出するワークフロー。",
   },
   {
     id: "lmstudio-template",
