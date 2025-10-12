@@ -1,6 +1,7 @@
 ## ワークフローとその説明
 
-作れるワークフロー例です。ここにあるワークフローはソフト内のmenuのtempletesから読み込むことができます。
+作れるワークフロー例です。
+ここにあるワークフローはドラッグアンドドロップしたり、Kavukiai内のmenuのtempletesから読み込むことができます。
 
 ### String Template
 
@@ -30,9 +31,10 @@ stringをlistにして、joinでくっつける例です。
 
 LM Studioを使う例です。
 
-LM Studioを起動、停止、メモリを解放するノード、
+LM Studioを起動、停止、メモリを解放するノードなどがあります。
 
-UChatノードは、Chat用の履歴を構成するノードです。ここにUChat Messageをリストで保持して、これをLM Studioの引数にしてChatを行います。この部分はループになっています。
+UChatノードは、Chat用の履歴を構成するノードです。
+ここにUChat Messageをリストにして、LM Studioに渡しています。
 
 ### ComfyUI
 
@@ -40,5 +42,10 @@ UChatノードは、Chat用の履歴を構成するノードです。ここにUC
 
 ComfyUIを使う例です。
 
-設計としてはComfyUIのワークフローを読み込んで、ワークフローの一部を置き換えて、ComfyUIに投げるようになっています。
+ComfyUIのワークフローを読み込んで、ワークフローの一部を置き換えて、ComfyUIに投げるようになっています。
 
+### JsonSchema
+
+![jsonschema](../src/resources/public/templates/JsonSchema/JSON_Schema_Parse_Template.png)
+
+JSON SchemaでLLMの返答を固定して、値を取り出す例
