@@ -2,7 +2,7 @@
 
 [日本語](README.md) | [English](README.en.md) | [简体中文](README.zh-CN.md)
 
-**Last Updated:** 2025-10-11
+**Last Updated:** 2025-10-13
 
 ## Kavukiai
 
@@ -22,6 +22,7 @@ You can link nodes together to build AI workflows.
 > ⚠️  Kavukiai is less capable than solutions such as ComfyUI with its plugins, Dify, n8n, or even Vibe Coding (ChatGPT and similar tools). Please try those first to see whether they meet your needs, and use Kavukiai when you have an idea you specifically want to prototype with it.
 
 ## Release History
+2025-10-13 v5.1.0 released
 2025-10-11 v5.0.1 released
 
 ## Installation

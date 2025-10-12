@@ -2,7 +2,7 @@
 
 [日本語](README.md) | [English](README.en.md) | [简体中文](README.zh-CN.md)
 
-**最后更新：** 2025-10-11
+**最后更新：** 2025-10-13
 
 ## Kavukiai
 
@@ -22,6 +22,7 @@ Kavukiai（暂定名称）是一款基于节点界面的桌面工具，可以把
 > ⚠️  与 ComfyUI（及其插件）、Dify、n8n 以及 Vibe Coding（ChatGPT 等工具）相比，Kavukiai 的功能还较弱。建议优先确认这些工具能否满足需求，若有想在 Kavukiai 上试验的创意，再回到本工具。
 
 ## 更新记录
+2025-10-13 发布 v5.1.0
 2025-10-11 发布 v5.0.1
 
 ## 安装
