@@ -1,5 +1,9 @@
 ![image](src/resources/public/templates/Hybrid/Charactor_Creater_Template3.png)
 
+[日本語](README.md) | [English](README.en.md) | [简体中文](README.zh-CN.md)
+
+**最終更新 / Last Updated:** 2025-10-11
+
 ## Kavukiai
 
 Kavukiai(仮)は、主にローカルでAIを繋げて楽しむことができる、ノードUIのデスクトップツールです。
@@ -32,7 +36,7 @@ Kavukiai(仮)は、主にローカルでAIを繋げて楽しむことができ�
 
 
 ### 2. ダウンロード、解凍、起動
-[Releaseページ](https://github.com/ahehead/Kavukiai/releases/tag/v5.0.1)から、exeファイルをダウンロードして実行します。
+[Releaseページ](https://github.com/ahehead/Kavukiai/releases/)から、最新のバージョンのページへ、そしてexeファイルをダウンロードして実行します。
 (現在証明書などがないので、警告がでます)
 
 （注意: 環境毎のビルドがありますが、Windows以外は未確認です。）
@@ -50,7 +54,6 @@ Kavukiai(仮)は、主にローカルでAIを繋げて楽しむことができ�
 - ctrl + c , ctrl + v でノードのコピーとペースト。
 
 ## 既知の問題(たぶん対処予定)
-- group機能の挙動が微妙。
 - ComfyUIのエラーが分かりづらい。
 - ローディングアニメーションがない。
 - JsonSchemaNodeがネストした形を定義できない。つまりkey valueの形にしか設定できない。
@@ -64,7 +67,7 @@ Kavukiai(仮)は、主にローカルでAIを繋げて楽しむことができ�
 - 画像をLLM等のinputにする。
 
 ## ノードの追加方法
-フォークして、クローンして、AIにでも書いてもらって、プッシュして、プルリクする……
+フォークして、クローンして、AIにでも書いてもらって、プッシュして、プルリクする⋯⋯
 
 ## 意見・感想等
 Issuesへ
@@ -83,5 +86,4 @@ MIT
 [robo-robo](https://note.com/robo_robo_9):[イメージチャットシステムプロンプト](https://note.com/robo_robo_9/n/nef5345f312d7)
 
 [ぬるぽらぼ](https://x.com/NullpoLab):[インタラクティブテキストアドベンチャーゲームプロンプト](https://note.com/nullpolab/n/n738c84e2110e)
-
 
