@@ -2,6 +2,34 @@ type Loader<TModule> = () => Promise<TModule>;
 
 type ModuleMap<TModule> = Record<string, TModule | Loader<TModule>>;
 
+// Vite glob loaders expose functions named after the source path or __vite_glob_* helpers.
+const MODULE_LOADER_NAME_PATTERN = /[\\/]/;
+// These substrings appear in loader function bodies across Vite build targets.
+const MODULE_LOADER_SOURCE_HINTS = [
+  "__vite_ssr_dynamic_import__",
+  "__vite_glob_",
+  "import(",
+] as const;
+
+const hasLoaderSignature = (fn: (...args: unknown[]) => unknown) => {
+  if (fn.name && (MODULE_LOADER_NAME_PATTERN.test(fn.name) || fn.name.startsWith("__vite_glob_"))) {
+    return true;
+  }
+
+  const source = Function.prototype.toString.call(fn);
+  return MODULE_LOADER_SOURCE_HINTS.some((hint) => source.includes(hint));
+};
+
+function isModuleLoader<TModule>(
+  entry: TModule | Loader<TModule>
+): entry is Loader<TModule> {
+  if (typeof entry !== "function") {
+    return false;
+  }
+
+  return hasLoaderSignature(entry as (...args: unknown[]) => unknown);
+}
+
 export interface LoadModulesOptions<TModule, TResult = TModule> {
   /**
    * Resolve the value to collect from each module.
@@ -25,10 +53,7 @@ export async function loadModules<TModule, TResult = TModule>(
   const results: TResult[] = [];
 
   for (const [path, entry] of Object.entries(modules)) {
-    const moduleValue =
-      typeof entry === "function"
-        ? await (entry as Loader<TModule>)()
-        : entry;
+    const moduleValue = isModuleLoader(entry) ? await entry() : entry;
 
     const resolvedValue = resolve
       ? await resolve(moduleValue, path)
