@@ -1,85 +1,36 @@
 # Copilot Developer Instructions
-
-Quick-start guidance for AI coding agents working in this Electron + React + TypeScript monorepo (electron-vite based).
-
-## Architecture in one look
-
-- Three processes under `src/`:
-  - `main/` (Node): app entry (`main/index.ts`), IPC handlers (`main/ipc/**`), menus and windows (`main/windows/**`).
-  - `preload/` (Bridge): exposes safe APIs on `window.App` by composing modules (`preload/index.ts`). See `preload/README_ipc.md` for how to add channels.
-  - `renderer/` (React 19 + Vite): UI, routing via `electron-router-dom` (`renderer/routes.tsx`). Node editor is under `renderer/nodeEditor/**` using Rete v2.
-- Shared types live in `src/shared/**` and are consumed from both main/renderer (e.g., `shared/ApiType.ts`, TypeBox schemas).
-- Resources (icons, images, sample workflows) are under `src/resources/**`.
-
-## Development workflow
-
-- Setup: pnpm install
-- Run (dev, hot-reload): pnpm dev
-- Preview (prod build preview): pnpm start
-- Build app: pnpm build (uses electron-builder)
-- Lint/format: pnpm lint (auto-fix: pnpm lint:fix)
-- Tests (Vitest): pnpm test run, or pnpm vitest run -t "<name>"
-- Prebuild packaging metadata: pnpm compile:packageJSON
- - Editor/terminal: VS Code with PowerShell terminal (pwsh)
-
-### Change verification (run in PowerShell)
-
-```powershell
-pnpm lint
-npx tsc --noEmit
-pnpm test run
-```
-
-## IPC pattern (canonical)
-
-1) Add channel in `shared/ApiType.ts` (enum IpcChannel)
-2) Implement handler in `main/ipc/**` and register in `main/ipc/index.ts` via `registerIpcHandlers()`
-3) Add API wrapper in `preload/**` and export from `preload/index.ts` into `window.App`
-4) Call from renderer using the preload API. Example: ComfyUI run recipe
-   - Channel: `IpcChannel.PortComfyUIRunRecipe`
-   - Handler: `main/ipc/ComfyUI/runRecipeHandler.ts` streams structured events over a MessagePort
-   - Port event types: `shared/ComfyUIType/port-events.ts`
-
-## Node editor conventions (Rete v2)
-
-- Entry: `renderer/nodeEditor/CreateNodeEditor.ts` wires plugins: area, connection, react render, history, grid snapping, selection.
-- Control vs Data flow: `ExecList` in `renderer/nodeEditor/types` distinguishes exec sockets from data sockets. Dataflow via `features/safe-dataflow/dataflowEngin` and control via `rete-engine`.
-- UI presets: custom context menu and react presets under `renderer/nodeEditor/features/**`.
-- Keep logic separate from presentation; prefer Class Variance Authority for style variants.
-
-## ComfyUI and LMStudio integrations
-
-- ComfyUI: using `@saintno/comfyui-sdk`.
-  - Main handler builds a `PromptBuilder` from a `PromptRecipe` (TypeBox in `renderer/nodeEditor/types/Schemas/comfyui/prompt.schema.ts`):
-    - Map `recipe.inputs[key].path` via `setInputNode(key, path)`, `recipe.outputs[key].path` via `setOutputNode(key, path)`
-    - Apply `default` values unless listed in `recipe.bypass`
-    - Stream progress/preview/output via MessagePort events
-  - API client singleton in `main/ipc/ComfyUI/comfyApiClient.ts`.
-- LMStudio: IPC handlers under `main/ipc/LMStudio/**`; preload API in `preload/lmstudio.ts`.
-
-## State, settings, persistence
-
-- Renderer state via Zustand stores under `renderer/hooks/**`.
-- Persist app/user settings with `electron-conf` on main side; renderer-side persistence uses `localStorage` when applicable.
-
-## Code conventions for this repo
-
-- TypeScript + Biome. Keep types strict; avoid non-null assertions.
-- Follow `.github/instructions/ts.instructions.md` for TS/TSX/JS/CSS generation. Preserve comments; don’t reformat unrelated code in patches.
-- JSON schema: prefer TypeBox (`@sinclair/typebox`) in `src/shared/**` and generate types where needed.
-
-## Useful paths and examples
-
-- Routing: `renderer/routes.tsx`
-- IPC registry: `main/ipc/index.ts`
-- Preload export surface: `preload/index.ts`
-- Shared channels and types: `shared/ApiType.ts`, `shared/ComfyUIType/**`
-- Tests: `test/**` (Vitest). Example: `test/preload/lmstudio.test.ts`
-- Scripts: type extraction (`scripts/extract-types.ts`), ComfyUI sample runner (`scripts/run-comfyui-sample.ts`)
-
-## PR and CI expectations
-
-- Run pnpm test run and pnpm lint before pushing (see AGENTS.md). Ensure green tests and no type/lint errors.
- - Also run a type-check locally: `npx tsc --noEmit` (PowerShell terminal)
-
-If anything is unclear or missing, point to the file/area and we’ll refine this guide.
+**Core Layout**
+- Electron + Vite app with three processes: Node main (`src/main/**`), preload bridge (`src/preload/**`), and React renderer (`src/renderer/**`).
+- `main/index.ts` boots windows declared in `main/windows/**`; IPC handlers stay under `main/ipc/**` and register via `registerIpcHandlers()` in `main/ipc/index.ts`.
+- `preload/index.ts` exposes vetted APIs on `window.App`; modules like `preload/fileOperations.ts` or `preload/lmstudio.ts` wrap IPC calls using shared types.
+- Routing lives in `renderer/routes.tsx`; node editor UI is concentrated in `renderer/nodeEditor/**` (Rete v2 + React renderer).
+- Shared contracts stay in `src/shared/**` (TypeBox schemas + TS types) so both main and renderer compile against the same shapes.
+**Renderer Patterns**
+- `renderer/nodeEditor/CreateNodeEditor.ts` wires area, connection, history, selection, and custom plugin setup for Rete.
+- Exec sockets are enumerated in `renderer/nodeEditor/types/ExecList`; data flow logic sits in `renderer/nodeEditor/features/safe-dataflow/**`.
+- Context menu, grid snapping, and node chrome customizations live in `renderer/nodeEditor/features/**`; keep visual components using Class Variance Authority patterns already in place.
+- Cross-cutting UI sits under `renderer/components/**` and `renderer/features/**` (e.g., dirty-check, tab manager, toast notices).
+**IPC Workflow**
+- Declare new channels in `shared/ApiType.ts` (enum `IpcChannel`) and extend related TypeBox payloads there.
+- Implement handlers in `main/ipc/<feature>.ts` (or nested folders) and register them inside `main/ipc/index.ts`'s `registerIpcHandlers()`.
+- Mirror the handler with a preload wrapper (e.g., `preload/appState.ts`) and re-export through `preload/index.ts` to surface on `window.App`.
+- Renderer code calls `window.App.<feature>`; refer to `preload/README_ipc.md` for MessagePort patterns (ComfyUI streaming, etc.).
+**Integrations**
+- ComfyUI flows: `main/ipc/ComfyUI/runRecipeHandler.ts` builds a `PromptBuilder` from `renderer/nodeEditor/types/Schemas/comfyui/prompt.schema.ts`; events stream over MessagePort types defined in `shared/ComfyUIType/port-events.ts`.
+- `main/ipc/ComfyUI/comfyApiClient.ts` caches the SDK client—reuse instead of instantiating per request.
+- LMStudio endpoints reside in `main/ipc/LMStudio/**`, with preload access via `preload/lmstudio.ts` and Vitest coverage in `test/preload/lmstudio.test.ts` for expected payloads.
+**State & Persistence**
+- Renderer state stores use Zustand under `renderer/hooks/**`; async effects should live in store actions for predictable updates.
+- Persistent app settings leverage `electron-conf` on the main process; renderer-level preferences fall back to `localStorage` or store-level hydration helpers.
+- Workflow templates and assets live under `src/resources/public/**` and `scripts/sample/**`; keep new assets mirrored there if surfaced in UI.
+**Tooling & Commands**
+- Install deps with `pnpm install`; run hot reload via `pnpm dev`, production preview with `pnpm start`, and package with `pnpm build` (electron-builder).
+- Run linting using `pnpm lint` (auto-fix: `pnpm lint:fix`); static type checks via `npx tsc --noEmit`.
+- Execute tests with `pnpm test run`; target a single case using `pnpm vitest run -t "<name>"`.
+- Follow `.github/instructions/ts.instructions.md` for TS/TSX/JS/CSS edits; formatting is enforced by Biome.
+- Type extraction utilities live in `scripts/extract-types.ts`; data fixtures in `scripts/data/*.data.ts` document expected schema shapes.
+**Useful References**
+- `main/features/**` contains OS integrations (file dialogs, window sizing) reused by IPC handlers.
+- `renderer/features/**` aggregates reusable logic like file IO, PNG export, and drag/drop workflow handling.
+- Documentation for flows sits in `doc/workflow.md`; architectural notes and refactor plans under `doc/plan/*.md` provide rationale before editing core modules.
+- `AGENTS.md` summarizes contributor expectations (lint, type-check, Vitest) before opening PRs—treat as CI contract.
