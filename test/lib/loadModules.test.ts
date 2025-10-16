@@ -1,0 +1,58 @@
+import { loadModules } from "src/lib/loadModules";
+import { describe, expect, test, vi } from "vitest";
+
+type FixtureModule = { register: () => string } | { default: () => string };
+
+const resolveRegister = (module: FixtureModule) => {
+  if ("register" in module) {
+    return module.register();
+  }
+
+  if ("default" in module) {
+    return module.default();
+  }
+
+  throw new Error("register export not found");
+};
+
+describe("loadModules", () => {
+  test("normalises eager module maps", async () => {
+    const hitPaths: string[] = [];
+    const modules = import.meta.glob<FixtureModule>(
+      "./__fixtures__/module*.ts",
+      {
+        eager: true,
+      }
+    );
+
+    const results = await loadModules(modules, {
+      resolve: (module, path) => {
+        hitPaths.push(path);
+        return resolveRegister(module);
+      },
+    });
+
+    expect(results.sort()).toEqual(["moduleA", "moduleB"]);
+    expect(hitPaths.sort()).toEqual(
+      ["./__fixtures__/moduleA.ts", "./__fixtures__/moduleB.ts"].sort()
+    );
+  });
+
+  test("awaits lazy module loaders and onLoad hooks", async () => {
+    const onLoad = vi.fn(async () => {
+      await Promise.resolve();
+    });
+
+    const modules = import.meta.glob<FixtureModule>(
+      "./__fixtures__/module*.ts"
+    );
+
+    const results = await loadModules(modules, {
+      resolve: resolveRegister,
+      onLoad,
+    });
+
+    expect(results.sort()).toEqual(["moduleA", "moduleB"]);
+    expect(onLoad).toHaveBeenCalledTimes(2);
+  });
+});

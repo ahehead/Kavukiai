@@ -1,9 +1,9 @@
-import { expect, test } from "vitest";
 import {
   createApiKeysFlags,
   createApiKeysSecrets,
   providers,
 } from "shared/ApiKeysType";
+import { expect, test } from "vitest";
 
 test("createApiKeysFlags returns flags for all providers set to false", () => {
   const keys = createApiKeysFlags();
