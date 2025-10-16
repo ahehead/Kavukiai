@@ -21,31 +21,38 @@
 
 ## フェーズ別計画
 
+## 進捗トラッカー
+- [x] Phase 1: パイロットノード構築と基盤整備
+- [ ] Phase 2: Preload 自動登録化
+- [ ] Phase 3: Main(IPC) 自動登録化
+- [ ] Phase 4: Renderer Schema/Types 再配置
+- [ ] Phase 5: shared/type 全体整理
+
 ### Phase 1: 準備
-- `src/nodes/` ルートを作成し、`src/nodes/LMStudio/LMStudioStart` をパイロット対象に選定。
-- 共通ユーティリティ: `loadModules` 的なヘルパー（`import.meta.glob` ラッパー）を `src/lib` へ追加。
-- ビルド設定 (electron.vite.config.ts) のエイリアス設定確認・必要なら `@nodes` 等の alias を追加。
+- [x] `src/nodes/` ルートを作成し、`src/nodes/LMStudio/LMStudioStart` をパイロット対象に選定。
+- [x] 共通ユーティリティ: `loadModules` 的なヘルパー（`import.meta.glob` ラッパー）を `src/lib` へ追加。
+- [x] ビルド設定 (electron.vite.config.ts) のエイリアス設定確認・必要なら `@nodes` 等の alias を追加。
 
 ### Phase 2: preload 再構成
-- `src/preload/index.ts` を `import.meta.glob("../nodes/**/preload/*Entry.ts")` のような自動登録へ書き換え。
-- LMStudio/LMStudioStart から着手し、既存の api を `src/nodes/LMStudio/LMStudioStart/preload/api.ts` へ移動。
-- LMStudio/LMStudioStart関連のAPI の型は `src/nodes/LMStudio/LMStudioStart/shared/types.ts` へ配置。
-- 他ノードを順次移行。移行済みノードのレガシーファイルを削除。
+- [ ] `src/preload/index.ts` を `import.meta.glob("../nodes/**/preload/*Entry.ts")` のような自動登録へ書き換え。
+- [ ] LMStudio/LMStudioStart から着手し、既存の api を `src/nodes/LMStudio/LMStudioStart/preload/api.ts` へ移動。
+- [ ] LMStudio/LMStudioStart関連のAPI の型は `src/nodes/LMStudio/LMStudioStart/shared/types.ts` へ配置。
+- [ ] 他ノードを順次移行。移行済みノードのレガシーファイルを削除。
 
 ### Phase 3: main (IPC) 再構成
-- `src/main/ipc/index.ts` を `import.meta.glob("../nodes/**/main/ipc.ts")` からの自動登録へ切り替え。
-- LMStudio 関連 (`registerLMStudioHandlers`, `registerLMStudioChatHandler`, `registerLMStudioLoadModelHandler`) からLMStudioStart関連を `src/nodes/LMStudio/LMStudioStart/main` に移動.LMStudio関連のノード全体に関係ありそうな部分は、`src/nodes/LMStudio/commn/main`へ。ひとつの `register` エントリから束ねる。
-- 順次移行。`registerIpcHandlers` 内の個別呼び出しは段階的に廃止。
+- [ ] `src/main/ipc/index.ts` を `import.meta.glob("../nodes/**/main/ipc.ts")` からの自動登録へ切り替え。
+- [ ] LMStudio 関連 (`registerLMStudioHandlers`, `registerLMStudioChatHandler`, `registerLMStudioLoadModelHandler`) からLMStudioStart関連を `src/nodes/LMStudio/LMStudioStart/main` に移動.LMStudio関連のノード全体に関係ありそうな部分は、`src/nodes/LMStudio/commn/main`へ。ひとつの `register` エントリから束ねる。
+- [ ] 順次移行。`registerIpcHandlers` 内の個別呼び出しは段階的に廃止。
 
 ### Phase 4: Renderer NodeEditor Schema/Types
-- `src/renderer/nodeEditor/types/Schemas` や `shared/type` のうちノード固有の要素を各ノード配下の `schema/` または `shared/` に移動。
-- 共通 schema は `src/nodes/common/schema` または `src/nodes/commna/_shared` にまとめる案を検討。
-- 最初の対象として `src/renderer/nodeEditor/nodes/Node/LMStudio/LMStudioStartNode.tsx` を `src/nodes/LMStudio/LMStudioStart/renderer/LMStudioStartNode.tsx` へ移設し、必要なら `src/nodes/LMStudio/LMStudioStart` 配下に `main/`, `preload/`, `shared/`, `schema/` を段階的に追加する。
+- [ ] `src/renderer/nodeEditor/types/Schemas` や `shared/type` のうちノード固有の要素を各ノード配下の `schema/` または `shared/` に移動。
+- [ ] 共通 schema は `src/nodes/common/schema` または `src/nodes/commna/_shared` にまとめる案を検討。
+- [ ] 最初の対象として `src/renderer/nodeEditor/nodes/Node/LMStudio/LMStudioStartNode.tsx` を `src/nodes/LMStudio/LMStudioStart/renderer/LMStudioStartNode.tsx` へ移設し、必要なら `src/nodes/LMStudio/LMStudioStart` 配下に `main/`, `preload/`, `shared/`, `schema/` を段階的に追加する。
 
 ### Phase 5: shared/type の整理
-- `src/shared` 配下を棚卸しし、ノード固有の型は `src/nodes/<nodeフォルダ>/<node>/shared` へ移動。
-- どのノードからも参照される純粋ユーティリティは `src/shared/core` などに再配置。
-- 型の循環参照が発生する場合は `shared/core` に残す。
+- [ ] `src/shared` 配下を棚卸しし、ノード固有の型は `src/nodes/<nodeフォルダ>/<node>/shared` へ移動。
+- [ ] どのノードからも参照される純粋ユーティリティは `src/shared/core` などに再配置。
+- [ ] 型の循環参照が発生する場合は `shared/core` に残す。
 
 ## モジュール自動登録の詳細案
 - preload: `import.meta.glob("../nodes/**/preload/expose.ts", { eager: true })` で各モジュールの `default` もしくは `register(apiContext)` を実行。
@@ -58,8 +65,8 @@
 - Electron メインプロセス再起動時のパス解決が変わるため、`__dirname` 依存ロジックがないか確認。
 
 ## 次のアクション
-1. `src/nodes/LMStudio/LMStudioStart` ディレクトリを作成し、`renderer/LMStudioStartNode.tsx` へ既存ノードを移動・再輸出できる状態に整える。
-2. LMStudio ノードの preload/main エントリファイルを `src/nodes/LMStudio/...` へ複製し、既存実装とリンクを張る。
-3. `src/preload/index.ts` に仮実装の自動登録関数（まだ LMStudio のみ）を導入し動作確認。
-4. 続いて `src/main/ipc/index.ts` でも同様の手法を適用。
-5. NodeEditor schema/type の移行規約を追加で定義し、別ドキュメント化する（必要に応じて）。
+- [x] `src/nodes/LMStudio/LMStudioStart` ディレクトリを作成し、`renderer/LMStudioStartNode.tsx` へ既存ノードを移動・再輸出できる状態に整える。
+- [ ] LMStudio ノードの preload/main エントリファイルを `src/nodes/LMStudio/...` へ複製し、既存実装とリンクを張る。
+- [ ] `src/preload/index.ts` に仮実装の自動登録関数（まだ LMStudio のみ）を導入し動作確認。
+- [ ] 続いて `src/main/ipc/index.ts` でも同様の手法を適用。
+- [ ] NodeEditor schema/type の移行規約を追加で定義し、別ドキュメント化する（必要に応じて）。

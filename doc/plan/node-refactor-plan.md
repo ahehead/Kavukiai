@@ -1,67 +1,72 @@
 # Node-Level Recomposition Plan
 
 ## Background
-- The Electron app structure is split across `src/main`, `src/preload`, `src/renderer`, and `src/shared`, so implementations for a single "node" (feature) are scattered across directories, making them hard to trace and understand.
-- This is especially problematic for NodeEditor schemas/types and node-specific logic such as LMStudio or ComfyUI, which live far apart and reduce maintainability.
+- The Electron app structure is split across `src/main`, `src/preload`, `src/renderer`, and `src/shared`, so implementations for a single node (feature) end up scattered across layers and are hard to follow.
+- This is especially painful for NodeEditor schemas/types and node-specific logic such as LMStudio or ComfyUI, which live far apart and drag down maintainability.
 
 ## Goals
-- Group the main/preload/renderer/shared/schema code for each node under a single node boundary to improve discoverability.
-- Replace manual preload/IPC registration with directory discovery (auto-registration at build time) to lower maintenance cost when adding or removing nodes.
-- Reorganize existing type definitions and schemas into node-specific subdirectories to simplify import references.
+- Gather the main/preload/renderer/shared/schema pieces for each node so the functional boundary is easy to scan.
+- Replace preload and IPC registration with directory discovery (auto-registration at build time) to cut the maintenance cost of adding or removing nodes.
+- Reorganize existing type definitions and schemas into node-specific subdirectories to simplify imports.
 
 ## High-Level Approach
-- Rehome code under `src/nodes/<node group>/<node>/` with the following layout:
-	- `main/` — IPC handlers and main-process utilities.
-	- `preload/` — APIs exposed via `contextBridge`, schemas, and types.
-	- `renderer/` — NodeEditor UI, hooks, and schemas.
-	- `shared/` — Pure TypeScript types/constants referenced by both main and renderer.
-	- `schema/` — TypeBox definitions for data exchanged between nodes.
-- Update `src/main/index.ts` to load window/IPC modules via `import.meta.glob`, targeting entry files such as `main/register.ts`. `src/main/ipc/index.ts` should likewise auto-register handlers.
-- Update `src/preload/index.ts` to expose preload APIs via `import.meta.glob`, targeting entries like `preload/api.ts`.
-- Renderer code should import from these centralized entries so all node concerns reside under `src/nodes`.
-- During migration, keep the legacy `src/main`, `src/preload`, etc. alongside the new structure and remove old files once each node moves over.
+- Rehome code under `src/nodes/<node group>/<node>/` laid out as:
+  - `main/` — IPC handlers and main-process-only utilities.
+  - `preload/` — APIs, schemas, and types exposed via `contextBridge`.
+  - `renderer/` — NodeEditor UI, hooks, and schemas.
+  - `shared/` — Pure TypeScript types/constants referenced by both main and renderer.
+  - `schema/` — TypeBox definitions for the data exchanged between nodes.
+- Invoke auto-registration logic from `src/main/index.ts` and `src/preload/index.ts`, using `import.meta.glob` to eagerly load entry files in each node folder (for example `main/register.ts`, `preload/api.ts`).
+- For now, keep the legacy top-level `src/main`, `src/preload`, etc. alongside the new layout and retire legacy files gradually after each migration step.
 
-## Phase Plan
+## Phase-by-Phase Plan
+
+## Progress Tracker
+- [x] Phase 1: Build the pilot node and lay the groundwork
+- [ ] Phase 2: Automate preload registration
+- [ ] Phase 3: Automate main (IPC) registration
+- [ ] Phase 4: Rehome renderer schemas/types
+- [ ] Phase 5: Clean up shared/types overall
 
 ### Phase 1: Preparation
-- Create the `src/nodes/` root and select `src/nodes/LMStudio/LMStudioStart` as the pilot target.
-- Add a shared helper such as `loadModules` (an `import.meta.glob` wrapper) under `src/lib`.
-- Check `electron.vite.config.ts` aliases and add one (for example `@nodes`) if helpful.
+- [x] Create the `src/nodes/` root and select `src/nodes/LMStudio/LMStudioStart` as the pilot target.
+- [x] Add a shared helper such as `loadModules` (an `import.meta.glob` wrapper) under `src/lib`.
+- [x] Review alias settings in `electron.vite.config.ts` and add one like `@nodes` if necessary.
 
 ### Phase 2: Preload Recomposition
-- Refactor `src/preload/index.ts` to auto-register modules via `import.meta.glob("../nodes/**/preload/*Entry.ts")`.
-- Start with LMStudio/LMStudioStart: move existing APIs into `src/nodes/LMStudio/LMStudioStart/preload/api.ts`.
-- Place LMStudio/LMStudioStart-related types in `src/nodes/LMStudio/LMStudioStart/shared/types.ts`.
-- Migrate other nodes in turn and delete legacy files after each move.
+- [ ] Rewrite `src/preload/index.ts` to use auto-registration, for example `import.meta.glob("../nodes/**/preload/*Entry.ts")`.
+- [ ] Start with LMStudio/LMStudioStart and move the existing APIs into `src/nodes/LMStudio/LMStudioStart/preload/api.ts`.
+- [ ] Place LMStudio/LMStudioStart API types under `src/nodes/LMStudio/LMStudioStart/shared/types.ts`.
+- [ ] Migrate the remaining nodes in sequence, deleting legacy files once each move completes.
 
 ### Phase 3: Main (IPC) Recomposition
-- Refactor `src/main/ipc/index.ts` to auto-register handlers via `import.meta.glob("../nodes/**/main/ipc.ts")`.
-- Move LMStudio handlers such as `registerLMStudioHandlers`, `registerLMStudioChatHandler`, and `registerLMStudioLoadModelHandler` into `src/nodes/LMStudio/LMStudioStart/main`. Place logic shared across LMStudio nodes in `src/nodes/LMStudio/common/main`, exposed from a single `register` entry point.
-- Continue migrating other nodes and phase out explicit registrations inside `registerIpcHandlers`.
+- [ ] Switch `src/main/ipc/index.ts` to auto-register handlers via `import.meta.glob("../nodes/**/main/ipc.ts")`.
+- [ ] Move LMStudio handlers (`registerLMStudioHandlers`, `registerLMStudioChatHandler`, `registerLMStudioLoadModelHandler`) into `src/nodes/LMStudio/LMStudioStart/main`, and gather logic used across LMStudio nodes in `src/nodes/LMStudio/common/main`, exposed through a single `register` entry.
+- [ ] Continue migrating other nodes and phase out the explicit calls inside `registerIpcHandlers`.
 
 ### Phase 4: Renderer NodeEditor Schemas/Types
-- Move node-specific schemas from `src/renderer/nodeEditor/types/Schemas` and node-specific types from `src/shared/type` into each node's `schema/` or `shared/` directory.
-- Keep cross-node schemas under `src/nodes/common/schema` (or `src/nodes/common/_shared`) as needed.
-- Begin by relocating `src/renderer/nodeEditor/nodes/Node/LMStudio/LMStudioStartNode.tsx` to `src/nodes/LMStudio/LMStudioStart/renderer/LMStudioStartNode.tsx`, adding `main/`, `preload/`, `shared/`, and `schema/` subdirectories as necessary.
+- [ ] Move node-specific pieces from `src/renderer/nodeEditor/types/Schemas` and node-specific items in `src/shared/type` into each node's `schema/` or `shared/` directory.
+- [ ] Consider consolidating shared schemas under `src/nodes/common/schema` or `src/nodes/common/_shared`.
+- [ ] Start by relocating `src/renderer/nodeEditor/nodes/Node/LMStudio/LMStudioStartNode.tsx` to `src/nodes/LMStudio/LMStudioStart/renderer/LMStudioStartNode.tsx`, adding `main/`, `preload/`, `shared/`, and `schema/` subdirectories as needed.
 
-### Phase 5: Shared Type Cleanup
-- Audit `src/shared` and move node-specific types into `src/nodes/<node group>/<node>/shared`.
-- Keep utilities referenced by multiple nodes under `src/shared/core` or a similar location.
-- If circular dependencies appear, leave the types in `shared/core`.
+### Phase 5: Shared/Type Cleanup
+- [ ] Review `src/shared` and move node-specific types into `src/nodes/<node group>/<node>/shared`.
+- [ ] Relocate utilities referenced by multiple nodes to `src/shared/core` or a similar shared location.
+- [ ] If circular dependencies arise, keep the types under `shared/core`.
 
-## Auto-Registration Details
-- Preload: use `import.meta.glob("../nodes/**/preload/expose.ts", { eager: true })` to load each module and call its default export or `register(apiContext)`.
-- Main: use `import.meta.glob("../nodes/**/main/*.ipc.ts", { eager: true })` to load modules and call `export const register = (ctx) => { ... }`.
-- Testing: add Vitest coverage (e.g., `pnpm vitest run -t "preload auto registration"`) to verify the discovered modules match expectations.
+## Auto-Registration Proposal
+- Preload: call `import.meta.glob("../nodes/**/preload/expose.ts", { eager: true })` and execute each module's default export or `register(apiContext)`.
+- Main: call `import.meta.glob("../nodes/**/main/*.ipc.ts", { eager: true })` and execute each module's `export const register = (ctx) => { ... }`.
+- Testing: add Vitest coverage (for example `pnpm vitest run -t "preload auto registration"`) to confirm the discovered modules match expectations.
 
 ## Risks and Considerations
-- `import.meta.glob` resolves at build time, so we must standardize file naming conventions.
-- During migration there is higher risk of circular references or duplicate API exposures, so run `pnpm lint` and `pnpm test` at each step.
-- Electron main-process path resolution will change; verify no logic depends on `__dirname`.
+- Because `import.meta.glob` resolves at build time, we must enforce strict file-naming conventions.
+- During migration, circular references or duplicate exposures become harder to spot, so run `pnpm lint` and `pnpm test` at each stage.
+- Electron main-process restarts will resolve paths differently; confirm no logic depends on `__dirname`.
 
 ## Next Actions
-1. Create `src/nodes/LMStudio/LMStudioStart` and move the existing node implementation to `renderer/LMStudioStartNode.tsx`, ensuring exports remain intact.
-2. Copy the LMStudio preload/main entry files into `src/nodes/LMStudio/...` and link them with the existing implementations.
-3. Add a provisional auto-registration function to `src/preload/index.ts` (for LMStudio only) and confirm it works.
-4. Apply the same approach to `src/main/ipc/index.ts`.
-5. Define schema/type migration rules for the NodeEditor and document them separately as needed.
+- [x] Create the `src/nodes/LMStudio/LMStudioStart` directory and move the existing node implementation to `renderer/LMStudioStartNode.tsx`, keeping exports wired up.
+- [ ] Duplicate the LMStudio preload/main entry files into `src/nodes/LMStudio/...` and connect them to the existing implementations.
+- [ ] Add a provisional auto-registration helper (LMStudio only for now) to `src/preload/index.ts` and verify it runs.
+- [ ] Apply the same technique to `src/main/ipc/index.ts`.
+- [ ] Define migration rules for NodeEditor schemas/types and document them separately if needed.
