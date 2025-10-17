@@ -23,7 +23,7 @@
 
 ## Progress Tracker
 - [x] Phase 1: Build the pilot node and lay the groundwork
-- [ ] Phase 2: Automate preload registration
+- [x] Phase 2: Automate preload registration
 - [ ] Phase 3: Automate main (IPC) registration
 - [ ] Phase 4: Rehome renderer schemas/types
 - [ ] Phase 5: Clean up shared/types overall
@@ -34,10 +34,10 @@
 - [x] Review alias settings in `electron.vite.config.ts` and add one like `@nodes` if necessary.
 
 ### Phase 2: Preload Recomposition
-- [ ] Rewrite `src/preload/index.ts` to use auto-registration, for example `import.meta.glob("../nodes/**/preload/*Entry.ts")`.
-- [ ] Start with LMStudio/LMStudioStart and move the existing APIs into `src/nodes/LMStudio/LMStudioStart/preload/api.ts`.
-- [ ] Place LMStudio/LMStudioStart API types under `src/nodes/LMStudio/LMStudioStart/shared/types.ts`.
-- [ ] Migrate the remaining nodes in sequence, deleting legacy files once each move completes.
+- [x] Rewrite `src/preload/index.ts` to use auto-registration, for example `import.meta.glob("../nodes/**/preload/*Entry.ts")`.
+- [x] Start with LMStudio/LMStudioStart and move the existing APIs into `src/nodes/LMStudio/LMStudioStart/preload/api.ts`.
+- [x] Place LMStudio/LMStudioStart API types under `src/nodes/LMStudio/LMStudioStart/shared/types.ts`.
+- [x] Delete migrated preload legacy files. Rewriting or adding tests.
 
 ### Phase 3: Main (IPC) Recomposition
 - [ ] Switch `src/main/ipc/index.ts` to auto-register handlers via `import.meta.glob("../nodes/**/main/ipc.ts")`.
@@ -66,7 +66,7 @@
 
 ## Next Actions
 - [x] Create the `src/nodes/LMStudio/LMStudioStart` directory and move the existing node implementation to `renderer/LMStudioStartNode.tsx`, keeping exports wired up.
-- [ ] Duplicate the LMStudio preload/main entry files into `src/nodes/LMStudio/...` and connect them to the existing implementations.
-- [ ] Add a provisional auto-registration helper (LMStudio only for now) to `src/preload/index.ts` and verify it runs.
+- [x] Duplicate the LMStudio preload/main entry files into `src/nodes/LMStudio/...` and connect them to the existing implementations.
+- [x] Add a provisional auto-registration helper (LMStudio only for now) to `src/preload/index.ts` and verify it runs.
 - [ ] Apply the same technique to `src/main/ipc/index.ts`.
 - [ ] Define migration rules for NodeEditor schemas/types and document them separately if needed.

@@ -7,7 +7,9 @@ vi.mock("electron", () => ({
 
 describe("lmstudioApi", () => {
   test("listDownloadedModels invokes ipcRenderer with correct channel", async () => {
-    const { lmstudioApi } = await import("preload/lmstudio");
+    const { lmstudioApi } = await import(
+      "src/nodes/LMStudio/common/preload/api"
+    );
     const { ipcRenderer } = (await import("electron")) as any;
     const mockReturn = Promise.resolve({ status: "success", data: [] });
     ipcRenderer.invoke.mockReturnValueOnce(mockReturn);
@@ -19,7 +21,9 @@ describe("lmstudioApi", () => {
   });
 
   test("loadModel posts message with port", async () => {
-    const { lmstudioApi } = await import("preload/lmstudio");
+    const { lmstudioApi } = await import(
+      "src/nodes/LMStudio/common/preload/api"
+    );
     const { ipcRenderer } = (await import("electron")) as any;
     const postMessage = vi.fn();
     const winPost = vi.fn();
@@ -37,7 +41,9 @@ describe("lmstudioApi", () => {
   });
 
   test("sendChatMessage posts message with port", async () => {
-    const { lmstudioApi } = await import("preload/lmstudio");
+    const { lmstudioApi } = await import(
+      "src/nodes/LMStudio/common/preload/api"
+    );
     const { ipcRenderer } = (await import("electron")) as any;
     const postMessage = vi.fn();
     const winPost = vi.fn();
@@ -60,7 +66,9 @@ describe("lmstudioApi", () => {
   });
 
   test("unloadAllModels invokes ipcRenderer with correct channel", async () => {
-    const { lmstudioApi } = await import("preload/lmstudio");
+    const { lmstudioApi } = await import(
+      "src/nodes/LMStudio/common/preload/api"
+    );
     const { ipcRenderer } = (await import("electron")) as any;
     const mockReturn = Promise.resolve({ status: "success", data: "ok" });
     ipcRenderer.invoke.mockReturnValueOnce(mockReturn);

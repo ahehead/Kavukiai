@@ -34,10 +34,10 @@
 - [x] ビルド設定 (electron.vite.config.ts) のエイリアス設定確認・必要なら `@nodes` 等の alias を追加。
 
 ### Phase 2: preload 再構成
-- [ ] `src/preload/index.ts` を `import.meta.glob("../nodes/**/preload/*Entry.ts")` のような自動登録へ書き換え。
-- [ ] LMStudio/LMStudioStart から着手し、既存の api を `src/nodes/LMStudio/LMStudioStart/preload/api.ts` へ移動。
-- [ ] LMStudio/LMStudioStart関連のAPI の型は `src/nodes/LMStudio/LMStudioStart/shared/types.ts` へ配置。
-- [ ] 他ノードを順次移行。移行済みノードのレガシーファイルを削除。
+- [x] `src/preload/index.ts` を `import.meta.glob("../nodes/**/preload/*Entry.ts")` のような自動登録へ書き換え。
+- [x] LMStudio/LMStudioStart から着手し、既存の api を `src/nodes/LMStudio/LMStudioStart/preload/api.ts` へ移動。
+- [x] LMStudio/LMStudioStart関連のAPI の型は `src/nodes/LMStudio/LMStudioStart/shared/types.ts` へ配置。
+- [x] 移行済みのpreloadレガシーファイルを削除。テストの書き換えまたは追加。
 
 ### Phase 3: main (IPC) 再構成
 - [ ] `src/main/ipc/index.ts` を `import.meta.glob("../nodes/**/main/ipc.ts")` からの自動登録へ切り替え。
@@ -66,7 +66,7 @@
 
 ## 次のアクション
 - [x] `src/nodes/LMStudio/LMStudioStart` ディレクトリを作成し、`renderer/LMStudioStartNode.tsx` へ既存ノードを移動・再輸出できる状態に整える。
-- [ ] LMStudio ノードの preload/main エントリファイルを `src/nodes/LMStudio/...` へ複製し、既存実装とリンクを張る。
-- [ ] `src/preload/index.ts` に仮実装の自動登録関数（まだ LMStudio のみ）を導入し動作確認。
+- [x] LMStudio ノードの preload/main エントリファイルを `src/nodes/LMStudio/...` へ複製し、既存実装とリンクを張る。
+- [x] `src/preload/index.ts` に仮実装の自動登録関数（まだ LMStudio のみ）を導入し動作確認。
 - [ ] 続いて `src/main/ipc/index.ts` でも同様の手法を適用。
 - [ ] NodeEditor schema/type の移行規約を追加で定義し、別ドキュメント化する（必要に応じて）。

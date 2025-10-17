@@ -8,8 +8,6 @@ import type {
 export const lmstudioApi = {
   listDownloadedModels: (): Promise<IpcResult<any[]>> =>
     ipcRenderer.invoke(IpcChannel.ListLMStudioModels),
-  startServer: (): Promise<IpcResult<string>> =>
-    ipcRenderer.invoke(IpcChannel.StartLMStudioServer),
   stopServer: (): Promise<IpcResult<string>> =>
     ipcRenderer.invoke(IpcChannel.StopLMStudioServer),
   getServerStatus: (): Promise<IpcResult<any>> =>
@@ -40,3 +38,7 @@ export const lmstudioApi = {
     window.postMessage({ type: "node-port", id }, "*", [port1]);
   },
 };
+
+export const register = () => lmstudioApi;
+
+export default register;
