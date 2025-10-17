@@ -5,7 +5,8 @@
     "paths": {
       "renderer/*": ["src/renderer/*"],
       "main/*": ["src/main/*"],
-      "shared/*": ["src/shared/*"]
+      "shared/*": ["src/shared/*"],
+      "@nodes/*": ["src/nodes/*"]
     },
     "module": "ESNext",
     "moduleResolution": "Bundler",
