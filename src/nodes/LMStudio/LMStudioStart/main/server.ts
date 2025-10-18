@@ -7,10 +7,10 @@ import {
   listModelsViaCli,
   startServerViaCli,
   stopServerViaCli,
-} from "./cliService";
-import { unloadAllModels } from "./modelClient";
+} from "../../common/main/cliService";
+import { unloadAllModels } from "../../common/main/modelClient";
 
-export function registerLMStudioHandlers(): void {
+export function registerLMStudioServerHandlers(): void {
   ipcMain.handle(
     IpcChannel.ListLMStudioModels,
     async (): Promise<IpcResult<ModelInfo[]>> => {
@@ -59,6 +59,7 @@ export function registerLMStudioHandlers(): void {
   ipcMain.handle(
     IpcChannel.GetLMStudioStatus,
     async (): Promise<IpcResult<LMStudioStatusInfo>> => {
+      console.log("GetLMStudioStatus called");
       try {
         const info = await getStatusViaCli();
         if (info === null) {

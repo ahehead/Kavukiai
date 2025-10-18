@@ -5,7 +5,10 @@ import type {
   LMStudioChatPortEvent,
   LMStudioChatRequestArgs,
 } from "shared/LMStudioType";
-import { findLoadedModel, getLMStudioClient } from "./modelClient";
+import {
+  findLoadedModel,
+  getLMStudioClient,
+} from "../../common/main/modelClient";
 
 /**
  * Registers the IPC handler for LMStudio chat requests.

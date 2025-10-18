@@ -8,6 +8,7 @@ import {
 import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
 
 import type { ControlFlowEngine } from 'rete-engine'
+import type api from '../preload/api'
 
 export class LMStudioStartNode extends SerializableInputsNode<
   'LMStudioStart',
@@ -34,7 +35,9 @@ export class LMStudioStartNode extends SerializableInputsNode<
     if (this.status === NodeStatus.RUNNING) return
 
     this.changeStatus(NodeStatus.RUNNING)
-    const result = await electronApiService.startServer()
+    const result = await (
+      electronApiService as never as typeof api
+    ).startServer()
     if (result.status === 'success') {
       this.controls.console.addValue(result.data)
       this.changeStatus(NodeStatus.COMPLETED)

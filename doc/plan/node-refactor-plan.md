@@ -40,8 +40,8 @@
 - [x] Delete migrated preload legacy files. Rewriting or adding tests.
 
 ### Phase 3: Main (IPC) Recomposition
-- [ ] Switch `src/main/ipc/index.ts` to auto-register handlers via `import.meta.glob("../nodes/**/main/ipc.ts")`.
-- [ ] Move LMStudio handlers (`registerLMStudioHandlers`, `registerLMStudioChatHandler`, `registerLMStudioLoadModelHandler`) into `src/nodes/LMStudio/LMStudioStart/main`, and gather logic used across LMStudio nodes in `src/nodes/LMStudio/common/main`, exposed through a single `register` entry.
+- [x] Switch `src/main/ipc/index.ts` to auto-register handlers via `import.meta.glob("../nodes/**/main/ipc.ts")`.
+- [x] Move LMStudio handlers (`registerLMStudioHandlers`, `registerLMStudioChatHandler`, `registerLMStudioLoadModelHandler`) into `src/nodes/LMStudio/LMStudioStart/main`, and gather logic used across LMStudio nodes in `src/nodes/LMStudio/common/main`, exposed through a single `register` entry.
 - [ ] Continue migrating other nodes and phase out the explicit calls inside `registerIpcHandlers`.
 
 ### Phase 4: Renderer NodeEditor Schemas/Types
@@ -68,5 +68,5 @@
 - [x] Create the `src/nodes/LMStudio/LMStudioStart` directory and move the existing node implementation to `renderer/LMStudioStartNode.tsx`, keeping exports wired up.
 - [x] Duplicate the LMStudio preload/main entry files into `src/nodes/LMStudio/...` and connect them to the existing implementations.
 - [x] Add a provisional auto-registration helper (LMStudio only for now) to `src/preload/index.ts` and verify it runs.
-- [ ] Apply the same technique to `src/main/ipc/index.ts`.
+- [x] Apply the same technique to `src/main/ipc/index.ts`.
 - [ ] Define migration rules for NodeEditor schemas/types and document them separately if needed.

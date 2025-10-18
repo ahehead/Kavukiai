@@ -7,5 +7,5 @@ import { MainWindow } from "./windows/main";
 makeAppWithSingleInstanceLock(async () => {
   await app.whenReady();
   await makeAppSetup(MainWindow);
-  registerIpcHandlers();
+  await registerIpcHandlers();
 });
