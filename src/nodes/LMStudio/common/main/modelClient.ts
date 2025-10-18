@@ -1,28 +1,17 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 import {
   type BaseLoadModelOpts,
   type LLM,
   type LLMLoadModelConfig,
   LMStudioClient,
 } from "@lmstudio/sdk";
-
-const execFileAsync = promisify(execFile);
+import { getStatusViaCli } from "./cliService";
 
 /**
  * Checks if LMStudio server is running via CLI.
  */
 async function isServerRunningViaCli(): Promise<boolean> {
-  try {
-    const { stdout, stderr } = await execFileAsync("lms", ["status"], {
-      encoding: "utf8",
-    });
-    // CLI may output status to stderr or stdout
-    const output = stderr || stdout;
-    return !output.includes("Server:  OFF");
-  } catch {
-    return false;
-  }
+  const statusInfo = await getStatusViaCli();
+  return statusInfo?.server === "ON";
 }
 
 let client: LMStudioClient | null = null;

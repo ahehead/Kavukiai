@@ -1,5 +1,7 @@
-import type { StatusInfo } from "./cliService";
-import { getStatusViaCli } from "./cliService";
+import {
+  getStatusViaCli,
+  type StatusInfo,
+} from "../src/nodes/LMStudio/common/main/cliService.ts";
 
 async function main() {
   try {
