@@ -1,19 +1,19 @@
 import { ipcMain } from "electron";
 import { IpcChannel, type IpcResult } from "shared/ApiType";
-import { getComfyApiClient } from "./comfyApiClient";
+import { getComfyApiClient } from "../../common/main/comfyApiClient";
 
-export function registerComfyUICheckpointsHandler(): void {
+export const register = (): void => {
   ipcMain.handle(
-    IpcChannel.ListComfyCheckpoints,
+    IpcChannel.ListComfyUserWorkflows,
     async (_e, endpoint: string): Promise<IpcResult<string[]>> => {
       try {
         const api = getComfyApiClient(endpoint);
-        const list = await api.getCheckpoints();
+        const list = await api.listUserData("workflows");
         return { status: "success", data: list };
       } catch (err: any) {
-        console.error("Error listing comfy checkpoints:", err);
+        console.error("Error listing comfy user workflows:", err);
         return { status: "error", message: String(err?.message ?? err) };
       }
     }
   );
-}
+};

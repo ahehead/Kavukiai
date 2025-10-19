@@ -59,7 +59,6 @@ export function registerLMStudioServerHandlers(): void {
   ipcMain.handle(
     IpcChannel.GetLMStudioStatus,
     async (): Promise<IpcResult<LMStudioStatusInfo>> => {
-      console.log("GetLMStudioStatus called");
       try {
         const info = await getStatusViaCli();
         if (info === null) {

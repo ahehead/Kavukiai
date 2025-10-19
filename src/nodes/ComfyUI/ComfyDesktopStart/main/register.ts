@@ -2,10 +2,9 @@ import http from "node:http";
 import { ipcMain } from "electron";
 import { IpcChannel } from "shared/ApiType";
 import type { LaunchComfyDesktopResult, LaunchOpts } from "shared/ComfyUIType";
-import { launchComfyDesktop } from "./comfyDesktop";
+import { launchComfyDesktop } from "../../common/main/comfyDesktop";
 
-/** 簡易ヘルスチェック */
-function checkAlive(port: number, timeoutMs: number): Promise<boolean> {
+const checkAlive = (port: number, timeoutMs: number): Promise<boolean> => {
   return new Promise((resolve) => {
     const req = http.get(
       { host: "127.0.0.1", port, path: "/", timeout: timeoutMs },
@@ -20,9 +19,9 @@ function checkAlive(port: number, timeoutMs: number): Promise<boolean> {
       resolve(false);
     });
   });
-}
+};
 
-export function registerLaunchComfyDesktopHandler() {
+export const register = (): void => {
   ipcMain.handle(
     IpcChannel.LaunchComfyDesktop,
     async (_evt, opts: LaunchOpts = {}): Promise<LaunchComfyDesktopResult> => {
@@ -39,4 +38,4 @@ export function registerLaunchComfyDesktopHandler() {
       }
     }
   );
-}
+};
