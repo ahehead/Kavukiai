@@ -21,10 +21,11 @@
 
 ## フェーズ別計画
 
+まず再構成を行い、実験的にLMStudioStartNodeを移動する。
 ## 進捗トラッカー
 - [x] Phase 1: パイロットノード構築と基盤整備
 - [x] Phase 2: Preload 自動登録化
-- [ ] Phase 3: Main(IPC) 自動登録化
+- [x] Phase 3: Main(IPC) 自動登録化
 - [ ] Phase 4: Renderer Schema/Types 再配置
 - [ ] Phase 5: shared/type 全体整理
 
@@ -42,7 +43,6 @@
 ### Phase 3: main (IPC) 再構成
 - [x] `src/main/ipc/index.ts` を `import.meta.glob("../nodes/**/main/ipc.ts")` からの自動登録へ切り替え。
 - [x] LMStudio 関連 (`registerLMStudioHandlers`, `registerLMStudioChatHandler`, `registerLMStudioLoadModelHandler`) からLMStudioStart関連を `src/nodes/LMStudio/LMStudioStart/main` に移動.LMStudio関連のノード全体に関係ありそうな部分は、`src/nodes/LMStudio/commn/main`へ。ひとつの `register` エントリから束ねる。
-- [ ] 順次移行。`registerIpcHandlers` 内の個別呼び出しは段階的に廃止。
 
 ### Phase 4: Renderer NodeEditor Schema/Types
 - [ ] `src/renderer/nodeEditor/types/Schemas` や `shared/type` のうちノード固有の要素を各ノード配下の `schema/` または `shared/` に移動。
@@ -69,4 +69,4 @@
 - [x] LMStudio ノードの preload/main エントリファイルを `src/nodes/LMStudio/...` へ複製し、既存実装とリンクを張る。
 - [x] `src/preload/index.ts` に仮実装の自動登録関数（まだ LMStudio のみ）を導入し動作確認。
 - [x] 続いて `src/main/ipc/index.ts` でも同様の手法を適用。
-- [ ] NodeEditor schema/type の移行規約を追加で定義し、別ドキュメント化する（必要に応じて）。
+- [ ] NodeEditor schema/type の移行

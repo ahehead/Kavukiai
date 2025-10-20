@@ -1,7 +1,7 @@
 import type { ModelInfo } from "@lmstudio/sdk";
 import { ipcMain } from "electron";
 import { IpcChannel, type IpcResult } from "shared/ApiType";
-import type { LMStudioStatusInfo } from "shared/LMStudioType";
+import type { LMStudioStatusInfo } from "@nodes/LMStudio/common/shared/types";
 import {
   getStatusViaCli,
   listModelsViaCli,

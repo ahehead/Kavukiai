@@ -1,7 +1,8 @@
 // v0
+
+import type { LMStudioChatPortEvent } from "@nodes/LMStudio/common/schema/LMStudioChatPortEventOrNull";
 import type { Static } from "@sinclair/typebox";
 import { Type } from "@sinclair/typebox";
-import type { LMStudioChatPortEvent } from "../LMStudioChatPortEventOrNull";
 import { Timestamp } from "../openai/BaseSchemas";
 
 /** まずは共通3ロールのみ（tool/developerはv1拡張で） */

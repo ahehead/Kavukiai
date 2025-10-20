@@ -1,8 +1,8 @@
+import type { LMStudioChatPortEventOrNull } from "@nodes/LMStudio/common/schema/LMStudioChatPortEventOrNull";
 import {
   SerializableInputsNode,
   type TypedSocket,
 } from "renderer/nodeEditor/types";
-import type { LMStudioChatPortEventOrNull } from "renderer/nodeEditor/types/Schemas/LMStudioChatPortEventOrNull";
 import type {
   UChatCommandEvent,
   UChatCommandEventOrNull,

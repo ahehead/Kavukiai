@@ -1,10 +1,13 @@
+import type {
+  LMStudioLoadRequestArgs,
+  LMStudioPortEvent,
+} from '@nodes/LMStudio/common/shared/types'
 import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { MessagePortNode } from 'renderer/nodeEditor/types/Node/MessagePortNode'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
-import type { LMStudioLoadRequestArgs, LMStudioPortEvent } from "shared/LMStudioType"
 import { ConsoleControl } from '../../Controls/Console/Console'
 import { ProgressControl } from '../../Controls/view/ProgressControl'
 
@@ -46,7 +49,10 @@ export class LMStudioLoadModelNode extends MessagePortNode<
   }
 
   protected async buildRequestArgs(): Promise<LMStudioLoadRequestArgs | null> {
-    const modelKey = (await this.dataflow.fetchInputSingle<string>(this.id, "modelKey"))
+    const modelKey = await this.dataflow.fetchInputSingle<string>(
+      this.id,
+      'modelKey'
+    )
     if (!modelKey) return null
     return { id: this.id, modelKey }
   }

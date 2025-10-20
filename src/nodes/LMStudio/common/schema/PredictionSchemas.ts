@@ -1,5 +1,6 @@
 import type { Static } from "@sinclair/typebox";
 import { Type } from "@sinclair/typebox";
+import { LLMAdditionalInfo, ModelInfoBase } from "./ModelSchemas";
 
 /** Represents the reason why a prediction stopped. */
 export const LLMPredictionStopReasonSchema = Type.Union(
@@ -66,48 +67,15 @@ export const LLMPromptTemplateSchema = Type.Object(
 );
 export type LLMPromptTemplate = Static<typeof LLMPromptTemplateSchema>;
 
-/** Model compatibility type enum. */
-export const ModelCompatibilityTypeSchema = Type.Union([
-  Type.Literal("gguf"),
-  Type.Literal("safetensors"),
-  Type.Literal("onnx"),
-  Type.Literal("ggml"),
-  Type.Literal("mlx_placeholder"),
-  Type.Literal("torch_safetensors"),
-]);
-export type ModelCompatibilityType = Static<
-  typeof ModelCompatibilityTypeSchema
->;
-
-/** Base model information. */
-export const ModelInfoBaseSchema = Type.Object({
-  modelKey: Type.String(),
-  format: ModelCompatibilityTypeSchema,
-  displayName: Type.String(),
-  path: Type.String(),
-  sizeBytes: Type.Number(),
-  paramsString: Type.Optional(Type.String()),
-  architecture: Type.Optional(Type.String()),
-});
-export type ModelInfoBase = Static<typeof ModelInfoBaseSchema>;
-
 /** Base model instance information. */
 export const ModelInstanceInfoBaseSchema = Type.Intersect([
-  ModelInfoBaseSchema,
+  ModelInfoBase,
   Type.Object({
     identifier: Type.String(),
     instanceReference: Type.String(),
   }),
 ]);
 export type ModelInstanceInfoBase = Static<typeof ModelInstanceInfoBaseSchema>;
-
-/** Additional LLM information. */
-export const LLMAdditionalInfoSchema = Type.Object({
-  vision: Type.Boolean(),
-  trainedForToolUse: Type.Boolean(),
-  maxContextLength: Type.Number(),
-});
-export type LLMAdditionalInfo = Static<typeof LLMAdditionalInfoSchema>;
 
 /** Additional LLM instance information. */
 export const LLMInstanceAdditionalInfoSchema = Type.Object({
@@ -124,7 +92,7 @@ export const LLMInstanceInfoSchema = Type.Intersect(
       type: Type.Literal("llm"),
     }),
     ModelInstanceInfoBaseSchema,
-    LLMAdditionalInfoSchema,
+    LLMAdditionalInfo,
     LLMInstanceAdditionalInfoSchema,
   ],
   { description: "Loaded LLM instance information" }

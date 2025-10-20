@@ -1,5 +1,5 @@
 export type {
   LMStudioChatRequestArgs,
   LMStudioLoadRequestArgs,
-} from "shared/LMStudioType";
+} from "@nodes/LMStudio/common/shared/types";
 export type { IpcResult } from "shared/ApiType";

@@ -1,8 +1,8 @@
+import type { ChatHistoryData } from "@nodes/LMStudio/common/schema/LMStudioSchemas";
 import {
   SerializableInputsNode,
   type TypedSocket,
 } from "renderer/nodeEditor/types";
-import type { ChatHistoryData } from "renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas";
 import {
   type LMFileResolver,
   toLMHistory,

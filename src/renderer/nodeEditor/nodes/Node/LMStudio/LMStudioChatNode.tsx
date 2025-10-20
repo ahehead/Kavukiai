@@ -1,13 +1,14 @@
+import type { LMStudioChatPortEvent } from '@nodes/LMStudio/common/schema/LMStudioChatPortEventOrNull'
+import type {
+  ChatHistoryData,
+  LLMPredictionConfig,
+} from '@nodes/LMStudio/common/schema/LMStudioSchemas'
+import type { ModelInfo } from '@nodes/LMStudio/common/schema/ModelSchemas'
+import type { LMStudioChatRequestArgs } from '@nodes/LMStudio/common/shared/types'
 import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import type { AreaExtra, Schemes, TypedSocket } from 'renderer/nodeEditor/types'
 import { MessagePortNode } from 'renderer/nodeEditor/types/Node/MessagePortNode'
-import type { LMStudioChatPortEvent } from 'renderer/nodeEditor/types/Schemas/LMStudioChatPortEventOrNull'
-import type {
-  ChatHistoryData,
-  LLMPredictionConfig,
-} from 'renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas'
-import type { ModelInfo } from 'renderer/nodeEditor/types/Schemas/lmstudio/ModelSchemas'
 import type { UChatCommandEventOrNull } from 'renderer/nodeEditor/types/Schemas/UChat/UChatCommand'
 import {
   createUChatMessageFromLMStudioFinishEvent,
@@ -15,7 +16,6 @@ import {
 } from 'renderer/nodeEditor/types/Schemas/UChat/UChatMessage'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
-import type { LMStudioChatRequestArgs } from 'shared/LMStudioType'
 import { ConsoleControl } from '../../Controls/Console/Console'
 
 export class LMStudioChatNode extends MessagePortNode<
@@ -79,7 +79,6 @@ export class LMStudioChatNode extends MessagePortNode<
     ])
     this.addControl('console', new ConsoleControl({}))
   }
-
 
   async dataWithFetch(_fetchInputs: any) {
     return { command: this.command }

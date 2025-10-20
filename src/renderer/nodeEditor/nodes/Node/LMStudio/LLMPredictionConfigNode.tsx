@@ -1,3 +1,7 @@
+import {
+  LLMPredictionConfig,
+  type LLMPredictionConfig as LLMPredictionConfigType,
+} from '@nodes/LMStudio/common/schema/LMStudioSchemas'
 import { type TSchema, Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import {
@@ -5,11 +9,6 @@ import {
   SerializableInputsNode,
   type TypedSocket,
 } from 'renderer/nodeEditor/types'
-
-import {
-  LLMPredictionConfig,
-  type LLMPredictionConfig as LLMPredictionConfigType,
-} from 'renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas'
 import { InputValueControl } from '../../Controls/input/InputValue'
 import { SelectControl } from '../../Controls/input/Select'
 
@@ -113,8 +112,7 @@ export class LLMPredictionConfigNode extends SerializableInputsNode<
     }
 
     const structured = this.getInputValue<TSchema>(inputs, 'structured')
-    if (structured)
-      cfg.structured = { type: 'json', jsonSchema: structured }
+    if (structured) cfg.structured = { type: 'json', jsonSchema: structured }
 
     return { config: cfg as LLMPredictionConfig }
   }

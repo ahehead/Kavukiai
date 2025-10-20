@@ -1,3 +1,4 @@
+import type { ModelInfo } from '@nodes/LMStudio/common/schema/ModelSchemas'
 import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import {
@@ -6,13 +7,12 @@ import {
   type TypedSocket,
 } from 'renderer/nodeEditor/types'
 import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
-import type { ModelInfo } from 'renderer/nodeEditor/types/Schemas/lmstudio/ModelSchemas'
 import type { ControlFlowEngine } from 'rete-engine'
 import { ModelInfoListControl } from '../../Controls/LMStudio/ModelInfoListControl'
 
 export class FetchModelInfosNode extends SerializableInputsNode<
   'FetchModelInfos',
-  { exec: TypedSocket, exec2: TypedSocket },
+  { exec: TypedSocket; exec2: TypedSocket },
   { modelInfo: TypedSocket },
   { selectList: ModelInfoListControl }
 > {
@@ -26,15 +26,18 @@ export class FetchModelInfosNode extends SerializableInputsNode<
     super('FetchModelInfos')
     this.width = 380
     this.height = 380
-    this.addInputPort([{
-      key: 'exec',
-      label: 'Fetch',
-      onClick: () => this.controlflow.execute(this.id, 'exec'),
-    }, {
-      key: 'exec2',
-      label: 'Clear',
-      onClick: () => this.controlflow.execute(this.id, 'exec2'),
-    }])
+    this.addInputPort([
+      {
+        key: 'exec',
+        label: 'Fetch',
+        onClick: () => this.controlflow.execute(this.id, 'exec'),
+      },
+      {
+        key: 'exec2',
+        label: 'Clear',
+        onClick: () => this.controlflow.execute(this.id, 'exec2'),
+      },
+    ])
     this.addOutputPort([
       { key: 'modelInfo', typeName: 'ModelInfoOrNull', label: 'ModelInfo' },
     ])
@@ -46,7 +49,7 @@ export class FetchModelInfosNode extends SerializableInputsNode<
         editable: true,
         list: [],
         selectedKey: null,
-        onChange: (key) => {
+        onChange: key => {
           this.selectedKey = key
           this.dataflow.reset(this.id)
         },

@@ -1,3 +1,4 @@
+import type { ServerStatusInfo } from '@nodes/LMStudio/common/schema/StatusSchemas'
 import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
 import {
@@ -6,8 +7,6 @@ import {
   type TypedSocket,
 } from 'renderer/nodeEditor/types'
 import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
-
-import type { ServerStatusInfo } from 'renderer/nodeEditor/types/Schemas/lmstudio/StatusSchemas'
 import type { ControlFlowEngine } from 'rete-engine'
 import { ConsoleControl } from '../../Controls/Console/Console'
 

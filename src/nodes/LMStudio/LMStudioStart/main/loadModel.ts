@@ -1,9 +1,9 @@
-import { type IpcMainEvent, ipcMain } from "electron";
-import { IpcChannel } from "shared/ApiType";
 import type {
   LMStudioLoadRequestArgs,
   LMStudioPortEvent,
-} from "shared/LMStudioType";
+} from "@nodes/LMStudio/common/shared/types";
+import { type IpcMainEvent, ipcMain } from "electron";
+import { IpcChannel } from "shared/ApiType";
 import { getLoadedModel } from "../../common/main/modelClient";
 
 export function registerLMStudioLoadModelHandler(): void {

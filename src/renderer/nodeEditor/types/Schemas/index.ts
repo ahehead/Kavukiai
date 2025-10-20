@@ -1,13 +1,13 @@
-import type { TSchema } from "@sinclair/typebox";
-import * as PromptRecipe from "shared/ComfyUIType";
-import * as DefaultSchema from "./DefaultSchema";
-import { LMStudioChatPortEventOrNull } from "./LMStudioChatPortEventOrNull";
+import { LMStudioChatPortEventOrNull } from "@nodes/LMStudio/common/schema/LMStudioChatPortEventOrNull";
 import {
   ChatHistoryData,
   LLMPredictionConfig,
-} from "./lmstudio/LMStudioSchemas";
-import * as ModelInfoSchemas from "./lmstudio/ModelSchemas";
-import * as StatusSchemas from "./lmstudio/StatusSchemas";
+} from "@nodes/LMStudio/common/schema/LMStudioSchemas";
+import * as ModelInfoSchemas from "@nodes/LMStudio/common/schema/ModelSchemas";
+import * as StatusSchemas from "@nodes/LMStudio/common/schema/StatusSchemas";
+import type { TSchema } from "@sinclair/typebox";
+import * as PromptRecipe from "shared/ComfyUIType";
+import * as DefaultSchema from "./DefaultSchema";
 import {
   ImageArrayOrNull,
   NodeImage,

@@ -1,7 +1,7 @@
 import type {
   ChatHistoryData,
   LLMPredictionConfig,
-} from "renderer/nodeEditor/types/Schemas/lmstudio/LMStudioSchemas";
+} from "../schema/LMStudioSchemas";
 
 export type LMStudioLoadRequestArgs = {
   id: string;
@@ -27,4 +27,4 @@ export type LMStudioStatusInfo = {
   port?: number;
   loadedModels: string[];
 };
-export type { LMStudioChatPortEvent } from "renderer/nodeEditor/types/Schemas/LMStudioChatPortEventOrNull";
+export type { LMStudioChatPortEvent } from "../schema/LMStudioChatPortEventOrNull";
