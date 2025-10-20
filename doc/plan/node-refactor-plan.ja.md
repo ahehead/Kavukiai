@@ -21,52 +21,131 @@
 
 ## フェーズ別計画
 
-まず再構成を行い、実験的にLMStudioStartNodeを移動する。
-## 進捗トラッカー
-- [x] Phase 1: パイロットノード構築と基盤整備
-- [x] Phase 2: Preload 自動登録化
-- [x] Phase 3: Main(IPC) 自動登録化
-- [ ] Phase 4: Renderer Schema/Types 再配置
-- [ ] Phase 5: shared/type 全体整理
-
 ### Phase 1: 準備
-- [x] `src/nodes/` ルートを作成し、`src/nodes/LMStudio/LMStudioStart` をパイロット対象に選定。
-- [x] 共通ユーティリティ: `loadModules` 的なヘルパー（`import.meta.glob` ラッパー）を `src/lib` へ追加。
-- [x] ビルド設定 (electron.vite.config.ts) のエイリアス設定確認・必要なら `@nodes` 等の alias を追加。
+- `src/nodes/` ルートを作成し、`src/nodes/LMStudio/LMStudioStart` をパイロット対象に選定。
+- 共通ユーティリティ: `loadModules` 的なヘルパー（`import.meta.glob` ラッパー）を `src/lib` へ追加。
+- ビルド設定 (electron.vite.config.ts) のエイリアス設定確認・必要なら `@nodes` 等の alias を追加。
 
 ### Phase 2: preload 再構成
-- [x] `src/preload/index.ts` を `import.meta.glob("../nodes/**/preload/*Entry.ts")` のような自動登録へ書き換え。
-- [x] LMStudio/LMStudioStart から着手し、既存の api を `src/nodes/LMStudio/LMStudioStart/preload/api.ts` へ移動。
-- [x] LMStudio/LMStudioStart関連のAPI の型は `src/nodes/LMStudio/LMStudioStart/shared/types.ts` へ配置。
-- [x] 移行済みのpreloadレガシーファイルを削除。テストの書き換えまたは追加。
+- `src/preload/index.ts` を `import.meta.glob("../nodes/**/preload/*Entry.ts")` ベースの自動登録に切り替え。
+- パイロットノードの preload API を `src/nodes/<group>/<node>/preload/api.ts` へ移し、必要な型を `shared/types.ts` に整理。
+- 移行済みの preload レガシーファイルを削除し、対応テストを更新。
 
 ### Phase 3: main (IPC) 再構成
-- [x] `src/main/ipc/index.ts` を `import.meta.glob("../nodes/**/main/ipc.ts")` からの自動登録へ切り替え。
-- [x] LMStudio 関連 (`registerLMStudioHandlers`, `registerLMStudioChatHandler`, `registerLMStudioLoadModelHandler`) からLMStudioStart関連を `src/nodes/LMStudio/LMStudioStart/main` に移動.LMStudio関連のノード全体に関係ありそうな部分は、`src/nodes/LMStudio/commn/main`へ。ひとつの `register` エントリから束ねる。
+- `src/main/ipc/index.ts` で `import.meta.glob("../nodes/**/main/ipc.ts")` を用いた自動登録を導入。
+- パイロットノードの IPC ハンドラを `src/nodes/<group>/<node>/main` に再配置し、共通処理は `src/nodes/<group>/common/main` へ集約。
+- レガシーipcを削除して、対応テストを更新。
 
 ### Phase 4: Renderer NodeEditor Schema/Types
-- [ ] `src/renderer/nodeEditor/types/Schemas` や `shared/type` のうちノード固有の要素を各ノード配下の `schema/` または `shared/` に移動。
-- [ ] 共通 schema は `src/nodes/common/schema` または `src/nodes/commna/_shared` にまとめる案を検討。
-- [ ] 最初の対象として `src/renderer/nodeEditor/nodes/Node/LMStudio/LMStudioStartNode.tsx` を `src/nodes/LMStudio/LMStudioStart/renderer/LMStudioStartNode.tsx` へ移設し、必要なら `src/nodes/LMStudio/LMStudioStart` 配下に `main/`, `preload/`, `shared/`, `schema/` を段階的に追加する。
+- `src/renderer/nodeEditor/types/Schemas` や `src/shared` からノード固有の要素を各ノード配下の `schema/` や `shared/` へ移動。
+- 再利用する schema は `src/nodes/common/schema`（仮）などの横断ディレクトリに集約。
+- 各ノードの UI / schema 実装を `src/nodes/<group>/<node>/renderer/` へ段階的に移し、既存 exports を維持。
 
 ### Phase 5: shared/type の整理
-- [ ] `src/shared` 配下を棚卸しし、ノード固有の型は `src/nodes/<nodeフォルダ>/<node>/shared` へ移動。
-- [ ] どのノードからも参照される純粋ユーティリティは `src/shared/core` などに再配置。
-- [ ] 型の循環参照が発生する場合は `shared/core` に残す。
+- `src/shared` 配下を棚卸しし、ノード固有の型は `src/nodes/<group>/<node>/shared` へ移動。
+- 横断的に利用するユーティリティや型は `src/shared/core` などの共通ディレクトリへ再配置。
+- 循環参照懸念があるものは段階的に抽出しつつ、必要に応じて共通ディレクトリに残す。
+
 
 ## モジュール自動登録の詳細案
 - preload: `import.meta.glob("../nodes/**/preload/expose.ts", { eager: true })` で各モジュールの `default` もしくは `register(apiContext)` を実行。
 - main: `import.meta.glob("../nodes/**/main/*.ipc.ts", { eager: true })` から `export const register = (ctx) => { ... }` を呼び出す。
-- テスト: 単体で `pnpm vitest run -t "preload auto registration"` など追加し、登録対象が期待通りであることを検証。
+- テスト: 単体で `pnpm test run -t "preload auto registration"` など追加し、登録対象が期待通りであることを検証。
 
 ## リスク・留意事項
 - `import.meta.glob` は Vite ビルド時解決のため、ファイル命名規則を厳格化する必要がある。
 - 境界移行中は循環参照や duplicate expose の検出が難しくなるため、段階毎に `pnpm lint`, `pnpm test` を必ず実行。
 - Electron メインプロセス再起動時のパス解決が変わるため、`__dirname` 依存ロジックがないか確認。
 
-## 次のアクション
-- [x] `src/nodes/LMStudio/LMStudioStart` ディレクトリを作成し、`renderer/LMStudioStartNode.tsx` へ既存ノードを移動・再輸出できる状態に整える。
-- [x] LMStudio ノードの preload/main エントリファイルを `src/nodes/LMStudio/...` へ複製し、既存実装とリンクを張る。
-- [x] `src/preload/index.ts` に仮実装の自動登録関数（まだ LMStudio のみ）を導入し動作確認。
-- [x] 続いて `src/main/ipc/index.ts` でも同様の手法を適用。
-- [ ] NodeEditor schema/type の移行
+## ノード移行チェックリスト
+
+### LMStudio
+- [ ] FetchModelInfos
+- [ ] ListDownloadedModels
+- [ ] LLMPredictionConfig
+- [ ] LMStudioChat
+- [ ] LMStudioLoadModel
+- [x] LMStudioStart
+- [ ] LMStudioStop
+- [ ] ModelInfoToModelList
+- [ ] ServerStatus
+- [ ] UnLoadModel
+
+### ComfyUI
+- [ ] ComfyDesktopStart
+- [ ] ComfyUIFreeMemory
+- [ ] ComfyUI
+- [ ] FetchCheckpoints
+- [ ] FetchTemplateWorkflows
+- [ ] FetchUserWorkflowList
+- [ ] LoadWorkflowFile
+- [ ] MergeWorkflowInputsDefaults
+- [ ] WorkflowInputs
+- [ ] WorkflowOutputs
+- [ ] WorkflowRefToApiWorkflow
+
+### Chat
+- [ ] LMStudioToUChatCommand
+- [ ] OpenAIToUChatCommand
+- [ ] ReverseRole
+- [ ] UChatGetLastMessage
+- [ ] UChatMessageByString
+- [ ] UChatMessage
+- [ ] UChat
+- [ ] UChatRole
+- [ ] UChatToLMStudio
+- [ ] UChatToOpenAI
+- [ ] UChatToString
+- [ ] UPartText
+
+### OpenAI
+- [ ] JsonSchemaFormat
+- [ ] OpenAI
+- [ ] ResponseCreateParamsBase
+- [ ] ResponseTextConfig
+
+### Debug
+- [ ] Test
+- [ ] Unknown
+
+### Inspector
+- [ ] Inspector
+
+### Primitive（基本）
+- [ ] Bool
+- [ ] CreateSelect
+- [ ] Number
+
+### Primitive / Array
+- [ ] Array
+- [ ] Join
+- [ ] ToArray
+
+### Primitive / Flow
+- [ ] CounterLoop
+- [ ] IF
+- [ ] Run
+
+### Primitive / Image
+- [ ] SelectImage
+- [ ] ShowImage
+
+### Primitive / Object
+- [ ] JsonSchema
+- [ ] JsonSchemaToObject
+- [ ] ObjectPick
+- [ ] ParseJsonAndPick
+- [ ] ParseJsonToObject
+
+### Primitive / String
+- [ ] AutoTemplateReplace
+- [ ] CodeFence
+- [ ] DefaultString
+- [ ] JsonFilePath
+- [ ] MultiLineString
+- [ ] NumberToString
+- [ ] ObjectToString
+- [ ] ObjectToYAMLString
+- [ ] StringForm
+- [ ] String
+- [ ] TemplateReplace
