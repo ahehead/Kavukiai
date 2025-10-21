@@ -52,7 +52,7 @@
 
 ## Risks / Notes
 - `import.meta.glob` resolves at build time, so file naming conventions must be enforced.
-- During migration, it becomes harder to spot circular references or duplicate entries, so run `pnpm lint` at each stage.
+- During migration, it becomes harder to spot circular references or duplicate entries, so run `pnpm lint` at each stage. If there is another test, run `pnpm test run -t "<node>"`. Confirmation.
 - Since Electron main-process restarts will resolve paths differently, check for logic depending on `__dirname`.
 
 ## Node Migration Checklist
@@ -88,11 +88,11 @@
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] LMStudioStop
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+- [x] LMStudioStop
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] ModelInfoToModelList
   - [ ] Phase 2
   - [ ] Phase 3

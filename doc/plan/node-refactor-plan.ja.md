@@ -53,7 +53,7 @@
 
 ## リスク・留意事項
 - `import.meta.glob` は Vite ビルド時解決のため、ファイル命名規則を厳格化する必要がある。
-- 境界移行中は循環参照や duplicate expose の検出が難しくなるため、段階毎に `pnpm lint`を必ず実行。
+- 境界移行中は循環参照や duplicate expose の検出が難しくなるため、段階毎に `pnpm lint`を必ず実行。またtestがあれば `pnpm test run -t "<node>"`を実行。確認。
 - Electron メインプロセス再起動時のパス解決が変わるため、`__dirname` 依存ロジックがないか確認。
 
 ## ノード移行チェックリスト
@@ -89,11 +89,11 @@
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] LMStudioStop
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+- [x] LMStudioStop
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] ModelInfoToModelList
   - [ ] Phase 2
   - [ ] Phase 3

@@ -1,12 +1,11 @@
 import type { ModelInfo } from "@lmstudio/sdk";
+import type { LMStudioStatusInfo } from "@nodes/LMStudio/common/shared/types";
 import { ipcMain } from "electron";
 import { IpcChannel, type IpcResult } from "shared/ApiType";
-import type { LMStudioStatusInfo } from "@nodes/LMStudio/common/shared/types";
 import {
   getStatusViaCli,
   listModelsViaCli,
   startServerViaCli,
-  stopServerViaCli,
 } from "../../common/main/cliService";
 import { unloadAllModels } from "../../common/main/modelClient";
 
@@ -38,19 +37,6 @@ export function registerLMStudioServerHandlers(): void {
         return { status: "success", data: msg };
       } catch (err: any) {
         console.error("StartLMStudioServer error:", err);
-        return { status: "error", message: String(err?.message ?? err) };
-      }
-    }
-  );
-
-  ipcMain.handle(
-    IpcChannel.StopLMStudioServer,
-    async (): Promise<IpcResult<string>> => {
-      try {
-        const msg = await stopServerViaCli();
-        return { status: "success", data: msg };
-      } catch (err: any) {
-        console.error("StopLMStudioServer error:", err);
         return { status: "error", message: String(err?.message ?? err) };
       }
     }
