@@ -1,4 +1,4 @@
-import { factoryList } from "../../nodes/Node/nodeFactories";
+import { factoryList } from "../../nodes/nodeFactories";
 import type { FactoryMeta, FactoryWithMeta } from "./factoryTypes";
 
 // ===== レジストリ: typeId(namespace:name) -> factory =======================

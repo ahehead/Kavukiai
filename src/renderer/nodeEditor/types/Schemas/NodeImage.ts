@@ -1,5 +1,5 @@
 import { type Static, Type } from "@sinclair/typebox";
-import type { UFileRef, UPart } from "./UChat/UChatMessage";
+import type { UFileRef, UPart } from "nodes/Chat/common/schema";
 
 /**
  * ノード間で使うファイル参照（UFileRef 互換 + blob 対応）

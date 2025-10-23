@@ -6,7 +6,8 @@
       "renderer/*": ["src/renderer/*"],
       "main/*": ["src/main/*"],
       "shared/*": ["src/shared/*"],
-      "@nodes/*": ["src/nodes/*"]
+      "@nodes/*": ["src/nodes/*"],
+      "nodes/*": ["src/nodes/*"]
     },
     "module": "ESNext",
     "moduleResolution": "Bundler",

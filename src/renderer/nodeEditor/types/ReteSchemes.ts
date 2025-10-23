@@ -7,6 +7,7 @@ import type { BaseNode } from "./Node/BaseNode";
 import type { NodeControl } from "./NodeControl";
 import type { TypedSocket } from "./Socket/TypedSocket";
 
+// ノードのインターフェース汎用版の定義
 export interface NodeInterface
   extends BaseNode<
     string,
@@ -25,8 +26,10 @@ export type Schemes = GetSchemes<
   Connection<NodeInterface, NodeInterface>
 >;
 
+// Area アクションの定義
 export type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra | GroupExtra;
 
+// Exec 系列のソケット名一覧 ここから使う
 export const ExecList = [
   "exec",
   "exec2",

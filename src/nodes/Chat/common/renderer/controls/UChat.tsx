@@ -6,10 +6,9 @@ import {
   type UChat,
   type UChatMessage,
   type UPart,
-} from '@nodes/Chat/common/schema/UChatMessage'
+} from '@nodes/Chat/common/schema'
 import { Check, Copy, Pencil, Trash2, X } from 'lucide-react'
-import type { JSX } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { type JSX, useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import {
@@ -33,8 +32,8 @@ export interface UChatControlParams extends ControlOptions<UChat> {
 }
 
 export class UChatControl extends BaseControl<UChat, UChatControlParams> {
-  private readonly store: ChatStore
-  private readonly session: DeltaSession
+  private store: ChatStore
+  private session: DeltaSession
 
   constructor(opts: UChatControlParams) {
     super(opts)
@@ -42,11 +41,10 @@ export class UChatControl extends BaseControl<UChat, UChatControlParams> {
     this.session = new DeltaSession(this.store)
   }
 
-  getValue(): UChat {
+  getValue() {
     return this.store.value
   }
-
-  setValue(v: UChat): void {
+  setValue(v: UChat) {
     const prev = this.store.value
     this.store.setAll(v)
     this.addHistory(prev, this.store.value)
@@ -54,23 +52,21 @@ export class UChatControl extends BaseControl<UChat, UChatControlParams> {
     this.notify()
   }
 
-  addMessage(m: UChatMessage): void {
+  addMessage(m: UChatMessage) {
     const prev = this.store.value
     this.store.add(m)
     this.addHistory(prev, this.store.value)
     this.opts.onChange?.(this.store.value)
     this.notify()
   }
-
-  modifyChatMessage(i: number, m: UChatMessage): void {
+  modifyChatMessage(i: number, m: UChatMessage) {
     const prev = this.store.value
     this.store.modifyAt(i, m)
     this.addHistory(prev, this.store.value)
     this.opts.onChange?.(this.store.value)
     this.notify()
   }
-
-  clear(): void {
+  clear() {
     const prev = this.store.value
     this.store.clear()
     this.addHistory(prev, this.store.value)
@@ -78,7 +74,7 @@ export class UChatControl extends BaseControl<UChat, UChatControlParams> {
     this.notify()
   }
 
-  getMessagesWithSystemPrompt(text: string): UChat {
+  getMessagesWithSystemPrompt(text: string) {
     return this.store.withSystemPrompt(text)
   }
 
@@ -94,8 +90,8 @@ export class UChatControl extends BaseControl<UChat, UChatControlParams> {
         this.session.setInfo(info)
         this.notify()
       },
-      pushDelta: delta => {
-        this.session.delta(delta)
+      pushDelta: d => {
+        this.session.delta(d)
         this.notify()
       },
       finish: (text, message) => {
@@ -108,13 +104,13 @@ export class UChatControl extends BaseControl<UChat, UChatControlParams> {
     }
   }
 
-  get streamingIndex(): number | null {
+  get streamingIndex() {
     return this.session.streamingIndex
   }
 
-  removeMessage(index: number): void {
+  removeMessage(i: number) {
     const prev = this.store.value
-    this.store.removeAt(index)
+    this.store.removeAt(i)
     this.addHistory(prev, this.store.value)
     this.opts.onChange?.(this.store.value)
     this.notify()
@@ -136,183 +132,171 @@ export function UChatMessageListControlView(props: {
       scrollContainerRef.current.scrollTop =
         scrollContainerRef.current.scrollHeight
     }
-  }, [messages])
+  }, [messages.length])
 
-  const copyMessageToClipboard = async (index: number) => {
-    const target = messages[index]
-    if (!target) return
-    await navigator.clipboard.writeText(extractTextContent(target))
-  }
+  // テキストをクリップボードにコピーする関数
+  const copyMessageToClipboard = (index: number): void => {
+    const msg = messages[index]
+    if (!msg) return
 
-  const deleteMsg = (index: number) => {
-    control.removeMessage(index)
+    navigator.clipboard
+      .writeText(extractTextContent(msg))
+      .then(() => console.log('Message copied to clipboard'))
+      .catch(err => console.error('Failed to copy: ', err))
   }
 
   const startEdit = (index: number) => {
     const msg = messages[index]
-    if (!msg) return
-    setEditIndex(index)
     setEditText(extractTextContent(msg))
+    setEditIndex(index)
   }
 
-  const cancelEdit = () => {
-    setEditIndex(null)
-    setEditText('')
-  }
-
-  const commitEdit = (index: number) => {
-    const base = messages[index]
-    if (!base) return
-    control.modifyChatMessage(index, {
-      ...base,
-      content: [{ type: 'text', text: editText }],
+  const saveEdit = () => {
+    if (editIndex === null) return
+    const msg = messages[editIndex]
+    if (!msg) return
+    const contents = msg.content.filter((c: UPart) => c.type !== 'text')
+    control.modifyChatMessage(editIndex, {
+      ...msg,
+      content: [{ type: 'text', text: editText }, ...contents],
     })
-    cancelEdit()
+    setEditIndex(null)
   }
+
+  const cancelEdit = () => setEditIndex(null)
+  const deleteMsg = (index: number) => control.removeMessage(index)
+
+  const lineCount = editText.split('\n').length
+  const h = Math.min(600, Math.max(120, lineCount * 20))
 
   return (
     <Drag.NoDrag>
       <div
         ref={scrollContainerRef}
-        className="flex flex-col gap-2 max-h-[400px] overflow-y-auto pr-2"
+        className="flex-1 w-full h-full min-h-0 overflow-y-auto pb-2 border-t border-gray-200"
       >
-        {messages.map((msg, index) => (
-          <div
-            key={messageKey(msg, index)}
-            className="flex flex-col gap-2 border border-muted rounded-md p-3 shadow-sm bg-card"
-          >
-            <div className="flex items-center justify-between">
-              <div className="text-xs text-muted-foreground uppercase tracking-wide font-semibold flex gap-2 items-center">
-                <span>{msg.role}</span>
-                {msg.model ? (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
+        {messages.length === 0 && (
+          <div className="w-full flex items-center justify-center ">
+            <div className="p-3 text-gray-600">No messages</div>
+          </div>
+        )}
+        {messages.map((msg: UChatMessage, index: number) => (
+          <div key={messageKey(msg, index)} className="rounded group last:mb-2">
+            <div className="group-hover:bg-node-header/30 py-1.5 px-3">
+              <strong className="block mb-1 select-text">
+                {msg.role}
+                {msg.model && (
+                  <span className="ml-2 text-xs text-gray-400 font-light">
                     {msg.model}
                   </span>
-                ) : null}
-                {msg.created_at ? (
-                  <span className="text-[10px] text-muted-foreground/60">
-                    {msg.created_at}
-                  </span>
-                ) : null}
-              </div>
-            </div>
-            <div className="bg-muted/40 p-3 rounded-md border border-muted min-h-[80px]">
-              {renderMessageBody({
-                msg,
-                index,
-                editIndex,
-                editText,
-                setEditText,
-                commitEdit,
-                cancelEdit,
-              })}
-            </div>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <div className="flex items-center gap-2">
-                {msg.tokensPerSecond !== undefined && (
-                  <span className="text-xs text-gray-500 mr-1">
-                    {msg.tokensPerSecond.toFixed(3)} tps
-                  </span>
                 )}
-                <span className="text-xs text-gray-500 mr-1">
-                  {msg.stopReason ?? ''}
-                </span>
-                <ToolButton
-                  icon={<Copy size={14} />}
-                  onClick={() => copyMessageToClipboard(index)}
-                />
-                <ToolButton
-                  icon={<Pencil size={14} />}
-                  onClick={() => startEdit(index)}
-                />
-                <ToolButton
-                  icon={<Trash2 size={14} />}
-                  onClick={() => deleteMsg(index)}
-                />
-              </div>
+              </strong>
+              {editIndex === index ? (
+                <div className="flex flex-col">
+                  <Editor
+                    width={'100%'}
+                    height={h}
+                    value={editText}
+                    wrapperProps={{ 'data-monaco-editor': 'true' }}
+                    onChange={(value: string | undefined, _e) =>
+                      setEditText(value ?? '')
+                    }
+                    options={{
+                      wordWrap: 'on',
+                      minimap: { enabled: false },
+                      lineNumbers: 'off',
+                      glyphMargin: false,
+                      folding: false,
+                      renderWhitespace: 'none',
+                      automaticLayout: true,
+                      renderLineHighlight: 'none',
+                      renderLineHighlightOnlyWhenFocus: false,
+                    }}
+                  />
+                  <div className="flex justify-end gap-1">
+                    <Check
+                      size={14}
+                      className="cursor-pointer"
+                      onClick={saveEdit}
+                    />
+                    <X
+                      size={14}
+                      className="cursor-pointer"
+                      onClick={cancelEdit}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="break-all select-text">
+                  {msg.content.map((part: UPart, i: number) => {
+                    // ストリーミング中かどうか（メッセージ単位）
+                    const isStreaming = control.streamingIndex === index
+                    if (part.type === 'text') {
+                      // ストリーミング中はMarkdownの再レイアウトを避けて<pre>で表示、
+                      // 完了後はMarkdownで整形して表示
+                      return isStreaming ? (
+                        <pre
+                          key={partKey(part, i)}
+                          className="whitespace-pre-wrap break-words select-text"
+                        >
+                          {part.text}
+                        </pre>
+                      ) : (
+                        <Markdown
+                          key={partKey(part, i)}
+                          remarkPlugins={[remarkGfm]}
+                        >
+                          {part.text}
+                        </Markdown>
+                      )
+                    }
+                    if (part.type === 'image') {
+                      return renderImagePart(part, partKey(part, i))
+                    }
+                    if (part.type === 'file') {
+                      return renderFilePart(part, partKey(part, i))
+                    }
+                    return null
+                  })}
+                </div>
+              )}
             </div>
+
+            {msg.role !== 'system' &&
+              editIndex !== index &&
+              control.streamingIndex !== index && (
+                <div className="flex justify-end items-center py-0.5">
+                  <div
+                    className={`flex gap-1 text-xs ${index !== messages.length - 1 ? 'opacity-0 group-hover:opacity-100 transition-opacity duration-200' : ''}`}
+                  >
+                    {msg.tokensPerSecond != null && (
+                      <span className="text-xs text-gray-500 mr-1">
+                        {msg.tokensPerSecond.toFixed(3)} tps
+                      </span>
+                    )}
+                    <span className="text-xs text-gray-500 mr-1">
+                      {msg.stopReason ?? ''}
+                    </span>
+                    <ToolButton
+                      icon={<Copy size={14} />}
+                      onClick={() => copyMessageToClipboard(index)}
+                    />
+                    <ToolButton
+                      icon={<Pencil size={14} />}
+                      onClick={() => startEdit(index)}
+                    />
+                    <ToolButton
+                      icon={<Trash2 size={14} />}
+                      onClick={() => deleteMsg(index)}
+                    />
+                  </div>
+                </div>
+              )}
           </div>
         ))}
       </div>
     </Drag.NoDrag>
   )
-}
-
-function renderMessageBody({
-  msg,
-  index,
-  editIndex,
-  editText,
-  setEditText,
-  commitEdit,
-  cancelEdit,
-}: {
-  msg: UChatMessage
-  index: number
-  editIndex: number | null
-  editText: string
-  setEditText: (value: string) => void
-  commitEdit: (idx: number) => void
-  cancelEdit: () => void
-}): JSX.Element {
-  if (editIndex === index) {
-    return (
-      <div className="flex flex-col gap-2">
-        <Editor
-          height="200px"
-          defaultLanguage="markdown"
-          value={editText}
-          onChange={next => setEditText(next ?? '')}
-          theme="vs-dark"
-        />
-        <div className="flex gap-2 justify-end">
-          <button
-            type="button"
-            className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded bg-emerald-500 text-white hover:bg-emerald-600"
-            onClick={() => commitEdit(index)}
-          >
-            <Check size={14} />
-            Apply
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded bg-muted hover:bg-muted-foreground/10"
-            onClick={cancelEdit}
-          >
-            <X size={14} />
-            Cancel
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex flex-col gap-2">
-      {msg.content.map((part, partIndex) => (
-        <div key={partKey(part, partIndex)} className="text-sm leading-relaxed">
-          {renderPart(part, partIndex)}
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function renderPart(part: UPart, partIndex: number): JSX.Element | null {
-  switch (part.type) {
-    case 'text':
-      return (
-        <Markdown key={partIndex} remarkPlugins={[remarkGfm]}>
-          {part.text}
-        </Markdown>
-      )
-    case 'image':
-      return renderImagePart(part, partIndex)
-    case 'file':
-      return renderFilePart(part, partIndex)
-    default:
-      return null
-  }
 }
 
 function ToolButton({
@@ -335,6 +319,7 @@ function ToolButton({
   )
 }
 
+// --- パート別描画ヘルパー ---
 function renderImagePart(
   part: Extract<UPart, { type: 'image' }>,
   key: string | number
@@ -414,32 +399,31 @@ function messageKey(msg: UChatMessage, index: number): string | number {
   if (msg.id) return msg.id
   const text = extractTextContent(msg)
   const head = text.slice(0, 50)
+  // できるだけ安定した情報で合成（idが無い古いデータ向け）
   const base = `${msg.role}|${msg.model ?? ''}|${msg.created_at ?? ''}|${head}|${text.length}`
   return base || index
 }
 
 function partKey(part: UPart, index: number): string | number {
   if (part.type === 'text') {
-    const text = part.text
-    return `t|${text.slice(0, 48)}|${text.length}`
+    const t = part.text
+    return `t|${t.slice(0, 48)}|${t.length}`
   }
   if (part.type === 'image') {
-    const source = part.source
-    if (source.kind === 'url') return `img|url|${source.url}`
-    if (source.kind === 'path') return `img|path|${source.path}`
-    if (source.kind === 'id') return `img|id|${source.id}`
-    if (source.kind === 'data')
-      return `img|data|${source.encoding}|${source.data.length}`
+    const s = part.source
+    if (s.kind === 'url') return `img|url|${s.url}`
+    if (s.kind === 'path') return `img|path|${s.path}`
+    if (s.kind === 'id') return `img|id|${s.id}`
+    if (s.kind === 'data') return `img|data|${s.encoding}|${s.data.length}`
   }
   if (part.type === 'file') {
-    const source = part.source
+    const s = part.source
     const name = part.name ?? ''
-    if (source.kind === 'url') return `file|url|${name}|${source.url}`
-    if (source.kind === 'path') return `file|path|${name}|${source.path}`
-    if (source.kind === 'id') return `file|id|${name}|${source.id}`
-    if (source.kind === 'data') {
-      return `file|data|${name}|${source.encoding}|${source.data.length}`
-    }
+    if (s.kind === 'url') return `file|url|${name}|${s.url}`
+    if (s.kind === 'path') return `file|path|${name}|${s.path}`
+    if (s.kind === 'id') return `file|id|${name}|${s.id}`
+    if (s.kind === 'data')
+      return `file|data|${name}|${s.encoding}|${s.data.length}`
   }
   return index
 }

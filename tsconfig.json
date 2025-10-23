@@ -20,7 +20,8 @@
     "paths": {
       "*": ["src/*"],
       "~/*": ["./*"],
-      "@nodes/*": ["src/nodes/*"]
+      "@nodes/*": ["src/nodes/*"],
+      "nodes/*": ["src/nodes/*"]
     }
   },
   "include": [

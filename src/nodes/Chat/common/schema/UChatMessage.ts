@@ -1,9 +1,9 @@
 // v0
 
 import type { LMStudioChatPortEvent } from "@nodes/LMStudio/common/schema/LMStudioChatPortEventOrNull";
+import { Timestamp } from "@nodes/OpenAI/common/schema/BaseSchemas";
 import type { Static } from "@sinclair/typebox";
 import { Type } from "@sinclair/typebox";
-import { Timestamp } from "@nodes/OpenAI/common/schema/BaseSchemas";
 
 /** まずは共通3ロールのみ（tool/developerはv1拡張で） */
 export const UChatRole = Type.Union([
@@ -98,4 +98,3 @@ export const extractTextContent = (msg: UChatMessage): string => {
     .map((part) => part.text)
     .join("\n");
 };
-
