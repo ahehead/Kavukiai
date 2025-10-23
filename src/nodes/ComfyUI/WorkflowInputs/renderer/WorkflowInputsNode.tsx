@@ -14,7 +14,7 @@ import type { ControlJson } from 'shared/JsonType'
 import {
   WorkflowIOSelectControl,
   type WorkflowIOSelectValue,
-} from 'renderer/nodeEditor/nodes/Controls/ComfyUI/WorkflowIOSelectControl'
+} from '@nodes/ComfyUI/common/renderer/controls/WorkflowIOSelectControl'
 
 export class WorkflowInputsNode extends SerializableInputsNode<
   'WorkflowInputs',

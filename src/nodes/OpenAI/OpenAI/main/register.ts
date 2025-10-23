@@ -1,8 +1,8 @@
+import type { ResponseStreamEvent } from "@nodes/OpenAI/common/schema/EventsSchemas";
+import type { Response } from "@nodes/OpenAI/common/schema/ResponseSchemas";
 import { type IpcMainEvent, ipcMain } from "electron";
 import { ApiKeyConf, getApiKeyConf } from "main/features/file/conf";
 import OpenAI from "openai";
-import type { ResponseStreamEvent } from "@nodes/OpenAI/common/schema/EventsSchemas";
-import type { Response } from "@nodes/OpenAI/common/schema/ResponseSchemas";
 import {
   IpcChannel,
   type OpenAIPortEventType,

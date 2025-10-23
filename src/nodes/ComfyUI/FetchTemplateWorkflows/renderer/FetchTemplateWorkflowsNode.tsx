@@ -5,7 +5,7 @@ import { SerializableInputsNode } from 'renderer/nodeEditor/types/Node/Serializa
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { HistoryPlugin } from 'rete-history-plugin'
-import { SelectWorkflowControl } from 'renderer/nodeEditor/nodes/Controls/ComfyUI/SelectWorkflowControl'
+import { SelectWorkflowControl } from '@nodes/ComfyUI/common/renderer/controls/SelectWorkflowControl'
 import { InputValueControl } from 'renderer/nodeEditor/nodes/Controls/input/InputValue'
 
 export class FetchTemplateWorkflowsNode extends SerializableInputsNode<

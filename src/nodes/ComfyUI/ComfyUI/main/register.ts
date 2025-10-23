@@ -1,3 +1,5 @@
+import type { ComfyUIRunRequestArgs } from "@nodes/ComfyUI/common/shared";
+import type { ComfyUIPortEvent } from "@nodes/ComfyUI/common/shared/port-events";
 import {
   CallWrapper,
   type ImageInfo,
@@ -5,16 +7,16 @@ import {
 } from "@saintno/comfyui-sdk";
 import { type IpcMainEvent, ipcMain } from "electron";
 import { IpcChannel } from "shared/ApiType";
-import type { ComfyUIRunRequestArgs } from "@nodes/ComfyUI/common/shared";
-import type { ComfyUIPortEvent } from "@nodes/ComfyUI/common/shared/port-events";
 import { getComfyApiClient } from "../../common/main/comfyApiClient";
 import { launchComfyDesktop } from "../../common/main/comfyDesktop";
 
 type ComfyFinishData = Record<string, { images?: ImageInfo[] }>;
 
-export const register = (): void => {
+export const register = registerComfyUIRunRecipeHandler;
+
+export function registerComfyUIRunRecipeHandler(): void {
   ipcMain.on(IpcChannel.PortComfyUIRunRecipe, handleRunRecipe);
-};
+}
 
 async function handleRunRecipe(
   evt: IpcMainEvent,
@@ -32,7 +34,6 @@ async function handleRunRecipe(
     forceWs: recipe.opts?.forceWs,
     wsTimeout: recipe.opts?.wsTimeout ?? 5000,
   });
-  // finish イベントで受け取った raw data / promptId を保持しておき、run() 後にまとめて result を送信するよう修正
   let finishedRawData: ComfyFinishData | null = null;
   let finishedPromptId: string | undefined;
 
@@ -40,7 +41,6 @@ async function handleRunRecipe(
     await api.pollStatus();
   } catch (_error) {
     try {
-      // Comfy Desktop が起動していない場合は起動する
       await launchComfyDesktop();
     } catch (error) {
       console.error("Failed to launch Comfy Desktop:", error);
@@ -55,55 +55,79 @@ async function handleRunRecipe(
     await api
       .init(recipe.opts?.maxTries, recipe.opts?.delayTime)
       .waitForReady();
-    console.log("[ComfyUI][run] ready.");
-    await api.uploadWorkflow(recipe.workflow);
-    const builder = new PromptBuilder(recipe.workflow);
-    builder.applyInputs(recipe.inputs ?? {});
-    const outputKeys =
-      Array.isArray(recipe.outputKeys) && recipe.outputKeys.length
-        ? recipe.outputKeys
-        : (recipe.workflow as any)?.workflow?.output?.order ?? [];
-    console.log("[ComfyUI][run] output keys", outputKeys);
-    builder.registerOutputs(outputKeys);
-    const prompt = builder.createPrompt(recipe.opts?.operation);
-    const runner = await new CallWrapper(api)
-      .prepare(prompt, recipe.opts?.workflow)
-      .setProgressInterval(recipe.opts?.progressInterval ?? 3000)
-      .onQueued((promptId) => {
-        console.log("[ComfyUI][run] queued", promptId);
-        send({ type: "queued", promptId });
+
+    const inputEntries = Object.entries(recipe.inputs ?? {});
+    const outputEntries = Object.entries(recipe.outputs ?? {});
+    let builder = new PromptBuilder(
+      recipe.workflow as any,
+      inputEntries.map(([key]) => key),
+      outputEntries.map(([key]) => key)
+    );
+
+    for (const [key, value] of inputEntries) {
+      if (!value) continue;
+      builder = builder.setInputNode(key, value.path);
+      if (typeof value.default !== "undefined") {
+        builder = builder.input(key, value.default as unknown as any);
+      }
+    }
+
+    for (const [key, value] of outputEntries) {
+      if (!value) continue;
+      builder = builder.setOutputNode(key, value.path);
+    }
+
+    if (Array.isArray(recipe.bypass) && recipe.bypass.length > 0) {
+      builder = builder.bypass(recipe.bypass);
+    }
+
+    const runner = new CallWrapper(api, builder)
+      .onPending((promptId?: string) => {
+        console.log("[ComfyUI][pending]", { promptId });
+        send({ type: "pending", promptId });
       })
-      .onRunning((info, promptId) => {
-        const frac = logProgress(info, promptId);
+      .onStart((promptId?: string) => {
+        console.log("[ComfyUI][start]", { promptId });
+        send({ type: "start", promptId });
+      })
+      .onPreview(async (blob: Blob, promptId?: string) => {
+        try {
+          console.log("[ComfyUI][preview]", {
+            promptId,
+            blob: { size: blob.size, type: blob.type },
+          });
+          const data = await blob.arrayBuffer();
+          send({ type: "preview", data, promptId });
+        } catch (e) {
+          console.log("[ComfyUI][preview][error]", e);
+        }
+      })
+      .onOutput((key: string, result: unknown, promptId?: string) => {
+        console.log("[ComfyUI][output]", { key, promptId });
+        send({ type: "output", key, data: result, promptId });
+      })
+      .onProgress((info: any, promptId?: string) => {
+        const progress = logProgress(info, promptId);
         send({
           type: "progress",
-          progress: frac,
-          promptId,
-        });
-      })
-      .onPending((info, promptId) => {
-        const frac = logProgress(info, promptId);
-        send({
-          type: "progress",
-          progress: frac,
+          progress,
+          detail: String(info?.node ?? ""),
           promptId,
         });
       })
       .onFinished((data: ComfyFinishData, promptId?: string) => {
-        // 最後に finish 通知とデータの保持のみ行い、後続で画像取得→result をまとめて返す
         send({ type: "finish", promptId });
         try {
           finishedRawData = data;
           finishedPromptId = promptId;
-          const keys = Object.keys(data || {});
+          const keys = Object.keys(data ?? {});
           console.log("[ComfyUI][finished] stored keys", { promptId, keys });
         } catch (e) {
           console.log("[ComfyUI][finished][store-error]", e);
           send({ type: "error", message: String((e as any)?.message ?? e) });
         }
       })
-      .onFailed((err: any) => {
-        // 失敗時は詳細な error を送信
+      .onFailed((err: unknown, promptId?: string) => {
         console.log("ComfyUI run failed:", err);
         try {
           const cache = new Set<any>();
@@ -123,7 +147,7 @@ async function handleRunRecipe(
           console.log("[ComfyUI][failed] serialization error", e);
         }
         const message = extractComfyErrorMessage(err);
-        send({ type: "error", message });
+        send({ type: "error", message, promptId });
         api.interrupt();
       });
 
@@ -132,7 +156,11 @@ async function handleRunRecipe(
         console.log("Aborting ComfyUI run");
         await api.interrupt();
         await api.freeMemory(false, true);
-        send({ type: "error", message: "Aborted by user" });
+        send({
+          type: "error",
+          message: "Aborted by user",
+          promptId: e.data?.promptId,
+        });
       }
     });
 
@@ -143,18 +171,15 @@ async function handleRunRecipe(
       hasRunResult: runResult !== undefined && runResult !== false,
     });
 
-    console.log(runResult);
-
-    // run() の戻り値を利用 & onFinished で保持したデータから result を送信
     if (runResult !== false && runResult !== undefined) {
       try {
         const raw: ComfyFinishData | null =
           finishedRawData ??
           (typeof runResult === "object" && runResult
-            ? (runResult as any)
+            ? (runResult as ComfyFinishData)
             : null);
         if (raw) {
-          console.log("[ComfyUI][run] building result from raw data", { raw });
+          const outputKeys = outputEntries.map(([key]) => key);
           const buffers = await collectOutputBuffers(raw, outputKeys, api);
           send({
             type: "result",
@@ -179,9 +204,7 @@ async function handleRunRecipe(
     console.log("[ComfyUI][run] caught error before finish", err);
     send({ type: "error", message: String(err?.message ?? err) });
   } finally {
-    console.log("[ComfyUI][run] finally closing port", {
-      nodeId: id,
-    });
+    console.log("[ComfyUI][run] finally closing port", { nodeId: id });
     port.close();
   }
 }
@@ -192,7 +215,8 @@ async function collectOutputBuffers(
   api: ReturnType<typeof getComfyApiClient>
 ): Promise<ArrayBuffer[]> {
   const buffers: ArrayBuffer[] = [];
-  for (const key of outputKeys) {
+  const keys = outputKeys.length ? outputKeys : Object.keys(data);
+  for (const key of keys) {
     const nodeOut = data[key];
     if (!nodeOut) {
       console.log("[ComfyUI][finished] missing output key", key);

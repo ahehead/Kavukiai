@@ -17,11 +17,11 @@ import {
 import {
   SelectWorkflowControl,
   SelectWorkflowControlView,
-} from "renderer/nodeEditor/nodes/Controls/ComfyUI/SelectWorkflowControl";
+} from "@nodes/ComfyUI/common/renderer/controls/SelectWorkflowControl";
 import {
   WorkflowIOSelectControl,
   WorkflowIOSelectControlView,
-} from "renderer/nodeEditor/nodes/Controls/ComfyUI/WorkflowIOSelectControl";
+} from "@nodes/ComfyUI/common/renderer/controls/WorkflowIOSelectControl";
 import {
   ConsoleControl,
   ConsoleControlView,

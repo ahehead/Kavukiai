@@ -58,29 +58,29 @@
 ## Node Migration Checklist
 
 ### LMStudio
-- [ ] FetchModelInfos
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] FetchModelInfos
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] ListDownloadedModels
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] ListDownloadedModels
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] LLMPredictionConfig
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] LLMPredictionConfig
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] LMStudioChat
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] LMStudioChat
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] LMStudioLoadModel
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] LMStudioLoadModel
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
 - [x] LMStudioStart
@@ -98,320 +98,320 @@
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] ServerStatus
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] ServerStatus
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] UnLoadModel
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] UnLoadModel
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
 
 ### ComfyUI
-- [ ] ComfyDesktopStart
+- [x] ComfyDesktopStart
   - [x] Phase 2
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] ComfyUIFreeMemory
+- [x] ComfyUIFreeMemory
   - [x] Phase 2
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] ComfyUI
+- [x] ComfyUI
   - [x] Phase 2
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] FetchCheckpoints
+- [x] FetchCheckpoints
   - [x] Phase 2
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] FetchTemplateWorkflows
+- [x] FetchTemplateWorkflows
   - [x] Phase 2
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] FetchUserWorkflowList
+- [x] FetchUserWorkflowList
   - [x] Phase 2
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] LoadWorkflowFile
+- [x] LoadWorkflowFile
   - [x] Phase 2
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] MergeWorkflowInputsDefaults
+- [x] MergeWorkflowInputsDefaults
   - [x] Phase 2
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] WorkflowInputs
+- [x] WorkflowInputs
   - [x] Phase 2
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] WorkflowOutputs
+- [x] WorkflowOutputs
   - [x] Phase 2
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] WorkflowRefToApiWorkflow
+- [x] WorkflowRefToApiWorkflow
   - [x] Phase 2
   - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
 
 ### Chat
-- [ ] LMStudioToUChatCommand
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] LMStudioToUChatCommand
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] OpenAIToUChatCommand
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] OpenAIToUChatCommand
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] ReverseRole
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] ReverseRole
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] UChatGetLastMessage
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] UChatGetLastMessage
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] UChatMessageByString
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] UChatMessageByString
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] UChatMessage
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] UChatMessage
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] UChat
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] UChat
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] UChatRole
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] UChatRole
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] UChatToLMStudio
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] UChatToLMStudio
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] UChatToOpenAI
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] UChatToOpenAI
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] UChatToString
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] UChatToString
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
-- [ ] UPartText
-  - [ ] Phase 2
-  - [ ] Phase 3
+- [x] UPartText
+  - [x] Phase 2
+  - [x] Phase 3
   - [x] Phase 4
   - [x] Phase 5
 
 ### OpenAI
-- [ ] JsonSchemaFormat
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] OpenAI
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] ResponseCreateParamsBase
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] ResponseTextConfig
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+- [x] JsonSchemaFormat
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] OpenAI
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] ResponseCreateParamsBase
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] ResponseTextConfig
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 
 ### Debug
-- [ ] Test
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] Unknown
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+- [x] Test
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] Unknown
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 
 ### Inspector
-- [ ] Inspector
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+- [x] Inspector
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 
 ### Primitive (Basics)
-- [ ] Bool
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] CreateSelect
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] Number
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+- [x] Bool
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] CreateSelect
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] Number
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 
 ### Primitive / Array
-- [ ] Array
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] Join
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] ToArray
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+- [x] Array
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] Join
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] ToArray
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 
 ### Primitive / Flow
-- [ ] CounterLoop
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] IF
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] Run
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+- [x] CounterLoop
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] IF
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] Run
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 
 ### Primitive / Image
-- [ ] SelectImage
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] ShowImage
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+- [x] SelectImage
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] ShowImage
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 
 ### Primitive / Object
-- [ ] JsonSchema
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] JsonSchemaToObject
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] ObjectPick
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] ParseJsonAndPick
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] ParseJsonToObject
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+- [x] JsonSchema
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] JsonSchemaToObject
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] ObjectPick
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] ParseJsonAndPick
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] ParseJsonToObject
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 
 ### Primitive / String
-- [ ] AutoTemplateReplace
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] CodeFence
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] DefaultString
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] JsonFilePath
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] MultiLineString
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] NumberToString
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] ObjectToString
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] ObjectToYAMLString
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] StringForm
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] String
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
-- [ ] TemplateReplace
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+- [x] AutoTemplateReplace
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] CodeFence
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] DefaultString
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] JsonFilePath
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] MultiLineString
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] NumberToString
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] ObjectToString
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] ObjectToYAMLString
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] StringForm
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] String
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
+- [x] TemplateReplace
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
