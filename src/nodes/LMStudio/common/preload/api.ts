@@ -39,6 +39,8 @@ export const lmstudioApi = {
   },
 };
 
-export const register = () => lmstudioApi;
+export type LMStudioPreloadApi = typeof lmstudioApi;
+
+export const register = (): LMStudioPreloadApi => lmstudioApi;
 
 export default register;

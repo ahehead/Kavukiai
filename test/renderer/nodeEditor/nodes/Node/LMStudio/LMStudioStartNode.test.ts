@@ -4,7 +4,7 @@ vi.mock('renderer/features/services/appService', () => ({
   electronApiService: { startServer: vi.fn() }
 }))
 
-import { LMStudioStartNode } from 'renderer/nodeEditor/nodes/Node/LMStudio/LMStudioStartNode'
+import { LMStudioStartNode } from '@nodes/LMStudio/LMStudioStart/renderer/LMStudioStartNode'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { Schemes } from 'renderer/nodeEditor/types'

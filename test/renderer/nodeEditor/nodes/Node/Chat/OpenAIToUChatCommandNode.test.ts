@@ -1,4 +1,4 @@
-import { OpenAIToUChatCommandNode } from "renderer/nodeEditor/nodes/Node/Chat/OpenAIToUChatCommandNode";
+import { OpenAIToUChatCommandNode } from "@nodes/Chat/OpenAIToUChatCommand/renderer/OpenAIToUChatCommandNode";
 import { expect, test } from "vitest";
 
 // simple final response with text message

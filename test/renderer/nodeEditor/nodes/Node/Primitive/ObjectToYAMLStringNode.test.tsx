@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest';
-import { ObjectToYAMLStringNode } from 'renderer/nodeEditor/nodes/Node/Primitive/String/ObjectToYAMLStringNode';
+import { ObjectToYAMLStringNode } from '@nodes/Primitive/String/ObjectToYAMLString/renderer/ObjectToYAMLStringNode';
 
 test('ObjectToYAMLStringNode converts object to YAML string', () => {
   const node = new ObjectToYAMLStringNode();

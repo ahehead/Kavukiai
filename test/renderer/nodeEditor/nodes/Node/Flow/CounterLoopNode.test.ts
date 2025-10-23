@@ -1,5 +1,5 @@
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
-import { CounterLoopNode } from "renderer/nodeEditor/nodes/Node/Primitive/Flow/CounterLoopNode";
+import { CounterLoopNode } from "@nodes/Primitive/Flow/CounterLoop/renderer/CounterLoopNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";

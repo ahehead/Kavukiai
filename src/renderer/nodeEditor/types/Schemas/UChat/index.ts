@@ -1,4 +1,2 @@
-// Barrel exports for UChat schema & adapters
+export * from "@nodes/Chat/common/schema";
 
-export * from "./adapters";
-export * from "./UChatMessage";

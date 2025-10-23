@@ -28,13 +28,13 @@
 
 ### Phase 2: Preload Recomposition
 - [x] Switch `src/preload/index.ts` to auto-registration with `import.meta.glob("../nodes/**/preload/*Entry.ts")`.
-- [ ] Move the pilot node’s preload API into `src/nodes/<group>/<node>/preload/api.ts` and organize necessary types under `shared/types.ts`.
-- [ ] Delete migrated preload legacy files and update relevant tests.
+- [x] Move the pilot node's preload API into `src/nodes/<group>/<node>/preload/api.ts` and organize necessary types under `shared/types.ts`.
+- [x] Delete migrated preload legacy files and update relevant tests.
 
 ### Phase 3: Main (IPC) Recomposition
 - [x] Introduce auto-registration in `src/main/ipc/index.ts` via `import.meta.glob("../nodes/**/main/ipc.ts")`.
-- [ ] Relocate the pilot node’s IPC handlers to `src/nodes/<group>/<node>/main`, centralizing shared logic in `src/nodes/<group>/common/main`.
-- [ ] Delete legacy IPC code and update relevant tests.
+- [x] Relocate the pilot node's IPC handlers to `src/nodes/<group>/<node>/main`, centralizing shared logic in `src/nodes/<group>/common/main`.
+- [x] Delete legacy IPC code and update relevant tests.
 
 ### Phase 4: Renderer NodeEditor Schema/Types
 - [ ] Move node-specific items from `src/renderer/nodeEditor/types/Schemas` and `src/shared` into each node’s `schema/` or `shared/`.
@@ -61,28 +61,28 @@
 - [ ] FetchModelInfos
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] ListDownloadedModels
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] LLMPredictionConfig
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] LMStudioChat
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] LMStudioLoadModel
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [x] LMStudioStart
   - [x] Phase 2
   - [x] Phase 3
@@ -101,132 +101,132 @@
 - [ ] ServerStatus
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] UnLoadModel
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 
 ### ComfyUI
 - [ ] ComfyDesktopStart
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] ComfyUIFreeMemory
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] ComfyUI
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] FetchCheckpoints
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] FetchTemplateWorkflows
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] FetchUserWorkflowList
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] LoadWorkflowFile
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] MergeWorkflowInputsDefaults
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] WorkflowInputs
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] WorkflowOutputs
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] WorkflowRefToApiWorkflow
-  - [ ] Phase 2
-  - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 2
+  - [x] Phase 3
+  - [x] Phase 4
+  - [x] Phase 5
 
 ### Chat
 - [ ] LMStudioToUChatCommand
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] OpenAIToUChatCommand
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] ReverseRole
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] UChatGetLastMessage
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] UChatMessageByString
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] UChatMessage
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] UChat
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] UChatRole
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] UChatToLMStudio
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] UChatToOpenAI
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] UChatToString
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 - [ ] UPartText
   - [ ] Phase 2
   - [ ] Phase 3
-  - [ ] Phase 4
-  - [ ] Phase 5
+  - [x] Phase 4
+  - [x] Phase 5
 
 ### OpenAI
 - [ ] JsonSchemaFormat

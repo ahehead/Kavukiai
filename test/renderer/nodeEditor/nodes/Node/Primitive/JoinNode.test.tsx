@@ -1,5 +1,5 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import { JoinNode } from 'renderer/nodeEditor/nodes/Node/Primitive/Array/JoinNode'
+import { JoinNode } from '@nodes/Primitive/Array/Join/renderer/JoinNode'
 import type { Schemes } from 'renderer/nodeEditor/types'
 import { expect, test } from 'vitest'
 

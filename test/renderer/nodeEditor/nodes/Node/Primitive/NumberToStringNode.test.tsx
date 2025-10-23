@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest';
-import { NumberToStringNode } from 'renderer/nodeEditor/nodes/Node/Primitive/String/NumberToStringNode';
+import { NumberToStringNode } from '@nodes/Primitive/String/NumberToString/renderer/NumberToStringNode';
 
 test('NumberToStringNode converts number to string', () => {
   const node = new NumberToStringNode();

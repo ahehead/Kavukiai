@@ -1,7 +1,7 @@
 import http from "node:http";
 import { ipcMain } from "electron";
 import { IpcChannel } from "shared/ApiType";
-import type { LaunchComfyDesktopResult, LaunchOpts } from "shared/ComfyUIType";
+import type { LaunchComfyDesktopResult, LaunchOpts } from "@nodes/ComfyUI/common/shared";
 import { launchComfyDesktop } from "../../common/main/comfyDesktop";
 
 const checkAlive = (port: number, timeoutMs: number): Promise<boolean> => {

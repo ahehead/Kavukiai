@@ -5,7 +5,6 @@ import { registerExportPngHandler } from "./export-png";
 import { registerWriteTempFile } from "./filepath";
 import { registerImportPngHandler } from "./import-png";
 import { registerLoadFileHandler } from "./load-file";
-import { registerOpenAIHandlers } from "./openai";
 import { registerReadJsonByPathHandler } from "./read-json-by-path";
 import { registerSaveHandlers } from "./save";
 import { registerSnapshotHandlers } from "./snapshot";
@@ -46,7 +45,6 @@ const resolveModule = async (
 
 const registerLegacyHandlers = (): void => {
   registerSnapshotHandlers();
-  registerOpenAIHandlers();
   registerSaveHandlers();
   registerCloseConfirmHandler();
   registerLoadFileHandler();

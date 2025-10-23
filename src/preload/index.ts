@@ -1,15 +1,34 @@
 import { contextBridge } from "electron";
 import { loadModules } from "lib/loadModules";
+import type { ComfyUIPreloadApi } from "@nodes/ComfyUI/common/preload/api";
+import type { LMStudioPreloadApi } from "@nodes/LMStudio/common/preload/api";
+import type { LMStudioStartPreloadApi } from "@nodes/LMStudio/LMStudioStart/preload/api";
+import type { LMStudioStopPreloadApi } from "@nodes/LMStudio/LMStudioStop/preload/api";
+import type { OpenAIPreloadApi } from "@nodes/OpenAI/common/preload/api";
 import { apiKeyApi } from "./apiKeys";
 import { appStateApi } from "./appState";
-import { comfyuiApi } from "./comfyui";
 import { fileOperationsApi } from "./fileOperations";
-import { openAIApi } from "./openAI";
 import { settingsApi } from "./settings";
+
+type NodePreloadApis = LMStudioPreloadApi &
+  LMStudioStartPreloadApi &
+  LMStudioStopPreloadApi &
+  ComfyUIPreloadApi &
+  OpenAIPreloadApi;
+
+const baseApi = {
+  ...appStateApi,
+  ...apiKeyApi,
+  ...settingsApi,
+  ...fileOperationsApi,
+};
+
+type BaseApi = typeof baseApi;
+type PreloadApi = BaseApi & NodePreloadApis;
 
 declare global {
   interface Window {
-    App: typeof baseApi;
+    App: PreloadApi;
   }
 }
 
@@ -19,15 +38,6 @@ type PreloadModuleExports = {
   register?: () => PreloadApiFactory;
   default?: PreloadApiFactory | (() => PreloadApiFactory);
   expose?: PreloadApiFactory;
-};
-
-const baseApi = {
-  ...appStateApi,
-  ...apiKeyApi,
-  ...openAIApi,
-  ...comfyuiApi,
-  ...settingsApi,
-  ...fileOperationsApi,
 };
 
 const preloadModules = import.meta.glob<PreloadModuleExports>(
@@ -66,9 +76,12 @@ const registerPreloadApis = async () => {
       resolve: resolveModule,
     });
 
-    const mergedNodeApi = Object.assign({}, ...nodeApis);
+    const mergedNodeApi = Object.assign(
+      {},
+      ...nodeApis
+    ) as NodePreloadApis;
 
-    const API = {
+    const API: PreloadApi = {
       ...baseApi,
       ...mergedNodeApi,
     };
@@ -76,7 +89,7 @@ const registerPreloadApis = async () => {
     contextBridge.exposeInMainWorld("App", API);
   } catch (error) {
     console.error("Failed to register preload APIs", error);
-    contextBridge.exposeInMainWorld("App", baseApi);
+    contextBridge.exposeInMainWorld("App", baseApi as PreloadApi);
   }
 };
 

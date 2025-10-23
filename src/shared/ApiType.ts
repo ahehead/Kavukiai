@@ -1,6 +1,6 @@
 import type OpenAI from "openai";
-import type { ResponseStreamEvent } from "renderer/nodeEditor/types/Schemas/openai/EventsSchemas";
-import type { Response } from "renderer/nodeEditor/types/Schemas/openai/ResponseSchemas";
+import type { ResponseStreamEvent } from "@nodes/OpenAI/common/schema/EventsSchemas";
+import type { Response } from "@nodes/OpenAI/common/schema/ResponseSchemas";
 import type { GraphJsonData } from "./JsonType";
 
 export type SaveJsonOptions = {
@@ -127,3 +127,4 @@ export type ImportPngResult = {
   fileName: string; // basename without extension
   workflow: GraphJsonData;
 };
+

@@ -5,8 +5,8 @@ import {
 } from "@saintno/comfyui-sdk";
 import { type IpcMainEvent, ipcMain } from "electron";
 import { IpcChannel } from "shared/ApiType";
-import type { ComfyUIRunRequestArgs } from "shared/ComfyUIType";
-import type { ComfyUIPortEvent } from "shared/ComfyUIType/port-events";
+import type { ComfyUIRunRequestArgs } from "@nodes/ComfyUI/common/shared";
+import type { ComfyUIPortEvent } from "@nodes/ComfyUI/common/shared/port-events";
 import { getComfyApiClient } from "../../common/main/comfyApiClient";
 import { launchComfyDesktop } from "../../common/main/comfyDesktop";
 

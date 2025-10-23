@@ -1,4 +1,4 @@
-import { AutoTemplateReplaceNode } from 'renderer/nodeEditor/nodes/Node/Primitive/String/AutoTemplateReplaceNode'
+import { AutoTemplateReplaceNode } from '@nodes/Primitive/String/AutoTemplateReplace/renderer/AutoTemplateReplaceNode'
 import { NodeStatus } from 'renderer/nodeEditor/types'
 import { expect, test } from 'vitest'
 

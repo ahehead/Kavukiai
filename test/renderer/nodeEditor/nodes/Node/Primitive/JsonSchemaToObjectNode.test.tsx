@@ -1,6 +1,6 @@
 import { Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import { JsonSchemaToObjectNode } from 'renderer/nodeEditor/nodes/Node/Primitive/Object/JsonSchemaToObject'
+import { JsonSchemaToObjectNode } from '@nodes/Primitive/Object/JsonSchemaToObject/renderer/JsonSchemaToObject'
 import type { Schemes } from 'renderer/nodeEditor/types'
 import type { NodeEditor } from 'rete'
 import type { AreaPlugin } from 'rete-area-plugin'

@@ -73,7 +73,7 @@ import {
 import {
   ModelInfoListControl,
   ModelInfoListControlView,
-} from "renderer/nodeEditor/nodes/Controls/LMStudio/ModelInfoListControl";
+} from "@nodes/LMStudio/common/renderer/controls/ModelInfoListControl";
 import {
   ArrayViewControl,
   ArrayViewControlView,

@@ -1,6 +1,6 @@
 import { Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import { ArrayNode } from 'renderer/nodeEditor/nodes/Node/Primitive/Array/ArrayNode'
+import { ArrayNode } from '@nodes/Primitive/Array/Array/renderer/ArrayNode'
 import type { AreaExtra, Schemes } from 'renderer/nodeEditor/types'
 import { TypedSocket } from 'renderer/nodeEditor/types'
 import type { AreaPlugin } from 'rete-area-plugin'

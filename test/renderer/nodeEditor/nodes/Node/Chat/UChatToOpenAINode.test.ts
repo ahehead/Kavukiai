@@ -1,5 +1,5 @@
-import { UChatToOpenAINode } from "renderer/nodeEditor/nodes/Node/Chat/UChatToOpenAINode";
-import type { UChat } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
+import { UChatToOpenAINode } from "@nodes/Chat/UChatToOpenAI/renderer/UChatToOpenAINode";
+import type { UChat } from "@nodes/Chat/common/schema/UChatMessage";
 import { expect, test } from "vitest";
 
 test("UChatToOpenAINode converts UChat to ResponseInput", () => {
@@ -16,3 +16,4 @@ test("UChatToOpenAINode converts UChat to ResponseInput", () => {
     },
   ]);
 });
+

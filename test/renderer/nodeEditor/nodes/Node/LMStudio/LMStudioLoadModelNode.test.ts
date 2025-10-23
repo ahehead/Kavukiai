@@ -5,7 +5,7 @@ vi.mock("renderer/features/services/appService", () => ({
 }));
 
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
-import { LMStudioLoadModelNode } from "renderer/nodeEditor/nodes/Node/LMStudio/LMStudioLoadModelNode";
+import { LMStudioLoadModelNode } from "@nodes/LMStudio/LMStudioLoadModel/renderer/LMStudioLoadModelNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";
