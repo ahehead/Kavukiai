@@ -1,3 +1,4 @@
+import { ModelInfoListControl } from '@nodes/LMStudio/common/renderer/controls/ModelInfoListControl'
 import type { ModelInfo } from '@nodes/LMStudio/common/schema/ModelSchemas'
 import { electronApiService } from 'renderer/features/services/appService'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
@@ -8,7 +9,6 @@ import {
 } from 'renderer/nodeEditor/types'
 import { NodeStatus } from 'renderer/nodeEditor/types/Node/BaseNode'
 import type { ControlFlowEngine } from 'rete-engine'
-import { ModelInfoListControl } from '@nodes/LMStudio/common/renderer/controls/ModelInfoListControl'
 
 export class FetchModelInfosNode extends SerializableInputsNode<
   'FetchModelInfos',

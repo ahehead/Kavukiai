@@ -94,7 +94,7 @@ export function ModelInfoListControlView(props: {
   // cva でリスト項目のスタイルを定義
   // selected=true の場合にのみ選択状態の色を適用し、それ以外は通常状態
   const modelItemVariants = cva(
-    'cursor-pointer rounded-md border px-2 py-1 mb-1 text-sm transition-colors  dark:hover:bg-neutral-800 border-input',
+    'cursor-pointer rounded-md border px-2 py-1 mb-1 text-sm transition-colors dark:hover:bg-neutral-800 border-input focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 w-full text-left disabled:cursor-not-allowed disabled:opacity-60',
     {
       variants: {
         selected: {
@@ -119,16 +119,15 @@ export function ModelInfoListControlView(props: {
           const vision = isLLM ? mi.vision : undefined
           const tool = isLLM ? mi.trainedForToolUse : undefined
           return (
-            // biome-ignore lint/a11y/useAriaPropsSupportedByRole: aria-selected is valid for option-like elements in this context
-            // biome-ignore lint/a11y/noStaticElementInteractions: This div acts as a selectable list item and handles click events intentionally.
-            // biome-ignore lint/a11y/useKeyWithClickEvents: This div is intentionally clickable for selection in a custom list.
-            <div
+            <button
               key={mi.modelKey}
+              type="button"
               className={modelItemVariants({
                 selected: mi.modelKey === selectedKey,
               })}
               onClick={() => editable && control.setSelectedKey(mi.modelKey)}
-              aria-selected={selectedKey === mi.modelKey}
+              aria-pressed={selectedKey === mi.modelKey}
+              disabled={!editable}
             >
               <div className="flex items-center gap-2">
                 <span className="font-medium">
@@ -168,7 +167,7 @@ export function ModelInfoListControlView(props: {
               </div>
               {/* 長いパスを省略せず折り返す */}
               <span className="flex-1 break-all">{mi.path}</span>
-            </div>
+            </button>
           )
         })}
       </div>
