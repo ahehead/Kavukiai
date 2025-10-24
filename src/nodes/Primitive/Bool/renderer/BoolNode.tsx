@@ -1,4 +1,5 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
+import { SwitchControl } from 'renderer/nodeEditor/nodes/Controls/input/Switch'
 import {
   type AreaExtra,
   type Schemes,
@@ -7,7 +8,6 @@ import {
 } from 'renderer/nodeEditor/types'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'
-import { SwitchControl } from 'renderer/nodeEditor/nodes/Controls/input/Switch'
 
 // Boolean入力ノード
 export class BoolNode extends SerializableInputsNode<
@@ -44,8 +44,6 @@ export class BoolNode extends SerializableInputsNode<
   data(): { out: boolean } {
     return { out: this.controls.switch.getValue() }
   }
-
-  async execute(): Promise<void> { }
 
   serializeControlValue(): { data: { value: boolean } } {
     return {
