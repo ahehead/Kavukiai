@@ -15,6 +15,10 @@ import {
   ModelInfoListControlView,
 } from "@nodes/LMStudio/common/renderer/controls/ModelInfoListControl";
 import {
+  UChatControl,
+  UChatMessageListControlView,
+} from "nodes/Chat/common/renderer/controls/UChat";
+import {
   ButtonControl,
   ButtonControlView,
 } from "renderer/nodeEditor/nodes/Controls/Button/Button";
@@ -22,10 +26,6 @@ import {
   RunButtonControl,
   RunButtonControlView,
 } from "renderer/nodeEditor/nodes/Controls/Button/RunButton";
-import {
-  UChatControl,
-  UChatMessageListControlView,
-} from "renderer/nodeEditor/nodes/Controls/Chat/UChat";
 import {
   ConsoleControl,
   ConsoleControlView,

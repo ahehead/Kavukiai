@@ -1,3 +1,12 @@
+import type { UChatCommandEventOrNull } from "@nodes/Chat/common/schema/UChatCommand";
+import type {
+  UChat,
+  UChatMessage,
+} from "@nodes/Chat/common/schema/UChatMessage";
+import {
+  type DeltaStreamFunctions,
+  UChatControl,
+} from "nodes/Chat/common/renderer/controls/UChat";
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
 import type {
   AreaExtra,
@@ -6,18 +15,9 @@ import type {
 } from "renderer/nodeEditor/types";
 import type { SerializableDataNode } from "renderer/nodeEditor/types/Node/SerializableDataNode";
 import { SerializableInputsNode } from "renderer/nodeEditor/types/Node/SerializableInputsNode";
-import type { UChatCommandEventOrNull } from "@nodes/Chat/common/schema/UChatCommand";
-import type {
-  UChat,
-  UChatMessage,
-} from "@nodes/Chat/common/schema/UChatMessage";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";
 import type { HistoryPlugin } from "rete-history-plugin";
-import {
-  type DeltaStreamFunctions,
-  UChatControl,
-} from "renderer/nodeEditor/nodes/Controls/Chat/UChat";
 
 // open aiと lmstudioに変換できる
 export class UChatNode
@@ -210,4 +210,3 @@ export class UChatNode
     this.controls.chatContext.setValue(data.list);
   }
 }
-

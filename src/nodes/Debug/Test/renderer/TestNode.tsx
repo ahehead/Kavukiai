@@ -1,6 +1,5 @@
-import { SerializableInputsNode } from 'renderer/nodeEditor/types'
+import { UChatControl } from 'nodes/Chat/common/renderer/controls/UChat'
 import { ButtonControl } from 'renderer/nodeEditor/nodes/Controls/Button/Button'
-import { UChatControl } from 'renderer/nodeEditor/nodes/Controls/Chat/UChat'
 import { ConsoleControl } from 'renderer/nodeEditor/nodes/Controls/Console/Console'
 import { CheckBoxControl } from 'renderer/nodeEditor/nodes/Controls/input/CheckBox'
 import { ImageFileInputControl } from 'renderer/nodeEditor/nodes/Controls/input/ImageFileInput'
@@ -12,6 +11,7 @@ import { SwitchControl } from 'renderer/nodeEditor/nodes/Controls/input/Switch'
 import { PropertyInputControl } from 'renderer/nodeEditor/nodes/Controls/JsonSchema/PropertyInput'
 import { ImageControl } from 'renderer/nodeEditor/nodes/Controls/view/Image'
 import { ProgressControl } from 'renderer/nodeEditor/nodes/Controls/view/ProgressControl'
+import { SerializableInputsNode } from 'renderer/nodeEditor/types'
 
 // src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
 // コントロール等の確認用のNode。
@@ -83,7 +83,14 @@ export class TestNode extends SerializableInputsNode<
     this.addControl(
       'propertyInput',
       new PropertyInputControl({
-        value: [{ key: 'example', typeStr: 'string', required: false, defaultValue: '' }],
+        value: [
+          {
+            key: 'example',
+            typeStr: 'string',
+            required: false,
+            defaultValue: '',
+          },
+        ],
       })
     )
     this.addControl('image', new ImageControl({ value: [] }))
