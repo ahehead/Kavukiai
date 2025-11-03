@@ -5,8 +5,8 @@ export type TemplateType = "Prompt" | "PNGWorkflow";
 
 // Multi-language (ja/en) prompt content.
 export type PromptContent = {
-  ja: string;
-  en: string;
+  ja?: string;
+  en?: string;
 };
 
 // Discriminated union so Prompt variant holds multi-lang content while others keep a single src string.

@@ -8,12 +8,14 @@ import adultEditorEN from "src/resources/public/templates/Prompt/goalseek_adult_
 import adultEditorJA from "src/resources/public/templates/Prompt/goalseek_adult_editor.ja.md?raw";
 import adultWriterEN from "src/resources/public/templates/Prompt/goalseek_adult_writer.en.md?raw";
 import adultWriterJA from "src/resources/public/templates/Prompt/goalseek_adult_writer.ja.md?raw";
+import grokEroPrompt from "src/resources/public/templates/Prompt/grok_ero.ja.md?raw";
 import imageChatEN from "src/resources/public/templates/Prompt/image_chat.en.md?raw";
 import imageChatJA from "src/resources/public/templates/Prompt/image_chat.ja.md?raw";
 import interactiveGameEN from "src/resources/public/templates/Prompt/interactive_game.en.md?raw";
 import interactiveGameJA from "src/resources/public/templates/Prompt/interactive_game.ja.md?raw";
 import stringTemplatePng from "src/resources/public/templates/String/String_Template.png?url";
 import stringJoinPng from "src/resources/public/templates/String/string_join.png?url";
+
 import type { TemplateMeta, TemplatesByGenre } from "./types";
 // NOTE: Add your bundled assets here. Example of importing URLs with Vite:
 //   import examplePng from "../../assets/templates/example/example.png?url";
@@ -141,6 +143,18 @@ export const TEMPLATES: TemplateMeta[] = [
     },
     descriptionMd:
       "インタラクティブなテキストアドベンチャーゲーム用プロンプト。参照元: [ぬるぽらぼ](https://note.com/nullpolab/n/n738c84e2110e)",
+  },
+  {
+    id: "grok-ero-text-prompt",
+    title: "Grok Ero Text Prompt",
+    genre: "Prompt",
+    tags: ["prompt", "ero", "nsfw"],
+    type: "Prompt",
+    prompt: {
+      ja: grokEroPrompt,
+    },
+    descriptionMd:
+      "Grok4 用エロテキスト生成プロンプト。参照元: [すばみずる](https://note.com/_dhmo/n/nad478729c1dd)",
   },
 ];
 
