@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { UPartTextNode } from 'renderer/nodeEditor/nodes/Node/Chat/UPartTextNode';
+import { UPartTextNode } from '@nodes/Chat/UPartText/renderer/UPartTextNode';
 
 test('UPartTextNode outputs text part', () => {
   const node = new UPartTextNode('hello');

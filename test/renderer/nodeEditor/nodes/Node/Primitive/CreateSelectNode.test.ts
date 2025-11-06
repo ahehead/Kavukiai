@@ -1,5 +1,5 @@
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
-import { CreateSelectNode } from "renderer/nodeEditor/nodes/Node/Primitive/CreateSelectNode";
+import { CreateSelectNode } from "@nodes/Primitive/CreateSelect/renderer/CreateSelectNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import type { ControlFlowEngine } from "rete-engine";
 import { expect, test, vi } from "vitest";

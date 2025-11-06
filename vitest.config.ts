@@ -4,6 +4,8 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: {
     alias: {
+      "@nodes": path.resolve(__dirname, "./src/nodes"),
+      lib: path.resolve(__dirname, "./src/lib"),
       main: path.resolve(__dirname, "./src/main"),
       preload: path.resolve(__dirname, "./src/preload"),
       renderer: path.resolve(__dirname, "./src/renderer"),

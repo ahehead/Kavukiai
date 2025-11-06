@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest';
-import { ObjectToStringNode } from 'renderer/nodeEditor/nodes/Node/Primitive/String/ObjectToStringNode';
+import { ObjectToStringNode } from '@nodes/Primitive/String/ObjectToString/renderer/ObjectToStringNode';
 
 test('ObjectToStringNode converts object to formatted string', () => {
   const node = new ObjectToStringNode();

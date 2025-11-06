@@ -1,5 +1,5 @@
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
-import { IFNode } from "renderer/nodeEditor/nodes/Node/Primitive/Flow/IFNode";
+import { IFNode } from "@nodes/Primitive/Flow/IF/renderer/IFNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { HistoryPlugin } from "rete-history-plugin";

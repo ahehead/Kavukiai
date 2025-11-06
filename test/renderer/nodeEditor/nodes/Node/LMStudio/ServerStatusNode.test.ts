@@ -5,7 +5,7 @@ vi.mock("renderer/features/services/appService", () => ({
 }));
 
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
-import { ServerStatusNode } from "renderer/nodeEditor/nodes/Node/LMStudio/ServerStatusNode";
+import { ServerStatusNode } from "@nodes/LMStudio/ServerStatus/renderer/ServerStatusNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { ControlFlowEngine } from "rete-engine";

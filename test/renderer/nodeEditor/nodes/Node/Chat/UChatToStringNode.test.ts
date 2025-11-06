@@ -1,5 +1,5 @@
-import { UChatToStringNode } from "renderer/nodeEditor/nodes/Node/Chat/UChatToStringNode";
-import type { UChat } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
+import { UChatToStringNode } from "@nodes/Chat/UChatToString/renderer/UChatToStringNode";
+import type { UChat } from "@nodes/Chat/common/schema/UChatMessage";
 import { expect, test } from "vitest";
 
 const node = new UChatToStringNode();
@@ -30,3 +30,4 @@ test("UChatToStringNode with custom roles", () => {
   });
   expect(result.out).toBe("U\nhello\n\nA\nworld");
 });
+

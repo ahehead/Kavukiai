@@ -88,3 +88,4 @@ MIT
 
 [ぬるぽらぼ](https://x.com/NullpoLab):[インタラクティブテキストアドベンチャーゲームプロンプト](https://note.com/nullpolab/n/n738c84e2110e)
 
+[すばみずる]:[Grokエロテキスト](https://note.com/_dhmo/n/nad478729c1dd)

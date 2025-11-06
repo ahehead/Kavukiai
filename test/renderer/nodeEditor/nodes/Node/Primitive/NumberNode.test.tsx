@@ -1,5 +1,5 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import { NumberNode } from 'renderer/nodeEditor/nodes/Node/Primitive/NumberNode'
+import { NumberNode } from '@nodes/Primitive/Number/renderer/NumberNode'
 import type { Schemes } from 'renderer/nodeEditor/types'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'

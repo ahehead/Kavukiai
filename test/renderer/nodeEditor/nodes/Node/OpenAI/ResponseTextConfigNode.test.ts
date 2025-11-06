@@ -1,5 +1,5 @@
-import { ResponseTextConfigNode } from "renderer/nodeEditor/nodes/Node/OpenAI/ResponseTextConfigNode";
-import type { JsonSchemaFormat } from "renderer/nodeEditor/types/Schemas/openai/RequestSchemas";
+import { ResponseTextConfigNode } from "@nodes/OpenAI/ResponseTextConfig/renderer/ResponseTextConfigNode";
+import type { JsonSchemaFormat } from "@nodes/OpenAI/common/schema/RequestSchemas";
 import { expect, test } from "vitest";
 
 const format: JsonSchemaFormat = {
@@ -19,3 +19,4 @@ test("ResponseTextConfigNode outputs format when provided", () => {
   const result = node.data({ format: [format] });
   expect(result.out).toEqual({ format });
 });
+

@@ -5,9 +5,13 @@
     "paths": {
       "renderer/*": ["src/renderer/*"],
       "main/*": ["src/main/*"],
-      "shared/*": ["src/shared/*"]
+      "shared/*": ["src/shared/*"],
+      "@nodes/*": ["src/nodes/*"],
+      "nodes/*": ["src/nodes/*"]
     },
-    "types": ["vitest/globals"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["vitest/globals", "vite/client"],
     "jsx": "react"
   }
 }

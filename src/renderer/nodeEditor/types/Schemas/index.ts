@@ -1,13 +1,13 @@
-import type { TSchema } from "@sinclair/typebox";
-import * as PromptRecipe from "shared/ComfyUIType";
-import * as DefaultSchema from "./DefaultSchema";
-import { LMStudioChatPortEventOrNull } from "./LMStudioChatPortEventOrNull";
+import { LMStudioChatPortEventOrNull } from "@nodes/LMStudio/common/schema/LMStudioChatPortEventOrNull";
 import {
   ChatHistoryData,
   LLMPredictionConfig,
-} from "./lmstudio/LMStudioSchemas";
-import * as ModelInfoSchemas from "./lmstudio/ModelSchemas";
-import * as StatusSchemas from "./lmstudio/StatusSchemas";
+} from "@nodes/LMStudio/common/schema/LMStudioSchemas";
+import * as ModelInfoSchemas from "@nodes/LMStudio/common/schema/ModelSchemas";
+import * as StatusSchemas from "@nodes/LMStudio/common/schema/StatusSchemas";
+import type { TSchema } from "@sinclair/typebox";
+import * as PromptRecipe from "@nodes/ComfyUI/common/shared";
+import * as DefaultSchema from "./DefaultSchema";
 import {
   ImageArrayOrNull,
   NodeImage,
@@ -15,15 +15,15 @@ import {
   NodeImageOrArray,
   NodeImageOrArrayOrNull,
 } from "./NodeImage";
-import * as BaseSchemas from "./openai/BaseSchemas";
-import * as EventsSchemas from "./openai/EventsSchemas";
-import * as InputSchemas from "./openai/InputSchemas";
-import * as RequestSchemas from "./openai/RequestSchemas";
-import * as ResponseSchemas from "./openai/ResponseSchemas";
+import * as BaseSchemas from "@nodes/OpenAI/common/schema/BaseSchemas";
+import * as EventsSchemas from "@nodes/OpenAI/common/schema/EventsSchemas";
+import * as InputSchemas from "@nodes/OpenAI/common/schema/InputSchemas";
+import * as RequestSchemas from "@nodes/OpenAI/common/schema/RequestSchemas";
+import * as ResponseSchemas from "@nodes/OpenAI/common/schema/ResponseSchemas";
 import {
   UChatCommandEvent,
   UChatCommandEventOrNull,
-} from "./UChat/UChatCommand";
+} from "@nodes/Chat/common/schema/UChatCommand";
 import {
   UChat,
   UChatMessage,
@@ -31,7 +31,7 @@ import {
   UFileRef,
   UPart,
   UPartArray,
-} from "./UChat/UChatMessage";
+} from "@nodes/Chat/common/schema/UChatMessage";
 import { OpenAIClientResponse, OpenAIClientResponseOrNull } from "./Util";
 
 const registry = {

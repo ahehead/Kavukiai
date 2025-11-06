@@ -5,7 +5,7 @@
 - PowerShellで日本語が文字化けする場合は、ターミナル起動後に $OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 を実行してから "Get-Content" などのコマンドを使うと読みやすくなります。必要ならプロファイルに設定を追記してください。
 
 ## Refer to plan
-When I say refer to <planname> plan, refer to plan/<planname>-plan.md and proceed. If you get confused during the process, refer to it each time.
+When I say refer to <planname> plan, open doc/plan/<planname>-plan.md (for example doc/plan/node-refactor-plan.md) and proceed. If you get confused during the process, refer to it each time.
 
 ## Testing Instructions
 - From the package root you can just call pnpm test run. The commit should pass all tests before you merge.

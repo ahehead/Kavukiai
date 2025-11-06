@@ -24,11 +24,18 @@ const tsconfigPaths = tsconfigPathsPlugin({
   projects: [resolve("tsconfig.json")],
 });
 
+const sharedResolveAlias = {
+  "@nodes": resolve(__dirname, "src/nodes"),
+};
+
 console.log("🚀 using config file:", __filename);
 
 export default defineConfig({
   main: {
     plugins: [tsconfigPaths, externalizeDepsPlugin({ exclude: ["arktype"] })],
+    resolve: {
+      alias: sharedResolveAlias,
+    },
 
     build: {
       lib: {
@@ -40,6 +47,9 @@ export default defineConfig({
 
   preload: {
     plugins: [tsconfigPaths, externalizeDepsPlugin({ exclude: ["arktype"] })],
+    resolve: {
+      alias: sharedResolveAlias,
+    },
 
     build: {
       outDir: resolve(devPath, "preload"),
@@ -54,6 +64,10 @@ export default defineConfig({
 
     server: {
       port: settings.port,
+    },
+
+    resolve: {
+      alias: sharedResolveAlias,
     },
 
     plugins: [

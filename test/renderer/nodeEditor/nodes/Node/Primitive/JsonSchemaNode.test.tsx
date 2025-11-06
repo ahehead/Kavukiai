@@ -1,6 +1,6 @@
 import { Type } from '@sinclair/typebox'
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import { JsonSchemaNode } from 'renderer/nodeEditor/nodes/Node/Primitive/Object/JsonSchemaNode'
+import { JsonSchemaNode } from '@nodes/Primitive/Object/JsonSchema/renderer/JsonSchemaNode'
 import type { Schemes } from 'renderer/nodeEditor/types'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { HistoryPlugin } from 'rete-history-plugin'

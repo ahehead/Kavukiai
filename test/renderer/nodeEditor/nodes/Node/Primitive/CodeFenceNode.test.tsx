@@ -1,5 +1,5 @@
 import type { DataflowEngine } from 'renderer/nodeEditor/features/safe-dataflow/dataflowEngin'
-import { CodeFenceNode } from 'renderer/nodeEditor/nodes/Node/Primitive/String/CodeFenceNode'
+import { CodeFenceNode } from '@nodes/Primitive/String/CodeFence/renderer/CodeFenceNode'
 import type { Schemes } from 'renderer/nodeEditor/types'
 import { expect, test, vi } from 'vitest'
 

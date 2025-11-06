@@ -5,7 +5,7 @@ vi.mock("renderer/features/services/appService", () => ({
 }));
 
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
-import { OpenAINode } from "renderer/nodeEditor/nodes/Node/OpenAI/OpenAI";
+import { OpenAINode } from "@nodes/OpenAI/OpenAI/renderer/OpenAI";
 import type { Schemes } from "renderer/nodeEditor/types";
 import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";

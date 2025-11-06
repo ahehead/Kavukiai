@@ -1,0 +1,157 @@
+import { UChatControl } from 'nodes/Chat/common/renderer/controls/UChat'
+import { ButtonControl } from 'renderer/nodeEditor/nodes/Controls/Button/Button'
+import { ConsoleControl } from 'renderer/nodeEditor/nodes/Controls/Console/Console'
+import { CheckBoxControl } from 'renderer/nodeEditor/nodes/Controls/input/CheckBox'
+import { ImageFileInputControl } from 'renderer/nodeEditor/nodes/Controls/input/ImageFileInput'
+import { ListControl } from 'renderer/nodeEditor/nodes/Controls/input/List'
+import { PathInputControl } from 'renderer/nodeEditor/nodes/Controls/input/PathInputControl'
+import { SelectControl } from 'renderer/nodeEditor/nodes/Controls/input/Select'
+import { SliderControl } from 'renderer/nodeEditor/nodes/Controls/input/Slider'
+import { SwitchControl } from 'renderer/nodeEditor/nodes/Controls/input/Switch'
+import { PropertyInputControl } from 'renderer/nodeEditor/nodes/Controls/JsonSchema/PropertyInput'
+import { ImageControl } from 'renderer/nodeEditor/nodes/Controls/view/Image'
+import { ProgressControl } from 'renderer/nodeEditor/nodes/Controls/view/ProgressControl'
+import { SerializableInputsNode } from 'renderer/nodeEditor/types'
+
+// src/renderer/nodeEditor/features/customReactPresets/customReactPresets.ts
+// コントロール等の確認用のNode。
+export class TestNode extends SerializableInputsNode<
+  'Test',
+  object,
+  object,
+  {
+    check: CheckBoxControl
+    button: ButtonControl
+    buttonHeavyLog: ButtonControl
+    select: SelectControl<string>
+    list: ListControl<string>
+    switch: SwitchControl
+    slider: SliderControl
+    propertyInput: PropertyInputControl
+    image: ImageControl
+    imageFileInput: ImageFileInputControl
+    progress: ProgressControl
+    uChat: UChatControl
+    pathInput: PathInputControl
+    console: ConsoleControl
+    // コントロールを作った場合まずここに追加
+  }
+> {
+  constructor() {
+    super('Test')
+    this.addControl(
+      'check',
+      new CheckBoxControl({ value: true, label: 'CheckBox' })
+    )
+    this.addControl(
+      'button',
+      new ButtonControl({ label: 'Button', onClick: async () => { } })
+    )
+    this.addControl(
+      'select',
+      new SelectControl({
+        value: 'option1',
+        optionsList: [
+          { label: 'Option 1', value: 'option1' },
+          { label: 'Option 2', value: 'option2' },
+        ],
+        label: 'Select Option',
+      })
+    )
+    this.addControl(
+      'list',
+      new ListControl<string>({
+        value: ['item1', 'item2'],
+        label: 'List Control',
+        editable: true,
+      })
+    )
+    this.addControl(
+      'switch',
+      new SwitchControl({ value: true, label: 'Switch' })
+    )
+    this.addControl(
+      'slider',
+      new SliderControl({
+        value: 50,
+        label: 'Slider',
+        min: 0,
+        max: 100,
+        step: 1,
+      })
+    )
+    this.addControl(
+      'propertyInput',
+      new PropertyInputControl({
+        value: [
+          {
+            key: 'example',
+            typeStr: 'string',
+            required: false,
+            defaultValue: '',
+          },
+        ],
+      })
+    )
+    this.addControl('image', new ImageControl({ value: [] }))
+    this.addControl(
+      'imageFileInput',
+      new ImageFileInputControl({ value: null })
+    )
+
+    this.addControl(
+      'progress',
+      new ProgressControl({
+        value: 0,
+        label: 'Progress',
+      })
+    )
+
+    // Add UChatControl for testing
+    this.addControl('uChat', new UChatControl({ value: [], label: 'UChat' }))
+
+    // Add PathInputControl for testing
+    this.addControl(
+      'pathInput',
+      new PathInputControl({
+        value: '',
+        mode: 'file',
+        placeholder: 'ファイルまたはフォルダを選択…',
+        title: 'パスを選択',
+      })
+    )
+
+    // ConsoleControl (heavy text test)
+    const consoleControl = new ConsoleControl({ isOpen: true })
+    this.addControl('console', consoleControl)
+
+    // 大量テキスト追加動作
+    this.addControl(
+      'buttonHeavyLog',
+      new ButtonControl({
+        label: 'Add Huge Console Text',
+        onClick: async () => {
+          // 約 ~1MB 相当のテキストを生成して Console に追加
+          const lines = 5000 // 行数
+          const base =
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+          let chunk = ''
+          for (let i = 0; i < lines; i++) {
+            chunk += `${i}: ${base}Line repeat performance test.\n`
+          }
+          consoleControl.addValue(chunk)
+        },
+      })
+    )
+
+    // ここに新しいコントロールを追加していく
+  }
+
+  data(): object {
+    return {}
+  }
+
+  async execute(_: never, forward: (output: 'exec') => void): Promise<void> {
+    forward('exec')
+  }
+}

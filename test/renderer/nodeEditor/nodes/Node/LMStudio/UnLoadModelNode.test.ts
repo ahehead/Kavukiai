@@ -4,7 +4,7 @@ vi.mock("renderer/features/services/appService", () => ({
   electronApiService: { unloadAllModels: vi.fn() },
 }));
 
-import { UnLoadModelNode } from "renderer/nodeEditor/nodes/Node/LMStudio/UnLoadModelNode";
+import { UnLoadModelNode } from "@nodes/LMStudio/UnLoadModel/renderer/UnLoadModelNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import { NodeStatus } from "renderer/nodeEditor/types/Node/BaseNode";
 import type { AreaPlugin } from "rete-area-plugin";

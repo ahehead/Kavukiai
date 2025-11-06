@@ -3,6 +3,7 @@
 @import "./styles/node.css";
 @import "./styles/titlebar.css";
 @import "./styles/zindex.css";
+@config "../../tailwind.config.ts";
 
 @custom-variant dark (&:is(.dark *));
 @plugin "@tailwindcss/typography";

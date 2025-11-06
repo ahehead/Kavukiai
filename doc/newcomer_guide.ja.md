@@ -16,6 +16,7 @@ src/
 │  ├─ ipc/             # IPC ハンドラ
 │  └─ windows/         # ウィンドウ管理
 ├─ preload/            # レンダラーとの橋渡しをするスクリプト
+├─ nodes/              # ノード本体 (main / preload / renderer を含むモジュール群)
 ├─ renderer/           # React ベースの UI
 │  ├─ components/      # 汎用コンポーネント
 │  ├─ hooks/           # React フック
@@ -32,6 +33,7 @@ src/
 - `main/` : `index.ts` がエントリーポイント。`ipc/` や `windows/` にウィンドウ生成や通信ハンドラを分割しています。
 - `preload/` : contextBridge を通じて `window.App` へ公開される API を実装します。
 - `renderer/` : React で構築されたフロントエンド。`components/` や `nodeEditor/` に UI 部品やノードエディタを配置しています。
+- `nodes/` : ドメインごとにノードをまとめたモジュール群。`src/nodes/<Group>/<Node>/` 以下に renderer/main/preload などを整理します。
 - `shared/` : メイン・レンダラー両方で利用する型や定数をまとめています。
   - API キー関連の型は `shared/ApiKeysType.ts` を参照。
 
@@ -78,7 +80,7 @@ OpenAI や LMStudio などメインプロセス側の機能を利用するノー
 
 `ListDownloadedModelsNode` がこれらの手順を踏んだ実装例となっています。
 
-補足: ノードのファクトリ登録やカテゴリ分けの流れは `src/renderer/nodeEditor/nodes/README_node.md` も参照してください。
+補足: ノードのファクトリ登録やカテゴリ分けの流れは `doc/nodes/README.md` を参照してください。
 
 
 

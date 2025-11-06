@@ -3,6 +3,22 @@
 // Optional: specialize generic controls (see NodeControl type below).
 
 import {
+  SelectWorkflowControl,
+  SelectWorkflowControlView,
+} from "@nodes/ComfyUI/common/renderer/controls/SelectWorkflowControl";
+import {
+  WorkflowIOSelectControl,
+  WorkflowIOSelectControlView,
+} from "@nodes/ComfyUI/common/renderer/controls/WorkflowIOSelectControl";
+import {
+  ModelInfoListControl,
+  ModelInfoListControlView,
+} from "@nodes/LMStudio/common/renderer/controls/ModelInfoListControl";
+import {
+  UChatControl,
+  UChatMessageListControlView,
+} from "nodes/Chat/common/renderer/controls/UChat";
+import {
   ButtonControl,
   ButtonControlView,
 } from "renderer/nodeEditor/nodes/Controls/Button/Button";
@@ -10,18 +26,6 @@ import {
   RunButtonControl,
   RunButtonControlView,
 } from "renderer/nodeEditor/nodes/Controls/Button/RunButton";
-import {
-  UChatControl,
-  UChatMessageListControlView,
-} from "renderer/nodeEditor/nodes/Controls/Chat/UChat";
-import {
-  SelectWorkflowControl,
-  SelectWorkflowControlView,
-} from "renderer/nodeEditor/nodes/Controls/ComfyUI/SelectWorkflowControl";
-import {
-  WorkflowIOSelectControl,
-  WorkflowIOSelectControlView,
-} from "renderer/nodeEditor/nodes/Controls/ComfyUI/WorkflowIOSelectControl";
 import {
   ConsoleControl,
   ConsoleControlView,
@@ -70,10 +74,6 @@ import {
   PropertyInputControl,
   PropertyInputControlView,
 } from "renderer/nodeEditor/nodes/Controls/JsonSchema/PropertyInput";
-import {
-  ModelInfoListControl,
-  ModelInfoListControlView,
-} from "renderer/nodeEditor/nodes/Controls/LMStudio/ModelInfoListControl";
 import {
   ArrayViewControl,
   ArrayViewControlView,

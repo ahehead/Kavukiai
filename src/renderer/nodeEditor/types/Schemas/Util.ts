@@ -1,6 +1,6 @@
+import { ResponseStreamEvent } from "@nodes/OpenAI/common/schema/EventsSchemas";
+import * as ResponseSchemas from "@nodes/OpenAI/common/schema/ResponseSchemas";
 import { type Static, Type } from "@sinclair/typebox";
-import { ResponseStreamEvent } from "./openai/EventsSchemas";
-import * as ResponseSchemas from "./openai/ResponseSchemas";
 
 // OpenAIのclientからのレスポンスを表す型
 export const OpenAIClientResponse = Type.Union([

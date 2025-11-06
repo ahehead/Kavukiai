@@ -1,5 +1,5 @@
 import type { DataflowEngine } from "renderer/nodeEditor/features/safe-dataflow/dataflowEngin";
-import { ShowImageNode } from "renderer/nodeEditor/nodes/Node/Primitive/Image/ShowImageNode";
+import { ShowImageNode } from "@nodes/Primitive/Image/ShowImage/renderer/ShowImageNode";
 import type { Schemes } from "renderer/nodeEditor/types";
 import type { AreaPlugin } from "rete-area-plugin";
 import type { ControlFlowEngine } from "rete-engine";

@@ -39,6 +39,7 @@ src/
 │  ├─ ipc/             # IPC ハンドラ
 │  ├─ menu/            # アプリメニュー
 │  └─ windows/         # ブラウザウィンドウ生成
+├─ nodes/              # ノードモジュール群 (renderer/main/preload を集約)
 ├─ preload/            # IPC ブリッジ
 ├─ renderer/           # React レンダラー
 │  ├─ components/      # 共有UIコンポーネント
@@ -53,12 +54,11 @@ src/
 └─ shared/             # main/render 共有。アプリ全体の型・定数など
 ```
 
-### nodeEditorフォルダ
-Rete.js + React で実装したノードベースUI
-- features/             : コンテキストメニューやパン、シリアライズ等の拡張
-- nodes/                : ノード実装・コントロール・共通UI・ユーティリティ
-- nodes/Node/nodeFactories.ts : ノード生成関数（ファクトリ群）
-- types/                : `Schemes`, `AreaExtra` ほか型定義
+### nodeEditor / nodes フォルダ
+Rete.js + React で実装したノードベース UI は、`src/renderer/nodeEditor` と `src/nodes` の 2 層構成になりました。
+- `src/renderer/nodeEditor` : エディタ本体のセットアップや、共通 UI・Control 登録、`nodeFactories.ts` などメニュー管理を担当します。
+- `src/nodes` : 各ノードの実装をドメイン単位でまとめたモジュール群。`@nodes/...` エイリアス経由で参照され、renderer/main/preload のコードが隣接します。
+- 参考ドキュメント: `doc/nodes/README.md`
 ## 機能要件・仕様
 ### デスクトップアプリ
 

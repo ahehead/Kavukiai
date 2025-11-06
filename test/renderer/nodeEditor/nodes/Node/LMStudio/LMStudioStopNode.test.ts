@@ -4,7 +4,7 @@ vi.mock('renderer/features/services/appService', () => ({
   electronApiService: { stopServer: vi.fn() }
 }))
 
-import { LMStudioStopNode } from 'renderer/nodeEditor/nodes/Node/LMStudio/LMStudioStopNode'
+import { LMStudioStopNode } from '@nodes/LMStudio/LMStudioStop/renderer/LMStudioStopNode'
 import type { AreaPlugin } from 'rete-area-plugin'
 import type { ControlFlowEngine } from 'rete-engine'
 import type { Schemes } from 'renderer/nodeEditor/types'

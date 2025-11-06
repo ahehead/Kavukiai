@@ -1,5 +1,5 @@
-import { ReverseRoleNode } from "renderer/nodeEditor/nodes/Node/Chat/ReverseRoleNode";
-import type { UChat } from "renderer/nodeEditor/types/Schemas/UChat/UChatMessage";
+import { ReverseRoleNode } from "@nodes/Chat/ReverseRole/renderer/ReverseRoleNode";
+import type { UChat } from "@nodes/Chat/common/schema/UChatMessage";
 import { expect, test } from "vitest";
 
 const node = new ReverseRoleNode();
@@ -21,3 +21,4 @@ test("ReverseRoleNode swaps roles", () => {
   expect(result.list[0].role).toBe("assistant");
   expect(result.list[1].role).toBe("user");
 });
+
